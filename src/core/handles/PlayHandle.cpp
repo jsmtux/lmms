@@ -23,9 +23,7 @@
  */
  
 #include "PlayHandle.h"
-#include "AudioEngine.h"
 #include "BufferManager.h"
-#include "Engine.h"
 
 #include <QThread>
 
@@ -33,8 +31,9 @@
 namespace lmms
 {
 
-PlayHandle::PlayHandle(const Type type, f_cnt_t offset) :
+PlayHandle::PlayHandle(const Type type, fpp_t framesPerPeriod, f_cnt_t offset) :
 		m_type(type),
+		m_framesPerPeriod(framesPerPeriod),
 		m_offset(offset),
 		m_affinity(QThread::currentThread()),
 		m_playHandleBuffer(BufferManager::acquire()),
@@ -55,7 +54,7 @@ void PlayHandle::doProcessing()
 	if( m_usesBuffer )
 	{
 		m_bufferReleased = false;
-		BufferManager::clear(m_playHandleBuffer, Engine::audioEngine()->framesPerPeriod());
+		BufferManager::clear(m_playHandleBuffer, m_framesPerPeriod);
 		play( buffer() );
 	}
 	else

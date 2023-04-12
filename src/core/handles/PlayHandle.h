@@ -59,7 +59,7 @@ public:
 		MaxNumber = 1024
 	} ;
 
-	PlayHandle( const Type type, f_cnt_t offset = 0 );
+	PlayHandle( const Type type, fpp_t framesPerPeriod, f_cnt_t offset = 0 );
 
 	PlayHandle & operator = ( PlayHandle & p )
 	{
@@ -152,6 +152,7 @@ public:
 
 private:
 	Type m_type;
+	fpp_t m_framesPerPeriod;
 	f_cnt_t m_offset;
 	QThread* m_affinity;
 	QMutex m_processingLock;

@@ -1,15 +1,20 @@
+add_subdirectory(base)
+add_subdirectory(memory)
+add_subdirectory(scale)
+add_subdirectory(serialization)
+add_subdirectory(effect)
+add_subdirectory(plugin)
+add_subdirectory(engine)
+add_subdirectory(handles)
+
 set(LMMS_SRCS
 	${LMMS_SRCS}
 
-	core/AudioEngine.cpp
-	core/AudioEngineProfiler.cpp
-	core/AudioEngineWorkerThread.cpp
 	core/AutomatableModel.cpp
 	core/AutomationClip.cpp
 	core/AutomationNode.cpp
 	core/BandLimitedWave.cpp
 	core/base64.cpp
-	core/BufferManager.cpp
 	core/Clipboard.cpp
 	core/ComboBoxModel.cpp
 	core/ConfigManager.cpp
@@ -17,9 +22,6 @@ set(LMMS_SRCS
 	core/ControllerConnection.cpp
 	core/DataFile.cpp
 	core/DrumSynth.cpp
-	core/Effect.cpp
-	core/EffectChain.cpp
-	core/Engine.cpp
 	core/EnvelopeAndLfoParameters.cpp
 	core/fft_helpers.cpp
 	core/Mixer.cpp
@@ -27,9 +29,7 @@ set(LMMS_SRCS
 	core/InlineAutomation.cpp
 	core/Instrument.cpp
 	core/InstrumentFunctions.cpp
-	core/InstrumentPlayHandle.cpp
 	core/InstrumentSoundShaping.cpp
-	core/JournallingObject.cpp
 	core/Keymap.cpp
 	core/Ladspa2LMMS.cpp
 	core/LadspaControl.cpp
@@ -37,16 +37,11 @@ set(LMMS_SRCS
 	core/LfoController.cpp
 	core/LinkedModelGroups.cpp
 	core/LocklessAllocator.cpp
-	core/MemoryHelper.cpp
-	core/MemoryManager.cpp
 	core/MeterModel.cpp
-	core/MicroTimer.cpp
 	core/Microtuner.cpp
 	core/MixHelpers.cpp
-	core/Model.cpp
 	core/ModelVisitor.cpp
 	core/Note.cpp
-	core/NotePlayHandle.cpp
 	core/Oscillator.cpp
 	core/PathUtil.cpp
 	core/PatternClip.cpp
@@ -54,11 +49,8 @@ set(LMMS_SRCS
 	core/PeakController.cpp
 	core/PerfLog.cpp
 	core/Piano.cpp
-	core/PlayHandle.cpp
-	core/Plugin.cpp
 	core/PluginIssue.cpp
 	core/PluginFactory.cpp
-	core/PresetPreviewPlayHandle.cpp
 	core/ProjectJournal.cpp
 	core/ProjectRenderer.cpp
 	core/ProjectVersion.cpp
@@ -67,10 +59,6 @@ set(LMMS_SRCS
 	core/RingBuffer.cpp
 	core/SampleBuffer.cpp
 	core/SampleClip.cpp
-	core/SamplePlayHandle.cpp
-	core/SampleRecordHandle.cpp
-	core/Scale.cpp
-	core/SerializingObject.cpp
 	core/Song.cpp
 	core/TempoSyncKnobModel.cpp
 	core/TimePos.cpp
