@@ -30,15 +30,17 @@
 #include <QMessageBox>
 
 #include "embed.h"
-#include "Engine.h"
-#include "GuiApplication.h"
+// #include "GuiApplication.h"
 #include "DummyPlugin.h"
 #include "AutomatableModel.h"
-#include "Song.h"
+// #include "Song.h"
 #include "PluginFactory.h"
+#include "PluginView.h"
 
 namespace lmms
 {
+
+void* Plugin::s_dndPluginKey = nullptr;
 
 
 static PixmapLoader dummyLoader;
@@ -187,7 +189,7 @@ Plugin * Plugin::instantiateWithKey(const QString& pluginName, Model * parent,
 	if(keyFromDnd)
 		Q_ASSERT(!key);
 	const Descriptor::SubPluginFeatures::Key *keyPtr = keyFromDnd
-		? static_cast<Plugin::Descriptor::SubPluginFeatures::Key*>(Engine::pickDndPluginKey())
+		? static_cast<Plugin::Descriptor::SubPluginFeatures::Key*>(pickDndPluginKey())
 		: key;
 	const PluginFactory::PluginInfo& pi = getPluginFactory()->pluginInfo(pluginName.toUtf8());
 	if(keyPtr)
@@ -214,14 +216,15 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 	Plugin* inst;
 	if( pi.isNull() )
 	{
-		if (gui::getGUI() != nullptr)
-		{
-			QMessageBox::information( nullptr,
-				tr( "Plugin not found" ),
-				tr( "The plugin \"%1\" wasn't found or could not be loaded!\nReason: \"%2\"" ).
-						arg( pluginName ).arg( getPluginFactory()->errorString(pluginName) ),
-				QMessageBox::Ok | QMessageBox::Default );
-		}
+		// RTODO: check this
+		// if (gui::getGUI() != nullptr)
+		// {
+		// 	QMessageBox::information( nullptr,
+		// 		tr( "Plugin not found" ),
+		// 		tr( "The plugin \"%1\" wasn't found or could not be loaded!\nReason: \"%2\"" ).
+		// 				arg( pluginName ).arg( getPluginFactory()->errorString(pluginName) ),
+		// 		QMessageBox::Ok | QMessageBox::Default );
+		// }
 		inst = new DummyPlugin();
 	}
 	else
@@ -236,13 +239,14 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 		}
 		else
 		{
-			if (gui::getGUI() != nullptr)
-			{
-				QMessageBox::information( nullptr,
-					tr( "Error while loading plugin" ),
-					tr( "Failed to load plugin \"%1\"!").arg( pluginName ),
-					QMessageBox::Ok | QMessageBox::Default );
-			}
+			// RTODO: check this
+			// if (gui::getGUI() != nullptr)
+			// {
+			// 	QMessageBox::information( nullptr,
+			// 		tr( "Error while loading plugin" ),
+			// 		tr( "Failed to load plugin \"%1\"!").arg( pluginName ),
+			// 		QMessageBox::Ok | QMessageBox::Default );
+			// }
 			inst = new DummyPlugin();
 		}
 	}
@@ -255,7 +259,8 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 
 void Plugin::collectErrorForUI( QString errMsg )
 {
-	Engine::getSong()->collectError( errMsg );
+	// RTODO: Find proper place for this error
+	// Engine::getSong()->collectError( errMsg );
 }
 
 
@@ -271,6 +276,20 @@ gui::PluginView * Plugin::createView( QWidget * parent )
 	return pv;
 }
 
+
+void Plugin::setDndPluginKey(void *newKey)
+{
+	Q_ASSERT(static_cast<Plugin::Descriptor::SubPluginFeatures::Key*>(newKey));
+	s_dndPluginKey = newKey;
+}
+
+
+
+
+void *Plugin::pickDndPluginKey()
+{
+	return s_dndPluginKey;
+}
 
 
 

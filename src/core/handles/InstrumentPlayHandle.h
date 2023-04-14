@@ -26,7 +26,7 @@
 #define LMMS_INSTRUMENT_PLAY_HANDLE_H
 
 #include "PlayHandle.h"
-#include "Instrument.h"
+#include "IInstrument.h"
 #include "NotePlayHandle.h"
 #include "lmms_export.h"
 
@@ -36,7 +36,7 @@ namespace lmms
 class LMMS_EXPORT InstrumentPlayHandle : public PlayHandle
 {
 public:
-	InstrumentPlayHandle( Instrument * instrument, InstrumentTrack* instrumentTrack );
+	InstrumentPlayHandle( IInstrument * instrument, InstrumentTrack* instrumentTrack );
 
 	~InstrumentPlayHandle() override = default;
 
@@ -78,7 +78,7 @@ public:
 
 
 private:
-	Instrument* m_instrument;
+	IInstrument* m_instrument;
 
 } ;
 

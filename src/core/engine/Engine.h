@@ -113,9 +113,6 @@ public:
 		return s_instanceOfMe;
 	}
 
-	static void setDndPluginKey(void* newKey);
-	static void* pickDndPluginKey();
-
 signals:
 	void initProgress(const QString &msg);
 

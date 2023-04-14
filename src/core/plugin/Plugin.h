@@ -294,6 +294,9 @@ public:
 	//! Create a view for the model
 	gui::PluginView * createView( QWidget * parent );
 
+
+	static void setDndPluginKey(void* newKey);
+	static void* pickDndPluginKey();
 protected:
 	//! Create a view for the model
 	virtual gui::PluginView* instantiateView( QWidget * ) = 0;
@@ -301,6 +304,8 @@ protected:
 
 
 private:
+	static void* s_dndPluginKey;
+
 	const Descriptor * m_descriptor;
 
 	Descriptor::SubPluginFeatures::Key m_key;

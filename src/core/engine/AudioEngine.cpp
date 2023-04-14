@@ -61,6 +61,8 @@
 
 #include "BufferManager.h"
 
+#include "lmms_static_vars.h"
+
 namespace lmms
 {
 
@@ -73,7 +75,6 @@ static thread_local bool s_renderingThread;
 
 AudioEngine::AudioEngine( bool renderOnly ) :
 	m_renderOnly( renderOnly ),
-	m_framesPerPeriod( DEFAULT_BUFFER_SIZE ),
 	m_inputBufferRead( 0 ),
 	m_inputBufferWrite( 1 ),
 	m_outputBufferRead(nullptr),
@@ -107,44 +108,47 @@ AudioEngine::AudioEngine( bool renderOnly ) :
 
 	// determine FIFO size and number of frames per period
 	int fifoSize = 1;
+	fpp_t framesPerPeriod = DEFAULT_BUFFER_SIZE;
 
 	// if not only rendering (that is, using the GUI), load the buffer
 	// size from user configuration
 	if( renderOnly == false )
 	{
-		m_framesPerPeriod = 
+		fpp_t framesPerPeriod = 
 			( fpp_t ) ConfigManager::inst()->value( "audioengine", "framesperaudiobuffer" ).toInt();
 
 		// if the value read from user configuration is not set or
 		// lower than the minimum allowed, use the default value and
 		// save it to the configuration
-		if( m_framesPerPeriod < MINIMUM_BUFFER_SIZE )
+		if( framesPerPeriod < MINIMUM_BUFFER_SIZE )
 		{
 			ConfigManager::inst()->setValue( "audioengine",
 						"framesperaudiobuffer",
 						QString::number( DEFAULT_BUFFER_SIZE ) );
 
-			m_framesPerPeriod = DEFAULT_BUFFER_SIZE;
+			framesPerPeriod = DEFAULT_BUFFER_SIZE;
 		}
-		else if( m_framesPerPeriod > DEFAULT_BUFFER_SIZE )
+		else if( framesPerPeriod > DEFAULT_BUFFER_SIZE )
 		{
-			fifoSize = m_framesPerPeriod / DEFAULT_BUFFER_SIZE;
-			m_framesPerPeriod = DEFAULT_BUFFER_SIZE;
+			fifoSize = framesPerPeriod / DEFAULT_BUFFER_SIZE;
+			framesPerPeriod = DEFAULT_BUFFER_SIZE;
 		}
 	}
+
+	setFramesPerPeriod(framesPerPeriod);
 
 	// allocte the FIFO from the determined size
 	m_fifo = new Fifo( fifoSize );
 
 	// now that framesPerPeriod is fixed initialize global BufferManager
-	BufferManager::init( m_framesPerPeriod );
+	BufferManager::init( framesPerPeriod );
 
-	int outputBufferSize = m_framesPerPeriod * sizeof(surroundSampleFrame);
+	int outputBufferSize = framesPerPeriod * sizeof(surroundSampleFrame);
 	m_outputBufferRead = static_cast<surroundSampleFrame *>(MemoryHelper::alignedMalloc(outputBufferSize));
 	m_outputBufferWrite = static_cast<surroundSampleFrame *>(MemoryHelper::alignedMalloc(outputBufferSize));
 
-	BufferManager::clear(m_outputBufferRead, m_framesPerPeriod);
-	BufferManager::clear(m_outputBufferWrite, m_framesPerPeriod);
+	BufferManager::clear(m_outputBufferRead, framesPerPeriod);
+	BufferManager::clear(m_outputBufferWrite, framesPerPeriod);
 
 	for( int i = 0; i < m_numWorkers+1; ++i )
 	{
@@ -438,7 +442,8 @@ const surroundSampleFrame * AudioEngine::renderNextBuffer()
 
 	s_renderingThread = false;
 
-	m_profiler.finishPeriod( processingSampleRate(), m_framesPerPeriod );
+	fpp_t frames = framesPerPeriod()
+	m_profiler.finishPeriod( processingSampleRate(), frames );
 
 	return m_outputBufferRead;
 }
@@ -453,7 +458,7 @@ void AudioEngine::swapBuffers()
 	m_inputBufferFrames[m_inputBufferWrite] = 0;
 
 	std::swap(m_outputBufferRead, m_outputBufferWrite);
-	BufferManager::clear(m_outputBufferWrite, m_framesPerPeriod);
+	BufferManager::clear(m_outputBufferWrite, framesPerPeriod());
 }
 
 

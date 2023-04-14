@@ -52,10 +52,6 @@ class MidiClient;
 class AudioPort;
 class AudioEngineWorkerThread;
 
-
-const fpp_t MINIMUM_BUFFER_SIZE = 32;
-const fpp_t DEFAULT_BUFFER_SIZE = 256;
-
 const int BYTES_PER_SAMPLE = sizeof( sample_t );
 const int BYTES_PER_INT_SAMPLE = sizeof( int_sample_t );
 const int BYTES_PER_FRAME = sizeof( sampleFrame );
@@ -259,11 +255,6 @@ public:
 
 
 	// methods providing information for other classes
-	inline fpp_t framesPerPeriod() const
-	{
-		return m_framesPerPeriod;
-	}
-
 
 	AudioEngineProfiler& profiler()
 	{
@@ -417,8 +408,6 @@ private:
 	bool m_renderOnly;
 
 	QVector<AudioPort *> m_audioPorts;
-
-	fpp_t m_framesPerPeriod;
 
 	sampleFrame * m_inputBuffer[2];
 	f_cnt_t m_inputBufferFrames[2];

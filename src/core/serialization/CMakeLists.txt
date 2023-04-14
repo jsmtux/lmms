@@ -1,3 +1,0 @@
-add_library(lmms_serialization STATIC SerializingObject.cpp)
-target_include_directories(lmms_serialization PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(lmms_serialization PUBLIC lmms_base)

@@ -50,7 +50,6 @@ ProjectJournal * Engine::s_projectJournal = nullptr;
 Lv2Manager * Engine::s_lv2Manager = nullptr;
 #endif
 Ladspa2LMMS * Engine::s_ladspaManager = nullptr;
-void* Engine::s_dndPluginKey = nullptr;
 
 
 
@@ -152,19 +151,6 @@ void Engine::updateFramesPerTick()
 
 
 
-void Engine::setDndPluginKey(void *newKey)
-{
-	Q_ASSERT(static_cast<Plugin::Descriptor::SubPluginFeatures::Key*>(newKey));
-	s_dndPluginKey = newKey;
-}
-
-
-
-
-void *Engine::pickDndPluginKey()
-{
-	return s_dndPluginKey;
-}
 
 
 

@@ -31,6 +31,7 @@
 
 #include "lmms_export.h"
 #include "MemoryManager.h"
+#include "interface/IDataFile.h"
 
 class QTextStream;
 
@@ -40,7 +41,7 @@ namespace lmms
 class ProjectVersion;
 
 
-class LMMS_EXPORT DataFile : public QDomDocument
+class LMMS_EXPORT DataFile : public IDataFile
 {
 	MM_OPERATORS
 
@@ -81,7 +82,7 @@ public:
 	bool copyResources(const QString& resourcesDir); //!< Copies resources to the resourcesDir and changes the DataFile to use local paths to them
 	bool hasLocalPlugins(QDomElement parent = QDomElement(), bool firstCall = true) const;
 
-	QDomElement& content()
+	QDomElement& content() override
 	{
 		return m_content;
 	}

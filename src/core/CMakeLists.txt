@@ -1,25 +1,26 @@
 add_subdirectory(base)
 add_subdirectory(memory)
+add_subdirectory(controller)
 add_subdirectory(scale)
-add_subdirectory(serialization)
 add_subdirectory(effect)
 add_subdirectory(plugin)
 add_subdirectory(engine)
 add_subdirectory(handles)
+add_subdirectory(instrument)
+add_subdirectory(model)
+add_subdirectory(journalling)
+add_subdirectory(view)
+add_subdirectory(filter)
+add_subdirectory(note)
+add_subdirectory(track)
+add_subdirectory(config)
 
 set(LMMS_SRCS
 	${LMMS_SRCS}
 
-	core/AutomatableModel.cpp
-	core/AutomationClip.cpp
-	core/AutomationNode.cpp
 	core/BandLimitedWave.cpp
 	core/base64.cpp
 	core/Clipboard.cpp
-	core/ComboBoxModel.cpp
-	core/ConfigManager.cpp
-	core/Controller.cpp
-	core/ControllerConnection.cpp
 	core/DataFile.cpp
 	core/DrumSynth.cpp
 	core/EnvelopeAndLfoParameters.cpp
@@ -27,7 +28,6 @@ set(LMMS_SRCS
 	core/Mixer.cpp
 	core/ImportFilter.cpp
 	core/InlineAutomation.cpp
-	core/Instrument.cpp
 	core/InstrumentFunctions.cpp
 	core/InstrumentSoundShaping.cpp
 	core/Keymap.cpp
@@ -37,11 +37,8 @@ set(LMMS_SRCS
 	core/LfoController.cpp
 	core/LinkedModelGroups.cpp
 	core/LocklessAllocator.cpp
-	core/MeterModel.cpp
 	core/Microtuner.cpp
 	core/MixHelpers.cpp
-	core/ModelVisitor.cpp
-	core/Note.cpp
 	core/Oscillator.cpp
 	core/PathUtil.cpp
 	core/PatternClip.cpp
@@ -51,7 +48,6 @@ set(LMMS_SRCS
 	core/Piano.cpp
 	core/PluginIssue.cpp
 	core/PluginFactory.cpp
-	core/ProjectJournal.cpp
 	core/ProjectRenderer.cpp
 	core/ProjectVersion.cpp
 	core/RemotePlugin.cpp
@@ -60,13 +56,8 @@ set(LMMS_SRCS
 	core/SampleBuffer.cpp
 	core/SampleClip.cpp
 	core/Song.cpp
-	core/TempoSyncKnobModel.cpp
-	core/TimePos.cpp
 	core/ToolPlugin.cpp
-	core/Track.cpp
 	core/TrackContainer.cpp
-	core/Clip.cpp
-	core/ValueBuffer.cpp
 	core/VstSyncController.cpp
 	core/StepRecorder.cpp
 
