@@ -202,7 +202,7 @@ void AudioEngine::initDevices()
 	bool success_ful = false;
 	if( m_renderOnly ) {
 		m_audioDev = new AudioDummy( success_ful, this );
-		m_audioDevName = AudioDummy::name();
+		// m_audioDevName = AudioDummy::name();
 		m_midiClient = new MidiDummy;
 		m_midiClientName = MidiDummy::name();
 	} else {
@@ -831,76 +831,6 @@ void AudioEngine::runChangesInModel()
 	}
 }
 
-bool AudioEngine::isAudioDevNameValid(QString name)
-{
-#ifdef LMMS_HAVE_SDL
-	if (name == AudioSdl::name())
-	{
-		return true;
-	}
-#endif
-
-
-#ifdef LMMS_HAVE_ALSA
-	if (name == AudioAlsa::name())
-	{
-		return true;
-	}
-#endif
-
-
-#ifdef LMMS_HAVE_PULSEAUDIO
-	if (name == AudioPulseAudio::name())
-	{
-		return true;
-	}
-#endif
-
-
-#ifdef LMMS_HAVE_OSS
-	if (name == AudioOss::name())
-	{
-		return true;
-	}
-#endif
-
-#ifdef LMMS_HAVE_SNDIO
-	if (name == AudioSndio::name())
-	{
-		return true;
-	}
-#endif
-
-#ifdef LMMS_HAVE_JACK
-	if (name == AudioJack::name())
-	{
-		return true;
-	}
-#endif
-
-
-#ifdef LMMS_HAVE_PORTAUDIO
-	if (name == AudioPortAudio::name())
-	{
-		return true;
-	}
-#endif
-
-
-#ifdef LMMS_HAVE_SOUNDIO
-	if (name == AudioSoundIo::name())
-	{
-		return true;
-	}
-#endif
-
-	if (name == AudioDummy::name())
-	{
-		return true;
-	}
-
-	return false;
-}
 
 bool AudioEngine::isMidiDevNameValid(QString name)
 {

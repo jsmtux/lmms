@@ -34,7 +34,7 @@
 #include <QThread>
 
 #include "AudioDevice.h"
-#include "AudioDeviceSetupWidget.h"
+// #include "AudioDeviceSetupWidget.h"
 
 class QLineEdit;
 
@@ -54,28 +54,7 @@ public:
 	AudioPulseAudio( bool & _success_ful, AudioEngine* audioEngine );
 	~AudioPulseAudio() override;
 
-	inline static QString name()
-	{
-		return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", "PulseAudio" );
-	}
-
 	static QString probeDevice();
-
-
-	class setupWidget : public gui::AudioDeviceSetupWidget
-	{
-	public:
-		setupWidget( QWidget * _parent );
-		~setupWidget() override;
-
-		void saveSettings() override;
-
-	private:
-		QLineEdit * m_device;
-		gui::LcdSpinBox * m_channels;
-
-	} ;
-
 
 	void streamWriteCallback( pa_stream * s, size_t length );
 

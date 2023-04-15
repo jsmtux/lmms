@@ -37,7 +37,7 @@ namespace lmms::gui
 {
 
 AudioAlsaSetupWidget::AudioAlsaSetupWidget( QWidget * _parent ) :
-	AudioDeviceSetupWidget( AudioAlsa::name(), _parent ),
+	AudioDeviceSetupWidget( AudioAlsaSetupWidget::name(), _parent ),
 	m_selectedDevice(-1)
 {
 	m_deviceInfos = AudioAlsa::getAvailableDevices();

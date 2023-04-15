@@ -47,7 +47,6 @@
 
 // Platform-specific audio-interface classes.
 #include "AudioAlsa.h"
-#include "AudioAlsaSetupWidget.h"
 #include "AudioDummy.h"
 #include "AudioJack.h"
 #include "AudioOss.h"
@@ -56,6 +55,12 @@
 #include "AudioSdl.h"
 #include "AudioSndio.h"
 #include "AudioSoundIo.h"
+#include "audiosetupwidgets/AudioAlsaSetupWidget.h"
+#include "audiosetupwidgets/AudioDummySetupWidget.h"
+#include "audiosetupwidgets/AudioJackSetupWidget.h"
+#include "audiosetupwidgets/AudioPulseAudioSetupWidget.h"
+#include "audiosetupwidgets/AudioSdlSetupWidget.h"
+#include "audiosetupwidgets/AudioOssSetupWidget.h"
 
 // Platform-specific midi-interface classes.
 #include "MidiAlsaRaw.h"
@@ -490,18 +495,18 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 	as_w_layout->setContentsMargins(0, 0, 0, 0);
 
 #ifdef LMMS_HAVE_JACK
-	m_audioIfaceSetupWidgets[AudioJack::name()] =
-			new AudioJack::setupWidget(as_w);
+	m_audioIfaceSetupWidgets[AudioJackSetupWidget::name()] =
+			new AudioJackSetupWidget(as_w);
 #endif
 
 #ifdef LMMS_HAVE_ALSA
-	m_audioIfaceSetupWidgets[AudioAlsa::name()] =
+	m_audioIfaceSetupWidgets[AudioAlsaSetupWidget::name()] =
 			new AudioAlsaSetupWidget(as_w);
 #endif
 
 #ifdef LMMS_HAVE_PULSEAUDIO
-	m_audioIfaceSetupWidgets[AudioPulseAudio::name()] =
-			new AudioPulseAudio::setupWidget(as_w);
+	m_audioIfaceSetupWidgets[AudioPulseAudioSetupWidget::name()] =
+			new AudioPulseAudioSetupWidget(as_w);
 #endif
 
 #ifdef LMMS_HAVE_PORTAUDIO
@@ -515,13 +520,13 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 #endif
 
 #ifdef LMMS_HAVE_SDL
-	m_audioIfaceSetupWidgets[AudioSdl::name()] =
-			new AudioSdl::setupWidget(as_w);
+	m_audioIfaceSetupWidgets[AudioSdlSetupWidget::name()] =
+			new AudioSdlSetupWidget(as_w);
 #endif
 
 #ifdef LMMS_HAVE_OSS
-	m_audioIfaceSetupWidgets[AudioOss::name()] =
-			new AudioOss::setupWidget(as_w);
+	m_audioIfaceSetupWidgets[AudioOssSetupWidget::name()] =
+			new AudioOssSetupWidget(as_w);
 #endif
 
 #ifdef LMMS_HAVE_SNDIO
@@ -529,8 +534,8 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 			new AudioSndio::setupWidget(as_w);
 #endif
 
-	m_audioIfaceSetupWidgets[AudioDummy::name()] =
-			new AudioDummy::setupWidget(as_w);
+	m_audioIfaceSetupWidgets[AudioDummySetupWidget::name()] =
+			new AudioDummySetupWidget(as_w);
 
 
 	for(AswMap::iterator it = m_audioIfaceSetupWidgets.begin();

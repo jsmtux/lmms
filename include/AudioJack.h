@@ -36,9 +36,10 @@
 
 #include <atomic>
 #include <QVector>
+#include <QObject>
 
 #include "AudioDevice.h"
-#include "AudioDeviceSetupWidget.h"
+// #include "AudioDeviceSetupWidget.h"
 
 class QLineEdit;
 
@@ -66,28 +67,6 @@ public:
 	AudioJack * addMidiClient(MidiJack *midiClient);
 	void removeMidiClient() { m_midiClient = nullptr; }
 	jack_client_t * jackClient() {return m_client;};
-
-	inline static QString name()
-	{
-		return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget",
-			"JACK (JACK Audio Connection Kit)" );
-	}
-
-
-class setupWidget : public gui::AudioDeviceSetupWidget
-	{
-	public:
-		setupWidget( QWidget * _parent );
-		~setupWidget() override;
-
-		void saveSettings() override;
-
-	private:
-		QLineEdit * m_clientName;
-		gui::LcdSpinBox * m_channels;
-
-	} ;
-
 
 private slots:
 	void restartAfterZombified();
