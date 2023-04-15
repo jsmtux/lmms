@@ -41,8 +41,6 @@ public:
 	virtual void saveSettings() = 0;
 
 	virtual void show();
-
-	static bool isAudioDevNameValid(QString name);
 };
 
 } // namespace lmms::gui

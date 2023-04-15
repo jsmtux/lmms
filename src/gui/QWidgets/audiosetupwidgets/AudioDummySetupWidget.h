@@ -3,6 +3,8 @@
 
 #include "AudioDeviceSetupWidget.h"
 
+#include "AudioDummy.h"
+
 namespace lmms {
 
 class AudioDummySetupWidget : public gui::AudioDeviceSetupWidget
@@ -15,7 +17,7 @@ public:
 
     inline static QString name()
     {
-        return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", "Dummy (no sound output)" );
+        return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", AudioDummy::name() );
     }
 
     ~AudioDummySetupWidget() override = default;

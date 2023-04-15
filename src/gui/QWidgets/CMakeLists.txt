@@ -43,6 +43,7 @@ SET(LMMS_UI_SRCS
 	audiosetupwidgets/AudioJackSetupWidget.cpp
 	audiosetupwidgets/AudioPulseAudioSetupWidget.cpp
 	audiosetupwidgets/AudioSdlSetupWidget.cpp
+	audiosetupwidgets/AudioOssSetupWidget.cpp
 
 	clips/AutomationClipView.cpp
 	clips/ClipView.cpp
@@ -130,11 +131,16 @@ set(LMMS_UIS
 	modals/export_project.ui
 )
 
+# RTODO: Find out why only this works...
+QT5_WRAP_UI(TEST_UI_OUT ${LMMS_UIS})
+add_library(test_ui_library STATIC ${TEST_UI_OUT})
+
 QT5_WRAP_UI(LMMS_UI_OUT ${LMMS_UIS})
-SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${LMMS_UI_OUT}")
+SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${LMMS_UI_OUT})
 
 add_library(lmms_gui STATIC ${LMMS_UI_SRCS} ${LMMS_UI_OUT})
 target_include_directories(lmms_gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/include" "${CMAKE_BINARY_DIR}" "${CMAKE_BINARY_DIR}/src" "${WEAKJACK_INCLUDE_DIRS}")
+target_link_libraries(lmms_gui PUBLIC lmmsobjs)
 
 GENERATE_EXPORT_HEADER(lmms_gui
 	BASE_NAME lmms

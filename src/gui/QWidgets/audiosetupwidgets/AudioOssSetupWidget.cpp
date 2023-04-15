@@ -1,13 +1,16 @@
 #include "AudioOssSetupWidget.h"
 
+#include "ConfigManager.h"
 #include "gui_templates.h"
+
+#include <QLabel>
 
 namespace lmms {
 
-AudioOssSetupWidget::setupWidget( QWidget * _parent ) :
+AudioOssSetupWidget::AudioOssSetupWidget( QWidget * _parent ) :
 	AudioDeviceSetupWidget( AudioOss::name(), _parent )
 {
-	m_device = new QLineEdit( probeDevice(), this );
+	m_device = new QLineEdit( AudioOss::probeDevice(), this );
 	m_device->setGeometry( 10, 20, 160, 20 );
 
 	auto dev_lbl = new QLabel(tr("Device"), this);

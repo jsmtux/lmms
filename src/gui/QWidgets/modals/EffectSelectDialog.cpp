@@ -24,7 +24,7 @@
 
 #include "EffectSelectDialog.h"
 
-#include "ui_EffectSelectDialog.h"
+#include "gui/QWidgets/ui_EffectSelectDialog.h"
 
 #include "DummyEffect.h"
 #include "EffectChain.h"

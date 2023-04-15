@@ -27,7 +27,7 @@
 
 #include <QDialog>
 
-#include "ui_about_dialog.h"
+#include "gui/QWidgets/ui_about_dialog.h"
 
 namespace lmms::gui
 {

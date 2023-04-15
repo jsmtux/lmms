@@ -34,7 +34,6 @@
 #include <QThread>
 
 #include "AudioDevice.h"
-// #include "AudioDeviceSetupWidget.h"
 
 class QLineEdit;
 
@@ -53,6 +52,11 @@ class AudioPulseAudio : public QThread, public AudioDevice
 public:
 	AudioPulseAudio( bool & _success_ful, AudioEngine* audioEngine );
 	~AudioPulseAudio() override;
+
+	inline static QString name()
+	{
+		return "PulseAudio";
+	}
 
 	static QString probeDevice();
 

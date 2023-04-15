@@ -28,7 +28,7 @@
 
 #include <QDialog>
 #include <memory>
-#include "ui_export_project.h"
+#include "gui/QWidgets/ui_export_project.h"
 
 #include "ProjectRenderer.h"
 #include "RenderManager.h"
