@@ -32,7 +32,7 @@
 #include <QThread>
 
 #include "AudioDevice.h"
-#include "AudioDeviceSetupWidget.h"
+// #include "AudioDeviceSetupWidget.h"
 
 class QLineEdit;
 
@@ -53,28 +53,7 @@ public:
 	AudioOss( bool & _success_ful, AudioEngine* audioEngine );
 	~AudioOss() override;
 
-	inline static QString name()
-	{
-		return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", "OSS (Open Sound System)" );
-	}
-
 	static QString probeDevice();
-
-
-class setupWidget : public gui::AudioDeviceSetupWidget
-	{
-	public:
-		setupWidget( QWidget * _parent );
-		~setupWidget() override;
-
-		void saveSettings() override;
-
-	private:
-		QLineEdit * m_device;
-		gui::LcdSpinBox * m_channels;
-
-	} ;
-
 
 private:
 	void startProcessing() override;

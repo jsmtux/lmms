@@ -1,5 +1,5 @@
 /*
- * AudioAlsaSetupWidget.h - Implements a setup widget for ALSA-PCM-output
+ * AudioDeviceSetupWidget.h - Base class for audio device setup widgets
  *
  * Copyright (c) 2004-2015 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
@@ -22,48 +22,29 @@
  *
  */
 
-#ifndef LMMS_GUI_AUDIO_ALSA_SETUP_WIDGET_H
-#define LMMS_GUI_AUDIO_ALSA_SETUP_WIDGET_H
+#ifndef LMMS_GUI_AUDIO_DEVICE_SETUP_WIDGET_H
+#define LMMS_GUI_AUDIO_DEVICE_SETUP_WIDGET_H
 
-#include "lmmsconfig.h"
-
-#ifdef LMMS_HAVE_ALSA
-
-#include "AudioDeviceSetupWidget.h"
-
-#include "AudioAlsa.h"
-
-
-class QComboBox;
+#include "TabWidget.h"
 
 namespace lmms::gui
 {
 
-class LcdSpinBox;
-
-class AudioAlsaSetupWidget : public AudioDeviceSetupWidget
+class AudioDeviceSetupWidget : public TabWidget
 {
-	Q_OBJECT
-
+    Q_OBJECT
 public:
-	AudioAlsaSetupWidget( QWidget * _parent );
-	~AudioAlsaSetupWidget() override;
+	AudioDeviceSetupWidget( const QString & _caption, QWidget * _parent );
 
-	void saveSettings() override;
+	~AudioDeviceSetupWidget() override = default;
 
-public slots:
-	void onCurrentIndexChanged(int index);
+	virtual void saveSettings() = 0;
 
-private:
-	QComboBox * m_deviceComboBox;
-	LcdSpinBox * m_channels;
+	virtual void show();
 
-	int m_selectedDevice;
-	AudioAlsa::DeviceInfoCollection m_deviceInfos;
+	static bool isAudioDevNameValid(QString name);
 };
 
 } // namespace lmms::gui
 
-#endif // LMMS_HAVE_ALSA
-
-#endif // LMMS_GUI_AUDIO_ALSA_SETUP_WIDGET_H
+#endif // LMMS_GUI_AUDIO_DEVICE_SETUP_WIDGET_H

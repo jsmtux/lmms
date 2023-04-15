@@ -37,7 +37,7 @@
 #endif
 
 #include "AudioDevice.h"
-#include "AudioDeviceSetupWidget.h"
+// #include "AudioDeviceSetupWidget.h"
 
 class QLineEdit;
 
@@ -49,27 +49,6 @@ class AudioSdl : public AudioDevice
 public:
 	AudioSdl( bool & _success_ful, AudioEngine* audioEngine );
 	~AudioSdl() override;
-
-	inline static QString name()
-	{
-		return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget",
-					"SDL (Simple DirectMedia Layer)" );
-	}
-
-
-	class setupWidget : public gui::AudioDeviceSetupWidget
-	{
-	public:
-		setupWidget( QWidget * _parent );
-		~setupWidget() override = default;
-
-		void saveSettings() override;
-
-	private:
-		QLineEdit * m_device;
-
-	} ;
-
 
 private:
 	void startProcessing() override;
