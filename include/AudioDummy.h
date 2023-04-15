@@ -26,7 +26,6 @@
 #define LMMS_AUDIO_DUMMY_H
 
 #include "AudioDevice.h"
-// #include "AudioDeviceSetupWidget.h"
 #include "AudioEngine.h"
 #include "MicroTimer.h"
 
@@ -46,6 +45,11 @@ public:
 	~AudioDummy() override
 	{
 		stopProcessing();
+	}
+
+	inline static QString name()
+	{
+		return "Dummy (no sound output)";
 	}
 
 private:

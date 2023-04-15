@@ -39,7 +39,6 @@
 #include <QObject>
 
 #include "AudioDevice.h"
-// #include "AudioDeviceSetupWidget.h"
 
 class QLineEdit;
 
@@ -67,6 +66,11 @@ public:
 	AudioJack * addMidiClient(MidiJack *midiClient);
 	void removeMidiClient() { m_midiClient = nullptr; }
 	jack_client_t * jackClient() {return m_client;};
+
+	inline static QString name()
+	{
+		return "JACK (JACK Audio Connection Kit)";
+	}
 
 private slots:
 	void restartAfterZombified();

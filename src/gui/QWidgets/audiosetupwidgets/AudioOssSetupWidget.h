@@ -4,7 +4,9 @@
 #include <QWidget>
 #include <QLineEdit>
 
+#include "AudioOss.h"
 #include "AudioDeviceSetupWidget.h"
+#include "LcdSpinBox.h"
 
 namespace lmms {
 
@@ -16,7 +18,7 @@ public:
 
 inline static QString name()
 {
-    return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", "OSS (Open Sound System)" );
+    return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", AudioOss::name() );
 }
 
     void saveSettings() override;

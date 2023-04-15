@@ -32,7 +32,6 @@
 #include <QThread>
 
 #include "AudioDevice.h"
-// #include "AudioDeviceSetupWidget.h"
 
 class QLineEdit;
 
@@ -52,6 +51,11 @@ class AudioOss : public QThread, public AudioDevice
 public:
 	AudioOss( bool & _success_ful, AudioEngine* audioEngine );
 	~AudioOss() override;
+
+	inline static QString name()
+	{
+		return "OSS (Open Sound System)";
+	}
 
 	static QString probeDevice();
 

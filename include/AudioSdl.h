@@ -27,6 +27,8 @@
 
 #include "lmmsconfig.h"
 
+#include <QString>
+
 #ifdef LMMS_HAVE_SDL
 
 #ifdef LMMS_HAVE_SDL2
@@ -37,9 +39,6 @@
 #endif
 
 #include "AudioDevice.h"
-// #include "AudioDeviceSetupWidget.h"
-
-class QLineEdit;
 
 namespace lmms
 {
@@ -49,6 +48,11 @@ class AudioSdl : public AudioDevice
 public:
 	AudioSdl( bool & _success_ful, AudioEngine* audioEngine );
 	~AudioSdl() override;
+
+	inline static QString name()
+	{
+		return "SDL (Simple DirectMedia Layer)";
+	}
 
 private:
 	void startProcessing() override;

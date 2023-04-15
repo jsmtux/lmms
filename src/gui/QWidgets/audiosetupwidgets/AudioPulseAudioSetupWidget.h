@@ -4,6 +4,7 @@
 #include <QLineEdit>
 
 #include "AudioDeviceSetupWidget.h"
+#include "AudioPulseAudio.h"
 #include "LcdSpinBox.h"
 
 namespace lmms {
@@ -16,7 +17,7 @@ public:
 
 inline static QString name()
 {
-    return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", "PulseAudio" );
+    return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", AudioPulseAudio::name() );
 }
 
     void saveSettings() override;

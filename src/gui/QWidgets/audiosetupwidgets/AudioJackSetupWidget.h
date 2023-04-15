@@ -4,6 +4,7 @@
 #include <QLineEdit>
 
 #include "AudioDeviceSetupWidget.h"
+#include "AudioJack.h"
 #include "LcdSpinBox.h"
 
 namespace lmms {
@@ -16,8 +17,7 @@ public:
 
     inline static QString name()
     {
-        return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget",
-            "JACK (JACK Audio Connection Kit)" );
+        return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", AudioJack::name() );
     }
 
     void saveSettings() override;

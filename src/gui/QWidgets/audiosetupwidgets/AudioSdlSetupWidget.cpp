@@ -1,9 +1,13 @@
+
 #include "AudioSdlSetupWidget.h"
 
 #include <QLabel>
 
+#include "AudioSdl.h"
 #include "ConfigManager.h"
 #include "gui_templates.h"
+
+#ifdef LMMS_HAVE_SDL
 
 namespace lmms {
 
@@ -20,9 +24,6 @@ AudioSdlSetupWidget::AudioSdlSetupWidget( QWidget * _parent ) :
 
 }
 
-
-
-
 void AudioSdlSetupWidget::saveSettings()
 {
 	ConfigManager::inst()->setValue( "audiosdl", "device",
@@ -30,3 +31,5 @@ void AudioSdlSetupWidget::saveSettings()
 }
 
 }
+
+#endif

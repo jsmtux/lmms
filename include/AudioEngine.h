@@ -359,6 +359,7 @@ public:
 		return RequestChangesGuard{this};
 	}
 
+	static bool isAudioDevNameValid(QString name);
 	static bool isMidiDevNameValid(QString name);
 
 
