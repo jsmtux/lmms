@@ -369,7 +369,7 @@ void SampleBuffer::update(bool keepSettings)
 		QString message = tr("Audio files are limited to %1 MB "
 				"in size and %2 minutes of playing time"
 				).arg(fileSizeMax).arg(sampleLengthMax);
-		if (gui::getGUI() != nullptr)
+		if (gui::getGUIInterface() != nullptr)
 		{
 			QMessageBox::information(nullptr,
 				title, message,	QMessageBox::Ok);

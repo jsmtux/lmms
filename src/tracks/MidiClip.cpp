@@ -189,9 +189,9 @@ TimePos MidiClip::beatClipLength() const
 Note * MidiClip::addNote( const Note & _new_note, const bool _quant_pos )
 {
 	auto new_note = new Note(_new_note);
-	if (_quant_pos && gui::getGUI()->pianoRoll())
+	if (_quant_pos && gui::getGUIInterface()->pianoRoll())
 	{
-		new_note->quantizePos(gui::getGUI()->pianoRoll()->quantization());
+		new_note->quantizePos(gui::getGUIInterface()->pianoRoll()->quantization());
 	}
 
 	instrumentTrack()->lock();
@@ -541,11 +541,11 @@ void MidiClip::updatePatternTrack()
 		Engine::patternStore()->updatePatternTrack(this);
 	}
 
-	if (gui::getGUI() != nullptr
-		&& gui::getGUI()->pianoRoll()
-		&& gui::getGUI()->pianoRoll()->currentMidiClip() == this)
+	if (gui::getGUIInterface() != nullptr
+		&& gui::getGUIInterface()->pianoRoll()
+		&& gui::getGUIInterface()->pianoRoll()->currentMidiClip() == this)
 	{
-		gui::getGUI()->pianoRoll()->update();
+		gui::getGUIInterface()->pianoRoll()->update();
 	}
 }
 

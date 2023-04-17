@@ -151,7 +151,7 @@ DataFile::DataFile( const QString & _fileName ) :
 	QFile inFile( _fileName );
 	if( !inFile.open( QIODevice::ReadOnly ) )
 	{
-		if (gui::getGUI() != nullptr)
+		if (gui::getGUIInterface() != nullptr)
 		{
 			QMessageBox::critical( nullptr,
 				gui::SongEditor::tr( "Could not open file" ),
@@ -301,7 +301,7 @@ bool DataFile::writeFile(const QString& filename, bool withResources)
 {
 	// Small lambda function for displaying errors
 	auto showError = [this](QString title, QString body){
-		if (gui::getGUI() != nullptr)
+		if (gui::getGUIInterface() != nullptr)
 		{
 			QMessageBox mb;
 			mb.setWindowTitle(title);
@@ -1893,7 +1893,7 @@ void DataFile::loadData( const QByteArray & _data, const QString & _sourceFile )
 			using gui::SongEditor;
 
 			qWarning() << "at line" << line << "column" << errorMsg;
-			if (gui::getGUI() != nullptr)
+			if (gui::getGUIInterface() != nullptr)
 			{
 				QMessageBox::critical( nullptr,
 					SongEditor::tr( "Error in file" ),
@@ -1934,7 +1934,7 @@ void DataFile::loadData( const QByteArray & _data, const QString & _sourceFile )
 
 		if (createdWith.setCompareType(ProjectVersion::Minor)
 		 !=  openedWith.setCompareType(ProjectVersion::Minor)
-		 && gui::getGUI() != nullptr && root.attribute("type") == "song"
+		 && gui::getGUIInterface() != nullptr && root.attribute("type") == "song"
 		){
 			auto projectType = _sourceFile.endsWith(".mpt") ?
 				SongEditor::tr("template") : SongEditor::tr("project");
