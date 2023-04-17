@@ -43,10 +43,10 @@ namespace lmms
 class AutomationTrack;
 class TimePos;
 
-namespace gui
-{
-class AutomationClipView;
-} // namespace gui
+// namespace gui
+// {
+// class AutomationClipView;
+// } // namespace gui
 
 
 
@@ -126,6 +126,17 @@ public:
 		return m_dragging;
 	}
 
+	inline const objectVector & getObjects() const
+	{
+		return m_objects;
+	}
+
+	inline objectVector & getObjects()
+	{
+		return m_objects;
+	}
+
+
 	inline const timeMap & getTimeMap() const
 	{
 		return m_timeMap;
@@ -163,7 +174,7 @@ public:
 	static const QString classNodeName() { return "automationclip"; }
 	QString nodeName() const override { return classNodeName(); }
 
-	gui::ClipView * createView( gui::TrackView * _tv ) override;
+	ClipType getType() override { return ClipType::Automation; }
 
 
 	static bool isAutomated( const AutomatableModel * _m );
@@ -177,6 +188,8 @@ public:
 	static int quantization() { return s_quantization; }
 	static void setQuantization(int q) { s_quantization = q; }
 
+	void generateTangents();
+
 public slots:
 	void clear();
 	void objectDestroyed( lmms::jo_id_t );
@@ -186,7 +199,6 @@ public slots:
 
 private:
 	void cleanObjects();
-	void generateTangents();
 	void generateTangents(timeMap::iterator it, int numToGenerate);
 	float valueAt( timeMap::const_iterator v, int offset ) const;
 
@@ -219,7 +231,7 @@ private:
 	static const float DEFAULT_MIN_VALUE;
 	static const float DEFAULT_MAX_VALUE;
 
-	friend class gui::AutomationClipView;
+	// friend class gui::AutomationClipView;
 	friend class AutomationNode;
 
 } ;

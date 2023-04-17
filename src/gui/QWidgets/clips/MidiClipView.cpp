@@ -42,6 +42,10 @@
 namespace lmms::gui
 {
 
+QPixmap * MidiClipView::s_stepBtnOn0 = nullptr;
+QPixmap * MidiClipView::s_stepBtnOn200 = nullptr;
+QPixmap * MidiClipView::s_stepBtnOff = nullptr;
+QPixmap * MidiClipView::s_stepBtnOffLight = nullptr;
 
 MidiClipView::MidiClipView( MidiClip* clip, TrackView* parent ) :
 	ClipView( clip, parent ),

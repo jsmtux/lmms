@@ -29,7 +29,6 @@
 
 #include "AutomatableModel.h"
 
-
 namespace lmms
 {
 
@@ -44,6 +43,13 @@ class TrackView;
 
 } // namespace gui
 
+
+enum class ClipType {
+	Automation,
+	Midi,
+	Pattern,
+	Sample
+};
 
 class LMMS_EXPORT Clip : public Model, public JournallingObject
 {
@@ -131,7 +137,7 @@ public:
 	virtual void movePosition( const TimePos & pos );
 	virtual void changeLength( const TimePos & length );
 
-	virtual gui::ClipView * createView( gui::TrackView * tv ) = 0;
+	virtual ClipType getType() = 0;
 
 	inline void selectViewOnCreate( bool select )
 	{

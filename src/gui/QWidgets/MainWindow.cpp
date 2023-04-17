@@ -35,7 +35,7 @@
 #include <QShortcut>
 #include <QSplitter>
 
-#include "AboutDialog.h"
+#include "modals/AboutDialog.h"
 #include "AutomationEditor.h"
 #include "ControllerRackView.h"
 #include "embed.h"

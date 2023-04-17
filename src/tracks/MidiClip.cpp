@@ -29,7 +29,6 @@
 
 #include "GuiApplication.h"
 #include "InstrumentTrack.h"
-#include "MidiClipView.h"
 #include "PatternStore.h"
 #include "PianoRoll.h"
 
@@ -37,11 +36,6 @@
 
 namespace lmms
 {
-
-QPixmap * gui::MidiClipView::s_stepBtnOn0 = nullptr;
-QPixmap * gui::MidiClipView::s_stepBtnOn200 = nullptr;
-QPixmap * gui::MidiClipView::s_stepBtnOff = nullptr;
-QPixmap * gui::MidiClipView::s_stepBtnOffLight = nullptr;
 
 
 
@@ -539,17 +533,6 @@ void MidiClip::removeSteps()
 		emit dataChanged();
 	}
 }
-
-
-
-
-gui::ClipView * MidiClip::createView( gui::TrackView * _tv )
-{
-	return new gui::MidiClipView( this, _tv );
-}
-
-
-
 
 void MidiClip::updatePatternTrack()
 {

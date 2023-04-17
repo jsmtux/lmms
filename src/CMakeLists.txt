@@ -107,6 +107,8 @@ ADD_LIBRARY(lmmsobjs STATIC
 	${LMMS_RCC_OUT}
 )
 
+target_link_libraries(lmmsobjs PUBLIC lmms_gui_interface)
+
 GENERATE_EXPORT_HEADER(lmmsobjs
 	BASE_NAME lmms
 )

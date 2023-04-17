@@ -42,7 +42,8 @@
 #include "StringPairDrag.h"
 #include "Track.h"
 #include "TrackContainerView.h"
-#include "ClipView.h"
+#include "clips/ClipView.h"
+#include "clips/ClipViewFactory.h"
 
 
 namespace lmms::gui
@@ -418,7 +419,7 @@ void TrackView::paintEvent( QPaintEvent * pe )
  */
 void TrackView::createClipView( Clip * clip )
 {
-	ClipView * tv = clip->createView( this );
+	ClipView * tv = ClipViewFactory::createClipView( this, clip );
 	if( clip->getSelectViewOnCreate() == true )
 	{
 		tv->setSelected( true );

@@ -26,7 +26,7 @@
 
 #include <QAction>
 
-#include "ClipView.h"
+#include "clips/ClipView.h"
 #include "ComboBox.h"
 #include "DataFile.h"
 #include "embed.h"
