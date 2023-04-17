@@ -30,6 +30,7 @@
 #include "lmms_export.h"
 #include "lmmsconfig.h"
 #include "IGuiApplication.h"
+#include "MainWindow.h"
 
 class QLabel;
 
@@ -59,6 +60,7 @@ public:
 #endif
 
 	MainWindow* mainWindow() { return m_mainWindow; }
+	IMainWindow* mainWindowInterface() { return m_mainWindow; }
 	MixerView* mixerView() { return m_mixerView; }
 	SongEditorWindow* songEditor() { return m_songEditor; }
 	PatternEditorWindow* patternEditor() { return m_patternEditor; }
@@ -88,6 +90,9 @@ private:
 	ControllerRackView* m_controllerRackView;
 	QLabel* m_loadingProgressLabel;
 };
+
+// Short-hand function
+LMMS_EXPORT GuiApplication* getGUI();
 
 } // namespace lmms::gui
 

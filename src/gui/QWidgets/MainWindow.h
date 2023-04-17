@@ -29,8 +29,11 @@
 #include <QTimer>
 #include <QList>
 #include <QMainWindow>
+#include <QProgressDialog>
+#include <QTranslator>
 
 #include "ConfigManager.h"
+#include "IMainWindow.h"
 
 class QAction;
 class QDomElement;
@@ -51,7 +54,19 @@ class ToolButton;
 class GuiApplication;
 
 
-class MainWindow : public QMainWindow
+class ProgressModal : public IProgressModal {
+public:
+	ProgressModal(QString title, int min, int max, QWidget* parent);
+    int value() override;
+    void setValue(int value) override;
+    bool wasCanceled() override;
+    void updateDescription(QString description) override;
+private:
+	QProgressDialog dialog;
+};
+
+
+class MainWindow : public QMainWindow, public IMainWindow
 {
 	Q_OBJECT
 public:
@@ -64,6 +79,16 @@ public:
 	{
 		return m_toolBar;
 	}
+
+    void ShowInfoMessage(QString title, QString description) override;
+
+    void ShowCriticalMessage(QString title, QString description) override;
+
+    void ShowWarningMessage(int line, int col, QString description) override;
+
+	void ShowFileNotFoundMessage(QString path) override;
+
+	ProgressModal* ShowProgressMessage(QString title, int min, int max) override;
 
 	int addWidgetToToolBar( QWidget * _w, int _row = -1, int _col = -1 );
 	void addSpacingToToolBar( int _size );

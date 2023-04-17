@@ -214,7 +214,7 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 	Plugin* inst;
 	if( pi.isNull() )
 	{
-		if (gui::getGUI() != nullptr)
+		if (gui::getGUIInterface() != nullptr)
 		{
 			QMessageBox::information( nullptr,
 				tr( "Plugin not found" ),
@@ -236,7 +236,7 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 		}
 		else
 		{
-			if (gui::getGUI() != nullptr)
+			if (gui::getGUIInterface() != nullptr)
 			{
 				QMessageBox::information( nullptr,
 					tr( "Error while loading plugin" ),

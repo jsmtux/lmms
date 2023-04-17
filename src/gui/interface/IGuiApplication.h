@@ -1,10 +1,11 @@
 #ifndef BDEA9425_99B2_40B9_9B74_68E9BF97708B
 #define BDEA9425_99B2_40B9_9B74_68E9BF97708B
 
+#include "IMainWindow.h"
+
 namespace lmms::gui
 {
 
-class MainWindow;
 class MixerView;
 class SongEditorWindow;
 class PatternEditorWindow;
@@ -17,7 +18,7 @@ class ControllerRackView;
 class IGuiApplication {
 public:
     virtual ~IGuiApplication() {}
-    virtual MainWindow* mainWindow() = 0;
+    virtual IMainWindow* mainWindowInterface() = 0;
 	virtual MixerView* mixerView() = 0;
 	virtual SongEditorWindow* songEditor() = 0;
 	virtual PatternEditorWindow* patternEditor() = 0;
@@ -29,7 +30,7 @@ public:
 };
 
 // Short-hand function
-LMMS_EXPORT IGuiApplication* getGUI();
+LMMS_EXPORT IGuiApplication* getGUIInterface();
 
 }
 

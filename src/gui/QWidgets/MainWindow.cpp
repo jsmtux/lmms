@@ -78,6 +78,34 @@ namespace lmms::gui
 {
 
 
+ProgressModal::ProgressModal(QString title, int min, int max, QWidget* parent) :
+	dialog( title,
+			QString("Cancel"), min,
+			max,
+			parent)
+{
+	dialog.setWindowModality( Qt::ApplicationModal );
+	dialog.setWindowTitle( (title ) );
+	dialog.show();
+}
+
+int ProgressModal::value() {
+	return dialog.value();
+}
+
+void ProgressModal::setValue(int value) {
+	dialog.setValue(value);
+}
+
+bool ProgressModal::wasCanceled() {
+	return dialog.wasCanceled();
+}
+
+void ProgressModal::updateDescription(QString description) {
+	dialog.setLabelText( description );
+}
+
+
 MainWindow::MainWindow() :
 	m_workspace( nullptr ),
 	m_toolsMenu( nullptr ),
@@ -268,7 +296,44 @@ MainWindow::~MainWindow()
 	Engine::destroy();
 }
 
+void MainWindow::ShowInfoMessage(QString title, QString description) {
+	QMessageBox::information(this, title, description);
+}
 
+void MainWindow::ShowCriticalMessage(QString title, QString description) {
+	QMessageBox::critical( this, title, description,
+						QMessageBox::Ok,
+						QMessageBox::NoButton );
+}
+
+void MainWindow::ShowWarningMessage(int line, int col, QString description) {
+	QMessageBox::warning(
+		nullptr, gui::MainWindow::tr("Configuration file"),
+		gui::MainWindow::tr("Error while parsing configuration file at line %1:%2: %3").
+						arg(line).
+						arg(col).
+						arg(description));
+}
+
+void MainWindow::ShowFileNotFoundMessage(QString path) {
+	QString title, message;
+	title = MainWindow::tr("Could not open file");
+	message = MainWindow::tr("Could not open file %1 "
+				"for writing.\nPlease make "
+				"sure you have write "
+				"permission to the file and "
+				"the directory containing the "
+				"file and try again!"
+					).arg(path);
+	QMessageBox::critical(nullptr, title, message,
+				QMessageBox::Ok,
+				QMessageBox::NoButton);
+	return;
+}
+
+ProgressModal* MainWindow::ShowProgressMessage(QString title, int min, int max) {
+	return new ProgressModal(title, min, max, this);
+}
 
 
 void MainWindow::finalize()

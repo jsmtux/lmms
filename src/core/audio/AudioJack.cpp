@@ -35,7 +35,6 @@
 #include "gui_templates.h"
 #include "ConfigManager.h"
 #include "LcdSpinBox.h"
-#include "MainWindow.h"
 #include "AudioEngine.h"
 #include "MidiJack.h"
 
@@ -104,22 +103,21 @@ void AudioJack::restartAfterZombified()
 	{
 		m_active = false;
 		startProcessing();
-		QMessageBox::information(gui::getGUI()->mainWindow(),
-			tr( "JACK client restarted" ),
+		gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(tr( "JACK client restarted" ),
 			tr( "LMMS was kicked by JACK for some reason. "
 				"Therefore the JACK backend of LMMS has been "
 				"restarted. You will have to make manual "
-				"connections again." ) );
+				"connections again." ));
 	}
 	else
 	{
-		QMessageBox::information(gui::getGUI()->mainWindow(),
+		gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
 			tr( "JACK server down" ),
 			tr( "The JACK server seems to have been shutdown "
 				"and starting a new instance failed. "
 				"Therefore LMMS is unable to proceed. "
 				"You should save your project and restart "
-						"JACK and LMMS." ) );
+						"JACK and LMMS." ));
 	}
 }
 

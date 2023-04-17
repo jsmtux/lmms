@@ -33,7 +33,6 @@
 #include "ConfigManager.h"
 #include "IGuiApplication.h"
 #include "Engine.h"
-#include "MainWindow.h"
 
 namespace lmms
 {
@@ -54,11 +53,7 @@ static int JackMidiProcessCallback(jack_nframes_t nframes, void *arg)
 
 static void JackMidiShutdown(void *arg)
 {
-        //: When JACK(JACK Audio Connection Kit) disconnects, it will show the following message (title)
-	QString msg_short = MidiJack::tr("JACK server down");
-        //: When JACK(JACK Audio Connection Kit) disconnects, it will show the following message (dialog message)
-	QString msg_long = MidiJack::tr("The JACK server seems to be shuted down.");
-	QMessageBox::information(gui::getGUI()->mainWindow(), msg_short, msg_long);
+	gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(MidiJack::tr("JACK server down"), MidiJack::tr("The JACK server seems to be shuted down."));
 }
 
 MidiJack::MidiJack() :
