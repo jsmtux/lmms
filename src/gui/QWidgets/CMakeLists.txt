@@ -50,6 +50,7 @@ SET(LMMS_UI_SRCS
 	clips/MidiClipView.cpp
 	clips/PatternClipView.cpp
 	clips/SampleClipView.cpp
+	clips/ClipViewFactory.cpp
 
 	editors/AutomationEditor.cpp
 	editors/Editor.cpp

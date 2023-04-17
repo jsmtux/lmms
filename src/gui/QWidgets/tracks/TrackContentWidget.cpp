@@ -40,7 +40,7 @@
 #include "SongEditor.h"
 #include "StringPairDrag.h"
 #include "TrackContainerView.h"
-#include "ClipView.h"
+#include "clips/ClipView.h"
 #include "TrackView.h"
 
 

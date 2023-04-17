@@ -27,7 +27,6 @@
 #include <QDomElement>
 
 #include "SampleBuffer.h"
-#include "SampleClipView.h"
 #include "SampleTrack.h"
 #include "TimeLineWidget.h"
 
@@ -317,14 +316,5 @@ void SampleClip::loadSettings( const QDomElement & _this )
 		emit wasReversed(); // tell SampleClipView to update the view
 	}
 }
-
-
-
-
-gui::ClipView * SampleClip::createView( gui::TrackView * _tv )
-{
-	return new gui::SampleClipView( this, _tv );
-}
-
 
 } // namespace lmms

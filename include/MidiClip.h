@@ -107,8 +107,7 @@ public:
 
 	bool empty();
 
-
-	gui::ClipView * createView( gui::TrackView * _tv ) override;
+	ClipType getType() override { return ClipType::Midi; }
 
 
 	using Model::dataChanged;

@@ -27,7 +27,6 @@
 #include "AutomationClip.h"
 
 #include "AutomationNode.h"
-#include "AutomationClipView.h"
 #include "AutomationTrack.h"
 #include "LocaleHelper.h"
 #include "Note.h"
@@ -871,20 +870,6 @@ QString AutomationClip::name() const
 	}
 	return tr( "Drag a control while pressing <%1>" ).arg(UI_CTRL_KEY);
 }
-
-
-
-
-gui::ClipView * AutomationClip::createView( gui::TrackView * _tv )
-{
-	QMutexLocker m(&m_clipMutex);
-
-	return new gui::AutomationClipView( this, _tv );
-}
-
-
-
-
 
 bool AutomationClip::isAutomated( const AutomatableModel * _m )
 {

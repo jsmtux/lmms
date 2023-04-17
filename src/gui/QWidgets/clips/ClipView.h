@@ -32,7 +32,6 @@
 #include "Rubberband.h"
 #include "Clip.h"
 
-
 class QMenu;
 class QContextMenuEvent;
 

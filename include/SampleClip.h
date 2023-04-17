@@ -69,8 +69,8 @@ public:
 	TimePos sampleLength() const;
 	void setSampleStartFrame( f_cnt_t startFrame );
 	void setSamplePlayLength( f_cnt_t length );
-	gui::ClipView * createView( gui::TrackView * _tv ) override;
 
+	ClipType getType() override { return ClipType::Sample; }
 
 	bool isPlaying() const;
 	void setIsPlaying(bool isPlaying);
