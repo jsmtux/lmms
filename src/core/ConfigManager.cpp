@@ -33,7 +33,7 @@
 #include "ConfigManager.h"
 #include "MainWindow.h"
 #include "ProjectVersion.h"
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 
 #include "lmmsversion.h"
 

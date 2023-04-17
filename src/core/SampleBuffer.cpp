@@ -55,7 +55,7 @@
 #include "DrumSynth.h"
 #include "endian_handling.h"
 #include "Engine.h"
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 #include "Note.h"
 #include "PathUtil.h"
 

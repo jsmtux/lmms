@@ -27,7 +27,7 @@
 
 #include <QDomElement>
 
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 #include "InstrumentTrack.h"
 #include "PatternStore.h"
 #include "PianoRoll.h"

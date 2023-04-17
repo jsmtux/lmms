@@ -31,7 +31,7 @@
 #include <QMessageBox>
 
 #include "Engine.h"
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 #include "gui_templates.h"
 #include "ConfigManager.h"
 #include "LcdSpinBox.h"

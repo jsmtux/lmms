@@ -31,7 +31,7 @@
 #include "AudioEngine.h"
 #include "AudioJack.h"
 #include "ConfigManager.h"
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 #include "Engine.h"
 #include "MainWindow.h"
 

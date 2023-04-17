@@ -31,7 +31,7 @@
 
 #include "embed.h"
 #include "Engine.h"
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 #include "DummyPlugin.h"
 #include "AutomatableModel.h"
 #include "Song.h"

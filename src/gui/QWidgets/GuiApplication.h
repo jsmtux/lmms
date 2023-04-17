@@ -29,6 +29,7 @@
 
 #include "lmms_export.h"
 #include "lmmsconfig.h"
+#include "IGuiApplication.h"
 
 class QLabel;
 
@@ -45,7 +46,7 @@ class PianoRollWindow;
 class ProjectNotes;
 class SongEditorWindow;
 
-class LMMS_EXPORT GuiApplication : public QObject
+class LMMS_EXPORT GuiApplication : public QObject, public IGuiApplication
 {
 	Q_OBJECT;
 public:
@@ -87,9 +88,6 @@ private:
 	ControllerRackView* m_controllerRackView;
 	QLabel* m_loadingProgressLabel;
 };
-
-// Short-hand function
-LMMS_EXPORT GuiApplication* getGUI();
 
 } // namespace lmms::gui
 

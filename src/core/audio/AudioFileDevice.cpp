@@ -27,7 +27,7 @@
 
 #include "AudioFileDevice.h"
 #include "ExportProjectDialog.h"
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 
 namespace lmms
 {

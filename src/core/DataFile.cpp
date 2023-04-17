@@ -39,7 +39,7 @@
 #include "ConfigManager.h"
 #include "Effect.h"
 #include "embed.h"
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 #include "LocaleHelper.h"
 #include "PluginFactory.h"
 #include "ProjectVersion.h"
