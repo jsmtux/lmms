@@ -58,7 +58,7 @@ namespace lmms
 namespace gui
 {
 
-GuiApplication* getGUI()
+IGuiApplication* getGUI()
 {
 	return GuiApplication::instance();
 }

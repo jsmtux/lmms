@@ -40,7 +40,7 @@
 #include "EnvelopeAndLfoParameters.h"
 #include "Mixer.h"
 #include "MixerView.h"
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 #include "ExportFilter.h"
 #include "InstrumentTrack.h"
 #include "Keymap.h"

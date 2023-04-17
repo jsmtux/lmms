@@ -29,7 +29,7 @@
 #include "AutomationEditor.h"
 #include "AutomationClip.h"
 #include "Engine.h"
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 #include "Song.h"
 
 

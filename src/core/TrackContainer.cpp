@@ -37,7 +37,7 @@
 #include "PatternTrack.h"
 #include "Song.h"
 
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 #include "MainWindow.h"
 #include "TextFloat.h"
 
