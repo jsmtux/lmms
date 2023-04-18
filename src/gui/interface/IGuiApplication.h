@@ -2,11 +2,12 @@
 #define BDEA9425_99B2_40B9_9B74_68E9BF97708B
 
 #include "IMainWindow.h"
+#include "IMixerView.h"
+#include "ISongEditor.h"
 
 namespace lmms::gui
 {
 
-class MixerView;
 class SongEditorWindow;
 class PatternEditorWindow;
 class PianoRollWindow;
@@ -19,8 +20,8 @@ class IGuiApplication {
 public:
     virtual ~IGuiApplication() {}
     virtual IMainWindow* mainWindowInterface() = 0;
-	virtual MixerView* mixerView() = 0;
-	virtual SongEditorWindow* songEditor() = 0;
+	virtual IMixerView* mixerViewInterface() = 0;
+	virtual ISongEditor* songEditorInterface() = 0;
 	virtual PatternEditorWindow* patternEditor() = 0;
 	virtual PianoRollWindow* pianoRoll() = 0;
 	virtual ProjectNotes* getProjectNotes() = 0;

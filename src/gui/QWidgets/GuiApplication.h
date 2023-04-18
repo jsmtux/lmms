@@ -31,6 +31,8 @@
 #include "lmmsconfig.h"
 #include "IGuiApplication.h"
 #include "MainWindow.h"
+#include "MixerView.h"
+#include "editors/SongEditor.h"
 
 class QLabel;
 
@@ -39,7 +41,6 @@ namespace lmms::gui
 
 class AutomationEditorWindow;
 class ControllerRackView;
-class MixerView;
 class MainWindow;
 class MicrotunerConfig;
 class PatternEditorWindow;
@@ -62,7 +63,9 @@ public:
 	MainWindow* mainWindow() { return m_mainWindow; }
 	IMainWindow* mainWindowInterface() { return m_mainWindow; }
 	MixerView* mixerView() { return m_mixerView; }
+	IMixerView* mixerViewInterface() { return m_mixerView; }
 	SongEditorWindow* songEditor() { return m_songEditor; }
+	ISongEditor* songEditorInterface() { return m_songEditor->m_editor;}
 	PatternEditorWindow* patternEditor() { return m_patternEditor; }
 	PianoRollWindow* pianoRoll() { return m_pianoRoll; }
 	ProjectNotes* getProjectNotes() { return m_projectNotes; }

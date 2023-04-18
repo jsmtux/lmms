@@ -28,6 +28,7 @@
 
 #include "Editor.h"
 #include "TrackContainerView.h"
+#include "ISongEditor.h"
 
 class QLabel;
 class QScrollBar;
@@ -52,7 +53,7 @@ class TextFloat;
 class TimeLineWidget;
 
 
-class SongEditor : public TrackContainerView
+class SongEditor : public TrackContainerView, public ISongEditor
 {
 	Q_OBJECT
 public:
@@ -73,6 +74,10 @@ public:
 	ComboBoxModel *snappingModel() const;
 	float getSnapSize() const;
 	QString getSnapSizeString() const;
+
+	void clearAllTracks() override {
+		TrackContainerView::clearAllTracks();
+	}
 
 public slots:
 	void scrolled( int new_pos );

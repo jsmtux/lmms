@@ -39,7 +39,6 @@
 #include "ControllerConnection.h"
 #include "EnvelopeAndLfoParameters.h"
 #include "Mixer.h"
-#include "MixerView.h"
 #include "IGuiApplication.h"
 #include "ExportFilter.h"
 #include "InstrumentTrack.h"
@@ -53,7 +52,7 @@
 #include "ProjectJournal.h"
 #include "ProjectNotes.h"
 #include "Scale.h"
-#include "SongEditor.h"
+#include "ISongEditor.h"
 #include "TimeLineWidget.h"
 #include "PeakController.h"
 
@@ -869,13 +868,13 @@ void Song::clearProject()
 	{
 		getGUIInterface()->patternEditor()->m_editor->clearAllTracks();
 	}
-	if( getGUIInterface() != nullptr && getGUIInterface()->songEditor() )
+	if( getGUIInterface() != nullptr && getGUIInterface()->songEditorInterface() )
 	{
-		getGUIInterface()->songEditor()->m_editor->clearAllTracks();
+		getGUIInterface()->songEditorInterface()->clearAllTracks();
 	}
-	if( getGUIInterface() != nullptr && getGUIInterface()->mixerView() )
+	if( getGUIInterface() != nullptr && getGUIInterface()->mixerViewInterface() )
 	{
-		getGUIInterface()->mixerView()->clear();
+		getGUIInterface()->mixerViewInterface()->clear();
 	}
 	QCoreApplication::sendPostedEvents();
 	Engine::patternStore()->clearAllTracks();
@@ -1101,7 +1100,7 @@ void Song::loadProject( const QString & fileName )
 		if( getGUIInterface() != nullptr )
 		{
 			// refresh MixerView
-			getGUIInterface()->mixerView()->refreshDisplay();
+			getGUIInterface()->mixerViewInterface()->refreshDisplay();
 		}
 	}
 
