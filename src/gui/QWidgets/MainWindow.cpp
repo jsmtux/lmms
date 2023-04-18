@@ -62,7 +62,7 @@
 #include "RemotePlugin.h"
 #include "modals/SetupDialog.h"
 #include "SideBar.h"
-#include "SongEditor.h"
+#include "editors/SongEditor.h"
 #include "SubWindow.h"
 #include "TemplatesMenu.h"
 #include "TextFloat.h"

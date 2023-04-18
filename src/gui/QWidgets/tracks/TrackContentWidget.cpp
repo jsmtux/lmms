@@ -37,7 +37,7 @@
 #include "PatternEditor.h"
 #include "PatternStore.h"
 #include "Song.h"
-#include "SongEditor.h"
+#include "editors/SongEditor.h"
 #include "StringPairDrag.h"
 #include "TrackContainerView.h"
 #include "clips/ClipView.h"

@@ -36,6 +36,7 @@
 #include "PixmapButton.h"
 #include "embed.h"
 #include "EffectRackView.h"
+#include "IMixerView.h"
 
 class QButtonGroup;
 
@@ -46,7 +47,7 @@ namespace lmms::gui
 class MixerLine;
 
 class LMMS_EXPORT MixerView : public QWidget, public ModelView,
-					public SerializingObjectHook
+					public SerializingObjectHook, public IMixerView
 {
 	Q_OBJECT
 public:
@@ -87,7 +88,7 @@ public:
 	void setCurrentMixerLine( MixerLine * _line );
 	void setCurrentMixerLine( int _line );
 
-	void clear();
+	void clear() override;
 
 
 	// display the send button and knob correctly
@@ -109,7 +110,7 @@ public:
 
 	// make sure the display syncs up with the mixer.
 	// useful for loading projects
-	void refreshDisplay();
+	void refreshDisplay() override;
 
 public slots:
 	int addNewChannel();

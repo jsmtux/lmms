@@ -38,7 +38,7 @@
 #include "PatternEditor.h"
 #include "PianoRoll.h"
 #include "ProjectNotes.h"
-#include "SongEditor.h"
+#include "editors/SongEditor.h"
 
 #include <QApplication>
 #include <QDir>
