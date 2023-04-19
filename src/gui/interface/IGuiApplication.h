@@ -4,13 +4,13 @@
 #include "IMainWindow.h"
 #include "IMixerView.h"
 #include "ISongEditor.h"
+#include "IPatternEditor.h"
+#include "IPianoRollWindow.h"
 
 namespace lmms::gui
 {
 
 class SongEditorWindow;
-class PatternEditorWindow;
-class PianoRollWindow;
 class ProjectNotes;
 class MicrotunerConfig;
 class AutomationEditorWindow;
@@ -22,8 +22,8 @@ public:
     virtual IMainWindow* mainWindowInterface() = 0;
 	virtual IMixerView* mixerViewInterface() = 0;
 	virtual ISongEditor* songEditorInterface() = 0;
-	virtual PatternEditorWindow* patternEditor() = 0;
-	virtual PianoRollWindow* pianoRoll() = 0;
+	virtual IPatternEditor* patternEditorInterface() = 0;
+	virtual IPianoRollWindow* pianoRollInterface() = 0;
 	virtual ProjectNotes* getProjectNotes() = 0;
 	virtual MicrotunerConfig* getMicrotunerConfig() = 0;
 	virtual AutomationEditorWindow* automationEditor() = 0;

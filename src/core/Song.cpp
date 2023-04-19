@@ -45,10 +45,8 @@
 #include "Keymap.h"
 #include "NotePlayHandle.h"
 #include "MidiClip.h"
-#include "PatternEditor.h"
 #include "PatternStore.h"
 #include "PatternTrack.h"
-#include "PianoRoll.h"
 #include "ProjectJournal.h"
 #include "ProjectNotes.h"
 #include "Scale.h"
@@ -864,9 +862,9 @@ void Song::clearProject()
 
 	Engine::audioEngine()->requestChangeInModel();
 
-	if( getGUIInterface() != nullptr && getGUIInterface()->patternEditor() )
+	if( getGUIInterface() != nullptr && getGUIInterface()->patternEditorInterface() )
 	{
-		getGUIInterface()->patternEditor()->m_editor->clearAllTracks();
+		getGUIInterface()->patternEditorInterface()->clearAllTracks();
 	}
 	if( getGUIInterface() != nullptr && getGUIInterface()->songEditorInterface() )
 	{
@@ -887,9 +885,9 @@ void Song::clearProject()
 		getGUIInterface()->automationEditor()->setCurrentClip( nullptr );
 	}
 
-	if( getGUIInterface() != nullptr && getGUIInterface()->pianoRoll() )
+	if( getGUIInterface() != nullptr && getGUIInterface()->pianoRollInterface() )
 	{
-		getGUIInterface()->pianoRoll()->reset();
+		getGUIInterface()->pianoRollInterface()->reset();
 	}
 
 	m_tempoModel.reset();
@@ -1152,9 +1150,9 @@ void Song::loadProject( const QString & fileName )
 				{
 					getGUIInterface()->getControllerRackView()->restoreState( node.toElement() );
 				}
-				else if( node.nodeName() == getGUIInterface()->pianoRoll()->nodeName() )
+				else if( node.nodeName() == getGUIInterface()->pianoRollInterface()->nodeName() )
 				{
-					getGUIInterface()->pianoRoll()->restoreState( node.toElement() );
+					getGUIInterface()->pianoRollInterface()->restoreState( node.toElement() );
 				}
 				else if( node.nodeName() == getGUIInterface()->automationEditor()->m_editor->nodeName() )
 				{
@@ -1247,7 +1245,7 @@ bool Song::saveProjectFile(const QString & filename, bool withResources)
 	if( getGUIInterface() != nullptr )
 	{
 		getGUIInterface()->getControllerRackView()->saveState( dataFile, dataFile.content() );
-		getGUIInterface()->pianoRoll()->saveState( dataFile, dataFile.content() );
+		getGUIInterface()->pianoRollInterface()->saveState( dataFile, dataFile.content() );
 		getGUIInterface()->automationEditor()->m_editor->saveState( dataFile, dataFile.content() );
 		getGUIInterface()->getProjectNotes()->SerializingObject::saveState( dataFile, dataFile.content() );
 		m_playPos[Mode_PlaySong].m_timeLine->saveState( dataFile, dataFile.content() );

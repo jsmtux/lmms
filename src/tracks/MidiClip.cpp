@@ -30,8 +30,8 @@
 #include "IGuiApplication.h"
 #include "InstrumentTrack.h"
 #include "PatternStore.h"
-#include "PianoRoll.h"
-
+#include "Engine.h"
+#include "Song.h"
 
 
 namespace lmms
@@ -189,9 +189,9 @@ TimePos MidiClip::beatClipLength() const
 Note * MidiClip::addNote( const Note & _new_note, const bool _quant_pos )
 {
 	auto new_note = new Note(_new_note);
-	if (_quant_pos && gui::getGUIInterface()->pianoRoll())
+	if (_quant_pos && gui::getGUIInterface()->pianoRollInterface())
 	{
-		new_note->quantizePos(gui::getGUIInterface()->pianoRoll()->quantization());
+		new_note->quantizePos(gui::getGUIInterface()->pianoRollInterface()->quantization());
 	}
 
 	instrumentTrack()->lock();
@@ -542,10 +542,10 @@ void MidiClip::updatePatternTrack()
 	}
 
 	if (gui::getGUIInterface() != nullptr
-		&& gui::getGUIInterface()->pianoRoll()
-		&& gui::getGUIInterface()->pianoRoll()->currentMidiClip() == this)
+		&& gui::getGUIInterface()->pianoRollInterface()
+		&& gui::getGUIInterface()->pianoRollInterface()->currentMidiClip() == this)
 	{
-		gui::getGUIInterface()->pianoRoll()->update();
+		gui::getGUIInterface()->pianoRollInterface()->update();
 	}
 }
 

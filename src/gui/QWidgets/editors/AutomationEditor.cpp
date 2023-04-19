@@ -55,7 +55,7 @@
 #include "Knob.h"
 #include "MainWindow.h"
 #include "PatternStore.h"
-#include "PianoRoll.h"
+#include "editors/PianoRoll.h"
 #include "ProjectJournal.h"
 #include "StringPairDrag.h"
 #include "TextFloat.h"

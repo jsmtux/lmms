@@ -34,7 +34,7 @@
 #include "DataFile.h"
 #include "Engine.h"
 #include "GuiApplication.h"
-#include "PatternEditor.h"
+#include "editors/PatternEditor.h"
 #include "PatternStore.h"
 #include "Song.h"
 #include "editors/SongEditor.h"

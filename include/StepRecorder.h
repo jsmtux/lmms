@@ -38,7 +38,7 @@ class MidiClip;
 
 namespace gui
 {
-class PianoRoll;
+class IPianoRoll;
 class StepRecorderWidget;
 } // namespace gui
 
@@ -47,7 +47,7 @@ class StepRecorder : public QObject
 	Q_OBJECT
 
 	public:
-	StepRecorder(gui::PianoRoll& pianoRoll, gui::StepRecorderWidget& stepRecorderWidget);
+	StepRecorder(gui::IPianoRoll& pianoRoll, gui::StepRecorderWidget& stepRecorderWidget);
 
 	void initialize();
 	void start(const TimePos& currentPosition,const TimePos& stepLength);
@@ -89,7 +89,7 @@ class StepRecorder : public QObject
 
 	bool allCurStepNotesReleased();
 
-	gui::PianoRoll& m_pianoRoll;
+	gui::IPianoRoll& m_pianoRoll;
 	gui::StepRecorderWidget& m_stepRecorderWidget;
 
 	bool m_isRecording = false;

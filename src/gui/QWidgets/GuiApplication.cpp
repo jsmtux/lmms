@@ -35,8 +35,8 @@
 #include "MixerView.h"
 #include "MainWindow.h"
 #include "MicrotunerConfig.h"
-#include "PatternEditor.h"
-#include "PianoRoll.h"
+#include "editors/PatternEditor.h"
+#include "editors/PianoRoll.h"
 #include "ProjectNotes.h"
 #include "editors/SongEditor.h"
 

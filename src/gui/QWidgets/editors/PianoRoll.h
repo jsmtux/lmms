@@ -38,6 +38,8 @@
 #include "Song.h"
 #include "StepRecorder.h"
 #include "StepRecorderWidget.h"
+#include "IPianoRollWindow.h"
+#include "IPianoRoll.h"
 
 class QPainter;
 class QPixmap;
@@ -64,7 +66,7 @@ class SimpleTextFloat;
 class TimeLineWidget;
 
 
-class PianoRoll : public QWidget
+class PianoRoll : public QWidget, public IPianoRoll
 {
 	Q_OBJECT
 	Q_PROPERTY(QColor barLineColor MEMBER m_barLineColor)
@@ -154,7 +156,12 @@ public:
 
 	Song::PlayModes desiredPlayModeForAccompany() const;
 
-	int quantization() const;
+	int quantization() const override;
+
+	void update() override {
+		QWidget::update();
+	}
+
 
 protected:
 	enum QuantizeActions
@@ -502,7 +509,7 @@ signals:
 
 
 
-class PianoRollWindow : public Editor, SerializingObject
+class PianoRollWindow : public Editor, public IPianoRollWindow, SerializingObject
 {
 	Q_OBJECT
 public:
@@ -512,7 +519,7 @@ public:
 	void setCurrentMidiClip( MidiClip* clip );
 	void setGhostMidiClip( MidiClip* clip );
 
-	int quantization() const;
+	int quantization() const override;
 
 	void play() override;
 	void stop() override;
@@ -524,7 +531,7 @@ public:
 	bool isRecording() const;
 
 	/*! \brief Resets settings to default when e.g. creating a new project */
-	void reset();
+	void reset() override;
 
 	using SerializingObject::saveState;
 	using SerializingObject::restoreState;
@@ -536,8 +543,23 @@ public:
 		return "pianoroll";
 	}
 
+	QString nodeName() override {
+		return "pianoroll";
+	}
+
 	QSize sizeHint() const override;
 	bool hasFocus() const;
+
+	void update() override {
+		QWidget::update();
+	}
+
+    void restoreState( const QDomElement & _this ) {
+		SerializingObject::restoreState(_this);
+	}
+    QDomElement saveState( QDomDocument & _doc, QDomElement & _parent ) {
+		return SerializingObject::saveState(_doc, _parent);
+	}
 
 signals:
 	void currentMidiClipChanged();
