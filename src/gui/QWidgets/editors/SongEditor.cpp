@@ -46,7 +46,7 @@
 #include "MainWindow.h"
 #include "MeterDialog.h"
 #include "Oscilloscope.h"
-#include "PianoRoll.h"
+#include "editors/PianoRoll.h"
 #include "PositionLine.h"
 #include "SubWindow.h"
 #include "TextFloat.h"

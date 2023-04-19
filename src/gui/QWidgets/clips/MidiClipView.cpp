@@ -35,7 +35,7 @@
 #include "DeprecationHelper.h"
 #include "GuiApplication.h"
 #include "MidiClip.h"
-#include "PianoRoll.h"
+#include "editors/PianoRoll.h"
 #include "RenameDialog.h"
 #include "TrackView.h"
 

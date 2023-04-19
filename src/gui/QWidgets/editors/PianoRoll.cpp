@@ -24,7 +24,7 @@
  *
  */
 
-#include "PianoRoll.h"
+#include "editors/PianoRoll.h"
 
 #include <QtMath>
 #include <QApplication>

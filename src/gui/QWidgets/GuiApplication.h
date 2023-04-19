@@ -32,7 +32,9 @@
 #include "IGuiApplication.h"
 #include "MainWindow.h"
 #include "MixerView.h"
+#include "editors/PatternEditor.h"
 #include "editors/SongEditor.h"
+#include "editors/PianoRoll.h"
 
 class QLabel;
 
@@ -67,7 +69,9 @@ public:
 	SongEditorWindow* songEditor() { return m_songEditor; }
 	ISongEditor* songEditorInterface() { return m_songEditor->m_editor;}
 	PatternEditorWindow* patternEditor() { return m_patternEditor; }
+	IPatternEditor* patternEditorInterface() override { return m_patternEditor->m_editor; }
 	PianoRollWindow* pianoRoll() { return m_pianoRoll; }
+	IPianoRollWindow* pianoRollInterface() { return m_pianoRoll; }
 	ProjectNotes* getProjectNotes() { return m_projectNotes; }
 	MicrotunerConfig* getMicrotunerConfig() { return m_microtunerConfig; }
 	AutomationEditorWindow* automationEditor() { return m_automationEditor; }

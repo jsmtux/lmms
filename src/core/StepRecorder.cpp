@@ -24,8 +24,9 @@
 
 #include "MidiClip.h"
 #include "StepRecorderWidget.h"
-#include "PianoRoll.h"
-
+#include "IPianoRoll.h"
+#include "Engine.h"
+#include "Song.h"
 
 namespace lmms
 {
@@ -36,7 +37,7 @@ using std::max;
 
 const int REMOVE_RELEASED_NOTE_TIME_THRESHOLD_MS = 70;
 
-StepRecorder::StepRecorder(gui::PianoRoll& pianoRoll, gui::StepRecorderWidget& stepRecorderWidget):
+StepRecorder::StepRecorder(gui::IPianoRoll& pianoRoll, gui::StepRecorderWidget& stepRecorderWidget):
 	m_pianoRoll(pianoRoll),
 	m_stepRecorderWidget(stepRecorderWidget),
 	m_midiClip(nullptr)
