@@ -29,6 +29,7 @@
 
 #include "lmms_export.h"
 #include "lmmsconfig.h"
+#include "ProjectNotes.h"
 #include "IGuiApplication.h"
 #include "MainWindow.h"
 #include "MixerView.h"
@@ -45,10 +46,6 @@ class AutomationEditorWindow;
 class ControllerRackView;
 class MainWindow;
 class MicrotunerConfig;
-class PatternEditorWindow;
-class PianoRollWindow;
-class ProjectNotes;
-class SongEditorWindow;
 
 class LMMS_EXPORT GuiApplication : public QObject, public IGuiApplication
 {
@@ -67,12 +64,13 @@ public:
 	MixerView* mixerView() { return m_mixerView; }
 	IMixerView* mixerViewInterface() { return m_mixerView; }
 	SongEditorWindow* songEditor() { return m_songEditor; }
-	ISongEditor* songEditorInterface() { return m_songEditor->m_editor;}
+	ISongEditor* songEditorInterface() { return m_songEditor ? m_songEditor->m_editor : nullptr;}
 	PatternEditorWindow* patternEditor() { return m_patternEditor; }
-	IPatternEditor* patternEditorInterface() override { return m_patternEditor->m_editor; }
+	IPatternEditor* patternEditorInterface() override { return m_patternEditor ? m_patternEditor->m_editor : nullptr; }
 	PianoRollWindow* pianoRoll() { return m_pianoRoll; }
 	IPianoRollWindow* pianoRollInterface() { return m_pianoRoll; }
 	ProjectNotes* getProjectNotes() { return m_projectNotes; }
+	IProjectNotes* getProjectNotesInterface() { return m_projectNotes; }
 	MicrotunerConfig* getMicrotunerConfig() { return m_microtunerConfig; }
 	AutomationEditorWindow* automationEditor() { return m_automationEditor; }
 	ControllerRackView* getControllerRackView() { return m_controllerRackView; }

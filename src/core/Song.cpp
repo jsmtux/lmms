@@ -48,7 +48,7 @@
 #include "PatternStore.h"
 #include "PatternTrack.h"
 #include "ProjectJournal.h"
-#include "ProjectNotes.h"
+#include "IProjectNotes.h"
 #include "Scale.h"
 #include "ISongEditor.h"
 #include "TimeLineWidget.h"
@@ -906,9 +906,9 @@ void Song::clearProject()
 
 	Engine::audioEngine()->doneChangeInModel();
 
-	if( getGUIInterface() != nullptr && getGUIInterface()->getProjectNotes() )
+	if( getGUIInterface() != nullptr && getGUIInterface()->getProjectNotesInterface() )
 	{
-		getGUIInterface()->getProjectNotes()->clear();
+		getGUIInterface()->getProjectNotesInterface()->clear();
 	}
 
 	removeAllControllers();
@@ -1158,9 +1158,9 @@ void Song::loadProject( const QString & fileName )
 				{
 					getGUIInterface()->automationEditor()->m_editor->restoreState( node.toElement() );
 				}
-				else if( node.nodeName() == getGUIInterface()->getProjectNotes()->nodeName() )
+				else if( node.nodeName() == getGUIInterface()->getProjectNotesInterface()->nodeName() )
 				{
-					 getGUIInterface()->getProjectNotes()->SerializingObject::restoreState( node.toElement() );
+					 getGUIInterface()->getProjectNotesInterface()->restoreState( node.toElement() );
 				}
 				else if( node.nodeName() == m_playPos[Mode_PlaySong].m_timeLine->nodeName() )
 				{
@@ -1247,7 +1247,7 @@ bool Song::saveProjectFile(const QString & filename, bool withResources)
 		getGUIInterface()->getControllerRackView()->saveState( dataFile, dataFile.content() );
 		getGUIInterface()->pianoRollInterface()->saveState( dataFile, dataFile.content() );
 		getGUIInterface()->automationEditor()->m_editor->saveState( dataFile, dataFile.content() );
-		getGUIInterface()->getProjectNotes()->SerializingObject::saveState( dataFile, dataFile.content() );
+		getGUIInterface()->getProjectNotesInterface()->saveState( dataFile, dataFile.content() );
 		m_playPos[Mode_PlaySong].m_timeLine->saveState( dataFile, dataFile.content() );
 	}
 
