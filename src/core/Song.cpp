@@ -33,7 +33,7 @@
 #include <cmath>
 
 #include "AutomationTrack.h"
-#include "AutomationEditor.h"
+#include "IAutomationEditor.h"
 #include "ConfigManager.h"
 #include "ControllerRackView.h"
 #include "ControllerConnection.h"
@@ -880,9 +880,9 @@ void Song::clearProject()
 
 	Engine::mixer()->clear();
 
-	if( getGUIInterface() != nullptr && getGUIInterface()->automationEditor() )
+	if( getGUIInterface() != nullptr && getGUIInterface()->automationEditorInterface() )
 	{
-		getGUIInterface()->automationEditor()->setCurrentClip( nullptr );
+		getGUIInterface()->automationEditorInterface()->setCurrentClip( nullptr );
 	}
 
 	if( getGUIInterface() != nullptr && getGUIInterface()->pianoRollInterface() )
@@ -1154,9 +1154,9 @@ void Song::loadProject( const QString & fileName )
 				{
 					getGUIInterface()->pianoRollInterface()->restoreState( node.toElement() );
 				}
-				else if( node.nodeName() == getGUIInterface()->automationEditor()->m_editor->nodeName() )
+				else if( node.nodeName() == getGUIInterface()->automationEditorInterface()->nodeName() )
 				{
-					getGUIInterface()->automationEditor()->m_editor->restoreState( node.toElement() );
+					getGUIInterface()->automationEditorInterface()->restoreState( node.toElement() );
 				}
 				else if( node.nodeName() == getGUIInterface()->getProjectNotesInterface()->nodeName() )
 				{
@@ -1246,7 +1246,7 @@ bool Song::saveProjectFile(const QString & filename, bool withResources)
 	{
 		getGUIInterface()->getControllerRackView()->saveState( dataFile, dataFile.content() );
 		getGUIInterface()->pianoRollInterface()->saveState( dataFile, dataFile.content() );
-		getGUIInterface()->automationEditor()->m_editor->saveState( dataFile, dataFile.content() );
+		getGUIInterface()->automationEditorInterface()->saveState( dataFile, dataFile.content() );
 		getGUIInterface()->getProjectNotesInterface()->saveState( dataFile, dataFile.content() );
 		m_playPos[Mode_PlaySong].m_timeLine->saveState( dataFile, dataFile.content() );
 	}

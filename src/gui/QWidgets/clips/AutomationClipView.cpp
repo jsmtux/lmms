@@ -29,7 +29,7 @@
 #include <QPainterPath>
 #include <QMenu>
 
-#include "AutomationEditor.h"
+#include "editors/AutomationEditor.h"
 #include "embed.h"
 #include "GuiApplication.h"
 #include "ProjectJournal.h"

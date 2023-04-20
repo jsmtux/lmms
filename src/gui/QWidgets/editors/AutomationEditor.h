@@ -35,6 +35,7 @@
 #include "TimePos.h"
 #include "AutomationClip.h"
 #include "ComboBoxModel.h"
+#include "IAutomationEditor.h"
 
 class QPainter;
 class QPixmap;
@@ -247,7 +248,7 @@ signals:
 
 
 
-class AutomationEditorWindow : public Editor
+class AutomationEditorWindow : public Editor, public IAutomationEditor
 {
 	Q_OBJECT
 
@@ -257,13 +258,30 @@ public:
 	AutomationEditorWindow();
 	~AutomationEditorWindow() override = default;
 
-	void setCurrentClip(AutomationClip* clip);
+	void setCurrentClip(AutomationClip* clip) override;
 	const AutomationClip* currentClip();
 
 	void dropEvent( QDropEvent * _de ) override;
 	void dragEnterEvent( QDragEnterEvent * _dee ) override;
 
 	void open(AutomationClip* clip);
+
+
+
+	void updateAfterClipChange() override {
+		m_editor->updateAfterClipChange();
+	}
+
+	QString nodeName() override {
+		return m_editor->nodeName();
+	}
+
+	QDomElement saveState(QDomDocument & _doc, QDomElement & _parent) override {
+		return m_editor->saveState(_doc, _parent);
+	}
+	void restoreState(const QDomElement & _this) override {
+		m_editor->restoreState(_this);
+	}
 
 	AutomationEditor* m_editor;
 
