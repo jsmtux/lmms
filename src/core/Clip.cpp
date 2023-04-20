@@ -26,7 +26,7 @@
 
 #include <QDomDocument>
 
-#include "AutomationEditor.h"
+#include "IAutomationEditor.h"
 #include "AutomationClip.h"
 #include "Engine.h"
 #include "IGuiApplication.h"
@@ -148,7 +148,7 @@ void Clip::copyStateTo( Clip *src, Clip *dst )
 		dst->movePosition( pos );
 
 		AutomationClip::resolveAllIDs();
-		gui::getGUIInterface()->automationEditor()->m_editor->updateAfterClipChange();
+		gui::getGUIInterface()->automationEditorInterface()->updateAfterClipChange();
 	}
 }
 

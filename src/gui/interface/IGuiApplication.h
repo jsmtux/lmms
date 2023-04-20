@@ -7,13 +7,11 @@
 #include "IPatternEditor.h"
 #include "IPianoRollWindow.h"
 #include "IProjectNotes.h"
+#include "IAutomationEditor.h"
 
 namespace lmms::gui
 {
 
-class SongEditorWindow;
-class MicrotunerConfig;
-class AutomationEditorWindow;
 class ControllerRackView;
 
 class IGuiApplication {
@@ -25,8 +23,7 @@ public:
 	virtual IPatternEditor* patternEditorInterface() = 0;
 	virtual IPianoRollWindow* pianoRollInterface() = 0;
 	virtual IProjectNotes* getProjectNotesInterface() = 0;
-	virtual MicrotunerConfig* getMicrotunerConfig() = 0;
-	virtual AutomationEditorWindow* automationEditor() = 0;
+	virtual IAutomationEditor* automationEditorInterface() = 0;
 	virtual ControllerRackView* getControllerRackView() = 0;
 };
 

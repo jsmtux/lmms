@@ -29,15 +29,15 @@
 #include "LmmsStyle.h"
 #include "LmmsPalette.h"
 
-#include "AutomationEditor.h"
 #include "ConfigManager.h"
 #include "ControllerRackView.h"
 #include "MixerView.h"
 #include "MainWindow.h"
 #include "MicrotunerConfig.h"
+#include "ProjectNotes.h"
+#include "editors/AutomationEditor.h"
 #include "editors/PatternEditor.h"
 #include "editors/PianoRoll.h"
-#include "ProjectNotes.h"
 #include "editors/SongEditor.h"
 
 #include <QApplication>

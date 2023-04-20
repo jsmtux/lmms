@@ -35,7 +35,7 @@
 #include "StringPairDrag.h"
 #include "Clipboard.h"
 
-#include "AutomationEditor.h"
+#include "editors/AutomationEditor.h"
 
 
 namespace lmms::gui

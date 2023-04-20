@@ -36,13 +36,13 @@
 #include "editors/PatternEditor.h"
 #include "editors/SongEditor.h"
 #include "editors/PianoRoll.h"
+#include "editors/AutomationEditor.h"
 
 class QLabel;
 
 namespace lmms::gui
 {
 
-class AutomationEditorWindow;
 class ControllerRackView;
 class MainWindow;
 class MicrotunerConfig;
@@ -73,6 +73,7 @@ public:
 	IProjectNotes* getProjectNotesInterface() { return m_projectNotes; }
 	MicrotunerConfig* getMicrotunerConfig() { return m_microtunerConfig; }
 	AutomationEditorWindow* automationEditor() { return m_automationEditor; }
+	IAutomationEditor* automationEditorInterface() override { return m_automationEditor; }
 	ControllerRackView* getControllerRackView() { return m_controllerRackView; }
 
 public slots:
