@@ -48,9 +48,7 @@
 #include "PatternStore.h"
 #include "PatternTrack.h"
 #include "ProjectJournal.h"
-#include "IProjectNotes.h"
 #include "Scale.h"
-#include "ISongEditor.h"
 #include "TimeLineWidget.h"
 #include "PeakController.h"
 
@@ -862,33 +860,8 @@ void Song::clearProject()
 
 	Engine::audioEngine()->requestChangeInModel();
 
-	if( getGUIInterface() != nullptr && getGUIInterface()->patternEditorInterface() )
-	{
-		getGUIInterface()->patternEditorInterface()->clearAllTracks();
-	}
-	if( getGUIInterface() != nullptr && getGUIInterface()->songEditorInterface() )
-	{
-		getGUIInterface()->songEditorInterface()->clearAllTracks();
-	}
-	if( getGUIInterface() != nullptr && getGUIInterface()->mixerViewInterface() )
-	{
-		getGUIInterface()->mixerViewInterface()->clear();
-	}
 	QCoreApplication::sendPostedEvents();
-	Engine::patternStore()->clearAllTracks();
-	clearAllTracks();
-
 	Engine::mixer()->clear();
-
-	if( getGUIInterface() != nullptr && getGUIInterface()->automationEditorInterface() )
-	{
-		getGUIInterface()->automationEditorInterface()->setCurrentClip( nullptr );
-	}
-
-	if( getGUIInterface() != nullptr && getGUIInterface()->pianoRollInterface() )
-	{
-		getGUIInterface()->pianoRollInterface()->reset();
-	}
 
 	m_tempoModel.reset();
 	m_masterVolumeModel.reset();
@@ -906,10 +879,13 @@ void Song::clearProject()
 
 	Engine::audioEngine()->doneChangeInModel();
 
-	if( getGUIInterface() != nullptr && getGUIInterface()->getProjectNotesInterface() )
-	{
-		getGUIInterface()->getProjectNotesInterface()->clear();
+	if(getGUIInterface() != nullptr) {
+		getGUIInterface()->clear();
 	}
+
+	Engine::patternStore()->clearAllTracks();
+	clearAllTracks();
+
 
 	removeAllControllers();
 
@@ -1146,26 +1122,12 @@ void Song::loadProject( const QString & fileName )
 			}
 			else if( getGUIInterface() != nullptr )
 			{
-				if( node.nodeName() == getGUIInterface()->getControllerRackView()->nodeName() )
-				{
-					getGUIInterface()->getControllerRackView()->restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == getGUIInterface()->pianoRollInterface()->nodeName() )
-				{
-					getGUIInterface()->pianoRollInterface()->restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == getGUIInterface()->automationEditorInterface()->nodeName() )
-				{
-					getGUIInterface()->automationEditorInterface()->restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == getGUIInterface()->getProjectNotesInterface()->nodeName() )
-				{
-					 getGUIInterface()->getProjectNotesInterface()->restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == m_playPos[Mode_PlaySong].m_timeLine->nodeName() )
+				if( node.nodeName() == m_playPos[Mode_PlaySong].m_timeLine->nodeName() )
 				{
 					m_playPos[Mode_PlaySong].m_timeLine->restoreState( node.toElement() );
 				}
+
+				getGUIInterface()->restoreState(node);
 			}
 		}
 		node = node.nextSibling();
@@ -1244,10 +1206,7 @@ bool Song::saveProjectFile(const QString & filename, bool withResources)
 	Engine::mixer()->saveState( dataFile, dataFile.content() );
 	if( getGUIInterface() != nullptr )
 	{
-		getGUIInterface()->getControllerRackView()->saveState( dataFile, dataFile.content() );
-		getGUIInterface()->pianoRollInterface()->saveState( dataFile, dataFile.content() );
-		getGUIInterface()->automationEditorInterface()->saveState( dataFile, dataFile.content() );
-		getGUIInterface()->getProjectNotesInterface()->saveState( dataFile, dataFile.content() );
+		getGUIInterface()->saveState(dataFile);
 		m_playPos[Mode_PlaySong].m_timeLine->saveState( dataFile, dataFile.content() );
 	}
 

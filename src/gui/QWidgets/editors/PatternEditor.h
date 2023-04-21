@@ -27,7 +27,6 @@
 
 #include "Editor.h"
 #include "TrackContainerView.h"
-#include "IPatternEditor.h"
 
 namespace lmms
 {
@@ -40,7 +39,7 @@ namespace gui
 class ComboBox;
 
 
-class PatternEditor : public TrackContainerView, public IPatternEditor
+class PatternEditor : public TrackContainerView
 {
 	Q_OBJECT
 public:
@@ -55,9 +54,6 @@ public:
 
 	void saveSettings(QDomDocument& doc, QDomElement& element) override;
 	void loadSettings(const QDomElement& element) override;
-	void clearAllTracks() override {
-		TrackContainerView::clearAllTracks();
-	}
 
 public slots:
 	void addSteps();

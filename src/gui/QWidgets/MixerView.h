@@ -88,7 +88,7 @@ public:
 	void setCurrentMixerLine( MixerLine * _line );
 	void setCurrentMixerLine( int _line );
 
-	void clear() override;
+	void clear();
 
 
 	// display the send button and knob correctly

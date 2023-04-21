@@ -531,7 +531,7 @@ public:
 	bool isRecording() const;
 
 	/*! \brief Resets settings to default when e.g. creating a new project */
-	void reset() override;
+	void reset();
 
 	using SerializingObject::saveState;
 	using SerializingObject::restoreState;
@@ -543,22 +543,11 @@ public:
 		return "pianoroll";
 	}
 
-	QString nodeName() override {
-		return "pianoroll";
-	}
-
 	QSize sizeHint() const override;
 	bool hasFocus() const;
 
 	void update() override {
 		QWidget::update();
-	}
-
-    void restoreState( const QDomElement & _this ) {
-		SerializingObject::restoreState(_this);
-	}
-    QDomElement saveState( QDomDocument & _doc, QDomElement & _parent ) {
-		return SerializingObject::saveState(_doc, _parent);
 	}
 
 signals:
