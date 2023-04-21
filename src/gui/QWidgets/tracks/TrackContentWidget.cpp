@@ -35,11 +35,11 @@
 #include "Engine.h"
 #include "GuiApplication.h"
 #include "editors/PatternEditor.h"
+#include "editors/TrackContainerView.h"
 #include "PatternStore.h"
 #include "Song.h"
 #include "editors/SongEditor.h"
 #include "StringPairDrag.h"
-#include "TrackContainerView.h"
 #include "clips/ClipView.h"
 #include "TrackView.h"
 
