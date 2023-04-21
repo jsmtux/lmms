@@ -41,7 +41,7 @@
 #include "PixmapButton.h"
 #include "StringPairDrag.h"
 #include "Track.h"
-#include "TrackContainerView.h"
+#include "editors/TrackContainerView.h"
 #include "clips/ClipView.h"
 #include "clips/ClipViewFactory.h"
 

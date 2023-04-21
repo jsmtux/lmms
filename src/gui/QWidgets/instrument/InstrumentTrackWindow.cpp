@@ -65,7 +65,7 @@
 #include "StringPairDrag.h"
 #include "SubWindow.h"
 #include "TabWidget.h"
-#include "TrackContainerView.h"
+#include "editors/TrackContainerView.h"
 #include "TrackLabelButton.h"
 
 

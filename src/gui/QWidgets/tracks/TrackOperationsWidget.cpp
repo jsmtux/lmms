@@ -44,7 +44,7 @@
 #include "Song.h"
 #include "StringPairDrag.h"
 #include "Track.h"
-#include "TrackContainerView.h"
+#include "editors/TrackContainerView.h"
 #include "TrackView.h"
 
 namespace lmms::gui

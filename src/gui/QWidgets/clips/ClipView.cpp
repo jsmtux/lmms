@@ -51,7 +51,7 @@
 #include "StringPairDrag.h"
 #include "TextFloat.h"
 #include "TrackContainer.h"
-#include "TrackContainerView.h"
+#include "editors/TrackContainerView.h"
 #include "TrackView.h"
 
 namespace lmms::gui

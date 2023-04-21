@@ -29,7 +29,7 @@
 #include <QVector>
 
 #include "ModelView.h"
-#include "Rubberband.h"
+#include "editors/Rubberband.h"
 #include "Clip.h"
 
 class QMenu;
