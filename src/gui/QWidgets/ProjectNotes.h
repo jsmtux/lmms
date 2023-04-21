@@ -28,7 +28,6 @@
 #include <QMainWindow>
 
 #include "SerializingObject.h"
-#include "IProjectNotes.h"
 
 class QAction;
 class QComboBox;
@@ -39,14 +38,14 @@ namespace lmms::gui
 {
 
 
-class LMMS_EXPORT ProjectNotes : public QMainWindow, public SerializingObject, public IProjectNotes
+class LMMS_EXPORT ProjectNotes : public QMainWindow, public SerializingObject
 {
 	Q_OBJECT
 public:
 	ProjectNotes();
 	~ProjectNotes() override = default;
 
-	void clear() override;
+	void clear();
 	void setText( const QString & _text );
 
 	void saveSettings( QDomDocument & _doc, QDomElement & _parent ) override;
@@ -56,14 +55,6 @@ public:
 	{
 		return "projectnotes";
 	}
-
-	void restoreState( const QDomElement & _this ) override {
-		SerializingObject::restoreState(_this);
-	}
-	QDomElement saveState( QDomDocument & _doc, QDomElement & _parent ) override {
-		return SerializingObject::saveState(_doc, _parent);
-	}
-
 
 protected:
 	void closeEvent( QCloseEvent * _ce ) override;

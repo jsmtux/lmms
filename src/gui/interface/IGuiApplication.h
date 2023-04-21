@@ -3,33 +3,35 @@
 
 #include "IMainWindow.h"
 #include "IMixerView.h"
-#include "ISongEditor.h"
-#include "IPatternEditor.h"
 #include "IPianoRollWindow.h"
-#include "IProjectNotes.h"
 #include "IAutomationEditor.h"
 
-namespace lmms::gui
-{
+#include <QDomNode>
 
-class ControllerRackView;
+namespace lmms
+{
+class DataFile;
+
+namespace gui
+{
 
 class IGuiApplication {
 public:
     virtual ~IGuiApplication() {}
     virtual IMainWindow* mainWindowInterface() = 0;
 	virtual IMixerView* mixerViewInterface() = 0;
-	virtual ISongEditor* songEditorInterface() = 0;
-	virtual IPatternEditor* patternEditorInterface() = 0;
 	virtual IPianoRollWindow* pianoRollInterface() = 0;
-	virtual IProjectNotes* getProjectNotesInterface() = 0;
 	virtual IAutomationEditor* automationEditorInterface() = 0;
-	virtual ControllerRackView* getControllerRackView() = 0;
+
+	virtual void clear() = 0;
+	virtual void restoreState(QDomNode& node) = 0;
+	virtual void saveState(DataFile& dataFile) = 0;
 };
 
 // Short-hand function
 LMMS_EXPORT IGuiApplication* getGUIInterface();
 
+}
 }
 
 #endif /* BDEA9425_99B2_40B9_9B74_68E9BF97708B */

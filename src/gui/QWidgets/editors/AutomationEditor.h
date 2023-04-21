@@ -258,7 +258,7 @@ public:
 	AutomationEditorWindow();
 	~AutomationEditorWindow() override = default;
 
-	void setCurrentClip(AutomationClip* clip) override;
+	void setCurrentClip(AutomationClip* clip);
 	const AutomationClip* currentClip();
 
 	void dropEvent( QDropEvent * _de ) override;
@@ -270,17 +270,6 @@ public:
 
 	void updateAfterClipChange() override {
 		m_editor->updateAfterClipChange();
-	}
-
-	QString nodeName() override {
-		return m_editor->nodeName();
-	}
-
-	QDomElement saveState(QDomDocument & _doc, QDomElement & _parent) override {
-		return m_editor->saveState(_doc, _parent);
-	}
-	void restoreState(const QDomElement & _this) override {
-		m_editor->restoreState(_this);
 	}
 
 	AutomationEditor* m_editor;

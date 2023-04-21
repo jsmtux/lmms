@@ -64,17 +64,18 @@ public:
 	MixerView* mixerView() { return m_mixerView; }
 	IMixerView* mixerViewInterface() { return m_mixerView; }
 	SongEditorWindow* songEditor() { return m_songEditor; }
-	ISongEditor* songEditorInterface() { return m_songEditor ? m_songEditor->m_editor : nullptr;}
 	PatternEditorWindow* patternEditor() { return m_patternEditor; }
-	IPatternEditor* patternEditorInterface() override { return m_patternEditor ? m_patternEditor->m_editor : nullptr; }
 	PianoRollWindow* pianoRoll() { return m_pianoRoll; }
 	IPianoRollWindow* pianoRollInterface() { return m_pianoRoll; }
 	ProjectNotes* getProjectNotes() { return m_projectNotes; }
-	IProjectNotes* getProjectNotesInterface() { return m_projectNotes; }
 	MicrotunerConfig* getMicrotunerConfig() { return m_microtunerConfig; }
 	AutomationEditorWindow* automationEditor() { return m_automationEditor; }
 	IAutomationEditor* automationEditorInterface() override { return m_automationEditor; }
 	ControllerRackView* getControllerRackView() { return m_controllerRackView; }
+
+	void clear() override;
+	void restoreState(QDomNode& node) override;
+	void saveState(DataFile& dataFile) override;
 
 public slots:
 	void displayInitProgress(const QString &msg);

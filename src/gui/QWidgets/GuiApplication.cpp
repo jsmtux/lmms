@@ -28,6 +28,7 @@
 
 #include "LmmsStyle.h"
 #include "LmmsPalette.h"
+#include "DataFile.h"
 
 #include "ConfigManager.h"
 #include "ControllerRackView.h"
@@ -191,6 +192,63 @@ GuiApplication::~GuiApplication()
 	s_instance = nullptr;
 }
 
+void GuiApplication::clear() {
+	if( m_projectNotes )
+	{
+		m_projectNotes->clear();
+	}
+
+	if( m_pianoRoll )
+	{
+		m_pianoRoll->reset();
+	}
+
+	if( m_patternEditor )
+	{
+		m_patternEditor->m_editor->clearAllTracks();
+	}
+
+	if( m_songEditor && m_songEditor->m_editor )
+	{
+		m_songEditor->m_editor->clearAllTracks();
+	}
+
+	if( m_mixerView )
+	{
+		m_mixerView->clear();
+	}
+
+	if( m_automationEditor )
+	{
+		m_automationEditor->setCurrentClip( nullptr );
+	}
+}
+
+void GuiApplication::restoreState(QDomNode& node) {
+	if( node.nodeName() == m_controllerRackView->nodeName() )
+	{
+		m_controllerRackView->restoreState( node.toElement() );
+	}
+	else if( node.nodeName() == m_automationEditor->m_editor->nodeName() )
+	{
+		m_automationEditor->m_editor->restoreState( node.toElement() );
+	}
+	else if( node.nodeName() == m_projectNotes->nodeName() )
+	{
+		m_projectNotes->SerializingObject::restoreState( node.toElement() );
+	}
+	else if( node.nodeName() == m_pianoRoll->nodeName() )
+	{
+		m_pianoRoll->restoreState( node.toElement() );
+	}
+}
+
+void GuiApplication::saveState(DataFile& dataFile) {
+	m_controllerRackView->saveState( dataFile, dataFile.content() );
+	m_automationEditor->m_editor->saveState( dataFile, dataFile.content() );
+	m_projectNotes->SerializingObject::saveState( dataFile, dataFile.content() );
+	m_pianoRoll->saveState( dataFile, dataFile.content() );
+}
 
 void GuiApplication::displayInitProgress(const QString &msg)
 {
