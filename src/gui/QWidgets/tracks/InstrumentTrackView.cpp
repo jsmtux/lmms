@@ -41,7 +41,7 @@
 #include "MixerView.h"
 #include "GuiApplication.h"
 #include "InstrumentTrack.h"
-#include "InstrumentTrackWindow.h"
+#include "instrument/InstrumentTrackWindow.h"
 #include "MainWindow.h"
 #include "MidiClient.h"
 #include "MidiPortMenu.h"

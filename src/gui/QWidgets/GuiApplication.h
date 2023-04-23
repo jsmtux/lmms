@@ -73,6 +73,8 @@ public:
 	IAutomationEditor* automationEditorInterface() override { return m_automationEditor; }
 	ControllerRackView* getControllerRackView() { return m_controllerRackView; }
 
+	Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) override;
+
 	void clear() override;
 	void restoreState(QDomNode& node) override;
 	void saveState(DataFile& dataFile) override;

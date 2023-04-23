@@ -36,10 +36,13 @@
 #include "MainWindow.h"
 #include "MicrotunerConfig.h"
 #include "ProjectNotes.h"
+
 #include "editors/AutomationEditor.h"
 #include "editors/PatternEditor.h"
 #include "editors/PianoRoll.h"
 #include "editors/SongEditor.h"
+
+#include "instrument/DummyInstrument.h"
 
 #include <QApplication>
 #include <QDir>
@@ -190,6 +193,10 @@ GuiApplication::GuiApplication()
 GuiApplication::~GuiApplication()
 {
 	s_instance = nullptr;
+}
+
+Instrument* GuiApplication::createDummyInstrument(InstrumentTrack *_instrument_track) {
+	return new DummyInstrument(_instrument_track);
 }
 
 void GuiApplication::clear() {
