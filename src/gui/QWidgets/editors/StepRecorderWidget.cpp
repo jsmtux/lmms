@@ -22,7 +22,7 @@
 
 #include <QPainter>
 
-#include "StepRecorderWidget.h"
+#include "editors/StepRecorderWidget.h"
 #include "TextFloat.h"
 #include "embed.h"
 
@@ -81,24 +81,24 @@ void StepRecorderWidget::setBottomMargin(const int marginBottom)
 	m_marginBottom = marginBottom;
 }
 
-void StepRecorderWidget::setStartPosition(TimePos pos)
+void StepRecorderWidget::doSetStartPosition(TimePos pos)
 {
 	m_curStepStartPos = pos;
 }
 
-void StepRecorderWidget::setEndPosition(TimePos pos)
+void StepRecorderWidget::doSetEndPosition(TimePos pos)
 {
 	m_curStepEndPos = pos;
 	emit positionChanged(m_curStepEndPos);
 }
 
-void StepRecorderWidget::showHint()
+void StepRecorderWidget::doShowHint()
 {
 	TextFloat::displayMessage(tr( "Hint" ), tr("Move recording curser using <Left/Right> arrows"),
 		embed::getIconPixmap("hint"));
 }
 
-void StepRecorderWidget::setStepsLength(TimePos stepsLength)
+void StepRecorderWidget::doSetStepsLength(TimePos stepsLength)
 {
 	m_stepsLength = stepsLength;
 }

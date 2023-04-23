@@ -25,6 +25,8 @@
 #ifndef LMMS_GUI_TIMELINE_WIDGET_H
 #define LMMS_GUI_TIMELINE_WIDGET_H
 
+#include "ITimeLineWidget.h"
+
 #include <QWidget>
 
 #include "Song.h"
@@ -55,23 +57,10 @@ public:
 	Q_PROPERTY( QColor activeLoopInnerColor READ getActiveLoopInnerColor WRITE setActiveLoopInnerColor )
 	Q_PROPERTY( int loopRectangleVerticalPadding READ getLoopRectangleVerticalPadding WRITE setLoopRectangleVerticalPadding )
 
-	enum AutoScrollStates
-	{
-		AutoScrollEnabled,
-		AutoScrollDisabled
-	} ;
-
 	enum LoopPointStates
 	{
 		LoopPointsDisabled,
 		LoopPointsEnabled
-	} ;
-
-	enum BehaviourAtStopStates
-	{
-		BackToZero,
-		BackToStart,
-		KeepStopPosition
 	} ;
 
 
@@ -111,12 +100,12 @@ public:
 		return( m_pos );
 	}
 
-	AutoScrollStates autoScroll() const
+	TimeLineAutoScrollStates autoScroll() const
 	{
 		return m_autoScroll;
 	}
 
-	BehaviourAtStopStates behaviourAtStop() const
+	TimeLineBehaviourAtStopStates behaviourAtStop() const
 	{
 		return m_behaviourAtStop;
 	}
@@ -220,9 +209,9 @@ private:
 	QColor m_barLineColor;
 	QColor m_barNumberColor;
 
-	AutoScrollStates m_autoScroll;
+	TimeLineAutoScrollStates m_autoScroll;
 	LoopPointStates m_loopPoints;
-	BehaviourAtStopStates m_behaviourAtStop;
+	TimeLineBehaviourAtStopStates m_behaviourAtStop;
 
 	bool m_changedPosition;
 
@@ -261,6 +250,71 @@ signals:
 	void loadBehaviourAtStop( int _n );
 
 } ;
+
+class ITimeLineWidgetImpl : public ITimeLineWidget {
+	Q_OBJECT
+public:
+	ITimeLineWidgetImpl(TimeLineWidget& _timeLineWidget) :
+		timeLineWidget(_timeLineWidget)
+	{
+		connect(&timeLineWidget, &TimeLineWidget::positionMarkerMoved, this, &ITimeLineWidgetImpl::positionMarkerMoved);
+		connect(&timeLineWidget, &TimeLineWidget::positionChanged, this, &ITimeLineWidgetImpl::positionChanged);
+	}
+
+    void savePos( const TimePos & pos ) {
+		timeLineWidget.savePos(pos);
+	}
+    const TimePos & loopBegin() const {
+		return timeLineWidget.loopBegin();
+	}
+    const TimePos & loopEnd() const {
+		return timeLineWidget.loopEnd();
+	}
+    TimeLineBehaviourAtStopStates behaviourAtStop() const {
+		return timeLineWidget.behaviourAtStop();
+	}
+    const TimePos & savedPos() const {
+		return timeLineWidget.savedPos();
+	}
+    void toggleLoopPoints( int _n ) {
+		timeLineWidget.toggleLoopPoints(_n);
+	}
+    bool loopPointsEnabled() const {
+		return timeLineWidget.loopPointsEnabled();
+	}
+    QDomElement saveState( QDomDocument & _doc, QDomElement & _parent ) {
+		return timeLineWidget.saveState(_doc, _parent);
+	}
+    void restoreState( const QDomElement & _this ) {
+		timeLineWidget.restoreState(_this);
+	}
+    QString nodeName() const {
+		return timeLineWidget.nodeName();
+	}
+	void setPixelsPerBar( float ppb ) override {
+		timeLineWidget.setPixelsPerBar(ppb);
+	}
+	int markerX( const TimePos & _t ) const override {
+		return timeLineWidget.markerX(_t);
+	}
+	TimeLineAutoScrollStates autoScroll() const override {
+		return timeLineWidget.autoScroll();
+	}
+	void setFixedWidth(int _width) override {
+		timeLineWidget.setFixedWidth(_width);
+	}
+
+public slots:
+	void updatePosition( const lmms::TimePos &_tp ) {
+		timeLineWidget.updatePosition(_tp);
+	}
+
+signals:
+	void positionChanged( const lmms::TimePos & _t );
+
+private:
+	TimeLineWidget& timeLineWidget;
+};
 
 
 

@@ -68,7 +68,7 @@
 #include "PositionLine.h"
 #include "SimpleTextFloat.h"
 #include "SongEditor.h"
-#include "StepRecorderWidget.h"
+#include "editors/StepRecorderWidget.h"
 #include "TextFloat.h"
 #include "TimeLineWidget.h"
 #include "FileDialog.h"
@@ -4080,7 +4080,7 @@ void PianoRoll::stop()
 {
 	Engine::getSong()->stop();
 	m_recording = false;
-	m_scrollBack = ( m_timeLine->autoScroll() == TimeLineWidget::AutoScrollEnabled );
+	m_scrollBack = ( m_timeLine->autoScroll() == TimeLineAutoScrollStates::AutoScrollEnabled );
 }
 
 
@@ -4496,7 +4496,7 @@ void PianoRoll::updatePosition( const TimePos & t )
 {
 	if( ( Engine::getSong()->isPlaying()
 			&& Engine::getSong()->playMode() == Song::Mode_PlayMidiClip
-			&& m_timeLine->autoScroll() == TimeLineWidget::AutoScrollEnabled
+			&& m_timeLine->autoScroll() == TimeLineAutoScrollStates::AutoScrollEnabled
 		) || m_scrollBack )
 	{
 		autoScroll( t );

@@ -48,7 +48,7 @@ class Scale;
 namespace gui
 {
 
-class TimeLineWidget;
+class ITimeLineWidget;
 class SongEditor;
 class ControllerRackView;
 
@@ -124,7 +124,7 @@ public:
 		{
 			return m_jumped;
 		}
-		gui::TimeLineWidget * m_timeLine;
+		gui::ITimeLineWidget * m_timeLine;
 
 	private:
 		float m_currentFrame;

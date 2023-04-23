@@ -37,7 +37,7 @@
 #include "lmms_basics.h"
 #include "Song.h"
 #include "StepRecorder.h"
-#include "StepRecorderWidget.h"
+#include "editors/StepRecorderWidget.h"
 #include "IPianoRollWindow.h"
 #include "IPianoRoll.h"
 

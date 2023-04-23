@@ -57,7 +57,7 @@ TimeLineWidget::TimeLineWidget( const int xoff, const int yoff, const float ppb,
 	m_barNumberColor( m_barLineColor.darker( 120 ) ),
 	m_autoScroll( AutoScrollEnabled ),
 	m_loopPoints( LoopPointsDisabled ),
-	m_behaviourAtStop( BackToZero ),
+	m_behaviourAtStop( TimeLineBehaviourAtStopStates::BackToZero ),
 	m_changedPosition( true ),
 	m_xOffset( xoff ),
 	m_posMarkerX( 0 ),
@@ -86,7 +86,7 @@ TimeLineWidget::TimeLineWidget( const int xoff, const int yoff, const float ppb,
 	m_xOffset -= s_posMarkerPixmap->width() / 2;
 
 	setMouseTracking(true);
-	m_pos.m_timeLine = this;
+	m_pos.m_timeLine = new ITimeLineWidgetImpl(*this);
 
 	auto updateTimer = new QTimer(this);
 	connect( updateTimer, SIGNAL(timeout()),
@@ -103,6 +103,7 @@ TimeLineWidget::~TimeLineWidget()
 {
 	if( getGUI()->songEditor() )
 	{
+		delete m_pos.m_timeLine;
 		m_pos.m_timeLine = nullptr;
 	}
 	delete m_hint;
@@ -151,7 +152,7 @@ void TimeLineWidget::addToolButtons( QToolBar * _tool_bar )
 					SLOT(toggleBehaviourAtStop(int)));
 	connect( this, SIGNAL(loadBehaviourAtStop(int)), behaviourAtStop,
 					SLOT(changeState(int)));
-	behaviourAtStop->changeState( BackToStart );
+	behaviourAtStop->changeState( TimeLineBehaviourAtStopStates::BackToStart );
 
 	_tool_bar->addWidget( autoScroll );
 	_tool_bar->addWidget( loopPoints );
@@ -208,7 +209,7 @@ void TimeLineWidget::updatePosition( const TimePos & )
 
 void TimeLineWidget::toggleAutoScroll( int _n )
 {
-	m_autoScroll = static_cast<AutoScrollStates>( _n );
+	m_autoScroll = static_cast<TimeLineAutoScrollStates>( _n );
 }
 
 
@@ -225,7 +226,7 @@ void TimeLineWidget::toggleLoopPoints( int _n )
 
 void TimeLineWidget::toggleBehaviourAtStop( int _n )
 {
-	m_behaviourAtStop = static_cast<BehaviourAtStopStates>( _n );
+	m_behaviourAtStop = static_cast<TimeLineBehaviourAtStopStates>( _n );
 }
 
 

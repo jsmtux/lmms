@@ -49,7 +49,7 @@
 #include "PatternTrack.h"
 #include "ProjectJournal.h"
 #include "Scale.h"
-#include "TimeLineWidget.h"
+#include "ITimeLineWidget.h"
 #include "PeakController.h"
 
 
@@ -181,7 +181,7 @@ void Song::setTimeSignature()
 
 void Song::savePos()
 {
-	gui::TimeLineWidget* tl = m_playPos[m_playMode].m_timeLine;
+	gui::ITimeLineWidget* tl = m_playPos[m_playMode].m_timeLine;
 
 	if( tl != nullptr )
 	{
@@ -634,12 +634,12 @@ void Song::stop()
 		return;
 	}
 
-	using gui::TimeLineWidget;
+	using gui::ITimeLineWidget;
 
 	// To avoid race conditions with the processing threads
 	Engine::audioEngine()->requestChangeInModel();
 
-	TimeLineWidget * tl = m_playPos[m_playMode].m_timeLine;
+	ITimeLineWidget * tl = m_playPos[m_playMode].m_timeLine;
 	m_paused = false;
 	m_recording = true;
 
@@ -647,12 +647,12 @@ void Song::stop()
 	{
 		switch( tl->behaviourAtStop() )
 		{
-			case TimeLineWidget::BackToZero:
+			case gui::TimeLineBehaviourAtStopStates::BackToZero:
 				m_playPos[m_playMode].setTicks(0);
 				m_elapsedMilliSeconds[m_playMode] = 0;
 				break;
 
-			case TimeLineWidget::BackToStart:
+			case gui::TimeLineBehaviourAtStopStates::BackToStart:
 				if( tl->savedPos() >= 0 )
 				{
 					m_playPos[m_playMode].setTicks(tl->savedPos().getTicks());
@@ -662,7 +662,7 @@ void Song::stop()
 				}
 				break;
 
-			case TimeLineWidget::KeepStopPosition:
+			case gui::TimeLineBehaviourAtStopStates::KeepStopPosition:
 				break;
 		}
 	}
