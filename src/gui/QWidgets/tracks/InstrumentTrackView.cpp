@@ -44,7 +44,7 @@
 #include "instrument/InstrumentTrackWindow.h"
 #include "MainWindow.h"
 #include "MidiClient.h"
-#include "MidiPortMenu.h"
+#include "menus/MidiPortMenu.h"
 #include "TrackLabelButton.h"
 
 

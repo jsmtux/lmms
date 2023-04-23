@@ -28,7 +28,7 @@
 #include <QVBoxLayout>
 
 #include "InstrumentMidiIOView.h"
-#include "MidiPortMenu.h"
+#include "menus/MidiPortMenu.h"
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "embed.h"

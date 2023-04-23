@@ -33,7 +33,7 @@
 #include "ControllerConnection.h"
 #include "MidiController.h"
 #include "MidiClient.h"
-#include "MidiPortMenu.h"
+#include "menus/MidiPortMenu.h"
 #include "LcdSpinBox.h"
 #include "LedCheckBox.h"
 #include "ComboBox.h"
