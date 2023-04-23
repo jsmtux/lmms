@@ -11,6 +11,8 @@
 namespace lmms
 {
 class DataFile;
+class Instrument;
+class InstrumentTrack;
 
 namespace gui
 {
@@ -26,6 +28,8 @@ public:
 	virtual void clear() = 0;
 	virtual void restoreState(QDomNode& node) = 0;
 	virtual void saveState(DataFile& dataFile) = 0;
+
+	virtual Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) = 0;
 };
 
 // Short-hand function

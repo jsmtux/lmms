@@ -64,7 +64,7 @@
 #include "MainWindow.h"
 #include "MidiClip.h"
 #include "PatternStore.h"
-#include "PianoView.h"
+#include "instrument/PianoView.h"
 #include "PositionLine.h"
 #include "SimpleTextFloat.h"
 #include "SongEditor.h"
