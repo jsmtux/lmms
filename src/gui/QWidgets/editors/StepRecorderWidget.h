@@ -26,12 +26,12 @@
 #include <QWidget>
 #include <QColor>
 
-#include "TimePos.h"
+#include "IStepRecorderWidget.h"
 
 namespace lmms::gui
 {
 
-class StepRecorderWidget : public QWidget
+class StepRecorderWidget : public QWidget, public IStepRecorderWidget
 {
 	Q_OBJECT
 
@@ -52,13 +52,35 @@ public:
 	QMargins margins();
 
 	//API used by StepRecorder
-	void setStepsLength(TimePos stepsLength);
-	void setStartPosition(TimePos pos);
-	void setEndPosition(TimePos pos);
+	void setStepsLength(TimePos stepsLength) override {
+		doSetStepsLength(stepsLength);
+	}
+	void setStartPosition(TimePos pos) override {
+		doSetStartPosition(pos);
+	}
+	void setEndPosition(TimePos pos) override {
+		doSetEndPosition(pos);
+	}
 
-	void showHint();
+	void show() override {
+		QWidget::show();
+	}
+	void hide() override {
+		QWidget::hide();
+	}
+
+	void showHint() override {
+		doShowHint();
+	}
 
 private:
+
+	void doSetStepsLength(TimePos stepsLength);
+	void doSetStartPosition(TimePos pos);
+	void doSetEndPosition(TimePos pos);
+
+	void doShowHint();
+
 	void paintEvent(QPaintEvent * pe) override;
 
 	int xCoordOfTick(int tick);

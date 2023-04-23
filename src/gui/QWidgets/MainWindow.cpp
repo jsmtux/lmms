@@ -66,7 +66,7 @@
 #include "SubWindow.h"
 #include "TemplatesMenu.h"
 #include "TextFloat.h"
-#include "TimeLineWidget.h"
+#include "editors/TimeLineWidget.h"
 #include "ToolButton.h"
 #include "ToolPlugin.h"
 #include "VersionedSaveDialog.h"
@@ -1683,24 +1683,24 @@ void MainWindow::onSongStopped()
 	Song * song = Engine::getSong();
 	Song::PlayPos const & playPos = song->getPlayPos();
 
-	TimeLineWidget * tl = playPos.m_timeLine;
+	ITimeLineWidget * tl = playPos.m_timeLine;
 
 	if( tl )
 	{
 		SongEditorWindow* songEditor = getGUI()->songEditor();
 		switch( tl->behaviourAtStop() )
 		{
-			case TimeLineWidget::BackToZero:
-				if( songEditor && ( tl->autoScroll() == TimeLineWidget::AutoScrollEnabled ) )
+			case BackToZero:
+				if( songEditor && ( tl->autoScroll() == TimeLineAutoScrollStates::AutoScrollEnabled ) )
 				{
 					songEditor->m_editor->updatePosition(0);
 				}
 				break;
 
-			case TimeLineWidget::BackToStart:
+			case BackToStart:
 				if( tl->savedPos() >= 0 )
 				{
-					if(songEditor && ( tl->autoScroll() == TimeLineWidget::AutoScrollEnabled ) )
+					if(songEditor && ( tl->autoScroll() == TimeLineAutoScrollStates::AutoScrollEnabled ) )
 					{
 						songEditor->m_editor->updatePosition( TimePos(tl->savedPos().getTicks() ) );
 					}
@@ -1708,7 +1708,7 @@ void MainWindow::onSongStopped()
 				}
 				break;
 
-			case TimeLineWidget::KeepStopPosition:
+			case KeepStopPosition:
 				break;
 		}
 	}

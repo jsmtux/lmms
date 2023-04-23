@@ -28,7 +28,11 @@
 
 #include "SampleBuffer.h"
 #include "SampleTrack.h"
-#include "TimeLineWidget.h"
+#include "AudioEngine.h"
+#include "ITimeLineWidget.h"
+#include "Engine.h"
+#include "TrackContainer.h"
+#include "Song.h"
 
 
 namespace lmms
@@ -52,7 +56,7 @@ SampleClip::SampleClip( Track * _track ) :
 					this, SLOT(updateLength()));
 
 	//care about positionmarker
-	gui::TimeLineWidget* timeLine = Engine::getSong()->getPlayPos( Engine::getSong()->Mode_PlaySong ).m_timeLine;
+	gui::ITimeLineWidget* timeLine = Engine::getSong()->getPlayPos( Engine::getSong()->Mode_PlaySong ).m_timeLine;
 	if( timeLine )
 	{
 		connect( timeLine, SIGNAL(positionMarkerMoved()), this, SLOT(playbackPositionChanged()));

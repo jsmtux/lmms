@@ -792,7 +792,7 @@ void SongEditor::updatePosition( const TimePos & t )
 	}
 
 	if( ( m_song->isPlaying() && m_song->m_playMode == Song::Mode_PlaySong
-		  && m_timeLine->autoScroll() == TimeLineWidget::AutoScrollEnabled) ||
+		  && m_timeLine->autoScroll() == TimeLineAutoScrollStates::AutoScrollEnabled) ||
 							m_scrollBack == true )
 	{
 		m_smoothScroll = ConfigManager::inst()->value( "ui", "smoothscroll" ).toInt();
