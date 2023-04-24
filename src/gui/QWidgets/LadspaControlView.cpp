@@ -29,8 +29,9 @@
 #include "LadspaControl.h"
 #include "LadspaControlView.h"
 #include "LadspaBase.h"
-#include "LedCheckBox.h"
-#include "TempoSyncKnob.h"
+
+#include "widgets/LedCheckBox.h"
+#include "widgets/TempoSyncKnob.h"
 
 
 namespace lmms::gui

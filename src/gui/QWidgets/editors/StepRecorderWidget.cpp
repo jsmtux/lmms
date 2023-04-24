@@ -23,7 +23,7 @@
 #include <QPainter>
 
 #include "editors/StepRecorderWidget.h"
-#include "TextFloat.h"
+#include "widgets/TextFloat.h"
 #include "embed.h"
 
 namespace lmms::gui

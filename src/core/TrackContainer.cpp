@@ -37,7 +37,7 @@
 #include "Song.h"
 
 #include "IGuiApplication.h"
-#include "TextFloat.h"
+
 
 namespace lmms
 {
@@ -113,10 +113,11 @@ void TrackContainer::loadSettings( const QDomElement & _this )
 			{
 				if (gui::getGUIInterface() != nullptr)
 				{
-					gui::TextFloat::displayMessage( tr( "Loading cancelled" ),
-					tr( "Project loading was cancelled." ),
-					embed::getIconPixmap( "project_file", 24, 24 ),
-					2000 );
+					gui::getGUIInterface()->mainWindowInterface()->ShowTextFloatMessage(
+						tr( "Loading cancelled" ),
+						tr( "Project loading was cancelled." ),
+						embed::getIconPixmap( "project_file", 24, 24 ),
+						2000 );
 				}
 				Engine::getSong()->loadingCancelled();
 				break;

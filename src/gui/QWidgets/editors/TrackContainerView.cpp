@@ -40,9 +40,11 @@
 #include "PatternTrack.h"
 #include "Song.h"
 #include "StringPairDrag.h"
-#include "TrackView.h"
 #include "GuiApplication.h"
 #include "PluginFactory.h"
+
+#include "tracks/TrackView.h"
+#include "tracks/TrackViewFactory.h"
 
 namespace lmms
 {
@@ -280,7 +282,8 @@ TrackView * TrackContainerView::createTrackView( Track * _t )
 		if (trackView->getTrack() == _t) { return trackView; }
 	}
 
-	return _t->createView( this );
+	TrackViewFactory tvFactory;
+	return tvFactory.createTrackView(_t, this);
 }
 
 

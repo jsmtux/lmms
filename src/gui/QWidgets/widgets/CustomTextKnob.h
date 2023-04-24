@@ -25,7 +25,7 @@
 #ifndef LMMS_GUI_CUSTOM_TEXT_KNOB_H
 #define LMMS_GUI_CUSTOM_TEXT_KNOB_H
 
-#include "Knob.h"
+#include "widgets/Knob.h"
 
 namespace lmms::gui
 {

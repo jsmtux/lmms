@@ -47,13 +47,14 @@
 #include "AutomatableModelView.h"
 #include "PianoView.h"
 #include "Piano.h"
-#include "CaptionMenu.h"
 #include "embed.h"
 #include "Engine.h"
 #include "gui_templates.h"
 #include "InstrumentTrack.h"
 #include "Song.h"
 #include "StringPairDrag.h"
+
+#include "widgets/CaptionMenu.h"
 
 
 namespace lmms::gui

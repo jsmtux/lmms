@@ -51,7 +51,6 @@
 #include "AutomationEditor.h"
 #include "ActionGroup.h"
 #include "Clipboard.h"
-#include "ComboBox.h"
 #include "ConfigManager.h"
 #include "DataFile.h"
 #include "debug.h"
@@ -68,10 +67,12 @@
 #include "PositionLine.h"
 #include "SimpleTextFloat.h"
 #include "SongEditor.h"
-#include "editors/StepRecorderWidget.h"
-#include "TextFloat.h"
 #include "TimeLineWidget.h"
+
+#include "editors/StepRecorderWidget.h"
 #include "modals/FileDialog.h"
+#include "widgets/ComboBox.h"
+#include "widgets/TextFloat.h"
 
 
 namespace lmms

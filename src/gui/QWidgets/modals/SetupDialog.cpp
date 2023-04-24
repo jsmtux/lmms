@@ -41,9 +41,9 @@
 #include "MidiSetupWidget.h"
 #include "ProjectJournal.h"
 #include "SetupDialog.h"
-#include "TabBar.h"
 #include "TabButton.h"
 
+#include "widgets/TabBar.h"
 
 // Platform-specific audio-interface classes.
 #include "AudioAlsa.h"

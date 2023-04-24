@@ -32,9 +32,10 @@
 
 #include "TimeLineWidget.h"
 #include "embed.h"
-#include "NStateButton.h"
 #include "GuiApplication.h"
-#include "TextFloat.h"
+
+#include "widgets/NStateButton.h"
+#include "widgets/TextFloat.h"
 
 namespace lmms::gui
 {

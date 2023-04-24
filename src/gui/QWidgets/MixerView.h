@@ -32,11 +32,13 @@
 
 #include "ModelView.h"
 #include "Engine.h"
-#include "Fader.h"
-#include "PixmapButton.h"
 #include "embed.h"
 #include "EffectRackView.h"
 #include "IMixerView.h"
+#include "SampleTrack.h"
+
+#include "widgets/Fader.h"
+#include "widgets/PixmapButton.h"
 
 class QButtonGroup;
 

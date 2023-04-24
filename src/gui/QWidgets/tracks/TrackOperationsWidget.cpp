@@ -33,19 +33,22 @@
 
 #include "AutomationClip.h"
 #include "AutomationTrackView.h"
-#include "modals/ColorChooser.h"
 #include "ConfigManager.h"
 #include "DataFile.h"
 #include "embed.h"
 #include "Engine.h"
 #include "gui_templates.h"
 #include "InstrumentTrackView.h"
-#include "PixmapButton.h"
 #include "Song.h"
 #include "StringPairDrag.h"
 #include "Track.h"
-#include "editors/TrackContainerView.h"
 #include "TrackView.h"
+
+#include "editors/TrackContainerView.h"
+
+#include "modals/ColorChooser.h"
+
+#include "widgets/PixmapButton.h"
 
 namespace lmms::gui
 {

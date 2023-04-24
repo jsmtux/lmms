@@ -6,7 +6,8 @@
 
 #include "AudioOss.h"
 #include "AudioDeviceSetupWidget.h"
-#include "LcdSpinBox.h"
+
+#include "widgets/LcdSpinBox.h"
 
 namespace lmms {
 

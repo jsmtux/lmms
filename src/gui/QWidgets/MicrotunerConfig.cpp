@@ -34,14 +34,10 @@
 #include <QRegExp>
 #include <QTextStream>
 
-#include "ComboBox.h"
 #include "embed.h"
 #include "Engine.h"
-#include "modals/FileDialog.h"
 #include "GuiApplication.h"
 #include "Keymap.h"
-#include "LcdFloatSpinBox.h"
-#include "LcdSpinBox.h"
 #include "lmms_constants.h"
 #include "lmmsversion.h"
 #include "MainWindow.h"
@@ -49,6 +45,12 @@
 #include "Scale.h"
 #include "Song.h"
 #include "SubWindow.h"
+
+#include "modals/FileDialog.h"
+
+#include "widgets/ComboBox.h"
+#include "widgets/LcdFloatSpinBox.h"
+#include "widgets/LcdSpinBox.h"
 
 namespace lmms::gui
 {

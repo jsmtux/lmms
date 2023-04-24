@@ -29,11 +29,12 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-#include "ComboBox.h"
-#include "GroupBox.h"
 #include "gui_templates.h"
 #include "InstrumentTrack.h"
-#include "LedCheckBox.h"
+
+#include "widgets/ComboBox.h"
+#include "widgets/GroupBox.h"
+#include "widgets/LedCheckBox.h"
 
 
 namespace lmms::gui

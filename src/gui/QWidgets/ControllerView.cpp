@@ -33,12 +33,13 @@
 
 #include "ControllerView.h"
 
-#include "CaptionMenu.h"
 #include "ControllerDialog.h"
 #include "embed.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
 #include "SubWindow.h"
+
+#include "widgets/CaptionMenu.h"
 
 namespace lmms::gui
 {

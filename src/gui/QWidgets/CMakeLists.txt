@@ -96,6 +96,7 @@ SET(LMMS_UI_SRCS
 	tracks/TrackOperationsWidget.cpp
 	tracks/TrackRenameLineEdit.cpp
 	tracks/TrackView.cpp
+	tracks/TrackViewFactory.cpp
 
 	widgets/AutomatableButton.cpp
 	widgets/AutomatableSlider.cpp

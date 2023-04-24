@@ -37,7 +37,7 @@
 #include "MidiClip.h"
 #include "editors/PianoRoll.h"
 #include "modals/RenameDialog.h"
-#include "TrackView.h"
+#include "tracks/TrackView.h"
 
 namespace lmms::gui
 {

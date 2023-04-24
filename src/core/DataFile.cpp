@@ -43,11 +43,11 @@
 #include "LocaleHelper.h"
 #include "PluginFactory.h"
 #include "ProjectVersion.h"
-#include "TextFloat.h"
 #include "Track.h"
 #include "PathUtil.h"
 
 #include "lmmsversion.h"
+
 
 namespace lmms
 {
@@ -1932,7 +1932,7 @@ void DataFile::loadData( const QByteArray & _data, const QString & _sourceFile )
 			auto projectType = _sourceFile.endsWith(".mpt") ?
 				QObject::tr("template") : QObject::tr("project");
 
-			gui::TextFloat::displayMessage(
+			gui::getGUIInterface()->mainWindowInterface()->ShowTextFloatMessage(
 				QObject::tr("Version difference"),
 				QObject::tr("This %1 was created with LMMS %2")
 				.arg(projectType).arg(createdWith.getVersion()),

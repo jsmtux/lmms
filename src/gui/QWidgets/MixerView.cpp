@@ -34,7 +34,6 @@
 #include "lmms_math.h"
 
 #include "MixerView.h"
-#include "Knob.h"
 #include "MixerLine.h"
 #include "Mixer.h"
 #include "GuiApplication.h"
@@ -47,6 +46,8 @@
 #include "Song.h"
 #include "SubWindow.h"
 #include "TrackContainer.h" // For TrackContainer::TrackList typedef
+
+#include "widgets/Knob.h"
 
 namespace lmms::gui
 {

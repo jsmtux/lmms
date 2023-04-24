@@ -32,14 +32,12 @@
 
 #include "AutomationClip.h"
 #include "Clipboard.h"
-#include "modals/ColorChooser.h"
 #include "ComboBoxModel.h"
 #include "DataFile.h"
 #include "Engine.h"
 #include "embed.h"
 #include "GuiApplication.h"
 #include "InstrumentTrack.h"
-#include "InstrumentTrackView.h"
 #include "MidiClip.h"
 #include "MidiClipView.h"
 #include "Note.h"
@@ -49,10 +47,16 @@
 #include "Song.h"
 #include "editors/SongEditor.h"
 #include "StringPairDrag.h"
-#include "TextFloat.h"
 #include "TrackContainer.h"
+
 #include "editors/TrackContainerView.h"
-#include "TrackView.h"
+
+#include "modals/ColorChooser.h"
+
+#include "tracks/TrackView.h"
+#include "tracks/InstrumentTrackView.h"
+
+#include "widgets/TextFloat.h"
 
 namespace lmms::gui
 {

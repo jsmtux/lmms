@@ -28,10 +28,10 @@
 #include <QString>
 #include <QVBoxLayout>
 
-#include "ComboBox.h"
-#include "LcdSpinBox.h"
-#include "LedCheckBox.h"
-#include "Knob.h"
+#include "widgets/ComboBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LcdSpinBox.h"
+#include "widgets/LedCheckBox.h"
 
 
 namespace lmms::gui

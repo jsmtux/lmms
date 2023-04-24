@@ -47,7 +47,6 @@
 #include "ImportFilter.h"
 #include "Instrument.h"
 #include "InstrumentTrack.h"
-#include "instrument/InstrumentTrackWindow.h"
 #include "MainWindow.h"
 #include "PatternStore.h"
 #include "PluginFactory.h"
@@ -57,7 +56,10 @@
 #include "SampleTrack.h"
 #include "Song.h"
 #include "StringPairDrag.h"
-#include "TextFloat.h"
+
+#include "instrument/InstrumentTrackWindow.h"
+
+#include "widgets/TextFloat.h"
 
 namespace lmms::gui
 {

@@ -34,12 +34,13 @@
 #include "Mixer.h"
 #include "MixerView.h"
 #include "GuiApplication.h"
-#include "Knob.h"
 #include "SampleClip.h"
 #include "SampleTrackWindow.h"
 #include "StringPairDrag.h"
-#include "editors/TrackContainerView.h"
 #include "TrackLabelButton.h"
+
+#include "editors/TrackContainerView.h"
+#include "widgets/Knob.h"
 
 
 namespace lmms::gui
