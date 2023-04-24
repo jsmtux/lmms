@@ -29,7 +29,6 @@
 #include "ControllerConnection.h"
 #include "DataFile.h"
 #include "Mixer.h"
-#include "InstrumentTrackView.h"
 #include "Instrument.h"
 #include "Keymap.h"
 #include "MidiClient.h"
@@ -791,16 +790,6 @@ Clip* InstrumentTrack::createClip(const TimePos & pos)
 	p->movePosition(pos);
 	return p;
 }
-
-
-
-
-gui::TrackView* InstrumentTrack::createView( gui::TrackContainerView* tcv )
-{
-	return new gui::InstrumentTrackView( this, tcv );
-}
-
-
 
 
 void InstrumentTrack::saveTrackSpecificSettings( QDomDocument& doc, QDomElement & thisElement )

@@ -26,8 +26,6 @@
 
 #include <QAction>
 
-#include "clips/ClipView.h"
-#include "ComboBox.h"
 #include "DataFile.h"
 #include "embed.h"
 #include "MainWindow.h"
@@ -35,9 +33,12 @@
 #include "PatternTrack.h"
 #include "Song.h"
 #include "StringPairDrag.h"
-#include "TrackView.h"
 
 #include "MidiClip.h"
+
+#include "clips/ClipView.h"
+#include "tracks/TrackView.h"
+#include "widgets/ComboBox.h"
 
 
 namespace lmms::gui

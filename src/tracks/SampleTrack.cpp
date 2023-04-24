@@ -35,7 +35,6 @@
 #include "SampleClip.h"
 #include "SamplePlayHandle.h"
 #include "SampleRecordHandle.h"
-#include "SampleTrackView.h"
 #include "Song.h"
 #include "volume.h"
 
@@ -166,16 +165,6 @@ bool SampleTrack::play( const TimePos & _start, const fpp_t _frames,
 
 	return played_a_note;
 }
-
-
-
-
-gui::TrackView * SampleTrack::createView( gui::TrackContainerView* tcv )
-{
-	return new gui::SampleTrackView( this, tcv );
-}
-
-
 
 
 Clip * SampleTrack::createClip(const TimePos & pos)

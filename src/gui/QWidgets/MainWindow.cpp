@@ -35,22 +35,14 @@
 #include <QShortcut>
 #include <QSplitter>
 
-#include "modals/AboutDialog.h"
-#include "editors/AutomationEditor.h"
 #include "ControllerRackView.h"
 #include "embed.h"
 #include "Engine.h"
-#include "modals/ExportProjectDialog.h"
 #include "FileBrowser.h"
-#include "modals/FileDialog.h"
 #include "MixerView.h"
 #include "GuiApplication.h"
 #include "ImportFilter.h"
-#include "InstrumentTrackView.h"
-#include "instrument/InstrumentTrackWindow.h"
 #include "MicrotunerConfig.h"
-#include "editors/PatternEditor.h"
-#include "editors/PianoRoll.h"
 #include "instrument/PianoView.h"
 #include "PluginBrowser.h"
 #include "PluginFactory.h"
@@ -58,18 +50,32 @@
 #include "ProjectJournal.h"
 #include "ProjectNotes.h"
 #include "ProjectRenderer.h"
-#include "menus/RecentProjectsMenu.h"
 #include "RemotePlugin.h"
-#include "modals/SetupDialog.h"
 #include "SideBar.h"
-#include "editors/SongEditor.h"
 #include "SubWindow.h"
-#include "menus/TemplatesMenu.h"
-#include "TextFloat.h"
-#include "editors/TimeLineWidget.h"
-#include "ToolButton.h"
 #include "ToolPlugin.h"
+
+#include "editors/AutomationEditor.h"
+#include "editors/PatternEditor.h"
+#include "editors/PianoRoll.h"
+#include "editors/SongEditor.h"
+#include "editors/TimeLineWidget.h"
+
+#include "instrument/InstrumentTrackWindow.h"
+
+#include "menus/RecentProjectsMenu.h"
+#include "menus/TemplatesMenu.h"
+
+#include "modals/FileDialog.h"
+#include "modals/ExportProjectDialog.h"
 #include "modals/VersionedSaveDialog.h"
+#include "modals/AboutDialog.h"
+#include "modals/SetupDialog.h"
+
+#include "widgets/TextFloat.h"
+#include "widgets/ToolButton.h"
+
+#include "tracks/InstrumentTrackView.h"
 
 #include "lmmsversion.h"
 
@@ -313,6 +319,15 @@ void MainWindow::ShowWarningMessage(int line, int col, QString description) {
 						arg(line).
 						arg(col).
 						arg(description));
+}
+
+void MainWindow::ShowTextFloatMessage(QString title, QString description, QPixmap image, int _timeout) {
+	gui::TextFloat::displayMessage(
+		title,
+		description,
+		image,
+		_timeout
+	);
 }
 
 void MainWindow::ShowFileNotFoundMessage(QString path) {

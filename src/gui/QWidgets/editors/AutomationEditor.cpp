@@ -45,22 +45,22 @@
 
 #include "ActionGroup.h"
 #include "AutomationNode.h"
-#include "ComboBox.h"
 #include "debug.h"
 #include "DeprecationHelper.h"
 #include "embed.h"
 #include "Engine.h"
 #include "GuiApplication.h"
 #include "gui_templates.h"
-#include "Knob.h"
 #include "MainWindow.h"
 #include "PatternStore.h"
 #include "editors/PianoRoll.h"
 #include "ProjectJournal.h"
 #include "StringPairDrag.h"
-#include "TextFloat.h"
 #include "TimeLineWidget.h"
 
+#include "widgets/ComboBox.h"
+#include "widgets/Knob.h"
+#include "widgets/TextFloat.h"
 
 namespace lmms::gui
 {

@@ -27,11 +27,12 @@
 #include "InstrumentSoundShapingView.h"
 #include "EnvelopeAndLfoParameters.h"
 #include "EnvelopeAndLfoView.h"
-#include "ComboBox.h"
-#include "GroupBox.h"
 #include "gui_templates.h"
-#include "Knob.h"
-#include "TabWidget.h"
+
+#include "widgets/ComboBox.h"
+#include "widgets/GroupBox.h"
+#include "widgets/Knob.h"
+#include "widgets/TabWidget.h"
 
 
 namespace lmms::gui

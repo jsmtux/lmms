@@ -31,16 +31,17 @@
 #include "embed.h"
 #include "Engine.h"
 #include "gui_templates.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
 #include "AudioEngine.h"
 #include "DataFile.h"
 #include "Oscillator.h"
-#include "PixmapButton.h"
 #include "StringPairDrag.h"
-#include "TempoSyncKnob.h"
-#include "TextFloat.h"
 #include "Track.h"
+
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/PixmapButton.h"
+#include "widgets/TempoSyncKnob.h"
+#include "widgets/TextFloat.h"
 
 namespace lmms
 {

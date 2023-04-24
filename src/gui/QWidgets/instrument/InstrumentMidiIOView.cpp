@@ -28,14 +28,16 @@
 #include <QVBoxLayout>
 
 #include "InstrumentMidiIOView.h"
-#include "menus/MidiPortMenu.h"
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "embed.h"
-#include "GroupBox.h"
 #include "gui_templates.h"
-#include "LcdSpinBox.h"
 #include "MidiClient.h"
+
+#include "menus/MidiPortMenu.h"
+
+#include "widgets/GroupBox.h"
+#include "widgets/LcdSpinBox.h"
 
 namespace lmms::gui
 {

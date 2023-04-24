@@ -35,14 +35,16 @@
 #include "embed.h"
 #include "gui_templates.h"
 #include "GuiApplication.h"
-#include "Knob.h"
 #include "MainWindow.h"
-#include "MixerLineLcdSpinBox.h"
-#include "SampleTrackView.h"
 #include "Song.h"
 #include "SubWindow.h"
-#include "TabWidget.h"
-#include "TrackLabelButton.h"
+
+#include "widgets/Knob.h"
+#include "widgets/MixerLineLcdSpinBox.h"
+#include "widgets/TabWidget.h"
+
+#include "tracks/SampleTrackView.h"
+#include "tracks/TrackLabelButton.h"
 
 namespace lmms::gui
 {

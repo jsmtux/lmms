@@ -28,11 +28,12 @@
 
 #include "InstrumentFunctions.h"
 #include "InstrumentFunctionViews.h"
-#include "ComboBox.h"
-#include "GroupBox.h"
 #include "gui_templates.h"
-#include "Knob.h"
-#include "TempoSyncKnob.h"
+
+#include "widgets/ComboBox.h"
+#include "widgets/GroupBox.h"
+#include "widgets/Knob.h"
+#include "widgets/TempoSyncKnob.h"
 
 
 namespace lmms::gui

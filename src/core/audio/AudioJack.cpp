@@ -34,7 +34,7 @@
 #include "IGuiApplication.h"
 #include "gui_templates.h"
 #include "ConfigManager.h"
-#include "LcdSpinBox.h"
+// #include "LcdSpinBox.h"
 #include "AudioEngine.h"
 #include "MidiJack.h"
 

@@ -34,25 +34,29 @@
 #include "ActionGroup.h"
 #include "AudioDevice.h"
 #include "AudioEngine.h"
-#include "AutomatableSlider.h"
-#include "clips/ClipView.h"
-#include "ComboBox.h"
 #include "ConfigManager.h"
-#include "CPULoadWidget.h"
 #include "DeprecationHelper.h"
 #include "embed.h"
 #include "GuiApplication.h"
-#include "LcdSpinBox.h"
 #include "MainWindow.h"
-#include "MeterDialog.h"
-#include "Oscilloscope.h"
-#include "editors/PianoRoll.h"
 #include "PositionLine.h"
 #include "SubWindow.h"
-#include "TextFloat.h"
-#include "TimeDisplayWidget.h"
 #include "TimeLineWidget.h"
-#include "TrackView.h"
+
+#include "clips/ClipView.h"
+
+#include "editors/PianoRoll.h"
+
+#include "widgets/MeterDialog.h"
+#include "widgets/AutomatableSlider.h"
+#include "widgets/ComboBox.h"
+#include "widgets/CPULoadWidget.h"
+#include "widgets/LcdSpinBox.h"
+#include "widgets/Oscilloscope.h"
+#include "widgets/TextFloat.h"
+#include "widgets/TimeDisplayWidget.h"
+
+#include "tracks/TrackView.h"
 
 namespace lmms::gui
 {

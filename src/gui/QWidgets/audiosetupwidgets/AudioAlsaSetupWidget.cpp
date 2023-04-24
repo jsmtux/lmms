@@ -30,8 +30,9 @@
 #ifdef LMMS_HAVE_ALSA
 
 #include "ConfigManager.h"
-#include "LcdSpinBox.h"
 #include "gui_templates.h"
+
+#include "widgets/LcdSpinBox.h"
 
 namespace lmms::gui
 {

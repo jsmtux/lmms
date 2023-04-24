@@ -38,12 +38,15 @@
 #include "DataFile.h"
 #include "Engine.h"
 #include "FadeButton.h"
-#include "PixmapButton.h"
 #include "StringPairDrag.h"
 #include "Track.h"
+
 #include "editors/TrackContainerView.h"
+
 #include "clips/ClipView.h"
 #include "clips/ClipViewFactory.h"
+
+#include "widgets/PixmapButton.h"
 
 
 namespace lmms::gui

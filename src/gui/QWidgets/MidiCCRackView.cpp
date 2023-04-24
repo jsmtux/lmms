@@ -31,12 +31,13 @@
 #include <QWidget>
 
 #include "embed.h"
-#include "GroupBox.h"
 #include "GuiApplication.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
 #include "MainWindow.h"
 #include "SubWindow.h"
+
+#include "widgets/GroupBox.h"
+#include "widgets/Knob.h"
 
 namespace lmms::gui
 {

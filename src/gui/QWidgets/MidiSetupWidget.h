@@ -25,7 +25,7 @@
 #ifndef LMMS_GUI_MIDI_SETUP_WIDGET_H
 #define LMMS_GUI_MIDI_SETUP_WIDGET_H
 
-#include "TabWidget.h"
+#include "widgets/TabWidget.h"
 
 class QLineEdit;
 

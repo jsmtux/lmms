@@ -28,9 +28,10 @@
 
 
 #include "LfoController.h"
-#include "Knob.h"
-#include "TempoSyncKnob.h"
-#include "PixmapButton.h"
+
+#include "widgets/Knob.h"
+#include "widgets/PixmapButton.h"
+#include "widgets/TempoSyncKnob.h"
 
 namespace lmms::gui
 {

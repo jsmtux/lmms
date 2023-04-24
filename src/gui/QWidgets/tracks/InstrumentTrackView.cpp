@@ -35,17 +35,18 @@
 #include "ConfigManager.h"
 #include "Engine.h"
 #include "FadeButton.h"
-#include "Knob.h"
 #include "MidiCCRackView.h"
 #include "Mixer.h"
 #include "MixerView.h"
 #include "GuiApplication.h"
 #include "InstrumentTrack.h"
-#include "instrument/InstrumentTrackWindow.h"
 #include "MainWindow.h"
 #include "MidiClient.h"
-#include "menus/MidiPortMenu.h"
 #include "TrackLabelButton.h"
+
+#include "instrument/InstrumentTrackWindow.h"
+#include "menus/MidiPortMenu.h"
+#include "widgets/Knob.h"
 
 
 namespace lmms::gui

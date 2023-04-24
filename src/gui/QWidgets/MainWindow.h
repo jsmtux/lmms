@@ -86,6 +86,8 @@ public:
 
     void ShowWarningMessage(int line, int col, QString description) override;
 
+    void ShowTextFloatMessage(QString title, QString description, QPixmap image, int _timeout) override;
+
 	void ShowFileNotFoundMessage(QString path) override;
 
 	ProgressModal* ShowProgressMessage(QString title, int min, int max) override;

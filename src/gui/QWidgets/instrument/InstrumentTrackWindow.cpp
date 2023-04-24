@@ -33,16 +33,12 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-#include "ComboBox.h"
 #include "ConfigManager.h"
 #include "DataFile.h"
 #include "EffectRackView.h"
 #include "embed.h"
 #include "Engine.h"
 #include "FileBrowser.h"
-#include "modals/FileDialog.h"
-#include "GroupBox.h"
-#include "MixerLineLcdSpinBox.h"
 #include "GuiApplication.h"
 #include "gui_templates.h"
 #include "Instrument.h"
@@ -52,11 +48,6 @@
 #include "InstrumentMiscView.h"
 #include "InstrumentSoundShapingView.h"
 #include "InstrumentTrack.h"
-#include "InstrumentTrackView.h"
-#include "Knob.h"
-#include "LcdSpinBox.h"
-#include "LedCheckBox.h"
-#include "LeftRightNav.h"
 #include "MainWindow.h"
 #include "PianoView.h"
 #include "PluginFactory.h"
@@ -64,10 +55,22 @@
 #include "Song.h"
 #include "StringPairDrag.h"
 #include "SubWindow.h"
-#include "TabWidget.h"
-#include "editors/TrackContainerView.h"
-#include "TrackLabelButton.h"
 
+#include "editors/TrackContainerView.h"
+
+#include "modals/FileDialog.h"
+
+#include "tracks/TrackLabelButton.h"
+#include "tracks/InstrumentTrackView.h"
+
+#include "widgets/ComboBox.h"
+#include "widgets/GroupBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LcdSpinBox.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/LeftRightNav.h"
+#include "widgets/MixerLineLcdSpinBox.h"
+#include "widgets/TabWidget.h"
 
 namespace lmms::gui
 {

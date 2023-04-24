@@ -31,7 +31,8 @@
 
 #include "DeprecationHelper.h"
 #include "VersionedSaveDialog.h"
-#include "LedCheckBox.h"
+
+#include "widgets/LedCheckBox.h"
 
 
 namespace lmms::gui

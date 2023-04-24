@@ -29,14 +29,15 @@
 #include <QPainterPath>
 #include <QMenu>
 
-#include "editors/AutomationEditor.h"
 #include "embed.h"
 #include "GuiApplication.h"
 #include "ProjectJournal.h"
-#include "modals/RenameDialog.h"
 #include "StringPairDrag.h"
-#include "TextFloat.h"
 #include "Track.h"
+
+#include "editors/AutomationEditor.h"
+#include "modals/RenameDialog.h"
+#include "widgets/TextFloat.h"
 
 #include "Engine.h"
 
