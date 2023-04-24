@@ -59,7 +59,7 @@
 #include "Note.h"
 #include "PathUtil.h"
 
-#include "FileDialog.h"
+#include "IFileDialog.h"
 
 namespace lmms
 {
@@ -1121,7 +1121,8 @@ void SampleBuffer::visualize(
 
 QString SampleBuffer::openAudioFile() const
 {
-	gui::FileDialog ofd(nullptr, tr("Open audio file"));
+	auto ofd = gui::getGUIInterface()->createFileDialog(tr("Open audio file"));
+	// gui::FileDialog ofd(nullptr, tr("Open audio file"));
 
 	QString dir;
 	if (!m_audioFile.isEmpty())
@@ -1143,8 +1144,7 @@ QString SampleBuffer::openAudioFile() const
 		dir = ConfigManager::inst()->userSamplesDir();
 	}
 	// change dir to position of previously opened file
-	ofd.setDirectory(dir);
-	ofd.setFileMode(gui::FileDialog::ExistingFiles);
+	ofd->setDirectory(dir);
 
 	// set filters
 	QStringList types;
@@ -1163,20 +1163,20 @@ QString SampleBuffer::openAudioFile() const
 		<< tr("RAW-Files (*.raw)")
 		//<< tr("MOD-Files (*.mod)")
 		;
-	ofd.setNameFilters(types);
+	ofd->setNameFilters(types);
 	if (!m_audioFile.isEmpty())
 	{
 		// select previously opened file
-		ofd.selectFile(QFileInfo(m_audioFile).fileName());
+		ofd->selectFile(QFileInfo(m_audioFile).fileName());
 	}
 
-	if (ofd.exec () == QDialog::Accepted)
+	if (ofd->exec () == QDialog::Accepted)
 	{
-		if (ofd.selectedFiles().isEmpty())
+		if (ofd->selectedFiles().isEmpty())
 		{
 			return QString();
 		}
-		return PathUtil::toShortestRelative(ofd.selectedFiles()[0]);
+		return PathUtil::toShortestRelative(ofd->selectedFiles()[0]);
 	}
 
 	return QString();

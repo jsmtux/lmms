@@ -33,7 +33,7 @@
 
 #include "AutomationClip.h"
 #include "AutomationTrackView.h"
-#include "ColorChooser.h"
+#include "modals/ColorChooser.h"
 #include "ConfigManager.h"
 #include "DataFile.h"
 #include "embed.h"

@@ -5,6 +5,7 @@
 #include "IMixerView.h"
 #include "IPianoRollWindow.h"
 #include "IAutomationEditor.h"
+#include "IFileDialog.h"
 
 #include <QDomNode>
 
@@ -30,6 +31,7 @@ public:
 	virtual void saveState(DataFile& dataFile) = 0;
 
 	virtual Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) = 0;
+	virtual std::unique_ptr<IFileDialog> createFileDialog(QString title) = 0;
 };
 
 // Short-hand function

@@ -40,7 +40,7 @@
 #include "embed.h"
 #include "Engine.h"
 #include "FileBrowser.h"
-#include "FileDialog.h"
+#include "modals/FileDialog.h"
 #include "GroupBox.h"
 #include "MixerLineLcdSpinBox.h"
 #include "GuiApplication.h"
