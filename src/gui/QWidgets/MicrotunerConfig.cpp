@@ -37,7 +37,7 @@
 #include "ComboBox.h"
 #include "embed.h"
 #include "Engine.h"
-#include "FileDialog.h"
+#include "modals/FileDialog.h"
 #include "GuiApplication.h"
 #include "Keymap.h"
 #include "LcdFloatSpinBox.h"

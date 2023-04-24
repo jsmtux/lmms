@@ -40,9 +40,9 @@
 #include "ControllerRackView.h"
 #include "embed.h"
 #include "Engine.h"
-#include "ExportProjectDialog.h"
+#include "modals/ExportProjectDialog.h"
 #include "FileBrowser.h"
-#include "FileDialog.h"
+#include "modals/FileDialog.h"
 #include "MixerView.h"
 #include "GuiApplication.h"
 #include "ImportFilter.h"
@@ -69,7 +69,7 @@
 #include "editors/TimeLineWidget.h"
 #include "ToolButton.h"
 #include "ToolPlugin.h"
-#include "VersionedSaveDialog.h"
+#include "modals/VersionedSaveDialog.h"
 
 #include "lmmsversion.h"
 

@@ -33,7 +33,7 @@
 #include <QPainter>
 
 #include "CaptionMenu.h"
-#include "ColorChooser.h"
+#include "modals/ColorChooser.h"
 #include "embed.h"
 #include "Knob.h"
 #include "LcdWidget.h"

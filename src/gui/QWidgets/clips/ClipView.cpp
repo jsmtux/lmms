@@ -32,7 +32,7 @@
 
 #include "AutomationClip.h"
 #include "Clipboard.h"
-#include "ColorChooser.h"
+#include "modals/ColorChooser.h"
 #include "ComboBoxModel.h"
 #include "DataFile.h"
 #include "Engine.h"

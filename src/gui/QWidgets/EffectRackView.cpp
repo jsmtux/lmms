@@ -29,7 +29,7 @@
 #include <QVBoxLayout>
 
 #include "EffectRackView.h"
-#include "EffectSelectDialog.h"
+#include "modals/EffectSelectDialog.h"
 #include "EffectView.h"
 #include "GroupBox.h"
 

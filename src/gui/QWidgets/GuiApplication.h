@@ -74,6 +74,7 @@ public:
 	ControllerRackView* getControllerRackView() { return m_controllerRackView; }
 
 	Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) override;
+	std::unique_ptr<IFileDialog> createFileDialog(QString title) override;
 
 	void clear() override;
 	void restoreState(QDomNode& node) override;

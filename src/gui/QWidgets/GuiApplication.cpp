@@ -37,6 +37,8 @@
 #include "MicrotunerConfig.h"
 #include "ProjectNotes.h"
 
+#include "modals/FileDialog.h"
+
 #include "editors/AutomationEditor.h"
 #include "editors/PatternEditor.h"
 #include "editors/PianoRoll.h"
@@ -197,6 +199,10 @@ GuiApplication::~GuiApplication()
 
 Instrument* GuiApplication::createDummyInstrument(InstrumentTrack *_instrument_track) {
 	return new DummyInstrument(_instrument_track);
+}
+
+std::unique_ptr<IFileDialog> GuiApplication::createFileDialog(QString title) {
+	return std::unique_ptr<IFileDialog>(new FileDialog(mainWindow(), title));
 }
 
 void GuiApplication::clear() {

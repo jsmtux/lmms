@@ -21,7 +21,7 @@
  *
  */
 
-#include <ColorChooser.h>
+#include "ColorChooser.h"
 
 
 namespace lmms::gui

@@ -71,7 +71,7 @@
 #include "editors/StepRecorderWidget.h"
 #include "TextFloat.h"
 #include "TimeLineWidget.h"
-#include "FileDialog.h"
+#include "modals/FileDialog.h"
 
 
 namespace lmms

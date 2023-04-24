@@ -36,7 +36,7 @@
 #include "GuiApplication.h"
 #include "MidiClip.h"
 #include "editors/PianoRoll.h"
-#include "RenameDialog.h"
+#include "modals/RenameDialog.h"
 #include "TrackView.h"
 
 namespace lmms::gui

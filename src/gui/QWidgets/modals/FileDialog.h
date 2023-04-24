@@ -25,6 +25,8 @@
 #ifndef LMMS_GUI_FILE_DIALOG_H
 #define LMMS_GUI_FILE_DIALOG_H
 
+#include "IFileDialog.h"
+
 #include <QFileDialog>
 
 #include "lmms_export.h"
@@ -33,7 +35,7 @@ namespace lmms::gui
 {
 
 
-class LMMS_EXPORT FileDialog : public QFileDialog
+class LMMS_EXPORT FileDialog : public QFileDialog, public IFileDialog
 {
 	Q_OBJECT
 public:
@@ -51,6 +53,23 @@ public:
 									const QString &filter = QString(),
 									QString *selectedFilter = 0);
 	void clearSelection();
+////////////
+    void setDirectory(const QString& directory) override {
+		QFileDialog::setDirectory(directory);
+		setFileMode(gui::FileDialog::ExistingFiles);
+	}
+    void setNameFilters(const QStringList &filters) override {
+		QFileDialog::setNameFilters(filters);
+	}
+    void selectFile(const QString &filename) override {
+		QFileDialog::selectFile(filename);
+	}
+    int exec() override {
+		return QFileDialog::exec();
+	}
+    QStringList selectedFiles() const override {
+		return QFileDialog::selectedFiles();
+	}
 };
 
 
