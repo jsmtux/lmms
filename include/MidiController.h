@@ -69,7 +69,6 @@ public:
 
 
 public slots:
-	gui::ControllerDialog* createDialog( QWidget * _parent ) override;
 	void updateName();
 
 

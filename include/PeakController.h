@@ -26,7 +26,6 @@
 #define LMMS_PEAK_CONTROLLER_H
 
 #include "Controller.h"
-#include "ControllerDialog.h"
 
 class QWidget;
 
@@ -59,7 +58,6 @@ public:
 
 
 public slots:
-	gui::ControllerDialog * createDialog( QWidget * _parent ) override;
 	void handleDestroyedEffect();
 	void updateCoeffs();
 
@@ -82,28 +80,6 @@ private:
 	float m_decayCoeff;
 	bool m_coeffNeedsUpdate;
 } ;
-
-namespace gui
-{
-
-class PeakControllerDialog : public ControllerDialog
-{
-	Q_OBJECT
-public:
-	PeakControllerDialog( Controller * _controller, QWidget * _parent );
-	~PeakControllerDialog() override = default;
-
-protected:
-	void contextMenuEvent( QContextMenuEvent * _me ) override;
-	void paintEvent( QPaintEvent * _pe ) override;
-	void modelChanged() override;
-
-	PeakController * m_peakController;
-
-};
-
-
-} // namespace gui
 
 } // namespace lmms
 

@@ -139,8 +139,6 @@ public:
 	bool hasModel( const Model * m ) const;
 
 public slots:
-	virtual gui::ControllerDialog * createDialog( QWidget * _parent );
-
 	virtual void setName( const QString & _new_name )
 	{
 		m_name = _new_name;

@@ -33,13 +33,15 @@
 
 #include "ControllerView.h"
 
-#include "ControllerDialog.h"
 #include "embed.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
 #include "SubWindow.h"
 
 #include "widgets/CaptionMenu.h"
+
+#include "controllerdialogs/ControllerDialog.h"
+#include "controllerdialogs/ControllerDialogsFactory.h"
 
 namespace lmms::gui
 {
@@ -76,7 +78,8 @@ ControllerView::ControllerView( Controller * _model, QWidget * _parent ) :
 	vBoxLayout->addWidget(m_nameLabel);
 
 
-	m_controllerDlg = getController()->createDialog( getGUI()->mainWindow()->workspace() );
+	ControllerDialogsFactory factory;
+	m_controllerDlg = factory.createControllerDialog(getController(), getGUI()->mainWindow()->workspace());
 
 	m_subWindow = getGUI()->mainWindow()->addWindowedWidget( m_controllerDlg );
 	

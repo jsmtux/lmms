@@ -30,7 +30,7 @@
 
 #include "AudioEngine.h"
 #include "ControllerConnection.h"
-#include "ControllerDialog.h"
+// #include "ControllerDialog.h"
 #include "LfoController.h"
 #include "MidiController.h"
 #include "PeakController.h"
@@ -294,12 +294,12 @@ QString Controller::nodeName() const
 
 
 
-gui::ControllerDialog * Controller::createDialog( QWidget * _parent )
-{
-	auto d = new gui::ControllerDialog(this, _parent);
+// gui::ControllerDialog * Controller::createDialog( QWidget * _parent )
+// {
+// 	auto d = new gui::ControllerDialog(this, _parent);
 
-	return d;
-}
+// 	return d;
+// }
 
 
 

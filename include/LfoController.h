@@ -30,7 +30,6 @@
 #include "Model.h"
 #include "AutomatableModel.h"
 #include "Controller.h"
-#include "ControllerDialog.h"
 #include "TempoSyncKnobModel.h"
 #include "Oscillator.h"
 
@@ -64,10 +63,6 @@ public:
 	QString nodeName() const override;
 
 
-public slots:
-	gui::ControllerDialog * createDialog( QWidget * _parent ) override;
-
-
 protected:
 	// The internal per-controller value updating function
 	void updateValueBuffer() override;
@@ -97,42 +92,6 @@ protected slots:
 
 } ;
 
-namespace gui
-{
-
-class LfoControllerDialog : public ControllerDialog
-{
-	Q_OBJECT
-public:
-	LfoControllerDialog( Controller * _controller, QWidget * _parent );
-	~LfoControllerDialog() override;
-
-
-protected:
-	void contextMenuEvent( QContextMenuEvent * _me ) override;
-	void modelChanged() override;
-
-	LfoController * m_lfo;
-
-	Knob * m_baseKnob;
-	TempoSyncKnob * m_speedKnob;
-	Knob * m_amountKnob;
-	Knob * m_phaseKnob;
-	PixmapButton * m_userLfoBtn;
-	automatableButtonGroup * m_waveBtnGrp;
-	automatableButtonGroup * m_multiplierBtnGrp;
-
-
-private:
-	PixmapButton * m_userWaveBtn;
-
-private slots:
-	void askUserDefWave();
-
-} ;
-
-
-} // namespace gui
 
 } // namespace lmms
 

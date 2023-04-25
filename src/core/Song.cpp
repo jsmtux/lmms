@@ -35,7 +35,6 @@
 #include "AutomationTrack.h"
 #include "IAutomationEditor.h"
 #include "ConfigManager.h"
-#include "ControllerRackView.h"
 #include "ControllerConnection.h"
 #include "EnvelopeAndLfoParameters.h"
 #include "Mixer.h"

@@ -141,12 +141,4 @@ QString MidiController::nodeName() const
 
 
 
-
-gui::ControllerDialog* MidiController::createDialog( QWidget * _parent )
-{
-	return nullptr;
-}
-
-
-
 } // namespace lmms
