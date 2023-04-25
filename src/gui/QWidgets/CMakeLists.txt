@@ -3,7 +3,6 @@ SET(LMMS_UI_SRCS
 	AudioDeviceSetupWidget.cpp
 	AutomatableModelView.cpp
 	ControlLayout.cpp
-	ControllerDialog.cpp
 	ControllerRackView.cpp
 	ControllerView.cpp
 	Controls.cpp
@@ -14,7 +13,6 @@ SET(LMMS_UI_SRCS
 	FileBrowser.cpp
 	GuiApplication.cpp
 	LadspaControlView.cpp
-	LfoControllerDialog.cpp
 	LinkedModelGroupViews.cpp
 	LmmsPalette.cpp
 	LmmsStyle.cpp
@@ -27,7 +25,6 @@ SET(LMMS_UI_SRCS
 	MixerLine.cpp
 	MixerView.cpp
 	ModelView.cpp
-	PeakControllerDialog.cpp
 	PluginBrowser.cpp
 	ProjectNotes.cpp
 	RowTableView.cpp
@@ -51,6 +48,11 @@ SET(LMMS_UI_SRCS
 	clips/PatternClipView.cpp
 	clips/SampleClipView.cpp
 	clips/ClipViewFactory.cpp
+
+	controllerdialogs/ControllerDialogsFactory.cpp
+	controllerdialogs/ControllerDialog.cpp
+	controllerdialogs/PeakControllerDialog.cpp
+	controllerdialogs/LfoControllerDialog.cpp
 
 	editors/AutomationEditor.cpp
 	editors/Editor.cpp
