@@ -6,7 +6,6 @@ SET(LMMS_UI_SRCS
 	ControllerRackView.cpp
 	ControllerView.cpp
 	Controls.cpp
-	EffectControlDialog.cpp
 	EffectRackView.cpp
 	EffectView.cpp
 	embed.cpp
@@ -53,6 +52,9 @@ SET(LMMS_UI_SRCS
 	controllerdialogs/ControllerDialog.cpp
 	controllerdialogs/PeakControllerDialog.cpp
 	controllerdialogs/LfoControllerDialog.cpp
+
+	effectcontroldialogs/EffectControlDialog.cpp
+	effectcontroldialogs/EffectControlDialogFactory.cpp
 
 	editors/AutomationEditor.cpp
 	editors/Editor.cpp
