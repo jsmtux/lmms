@@ -32,6 +32,7 @@
 
 #include "ConfigManager.h"
 #include "ControllerRackView.h"
+#include "DummyEffect.h"
 #include "MixerView.h"
 #include "MainWindow.h"
 #include "MicrotunerConfig.h"
@@ -43,6 +44,9 @@
 #include "editors/PatternEditor.h"
 #include "editors/PianoRoll.h"
 #include "editors/SongEditor.h"
+
+#include "effectcontroldialogs/EffectControlDialogFactory.h"
+#include "effectcontroldialogs/DummyEffectControlDialog.h"
 
 #include "instrument/DummyInstrument.h"
 
@@ -190,6 +194,9 @@ GuiApplication::GuiApplication()
 	m_mainWindow->finalize();
 
 	m_loadingProgressLabel = nullptr;
+
+	m_effectControlDialogFactory.registerEffectView<DummyEffectControls>(
+		[](EffectControls* effectControl){return new DummyEffectControlDialog(effectControl);});
 }
 
 GuiApplication::~GuiApplication()

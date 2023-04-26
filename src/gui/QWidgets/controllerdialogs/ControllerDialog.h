@@ -1,7 +1,8 @@
 /*
- * EffectControls.h - model for effect-controls
+ * ControllerDialog.h - per-controller-specific view for changing a
+ *                      controller's settings
  *
- * Copyright (c) 2008-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2008-2009 Paul Giblock <drfaygo/at/gmail.com>
  *
  * This file is part of LMMS - https://lmms.io
  *
@@ -22,63 +23,42 @@
  *
  */
 
-#ifndef LMMS_EFFECT_CONTROLS_H
-#define LMMS_EFFECT_CONTROLS_H
+#ifndef LMMS_GUI_CONTROLLER_DIALOG_H
+#define LMMS_GUI_CONTROLLER_DIALOG_H
 
-#include "Model.h"
-#include "JournallingObject.h"
-#include "Effect.h"
+#include <QWidget>
+
+#include "ModelView.h"
 
 namespace lmms
 {
 
+class Controller;
 
 namespace gui
 {
 
-class EffectControlDialog;
-
-} // namespace gui
-
-class EffectControls : public JournallingObject, public Model
+class ControllerDialog : public QWidget, public ModelView
 {
+    Q_OBJECT
 public:
-	EffectControls( Effect * _eff ) :
-		JournallingObject(),
-		Model( _eff ),
-		m_effect( _eff ),
-		m_viewVisible( false )
-	{
-	}
+	ControllerDialog( Controller * _controller, QWidget * _parent );
 
-	~EffectControls() override = default;
-
-	virtual int controlCount() = 0;
+	~ControllerDialog() override = default;
 
 
-	void setViewVisible( bool _visible )
-	{
-		m_viewVisible = _visible;
-	}
-
-	bool isViewVisible() const
-	{
-		return m_viewVisible;
-	}
-
-	Effect * effect()
-	{
-		return m_effect;
-	}
+signals:
+	void closed();
 
 
-private:
-	Effect * m_effect;
-	bool m_viewVisible;
+protected:
+	void closeEvent( QCloseEvent * _ce ) override;
 
 } ;
 
 
+} // namespace gui
+
 } // namespace lmms
 
-#endif // LMMS_EFFECT_CONTROLS_H
+#endif // LMMS_GUI_CONTROLLER_DIALOG_H

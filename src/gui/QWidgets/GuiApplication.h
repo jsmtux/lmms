@@ -37,6 +37,7 @@
 #include "editors/SongEditor.h"
 #include "editors/PianoRoll.h"
 #include "editors/AutomationEditor.h"
+#include "effectcontroldialogs/EffectControlDialogFactory.h"
 
 class QLabel;
 
@@ -73,6 +74,8 @@ public:
 	IAutomationEditor* automationEditorInterface() override { return m_automationEditor; }
 	ControllerRackView* getControllerRackView() { return m_controllerRackView; }
 
+	EffectControlDialogFactory* getEffectControlDialogFactory() { return &m_effectControlDialogFactory; }
+
 	Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) override;
 	std::unique_ptr<IFileDialog> createFileDialog(QString title) override;
 
@@ -99,6 +102,7 @@ private:
 	MicrotunerConfig* m_microtunerConfig;
 	ControllerRackView* m_controllerRackView;
 	QLabel* m_loadingProgressLabel;
+	EffectControlDialogFactory m_effectControlDialogFactory;
 };
 
 // Short-hand function

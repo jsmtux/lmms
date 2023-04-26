@@ -42,6 +42,8 @@
 #include "widgets/LedCheckBox.h"
 #include "widgets/TempoSyncKnob.h"
 
+#include "effectcontroldialogs/EffectControlDialogFactory.h"
+
 
 namespace lmms::gui
 {
@@ -96,7 +98,7 @@ EffectView::EffectView( Effect * _model, QWidget * _parent ) :
 		connect( ctls_btn, SIGNAL(clicked()),
 					this, SLOT(editControls()));
 
-		m_controlView = effect()->controls()->createView();
+		m_controlView = getGUI()->getEffectControlDialogFactory()->createEffectView(effect()->controls());
 		if( m_controlView )
 		{
 			m_subWindow = getGUI()->mainWindow()->addWindowedWidget( m_controlView );
