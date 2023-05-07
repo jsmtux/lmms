@@ -163,16 +163,6 @@ void Effect::checkGate( double _out_sum )
 }
 
 
-
-
-gui::PluginView * Effect::instantiateView( QWidget * _parent )
-{
-	return new gui::EffectView( this, _parent );
-}
-
-	
-
-
 void Effect::reinitSRC()
 {
 	for (auto& state : m_srcState)
