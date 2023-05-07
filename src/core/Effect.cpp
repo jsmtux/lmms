@@ -28,7 +28,6 @@
 #include "Effect.h"
 #include "EffectChain.h"
 #include "EffectControls.h"
-#include "EffectView.h"
 
 #include "ConfigManager.h"
 
