@@ -45,10 +45,12 @@
 #include "editors/PianoRoll.h"
 #include "editors/SongEditor.h"
 
+#include "plugins/DummyPlugin.h"
+#include "plugins/DummyInstrument.h"
+
 #include "effectcontroldialogs/EffectControlDialogFactory.h"
 #include "effectcontroldialogs/DummyEffectControlDialog.h"
 
-#include "instrument/DummyInstrument.h"
 
 #include <QApplication>
 #include <QDir>
@@ -206,6 +208,10 @@ GuiApplication::~GuiApplication()
 
 Instrument* GuiApplication::createDummyInstrument(InstrumentTrack *_instrument_track) {
 	return new DummyInstrument(_instrument_track);
+}
+
+Plugin* GuiApplication::createDummyPlugin() {
+	return new DummyPlugin();
 }
 
 std::unique_ptr<IFileDialog> GuiApplication::createFileDialog(QString title) {

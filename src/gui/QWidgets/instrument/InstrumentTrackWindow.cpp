@@ -56,6 +56,8 @@
 #include "StringPairDrag.h"
 #include "SubWindow.h"
 
+#include "plugins/QWidgetInstrumentPlugin.h"
+
 #include "editors/TrackContainerView.h"
 
 #include "modals/FileDialog.h"
@@ -465,7 +467,7 @@ void InstrumentTrackWindow::updateInstrumentView()
 	delete m_instrumentView;
 	if( m_track->m_instrument != nullptr )
 	{
-		m_instrumentView = m_track->m_instrument->createView( m_tabWidget );
+		m_instrumentView = static_cast<QWidgetInstrumentPlugin*>(m_track->m_instrument)->createView( m_tabWidget );
 		m_tabWidget->addTab( m_instrumentView, tr( "Plugin" ), "plugin_tab", 0 );
 		m_tabWidget->setActiveTab( 0 );
 

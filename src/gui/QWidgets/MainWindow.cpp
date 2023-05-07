@@ -53,7 +53,8 @@
 #include "RemotePlugin.h"
 #include "SideBar.h"
 #include "SubWindow.h"
-#include "ToolPlugin.h"
+
+#include "plugins/QWidgetToolPlugin.h"
 
 #include "editors/AutomationEditor.h"
 #include "editors/PatternEditor.h"
@@ -460,7 +461,7 @@ void MainWindow::finalize()
 	for( const Plugin::Descriptor* desc : getPluginFactory()->descriptors(Plugin::Tool) )
 	{
 		m_toolsMenu->addAction( desc->logo->pixmap(), desc->displayName );
-		m_tools.push_back( ToolPlugin::instantiate( desc->name, /*this*/nullptr )
+		m_tools.push_back( static_cast<QWidgetToolPlugin*>(ToolPlugin::instantiate( desc->name, /*this*/nullptr ))
 						   ->createView(this) );
 	}
 	if( !m_toolsMenu->isEmpty() )

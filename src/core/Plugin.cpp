@@ -24,6 +24,8 @@
 
 #include "Plugin.h"
 
+#include <iostream>
+
 #include <QtGlobal>
 #include <QDomElement>
 #include <QLibrary>
@@ -32,7 +34,6 @@
 #include "embed.h"
 #include "Engine.h"
 #include "IGuiApplication.h"
-#include "DummyPlugin.h"
 #include "AutomatableModel.h"
 #include "Song.h"
 #include "PluginFactory.h"
@@ -211,18 +212,18 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 {
 	const PluginFactory::PluginInfo& pi = getPluginFactory()->pluginInfo(pluginName.toUtf8());
 
-	Plugin* inst;
-	if( pi.isNull() )
+	Plugin* inst = nullptr;
+	if (gui::getGUIInterface() == nullptr) {
+		std::cerr << "Gui implementation missing when trying to create plugin" << std::endl;
+	}
+	else if( pi.isNull() )
 	{
-		if (gui::getGUIInterface() != nullptr)
-		{
-			QMessageBox::information( nullptr,
-				tr( "Plugin not found" ),
-				tr( "The plugin \"%1\" wasn't found or could not be loaded!\nReason: \"%2\"" ).
-						arg( pluginName ).arg( getPluginFactory()->errorString(pluginName) ),
-				QMessageBox::Ok | QMessageBox::Default );
-		}
-		inst = new DummyPlugin();
+		QMessageBox::information( nullptr,
+			tr( "Plugin not found" ),
+			tr( "The plugin \"%1\" wasn't found or could not be loaded!\nReason: \"%2\"" ).
+					arg( pluginName ).arg( getPluginFactory()->errorString(pluginName) ),
+			QMessageBox::Ok | QMessageBox::Default );
+		inst = gui::getGUIInterface()->createDummyPlugin();
 	}
 	else
 	{
@@ -231,7 +232,7 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 		{
 			inst = instantiationHook(parent, data);
 			if(!inst) {
-				inst = new DummyPlugin();
+				inst = gui::getGUIInterface()->createDummyPlugin();
 			}
 		}
 		else
@@ -243,7 +244,7 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 					tr( "Failed to load plugin \"%1\"!").arg( pluginName ),
 					QMessageBox::Ok | QMessageBox::Default );
 			}
-			inst = new DummyPlugin();
+			inst = gui::getGUIInterface()->createDummyPlugin();
 		}
 	}
 
@@ -259,7 +260,7 @@ void Plugin::collectErrorForUI( QString errMsg )
 }
 
 
-
+/*
 
 gui::PluginView * Plugin::createView( QWidget * parent )
 {
@@ -271,7 +272,7 @@ gui::PluginView * Plugin::createView( QWidget * parent )
 	return pv;
 }
 
-
+*/
 
 
 Plugin::Descriptor::SubPluginFeatures::Key::Key( const QDomElement & key ) :

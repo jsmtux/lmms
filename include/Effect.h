@@ -169,7 +169,6 @@ public:
 				Model * _parent,
 				Descriptor::SubPluginFeatures::Key * _key );
 
-
 protected:
 	/**
 		Effects should call this at the end of audio processing
@@ -180,7 +179,6 @@ protected:
 	*/
 	void checkGate( double _out_sum );
 
-	gui::PluginView* instantiateView( QWidget * ) override;
 
 	// some effects might not be capable of higher sample-rates so they can
 	// sample it down before processing and back after processing

@@ -14,6 +14,7 @@ namespace lmms
 class DataFile;
 class Instrument;
 class InstrumentTrack;
+class Plugin;
 
 namespace gui
 {
@@ -31,6 +32,7 @@ public:
 	virtual void saveState(DataFile& dataFile) = 0;
 
 	virtual Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) = 0;
+	virtual Plugin* createDummyPlugin() = 0;
 	virtual std::unique_ptr<IFileDialog> createFileDialog(QString title) = 0;
 };
 

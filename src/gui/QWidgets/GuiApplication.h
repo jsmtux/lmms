@@ -77,6 +77,7 @@ public:
 	EffectControlDialogFactory* getEffectControlDialogFactory() { return &m_effectControlDialogFactory; }
 
 	Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) override;
+	Plugin* createDummyPlugin() override;
 	std::unique_ptr<IFileDialog> createFileDialog(QString title) override;
 
 	void clear() override;

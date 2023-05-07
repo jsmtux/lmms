@@ -1,8 +1,8 @@
 /*
- * DummyInstrument.h - instrument used as fallback if an instrument couldn't
- *                     be loaded
+ * DummyPlugin.h - empty plugin which is used as fallback if a plugin couldn't
+ *                 be found
  *
- * Copyright (c) 2005-2014 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2005-2009 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
  * This file is part of LMMS - https://lmms.io
  *
@@ -23,37 +23,26 @@
  *
  */
 
-#ifndef LMMS_DUMMY_INSTRUMENT_H
-#define LMMS_DUMMY_INSTRUMENT_H
+#ifndef LMMS_DUMMY_PLUGIN_H
+#define LMMS_DUMMY_PLUGIN_H
 
-#include "Instrument.h"
-#include "InstrumentView.h"
-#include "Engine.h"
+#include "Plugin.h"
+#include "PluginView.h"
 
-#include <cstring>
-
-#include "AudioEngine.h"
-
+#include "QWidgetToolPlugin.h"
 
 namespace lmms
 {
 
-
-class DummyInstrument : public Instrument
+class DummyPlugin : public gui::QWidgetToolPlugin
 {
 public:
-	DummyInstrument( InstrumentTrack * _instrument_track ) :
-		Instrument( _instrument_track, nullptr )
+	DummyPlugin() :
+		QWidgetToolPlugin( nullptr, nullptr )
 	{
 	}
 
-	~DummyInstrument() override = default;
-
-	void playNote( NotePlayHandle *, sampleFrame * buffer ) override
-	{
-		memset( buffer, 0, sizeof( sampleFrame ) *
-			Engine::audioEngine()->framesPerPeriod() );
-	}
+	~DummyPlugin() override = default;
 
 	void saveSettings( QDomDocument &, QDomElement & ) override
 	{
@@ -65,16 +54,19 @@ public:
 
 	QString nodeName() const override
 	{
-		return "dummyinstrument";
+		return "DummyPlugin";
 	}
 
+
+protected:
 	gui::PluginView * instantiateView( QWidget * _parent ) override
 	{
-		return new gui::InstrumentViewFixedSize( this, _parent );
+		return new gui::PluginView( this, _parent );
 	}
+
 } ;
 
 
 } // namespace lmms
 
-#endif // LMMS_DUMMY_INSTRUMENT_H
+#endif // LMMS_DUMMY_PLUGIN_H
