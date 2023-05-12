@@ -28,11 +28,13 @@
 #include <cmath>
 
 #include <QDomElement>
-#include <QMessageBox>
 
 #include "AudioEngine.h"
 #include "EffectChain.h"
 #include "plugins/PeakControllerEffect/PeakControllerEffect.h"
+#include "IGuiApplication.h"
+
+using lmms::gui::getGUIInterface;
 
 namespace lmms
 {
@@ -212,16 +214,14 @@ PeakController * PeakController::getControllerBySetting(const QDomElement & _thi
 			{
 				(*i)->m_effectId = newEffectId++;
 			}
-			QMessageBox msgBox;
-			msgBox.setIcon( QMessageBox::Information );
-			msgBox.setWindowTitle( tr("Peak Controller Bug") );
-			msgBox.setText( tr("Due to a bug in older version of LMMS, the peak "
+			getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+				tr("Peak Controller Bug"),
+				tr("Due to a bug in older version of LMMS, the peak "
 							   "controllers may not be connect properly. "
 							   "Please ensure that peak controllers are connected "
 							   "properly and re-save this file. "
-							   "Sorry for any inconvenience caused.") );
-			msgBox.setStandardButtons(QMessageBox::Ok);
-			msgBox.exec();
+							   "Sorry for any inconvenience caused.")
+			);
 		}
 	}
 

@@ -23,8 +23,6 @@
  *
  */
 
-#include <QMessageBox>
-
 #include "AudioFileDevice.h"
 #include "IGuiApplication.h"
 

@@ -8,7 +8,6 @@ SET(LMMS_UI_SRCS
 	Controls.cpp
 	EffectRackView.cpp
 	EffectView.cpp
-	embed.cpp
 	FileBrowser.cpp
 	GuiApplication.cpp
 	LadspaControlView.cpp
@@ -34,6 +33,7 @@ SET(LMMS_UI_SRCS
 	StringPairDrag.cpp
 	SubWindow.cpp
 	ToolPluginView.cpp
+	TabButton.cpp
 
 	audiosetupwidgets/AudioAlsaSetupWidget.cpp
 	audiosetupwidgets/AudioJackSetupWidget.cpp
@@ -53,9 +53,6 @@ SET(LMMS_UI_SRCS
 	controllerdialogs/PeakControllerDialog.cpp
 	controllerdialogs/LfoControllerDialog.cpp
 
-	effectcontroldialogs/EffectControlDialog.cpp
-	effectcontroldialogs/EffectControlDialogFactory.cpp
-
 	editors/AutomationEditor.cpp
 	editors/Editor.cpp
 	editors/PatternEditor.cpp
@@ -66,6 +63,9 @@ SET(LMMS_UI_SRCS
 	editors/StepRecorderWidget.cpp
 	editors/TimeLineWidget.cpp
 	editors/TrackContainerView.cpp
+
+	effectcontroldialogs/EffectControlDialog.cpp
+	effectcontroldialogs/EffectControlDialogFactory.cpp
 
 	instrument/EnvelopeAndLfoView.cpp
 	instrument/InstrumentFunctionViews.cpp
@@ -144,9 +144,11 @@ add_library(test_ui_library STATIC ${TEST_UI_OUT})
 QT5_WRAP_UI(LMMS_UI_OUT ${LMMS_UIS})
 SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${LMMS_UI_OUT})
 
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+
 add_library(lmms_gui STATIC ${LMMS_UI_SRCS} ${LMMS_UI_OUT})
 target_include_directories(lmms_gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/include" "${CMAKE_BINARY_DIR}" "${CMAKE_BINARY_DIR}/src" "${WEAKJACK_INCLUDE_DIRS}")
-target_link_libraries(lmms_gui PUBLIC lmmsobjs)
+target_link_libraries(lmms_gui PUBLIC lmmsobjs PRIVATE Qt5::Widgets)
 
 GENERATE_EXPORT_HEADER(lmms_gui
 	BASE_NAME lmms

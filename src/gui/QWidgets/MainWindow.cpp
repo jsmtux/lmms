@@ -912,7 +912,7 @@ bool MainWindow::saveProjectAs()
 						: "mmp" ;
 	sfd.setDefaultSuffix( suffix );
 
-	if( sfd.exec () == FileDialog::Accepted &&
+	if( sfd.exec () == gui::IFileDialog::Accepted &&
 		!sfd.selectedFiles().isEmpty() && sfd.selectedFiles()[0] != "" )
 	{
 		QString fname = sfd.selectedFiles()[0] ;

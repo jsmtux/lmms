@@ -26,7 +26,7 @@
 #ifndef AMPLIFIER_CONTROLS_H
 #define AMPLIFIER_CONTROLS_H
 
-#include "EffectControls.h"
+#include "effectcontroldialogs/QWidgetEffectControls.h"
 #include "AmplifierControlDialog.h"
 
 namespace lmms
@@ -40,7 +40,7 @@ class AmplifierControlDialog;
 }
 
 
-class AmplifierControls : public EffectControls
+class AmplifierControls : public gui::QWidgetEffectControls
 {
 	Q_OBJECT
 public:

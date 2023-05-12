@@ -28,7 +28,6 @@
 
 #include <QLineEdit>
 #include <QLabel>
-#include <QMessageBox>
 
 #include "Engine.h"
 #include "IGuiApplication.h"

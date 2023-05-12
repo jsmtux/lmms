@@ -29,7 +29,6 @@
 #include <QtGlobal>
 #include <QDomElement>
 #include <QLibrary>
-#include <QMessageBox>
 
 #include "embed.h"
 #include "Engine.h"
@@ -37,6 +36,9 @@
 #include "AutomatableModel.h"
 #include "Song.h"
 #include "PluginFactory.h"
+
+
+using lmms::gui::getGUIInterface;
 
 namespace lmms
 {
@@ -218,11 +220,10 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 	}
 	else if( pi.isNull() )
 	{
-		QMessageBox::information( nullptr,
+		getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
 			tr( "Plugin not found" ),
 			tr( "The plugin \"%1\" wasn't found or could not be loaded!\nReason: \"%2\"" ).
-					arg( pluginName ).arg( getPluginFactory()->errorString(pluginName) ),
-			QMessageBox::Ok | QMessageBox::Default );
+					arg( pluginName ).arg( getPluginFactory()->errorString(pluginName)) );
 		inst = gui::getGUIInterface()->createDummyPlugin();
 	}
 	else
@@ -239,10 +240,9 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 		{
 			if (gui::getGUIInterface() != nullptr)
 			{
-				QMessageBox::information( nullptr,
+				gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
 					tr( "Error while loading plugin" ),
-					tr( "Failed to load plugin \"%1\"!").arg( pluginName ),
-					QMessageBox::Ok | QMessageBox::Default );
+					tr( "Failed to load plugin \"%1\"!").arg( pluginName ));
 			}
 			inst = gui::getGUIInterface()->createDummyPlugin();
 		}
@@ -258,22 +258,6 @@ void Plugin::collectErrorForUI( QString errMsg )
 {
 	Engine::getSong()->collectError( errMsg );
 }
-
-
-/*
-
-gui::PluginView * Plugin::createView( QWidget * parent )
-{
-	gui::PluginView * pv = instantiateView( parent );
-	if( pv != nullptr )
-	{
-		pv->setModel( this );
-	}
-	return pv;
-}
-
-*/
-
 
 Plugin::Descriptor::SubPluginFeatures::Key::Key( const QDomElement & key ) :
 	desc( nullptr ),

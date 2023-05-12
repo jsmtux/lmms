@@ -27,7 +27,6 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
-#include <QMessageBox>
 
 #include <algorithm>
 #include <cmath>
@@ -1009,7 +1008,7 @@ void Song::loadProject( const QString & fileName )
 
 			if (getGUIInterface() != nullptr)
 			{
-				QMessageBox::critical(nullptr, tr("Aborting project load"),
+				getGUIInterface()->mainWindowInterface()->ShowCriticalMessage(tr("Aborting project load"),
 					tr("Project file contains local paths to plugins, which could be used to "
 						"run malicious code."));
 			}
@@ -1167,8 +1166,7 @@ void Song::loadProject( const QString & fileName )
 	{
 		if ( getGUIInterface() != nullptr )
 		{
-			QMessageBox::warning( nullptr, tr("LMMS Error report"), errorSummary(),
-							QMessageBox::Ok );
+			getGUIInterface()->mainWindowInterface()->ShowInfoMessage(tr("LMMS Error report"), errorSummary());
 		}
 		else
 		{

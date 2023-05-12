@@ -33,7 +33,7 @@ namespace lmms
 {
 
 AmplifierControls::AmplifierControls( AmplifierEffect* effect ) :
-	EffectControls( effect ),
+	gui::QWidgetEffectControls( effect ),
 	m_effect( effect ),
 	m_volumeModel( 100.0f, 0.0f, 200.0f, 0.1f, this, tr( "Volume" ) ),
 	m_panModel( 0.0f, -100.0f, 100.0f, 0.1f, this, tr( "Panning" ) ),

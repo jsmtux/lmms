@@ -8,6 +8,7 @@ namespace lmms::gui {
 
 class IFileDialog {
 public:
+    enum DialogCode {Accepted = 1, Rejected = 0};
     virtual ~IFileDialog() {}
     virtual void setDirectory(const QString& directory) = 0;
     virtual void setNameFilters(const QStringList &filters) = 0;

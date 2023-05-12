@@ -1,6 +1,9 @@
 #ifndef E270C3D0_0FB7_4E30_984F_A65D1EC26522
 #define E270C3D0_0FB7_4E30_984F_A65D1EC26522
 
+#include <QString>
+#include <QPixmap>
+
 namespace lmms::gui {
 
 class IProgressModal {

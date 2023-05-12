@@ -23,7 +23,7 @@
  *
  */
 
-#include <QAction>
+// #include <QAction>
 #include <QDomElement>
 
 #include "TempoSyncKnobModel.h"
@@ -53,10 +53,10 @@ TempoSyncKnobModel::TempoSyncKnobModel( const float _val, const float _min,
 
 
 
-void TempoSyncKnobModel::setTempoSync( QAction * _item )
-{
-	setTempoSync( _item->data().toInt() );
-}
+// void TempoSyncKnobModel::setTempoSync( QAction * _item )
+// {
+// 	setTempoSync( _item->data().toInt() );
+// }
 
 
 

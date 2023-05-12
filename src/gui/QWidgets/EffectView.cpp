@@ -37,12 +37,13 @@
 #include "MainWindow.h"
 #include "SubWindow.h"
 
+#include "effectcontroldialogs/EffectControlDialog.h"
+#include "effectcontroldialogs/QWidgetEffectControls.h"
+
 #include "widgets/CaptionMenu.h"
 #include "widgets/Knob.h"
 #include "widgets/LedCheckBox.h"
 #include "widgets/TempoSyncKnob.h"
-
-#include "effectcontroldialogs/EffectControlDialogFactory.h"
 
 
 namespace lmms::gui
@@ -98,7 +99,7 @@ EffectView::EffectView( Effect * _model, QWidget * _parent ) :
 		connect( ctls_btn, SIGNAL(clicked()),
 					this, SLOT(editControls()));
 
-		m_controlView = getGUI()->getEffectControlDialogFactory()->createEffectView(effect()->controls());
+		m_controlView = static_cast<QWidgetEffectControls*>(effect()->controls())->createView();
 		if( m_controlView )
 		{
 			m_subWindow = getGUI()->mainWindow()->addWindowedWidget( m_controlView );
