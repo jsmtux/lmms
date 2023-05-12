@@ -29,7 +29,6 @@
 
 #include <QFile>
 #include <QFileInfo>
-#include <QMessageBox>
 #include <QPainter>
 
 
@@ -371,8 +370,7 @@ void SampleBuffer::update(bool keepSettings)
 				).arg(fileSizeMax).arg(sampleLengthMax);
 		if (gui::getGUIInterface() != nullptr)
 		{
-			QMessageBox::information(nullptr,
-				title, message,	QMessageBox::Ok);
+			gui::getGUIInterface()->mainWindowInterface()->ShowCriticalMessage(title, message);
 		}
 		else
 		{
@@ -1122,7 +1120,6 @@ void SampleBuffer::visualize(
 QString SampleBuffer::openAudioFile() const
 {
 	auto ofd = gui::getGUIInterface()->createFileDialog(tr("Open audio file"));
-	// gui::FileDialog ofd(nullptr, tr("Open audio file"));
 
 	QString dir;
 	if (!m_audioFile.isEmpty())
@@ -1170,7 +1167,7 @@ QString SampleBuffer::openAudioFile() const
 		ofd->selectFile(QFileInfo(m_audioFile).fileName());
 	}
 
-	if (ofd->exec () == QDialog::Accepted)
+	if (ofd->exec () == gui::IFileDialog::Accepted)
 	{
 		if (ofd->selectedFiles().isEmpty())
 		{

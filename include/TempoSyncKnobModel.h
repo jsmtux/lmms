@@ -28,7 +28,7 @@
 
 #include "MeterModel.h"
 
-class QAction;
+// class QAction;
 
 namespace lmms
 {
@@ -93,7 +93,7 @@ public slots:
 		setTempoSync( SyncNone );
 	}
 	void setTempoSync( int _note_type );
-	void setTempoSync( QAction * _item );
+	// void setTempoSync( QAction * _item );
 
 
 protected slots:

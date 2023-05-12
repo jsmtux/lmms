@@ -27,7 +27,7 @@
 #include "AmplifierControlDialog.h"
 #include "AmplifierControls.h"
 #include "embed.h"
-#include "Knob.h"
+#include "widgets/Knob.h"
 
 
 namespace lmms::gui

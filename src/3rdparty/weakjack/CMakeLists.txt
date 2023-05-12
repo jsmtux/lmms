@@ -1,6 +1,6 @@
 # Use weak jack library linking
 IF(LMMS_HAVE_WEAKJACK)
-	SET(CMAKE_C_FLAGS "-std=c11")
+	SET(CMAKE_C_FLAGS "-std=c11 -fPIC")
 	
 	# Enable weakjack, disable metadata support
 	ADD_DEFINITIONS(-DUSE_WEAK_JACK=1 -DNO_JACK_METADATA=1)

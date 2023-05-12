@@ -33,7 +33,6 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
-#include <QMessageBox>
 
 #include "base64.h"
 #include "ConfigManager.h"
@@ -152,7 +151,7 @@ DataFile::DataFile( const QString & _fileName ) :
 	{
 		if (gui::getGUIInterface() != nullptr)
 		{
-			QMessageBox::critical( nullptr,
+			gui::getGUIInterface()->mainWindowInterface()->ShowCriticalMessage(
 				QObject::tr( "Could not open file" ),
 				QObject::tr( "Could not open file %1. You probably "
 						"have no permissions to read this "
@@ -302,12 +301,8 @@ bool DataFile::writeFile(const QString& filename, bool withResources)
 	auto showError = [this](QString title, QString body){
 		if (gui::getGUIInterface() != nullptr)
 		{
-			QMessageBox mb;
-			mb.setWindowTitle(title);
-			mb.setText(body);
-			mb.setIcon(QMessageBox::Warning);
-			mb.setStandardButtons(QMessageBox::Ok);
-			mb.exec();
+			//Should display warning here
+			gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(title, body);
 		}
 		else
 		{
@@ -1890,7 +1885,7 @@ void DataFile::loadData( const QByteArray & _data, const QString & _sourceFile )
 			qWarning() << "at line" << line << "column" << errorMsg;
 			if (gui::getGUIInterface() != nullptr)
 			{
-				QMessageBox::critical( nullptr,
+				gui::getGUIInterface()->mainWindowInterface()->ShowCriticalMessage(
 					QObject::tr( "Error in file" ),
 					QObject::tr( "The file %1 seems to contain "
 							"errors and therefore can't be "

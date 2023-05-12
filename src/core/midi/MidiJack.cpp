@@ -26,7 +26,6 @@
 
 #ifdef LMMS_HAVE_JACK
 
-#include <QMessageBox>
 
 #include "AudioEngine.h"
 #include "AudioJack.h"

@@ -25,7 +25,6 @@
 
 #include <QDomElement>
 #include <QDir>
-#include <QMessageBox>
 #include <QApplication>
 #include <QStandardPaths>
 #include <QTextStream>

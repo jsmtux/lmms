@@ -11,6 +11,9 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 # Enable C++17
 SET(CMAKE_CXX_STANDARD 17)
 
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+
 IF(LMMS_BUILD_APPLE)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 ENDIF()
@@ -107,14 +110,18 @@ ADD_LIBRARY(lmmsobjs STATIC
 	${LMMS_RCC_OUT}
 )
 
-target_link_libraries(lmmsobjs PUBLIC lmms_gui_interface)
+target_link_libraries(lmmsobjs PUBLIC lmms_gui_interface rpmalloc)
 
 GENERATE_EXPORT_HEADER(lmmsobjs
 	BASE_NAME lmms
 )
 
+GENERATE_EXPORT_HEADER(lmms_gui
+	BASE_NAME lmms
+)
+
 ADD_EXECUTABLE(lmms
-	core/main.cpp
+	gui/QWidgets/main.cpp
 	"${WINRC}"
 )
 
@@ -198,6 +205,24 @@ TARGET_LINK_LIBRARIES(lmms
 	lmmsobjs
 	lmms_gui
 	${LMMS_REQUIRED_LIBS}
+	Qt5::Widgets
+)
+
+
+ADD_EXECUTABLE(lmms_headless
+	gui/headless/main.cpp
+    gui/headless/GuiApplication.cpp
+	"${WINRC}"
+)
+
+TARGET_LINK_LIBRARIES(lmms_headless
+	PUBLIC
+	lmmsobjs
+	${LMMS_REQUIRED_LIBS}
+)
+
+TARGET_INCLUDE_DIRECTORIES(lmms_headless
+	PUBLIC ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src ${CMAKE_SOURCE_DIR}/include
 )
 
 FOREACH(LIB ${LMMS_REQUIRED_LIBS})
