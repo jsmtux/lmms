@@ -38,7 +38,7 @@
 #include "InstrumentTrack.h"
 #include "Song.h"
 #include "StringPairDrag.h"
-#include "TrackContainerView.h"
+#include "editors/TrackContainerView.h"
 #include "PluginFactory.h"
 
 namespace lmms::gui

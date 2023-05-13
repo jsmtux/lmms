@@ -65,7 +65,6 @@
 #include "PatternStore.h"
 #include "instrument/PianoView.h"
 #include "PositionLine.h"
-#include "SimpleTextFloat.h"
 #include "SongEditor.h"
 #include "TimeLineWidget.h"
 
@@ -73,6 +72,7 @@
 #include "modals/FileDialog.h"
 #include "widgets/ComboBox.h"
 #include "widgets/TextFloat.h"
+#include "widgets/SimpleTextFloat.h"
 
 
 namespace lmms
