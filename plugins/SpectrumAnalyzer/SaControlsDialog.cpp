@@ -30,11 +30,11 @@
 #include <QSplitter>
 #include <QWidget>
 
-#include "ComboBox.h"
+#include "widgets/ComboBox.h"
 #include "ComboBoxModel.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
-#include "PixmapButton.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/PixmapButton.h"
 #include "SaControls.h"
 #include "SaProcessor.h"
 #include "SaSpectrumView.h"

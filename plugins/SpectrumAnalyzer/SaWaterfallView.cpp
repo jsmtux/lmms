@@ -33,7 +33,7 @@
 #include <QPainter>
 #include <QString>
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
 #include "SaControls.h"

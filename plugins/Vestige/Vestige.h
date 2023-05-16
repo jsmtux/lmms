@@ -30,8 +30,8 @@
 #include <QMdiSubWindow>
 #include <QMutex>
 
-#include "Instrument.h"
-#include "InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
 
 
 class QPixmap;
@@ -54,7 +54,7 @@ class ManageVestigeInstrumentView;
 } // namespace gui
 
 
-class VestigeInstrument : public Instrument
+class VestigeInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

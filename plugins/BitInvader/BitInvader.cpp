@@ -29,12 +29,12 @@
 #include "AudioEngine.h"
 #include "base64.h"
 #include "Engine.h"
-#include "Graph.h"
+#include "widgets/Graph.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
 #include "NotePlayHandle.h"
-#include "PixmapButton.h"
+#include "widgets/PixmapButton.h"
 #include "Song.h"
 #include "interpolation.h"
 
@@ -150,7 +150,7 @@ sample_t BSynth::nextStringSample( float sample_length )
 
 
 BitInvader::BitInvader( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &bitinvader_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &bitinvader_plugin_descriptor ),
 	m_sampleLength(wavetableSize, 4, wavetableSize, 1, this, tr("Sample length")),
 	m_graph(-1.0f, 1.0f, wavetableSize, this),
 	m_interpolation( false, this ),

@@ -26,9 +26,9 @@
 
 #include "DualFilterControlDialog.h"
 #include "DualFilterControls.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
-#include "ComboBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/ComboBox.h"
 #include "gui_templates.h"
 
 namespace lmms::gui

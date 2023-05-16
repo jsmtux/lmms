@@ -56,7 +56,6 @@ public:
 ////////////
     void setDirectory(const QString& directory) override {
 		QFileDialog::setDirectory(directory);
-		setFileMode(gui::FileDialog::ExistingFiles);
 	}
     void setNameFilters(const QStringList &filters) override {
 		QFileDialog::setNameFilters(filters);
@@ -70,6 +69,9 @@ public:
     QStringList selectedFiles() const override {
 		return QFileDialog::selectedFiles();
 	}
+
+	void setAcceptMode(IFileDialog::AcceptMode mode) override;
+	void setFileMode(IFileDialog::FileMode mode) override;
 };
 
 

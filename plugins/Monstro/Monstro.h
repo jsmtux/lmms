@@ -29,11 +29,11 @@
 #include <vector>
 
 #include "ComboBoxModel.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
 #include "AutomatableModel.h"
-#include "TempoSyncKnob.h"
-#include "PixmapButton.h"
+#include "widgets/TempoSyncKnob.h"
+#include "widgets/PixmapButton.h"
 #include "Oscillator.h"
 #include "lmms_math.h"
 #include "BandLimitedWave.h"
@@ -318,7 +318,7 @@ private:
 	std::vector<float> m_env[2];
 };
 
-class MonstroInstrument : public Instrument
+class MonstroInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 

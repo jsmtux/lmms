@@ -35,8 +35,8 @@
 #include "ZynAddSubFx.h"
 #include "ConfigManager.h"
 #include "Engine.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
 #include "DataFile.h"
 #include "InstrumentPlayHandle.h"
 #include "InstrumentTrack.h"
@@ -104,7 +104,7 @@ bool ZynAddSubFxRemotePlugin::processMessage( const message & _m )
 
 ZynAddSubFxInstrument::ZynAddSubFxInstrument(
 									InstrumentTrack * _instrumentTrack ) :
-	Instrument( _instrumentTrack, &zynaddsubfx_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrumentTrack, &zynaddsubfx_plugin_descriptor ),
 	m_hasGUI( false ),
 	m_plugin( nullptr ),
 	m_remotePlugin( nullptr ),

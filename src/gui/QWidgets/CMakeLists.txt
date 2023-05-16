@@ -65,7 +65,6 @@ SET(LMMS_UI_SRCS
 	editors/TrackContainerView.cpp
 
 	effectcontroldialogs/EffectControlDialog.cpp
-	effectcontroldialogs/EffectControlDialogFactory.cpp
 
 	instrument/EnvelopeAndLfoView.cpp
 	instrument/InstrumentFunctionViews.cpp
@@ -136,10 +135,6 @@ set(LMMS_UIS
 	modals/EffectSelectDialog.ui
 	modals/export_project.ui
 )
-
-# RTODO: Find out why only this works...
-QT5_WRAP_UI(TEST_UI_OUT ${LMMS_UIS})
-add_library(test_ui_library STATIC ${TEST_UI_OUT})
 
 QT5_WRAP_UI(LMMS_UI_OUT ${LMMS_UIS})
 SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${LMMS_UI_OUT})

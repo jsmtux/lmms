@@ -26,7 +26,7 @@
 #ifndef DUALFILTER_CONTROL_DIALOG_H
 #define DUALFILTER_CONTROL_DIALOG_H
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 namespace lmms
 {

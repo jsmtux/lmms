@@ -28,7 +28,7 @@
 #define CROSSOVEREQ_CONTROL_DIALOG_H
 
 #include <QPixmap>
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 namespace lmms
 {

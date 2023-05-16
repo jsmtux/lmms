@@ -60,6 +60,10 @@ public:
 	{
 		return "DummyControls";
 	}
+
+	gui::EffectControlDialog * createView() override {
+		return nullptr;
+	}
 } ;
 
 

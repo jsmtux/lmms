@@ -26,11 +26,11 @@
 #ifndef WATSYN_H
 #define WATSYN_H
 
-#include "Instrument.h"
-#include "InstrumentView.h"
-#include "Graph.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
+#include "widgets/Graph.h"
 #include "AutomatableModel.h"
-#include "TempoSyncKnob.h"
+#include "widgets/TempoSyncKnob.h"
 #include <samplerate.h>
 #include "MemoryManager.h"
 
@@ -134,7 +134,7 @@ private:
 	float m_B2wave [WAVELEN];
 };
 
-class WatsynInstrument : public Instrument
+class WatsynInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

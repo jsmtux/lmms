@@ -28,8 +28,8 @@
 #include <QMutex>
 
 #include "AutomatableModel.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
 
 class Copl;
 
@@ -54,7 +54,7 @@ class automatableButtonGroup;
 // The "normal" range for LMMS pitchbends
 #define DEFAULT_BEND_CENTS 100
 
-class OpulenzInstrument : public Instrument
+class OpulenzInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

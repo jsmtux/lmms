@@ -28,7 +28,7 @@
 #define _LADSPA_BROWSER_H
 
 #include "LadspaManager.h"
-#include "ToolPlugin.h"
+#include "plugins/QWidgetToolPlugin.h"
 #include "ToolPluginView.h"
 
 namespace lmms
@@ -65,7 +65,7 @@ private:
 } // namespace gui
 
 
-class LadspaBrowser : public ToolPlugin
+class LadspaBrowser : public gui::QWidgetToolPlugin
 {
 public:
 	LadspaBrowser();

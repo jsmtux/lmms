@@ -29,7 +29,7 @@
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "InstrumentTrack.h"
-#include "PixmapButton.h"
+#include "widgets/PixmapButton.h"
 #include "Song.h"
 #include "lmms_math.h"
 #include "interpolation.h"
@@ -233,7 +233,7 @@ void WatsynObject::renderOutput( fpp_t _frames )
 
 
 WatsynInstrument::WatsynInstrument( InstrumentTrack * _instrument_track ) :
-		Instrument( _instrument_track, &watsyn_plugin_descriptor ),
+		QWidgetInstrumentPlugin( _instrument_track, &watsyn_plugin_descriptor ),
 
 		a1_vol( 100.0f, 0.0f, 200.0f, 0.1f, this, tr( "Volume A1" ) ),
 		a2_vol( 100.0f, 0.0f, 200.0f, 0.1f, this, tr( "Volume A2" ) ),

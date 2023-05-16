@@ -26,8 +26,8 @@
 #ifndef PATMAN_H
 #define PATMAN_H
 
-#include "Instrument.h"
-#include "InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
 #include "SampleBuffer.h"
 #include "AutomatableModel.h"
 #include "MemoryManager.h"
@@ -52,7 +52,7 @@ class PatmanView;
 #define MODES_CLAMPED	( 1 << 7 )
 
 
-class PatmanInstrument : public Instrument
+class PatmanInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

@@ -79,6 +79,8 @@ public:
     void selectFile(const QString &filename) {}
     int exec() { return IFileDialog::Accepted; }
     QStringList selectedFiles() const { return QStringList();}
+	void setAcceptMode(IFileDialog::AcceptMode mode) override {}
+	void setFileMode(IFileDialog::FileMode mode) override {}
 };
 
 

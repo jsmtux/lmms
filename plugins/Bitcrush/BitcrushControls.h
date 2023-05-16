@@ -26,7 +26,7 @@
 #ifndef BITCRUSH_CONTROLS_H
 #define BITCRUSH_CONTROLS_H
 
-#include "EffectControls.h"
+#include "effectcontroldialogs/QWidgetEffectControls.h"
 #include "BitcrushControlDialog.h"
 
 namespace lmms
@@ -35,7 +35,7 @@ namespace lmms
 
 class BitcrushEffect;
 
-class BitcrushControls : public EffectControls
+class BitcrushControls : public gui::QWidgetEffectControls
 {
 	Q_OBJECT
 public:

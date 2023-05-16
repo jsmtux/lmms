@@ -35,9 +35,9 @@
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
+#include "widgets/Knob.h"
 #include "NotePlayHandle.h"
-#include "PixmapButton.h"
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 #include "plugin_export.h"
@@ -117,7 +117,7 @@ VoiceObject::VoiceObject( Model * _parent, int _idx ) :
 
 
 SidInstrument::SidInstrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &sid_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &sid_plugin_descriptor ),
 	// filter
 	m_filterFCModel( 1024.0f, 0.0f, 2047.0f, 1.0f, this, tr( "Cutoff frequency" ) ),
 	m_filterResonanceModel( 8.0f, 0.0f, 15.0f, 1.0f, this, tr( "Resonance" ) ),

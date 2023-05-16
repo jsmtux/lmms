@@ -4,6 +4,7 @@
 #include "Instrument.h"
 #include "InstrumentTrack.h"
 #include "Plugin.h"
+#include "PluginView.h"
 
 namespace lmms::gui {
 

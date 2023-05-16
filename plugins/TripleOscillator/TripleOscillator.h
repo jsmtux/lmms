@@ -26,8 +26,8 @@
 #ifndef _TRIPLE_OSCILLATOR_H
 #define _TRIPLE_OSCILLATOR_H
 
-#include "Instrument.h"
-#include "InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
 #include "AutomatableModel.h"
 
 namespace lmms
@@ -103,7 +103,7 @@ private slots:
 
 
 
-class TripleOscillator : public Instrument
+class TripleOscillator : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

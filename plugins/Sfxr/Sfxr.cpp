@@ -43,9 +43,9 @@ float frnd(float range)
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
+#include "widgets/Knob.h"
 #include "NotePlayHandle.h"
-#include "PixmapButton.h"
+#include "widgets/PixmapButton.h"
 #include "MidiEvent.h"
 
 #include "embed.h"
@@ -321,7 +321,7 @@ bool SfxrSynth::isPlaying() const
 
 
 SfxrInstrument::SfxrInstrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &sfxr_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &sfxr_plugin_descriptor ),
 	m_attModel(0.0f, this, "Attack Time"),
 	m_holdModel(0.3f, this, "Sustain Time"),
 	m_susModel(0.0f, this, "Sustain Punch"),

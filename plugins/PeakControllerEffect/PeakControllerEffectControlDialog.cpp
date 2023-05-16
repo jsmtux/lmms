@@ -31,8 +31,8 @@
 
 #include "PeakControllerEffectControlDialog.h"
 #include "PeakControllerEffectControls.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
 #include "embed.h"
 
 namespace lmms::gui

@@ -30,7 +30,7 @@
 #include <QScrollArea>
 
 #include "embed.h"
-#include "CustomTextKnob.h"
+#include "widgets/CustomTextKnob.h"
 #include "VstEffectControls.h"
 #include "VstEffectControlDialog.h"
 #include "VstEffect.h"
