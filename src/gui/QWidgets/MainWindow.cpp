@@ -851,7 +851,7 @@ void MainWindow::openProject()
 		FileDialog ofd( this, tr( "Open Project" ), "", tr( "LMMS (*.mmp *.mmpz)" ) );
 
 		ofd.setDirectory( ConfigManager::inst()->userProjectsDir() );
-		ofd.setFileMode( FileDialog::ExistingFiles );
+		ofd.setFileMode( IFileDialog::ExistingFiles );
 		if( ofd.exec () == QDialog::Accepted &&
 						!ofd.selectedFiles().isEmpty() )
 		{
@@ -1506,7 +1506,7 @@ void MainWindow::onExportProjectMidi()
 {
 	FileDialog efd( this );
 
-	efd.setFileMode( FileDialog::AnyFile );
+	efd.setFileMode( IFileDialog::AnyFile );
 
 	QStringList types;
 	types << tr("MIDI File (*.mid)");
@@ -1527,7 +1527,7 @@ void MainWindow::onExportProjectMidi()
 	efd.setDefaultSuffix( "mid");
 	efd.setWindowTitle( tr( "Select file for project-export..." ) );
 
-	efd.setAcceptMode( FileDialog::AcceptSave );
+	efd.setAcceptMode( IFileDialog::AcceptSave );
 
 
 	if( efd.exec() == QDialog::Accepted && !efd.selectedFiles().isEmpty() && !efd.selectedFiles()[0].isEmpty() )
@@ -1549,7 +1549,7 @@ void MainWindow::exportProject(bool multiExport)
 
 	if ( multiExport )
 	{
-		efd.setFileMode( FileDialog::Directory);
+		efd.setFileMode( IFileDialog::Directory);
 		efd.setWindowTitle( tr( "Select directory for writing exported tracks..." ) );
 		if( !projectFileName.isEmpty() )
 		{
@@ -1558,7 +1558,7 @@ void MainWindow::exportProject(bool multiExport)
 	}
 	else
 	{
-		efd.setFileMode( FileDialog::AnyFile );
+		efd.setFileMode( IFileDialog::AnyFile );
 		int idx = 0;
 		QStringList types;
 		while( ProjectRenderer::fileEncodeDevices[idx].m_fileFormat != ProjectRenderer::NumFileFormats)
@@ -1586,7 +1586,7 @@ void MainWindow::exportProject(bool multiExport)
 
 	QString suffix = "wav";
 	efd.setDefaultSuffix( suffix );
-	efd.setAcceptMode( FileDialog::AcceptSave );
+	efd.setAcceptMode( IFileDialog::AcceptSave );
 
 	if( efd.exec() == QDialog::Accepted && !efd.selectedFiles().isEmpty() &&
 					 !efd.selectedFiles()[0].isEmpty() )
@@ -1684,7 +1684,7 @@ void MainWindow::onImportProject()
 				tr("All file types") +
 				" (*.*)");
 
-		ofd.setFileMode( FileDialog::ExistingFiles );
+		ofd.setFileMode( IFileDialog::ExistingFiles );
 		if( ofd.exec () == QDialog::Accepted && !ofd.selectedFiles().isEmpty() )
 		{
 			ImportFilter::import( ofd.selectedFiles()[0], song );

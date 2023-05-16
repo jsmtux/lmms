@@ -35,7 +35,7 @@
 #include "LadspaControls.h"
 #include "LadspaControlDialog.h"
 #include "LadspaControlView.h"
-#include "LedCheckBox.h"
+#include "widgets/LedCheckBox.h"
 
 namespace lmms::gui
 {

@@ -27,8 +27,6 @@
 
 #include "Controller.h"
 
-class QWidget;
-
 namespace lmms
 {
 

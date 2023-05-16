@@ -25,7 +25,7 @@
 #ifndef _STEREOMATRIX_CONTROL_DIALOG_H
 #define _STEREOMATRIX_CONTROL_DIALOG_H
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 namespace lmms
 {

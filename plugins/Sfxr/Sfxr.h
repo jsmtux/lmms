@@ -29,8 +29,8 @@
 #define SFXR_H
 
 #include "AutomatableModel.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
 #include "MemoryManager.h"
 
 namespace lmms
@@ -171,7 +171,7 @@ public:
 	}
 };
 
-class SfxrInstrument : public Instrument
+class SfxrInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

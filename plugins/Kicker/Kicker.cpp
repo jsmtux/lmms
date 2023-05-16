@@ -31,11 +31,11 @@
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
 #include "NotePlayHandle.h"
 #include "KickerOsc.h"
-#include "TempoSyncKnob.h"
+#include "widgets/TempoSyncKnob.h"
 
 #include "embed.h"
 #include "plugin_export.h"
@@ -65,7 +65,7 @@ Plugin::Descriptor PLUGIN_EXPORT kicker_plugin_descriptor =
 
 
 KickerInstrument::KickerInstrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &kicker_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &kicker_plugin_descriptor ),
 	m_startFreqModel( 150.0f, 5.0f, 1000.0f, 1.0f, this, tr( "Start frequency" ) ),
 	m_endFreqModel( 40.0f, 5.0f, 1000.0f, 1.0f, this, tr( "End frequency" ) ),
 	m_decayModel( 440.0f, 5.0f, 5000.0f, 1.0f, 5000.0f, this, tr( "Length" ) ),

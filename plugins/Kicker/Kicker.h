@@ -28,8 +28,8 @@
 #define KICKER_H
 
 #include "AutomatableModel.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
 #include "TempoSyncKnobModel.h"
 
 
@@ -49,7 +49,7 @@ class KickerInstrumentView;
 }
 
 
-class KickerInstrument : public Instrument
+class KickerInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

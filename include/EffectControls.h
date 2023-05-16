@@ -55,6 +55,7 @@ public:
 
 	virtual int controlCount() = 0;
 
+	virtual gui::EffectControlDialog * createView() = 0;
 
 	void setViewVisible( bool _visible )
 	{

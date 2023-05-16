@@ -29,12 +29,12 @@
 
 #include <stk/Instrmnt.h>
 
-#include "ComboBox.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
-#include "Knob.h"
+#include "widgets/ComboBox.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
+#include "widgets/Knob.h"
 #include "NotePlayHandle.h"
-#include "LedCheckBox.h"
+#include "widgets/LedCheckBox.h"
 
 // As of Stk 4.4 all classes and types have been moved to the namespace "stk".
 // However in older versions this namespace does not exist, therefore declare it
@@ -155,7 +155,7 @@ protected:
 
 
 
-class MalletsInstrument : public Instrument
+class MalletsInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

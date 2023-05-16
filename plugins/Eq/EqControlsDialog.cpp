@@ -27,11 +27,11 @@
 
 #include <QWidget>
 
-#include "AutomatableButton.h"
+#include "widgets/AutomatableButton.h"
 #include "embed.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
-#include "PixmapButton.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/PixmapButton.h"
 
 #include "EqControls.h"
 #include "EqFader.h"

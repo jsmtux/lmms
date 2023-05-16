@@ -25,7 +25,7 @@
 #ifndef BASSBOOSTER_CONTROLS_H
 #define BASSBOOSTER_CONTROLS_H
 
-#include "EffectControls.h"
+#include "effectcontroldialogs/QWidgetEffectControls.h"
 #include "BassBoosterControlDialog.h"
 
 namespace lmms
@@ -34,7 +34,7 @@ namespace lmms
 class BassBoosterEffect;
 
 
-class BassBoosterControls : public EffectControls
+class BassBoosterControls : public gui::QWidgetEffectControls
 {
 	Q_OBJECT
 public:

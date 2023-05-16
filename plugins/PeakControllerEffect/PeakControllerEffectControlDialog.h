@@ -26,7 +26,7 @@
 #ifndef _PEAK_CONTROLLER_EFFECT_CONTROL_DIALOG_H
 #define _PEAK_CONTROLLER_EFFECT_CONTROL_DIALOG_H
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 namespace lmms
 {

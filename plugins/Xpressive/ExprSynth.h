@@ -29,7 +29,7 @@
 #include <cstddef>
 #include <limits>
 #include "AutomatableModel.h"
-#include "Graph.h"
+#include "widgets/Graph.h"
 #include "MemoryManager.h"
 
 namespace lmms

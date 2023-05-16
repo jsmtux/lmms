@@ -60,7 +60,7 @@ Plugin::Descriptor PLUGIN_EXPORT midiexport_plugin_descriptor =
 }
 
 
-MidiExport::MidiExport() : ExportFilter( &midiexport_plugin_descriptor)
+MidiExport::MidiExport() : QWidgetExportFilter( &midiexport_plugin_descriptor)
 {
 }
 

@@ -419,9 +419,9 @@ void InstrumentTrackWindow::saveSettingsBtnClicked()
 		QDir(presetRoot).mkdir(m_track->instrumentName());
 	}
 
-	sfd.setAcceptMode(FileDialog::AcceptSave);
+	sfd.setAcceptMode(IFileDialog::AcceptSave);
 	sfd.setDirectory(presetRoot + m_track->instrumentName());
-	sfd.setFileMode( FileDialog::AnyFile );
+	sfd.setFileMode( IFileDialog::AnyFile );
 	QString fname = m_track->name();
 	sfd.selectFile(fname.remove(QRegExp(FILENAME_FILTER)));
 	sfd.setDefaultSuffix( "xpf");

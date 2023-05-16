@@ -27,10 +27,10 @@
 
 #include <cmath>
 
-#include "Instrument.h"
-#include "InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
 #include "AutomatableModel.h"
-#include "PixmapButton.h"
+#include "widgets/PixmapButton.h"
 #include "MemoryManager.h"
 
 
@@ -206,7 +206,7 @@ private:
 };
 
 
-class NesInstrument : public Instrument
+class NesInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

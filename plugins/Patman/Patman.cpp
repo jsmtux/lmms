@@ -32,15 +32,16 @@
 #include "ConfigManager.h"
 #include "endian_handling.h"
 #include "Engine.h"
-#include "FileDialog.h"
+#include "IFileDialog.h"
 #include "gui_templates.h"
 #include "InstrumentTrack.h"
 #include "NotePlayHandle.h"
 #include "PathUtil.h"
-#include "PixmapButton.h"
+#include "widgets/PixmapButton.h"
 #include "Song.h"
 #include "StringPairDrag.h"
 #include "Clipboard.h"
+#include "IGuiApplication.h"
 
 #include "embed.h"
 
@@ -80,7 +81,7 @@ PLUGIN_EXPORT Plugin * lmms_plugin_main( Model *m, void * )
 
 
 PatmanInstrument::PatmanInstrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &patman_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &patman_plugin_descriptor ),
 	m_loopedModel( true, this ),
 	m_tunedModel( true, this )
 {
@@ -497,22 +498,22 @@ PatmanView::PatmanView( Instrument * _instrument, QWidget * _parent ) :
 
 void PatmanView::openFile()
 {
-	FileDialog ofd( nullptr, tr( "Open patch file" ) );
-	ofd.setFileMode( FileDialog::ExistingFiles );
+	auto ofd = getGUIInterface()->createFileDialog("Open patch file");
+	ofd->setFileMode( IFileDialog::ExistingFiles );
 
 	QStringList types;
 	types << tr( "Patch-Files (*.pat)" );
-	ofd.setNameFilters( types );
+	ofd->setNameFilters( types );
 
 	if( m_pi->m_patchFile == "" )
 	{
 		if( QDir( "/usr/share/midi/freepats" ).exists() )
 		{
-			ofd.setDirectory( "/usr/share/midi/freepats" );
+			ofd->setDirectory( "/usr/share/midi/freepats" );
 		}
 		else
 		{
-			ofd.setDirectory(
+			ofd->setDirectory(
 				ConfigManager::inst()->userSamplesDir() );
 		}
 	}
@@ -526,16 +527,16 @@ void PatmanView::openFile()
 							+ m_pi->m_patchFile;
 		}
 
-		ofd.selectFile( f );
+		ofd->selectFile( f );
 	}
 	else
 	{
-		ofd.selectFile( m_pi->m_patchFile );
+		ofd->selectFile( m_pi->m_patchFile );
 	}
 
-	if( ofd.exec() == QDialog::Accepted && !ofd.selectedFiles().isEmpty() )
+	if( ofd->exec() == IFileDialog::Accepted && !ofd->selectedFiles().isEmpty() )
 	{
-		QString f = ofd.selectedFiles()[0];
+		QString f = ofd->selectedFiles()[0];
 		if( f != "" )
 		{
 			m_pi->setFile( f );

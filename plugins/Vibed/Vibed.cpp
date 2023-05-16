@@ -28,14 +28,14 @@
 #include "Vibed.h"
 #include "AudioEngine.h"
 #include "Engine.h"
-#include "Graph.h"
+#include "widgets/Graph.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
 #include "NotePlayHandle.h"
-#include "PixmapButton.h"
+#include "widgets/PixmapButton.h"
 #include "base64.h"
-#include "CaptionMenu.h"
+#include "widgets/CaptionMenu.h"
 #include "StringContainer.h"
 #include "volume.h"
 #include "Song.h"
@@ -68,7 +68,7 @@ Plugin::Descriptor PLUGIN_EXPORT vibedstrings_plugin_descriptor =
 
 
 Vibed::Vibed( InstrumentTrack * _instrumentTrack ) :
-	Instrument( _instrumentTrack, &vibedstrings_plugin_descriptor )
+	QWidgetInstrumentPlugin( _instrumentTrack, &vibedstrings_plugin_descriptor )
 {
 
 	FloatModel * knob;

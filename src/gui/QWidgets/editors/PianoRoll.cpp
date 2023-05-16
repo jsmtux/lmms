@@ -5269,7 +5269,7 @@ void PianoRollWindow::exportMidiClip()
 	FileDialog exportDialog(this, tr("Export clip"), "",
 		tr("XML clip file (*.xpt *.xptz)"));
 
-	exportDialog.setAcceptMode(FileDialog::AcceptSave);
+	exportDialog.setAcceptMode(IFileDialog::AcceptSave);
 
 	if (exportDialog.exec() == QDialog::Accepted &&
 		!exportDialog.selectedFiles().isEmpty() &&
@@ -5315,7 +5315,7 @@ void PianoRollWindow::importMidiClip()
 
 	FileDialog importDialog(this, tr("Open clip"), "",
 		tr("XML clip file (*.xpt *.xptz)"));
-	importDialog.setFileMode(FileDialog::ExistingFile);
+	importDialog.setFileMode(IFileDialog::ExistingFile);
 
 	if (importDialog.exec() == QDialog::Accepted &&
 		!importDialog.selectedFiles().isEmpty())

@@ -126,7 +126,7 @@ public:
 
 };
 HydrogenImport::HydrogenImport( const QString & _file ) :
-	ImportFilter( _file, &hydrogenimport_plugin_descriptor )
+	QWidgetImportFilter( _file, &hydrogenimport_plugin_descriptor )
 {
 	filename = _file;
 }

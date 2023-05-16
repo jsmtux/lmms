@@ -35,7 +35,7 @@ namespace lmms
 
 
 BitcrushControls::BitcrushControls( BitcrushEffect * eff ) :
-	EffectControls( eff ),
+	QWidgetEffectControls( eff ),
 	m_effect( eff ),
 	m_inGain( 0.0f, -20.0f, 20.0f, 0.1f, this, tr( "Input gain" ) ),
 	m_inNoise( 0.0f, 0.0f, 100.0f, 0.1f, this, tr( "Input noise" ) ),

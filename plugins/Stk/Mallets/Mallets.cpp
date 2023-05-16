@@ -69,7 +69,7 @@ Plugin::Descriptor PLUGIN_EXPORT malletsstk_plugin_descriptor =
 
 
 MalletsInstrument::MalletsInstrument( InstrumentTrack * _instrument_track ):
-	Instrument( _instrument_track, &malletsstk_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &malletsstk_plugin_descriptor ),
 	m_hardnessModel(64.0f, 0.0f, 128.0f, 0.1f, this, tr( "Hardness" )),
 	m_positionModel(64.0f, 0.0f, 64.0f, 0.1f, this, tr( "Position" )),
 	m_vibratoGainModel(0.0f, 0.0f, 128.0f, 0.1f, this, tr( "Vibrato gain" )),

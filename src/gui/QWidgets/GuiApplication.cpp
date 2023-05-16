@@ -48,7 +48,6 @@
 #include "plugins/DummyPlugin.h"
 #include "plugins/DummyInstrument.h"
 
-#include "effectcontroldialogs/EffectControlDialogFactory.h"
 #include "effectcontroldialogs/DummyEffectControlDialog.h"
 
 
@@ -196,9 +195,6 @@ GuiApplication::GuiApplication()
 	m_mainWindow->finalize();
 
 	m_loadingProgressLabel = nullptr;
-
-	m_effectControlDialogFactory.registerEffectView<DummyEffectControls>(
-		[](EffectControls* effectControl){return new DummyEffectControlDialog(effectControl);});
 }
 
 GuiApplication::~GuiApplication()

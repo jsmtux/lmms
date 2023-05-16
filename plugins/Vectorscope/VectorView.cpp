@@ -28,9 +28,9 @@
 #include <QImage>
 #include <QPainter>
 
-#include "ColorChooser.h"
+#include "modals/ColorChooser.h"
 #include "GuiApplication.h"
-#include "MainWindow.h"
+#include "IMainWindow.h"
 #include "VecControls.h"
 
 namespace lmms::gui

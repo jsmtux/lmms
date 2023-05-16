@@ -26,7 +26,7 @@
 #define EQCONTROLSDIALOG_H
 
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 namespace lmms
 {

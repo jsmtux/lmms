@@ -46,8 +46,8 @@ VersionedSaveDialog::VersionedSaveDialog( QWidget *parent,
 										  const QString &filter ) :
 	FileDialog(parent, caption, directory, filter)
 {
-	setAcceptMode( QFileDialog::AcceptSave );
-	setFileMode( QFileDialog::AnyFile );
+	setAcceptMode( IFileDialog::AcceptSave );
+	setFileMode( IFileDialog::AnyFile );
 
 	// Create + and - buttons
 	auto plusButton(new QPushButton("+", this));

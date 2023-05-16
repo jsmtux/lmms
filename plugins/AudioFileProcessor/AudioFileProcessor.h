@@ -31,10 +31,11 @@
 
 #include "ComboBoxModel.h"
 #include "Instrument.h"
-#include "InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
 #include "SampleBuffer.h"
-#include "Knob.h"
-
+#include "widgets/Knob.h"
+#include "PluginView.h"
 
 namespace lmms
 {
@@ -42,7 +43,6 @@ namespace lmms
 namespace gui
 {
 class automatableButtonGroup;
-class PluginView;
 class InstrumentViewFixedSize;
 class Knob;
 class PixmapButton;
@@ -51,7 +51,7 @@ class AudioFileProcessorView;
 }
 
 
-class AudioFileProcessor : public Instrument
+class AudioFileProcessor : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

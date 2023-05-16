@@ -27,7 +27,7 @@
 
 #include "GuiApplication.h"
 #include "Song.h"
-#include "TextFloat.h"
+#include "widgets/TextFloat.h"
 #include "VstPlugin.h"
 #include "VstSubPluginFeatures.h"
 

@@ -29,8 +29,8 @@
 #include <QMutex>
 
 #include "AutomatableModel.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
 #include "RemotePlugin.h"
 #include "zynaddsubfx/src/globals.h"
 
@@ -67,7 +67,7 @@ signals:
 
 
 
-class ZynAddSubFxInstrument : public Instrument
+class ZynAddSubFxInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

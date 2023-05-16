@@ -33,7 +33,7 @@ namespace lmms
 
 
 BassBoosterControls::BassBoosterControls( BassBoosterEffect* effect ) :
-	EffectControls( effect ),
+	QWidgetEffectControls( effect ),
 	m_effect( effect ),
 	m_freqModel( 100.0f, 50.0f, 200.0f, 1.0f, this, tr( "Frequency" ) ),
 	m_gainModel( 1.0f, 0.1f, 5.0f, 0.05f, this, tr( "Gain" ) ),

@@ -76,7 +76,7 @@ QString FileDialog::getExistingDirectory(QWidget *parent,
 										QFileDialog::Options options)
 {
 	FileDialog dialog(parent, caption, directory, QString());
-	dialog.setFileMode(QFileDialog::Directory);
+	dialog.setFileMode(IFileDialog::Directory);
 	dialog.setOptions(dialog.options() | options);
 	if (dialog.exec() == QDialog::Accepted) {
 		return dialog.selectedFiles().value(0);
@@ -109,5 +109,28 @@ void FileDialog::clearSelection()
 	view->clearSelection();
 }
 
+void FileDialog::setAcceptMode(IFileDialog::AcceptMode mode) {
+	QFileDialog::AcceptMode qmode = mode == IFileDialog::AcceptOpen ? QFileDialog::AcceptOpen : QFileDialog::AcceptSave;
+	QFileDialog::setAcceptMode(qmode);
+}
+
+void FileDialog::setFileMode(IFileDialog::FileMode mode) {
+	QFileDialog::FileMode qmode;
+	switch(mode) {
+		case IFileDialog::AnyFile:
+			qmode = QFileDialog::AnyFile;
+			break;
+		case IFileDialog::ExistingFile:
+			qmode = QFileDialog::ExistingFile;
+			break;
+		case IFileDialog::Directory:
+			qmode = QFileDialog::Directory;
+			break;
+		case IFileDialog::ExistingFiles:
+			qmode = QFileDialog::ExistingFiles;
+			break;
+	}
+	QFileDialog::setFileMode(qmode);
+}
 
 } // namespace lmms::gui

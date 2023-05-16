@@ -28,9 +28,9 @@
 
 #include "AutomatableModel.h"
 #include "Blip_Buffer.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
-#include "Graph.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "instrument/InstrumentView.h"
+#include "widgets/Graph.h"
 
 namespace lmms
 {
@@ -46,7 +46,7 @@ class Knob;
 }
 
 
-class FreeBoyInstrument : public Instrument
+class FreeBoyInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

@@ -25,7 +25,7 @@
 #ifndef SACONTROLSDIALOG_H
 #define SACONTROLSDIALOG_H
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 #include "fft_helpers.h"
 
 namespace lmms
