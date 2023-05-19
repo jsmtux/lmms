@@ -25,11 +25,11 @@
 #ifndef LMMS_GUI_COMBOBOX_H
 #define LMMS_GUI_COMBOBOX_H
 
+#include "AutomatableModelView.h"
+#include "ComboBoxModel.h"
+
 #include <QMenu>
 #include <QWidget>
-
-#include "ComboBoxModel.h"
-#include "AutomatableModelView.h"
 
 namespace lmms::gui
 {

@@ -27,6 +27,7 @@
 #include "AmplifierControlDialog.h"
 #include "AmplifierControls.h"
 #include "embed.h"
+
 #include "widgets/Knob.h"
 
 

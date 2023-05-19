@@ -25,13 +25,13 @@
 
 #include "MidiClip.h"
 
-#include <QDomElement>
-
+#include "Engine.h"
 #include "IGuiApplication.h"
 #include "InstrumentTrack.h"
 #include "PatternStore.h"
-#include "Engine.h"
 #include "Song.h"
+
+#include <QDomElement>
 
 
 namespace lmms

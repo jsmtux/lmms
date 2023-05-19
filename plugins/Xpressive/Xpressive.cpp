@@ -29,15 +29,16 @@
 
 #include "AudioEngine.h"
 #include "Engine.h"
-#include "widgets/Graph.h"
 #include "GuiApplication.h"
 #include "InstrumentTrack.h"
-#include "widgets/Knob.h"
-#include "widgets/LedCheckBox.h"
 #include "MainWindow.h"
 #include "NotePlayHandle.h"
-#include "widgets/PixmapButton.h"
 #include "Song.h"
+
+#include "widgets/Graph.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/PixmapButton.h"
 
 #include "base64.h"
 #include "lmms_constants.h"

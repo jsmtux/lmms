@@ -25,14 +25,13 @@
  */
 
 
-#include <QMimeData>
-#include <QDragEnterEvent>
-
-
-#include "StringPairDrag.h"
+#include "Clipboard.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
-#include "Clipboard.h"
+#include "StringPairDrag.h"
+
+#include <QMimeData>
+#include <QDragEnterEvent>
 
 
 namespace lmms::gui

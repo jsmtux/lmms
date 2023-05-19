@@ -27,12 +27,12 @@
 
 #include <cmath>
 
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
 #include "AutomatableModel.h"
-#include "widgets/PixmapButton.h"
 #include "MemoryManager.h"
 
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/PixmapButton.h"
 
 #define makeknob( name, x, y, hint, unit, oname ) 		\
 	name = new Knob( knobStyled, this ); 				\

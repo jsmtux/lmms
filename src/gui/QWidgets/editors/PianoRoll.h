@@ -27,19 +27,20 @@
 #ifndef LMMS_GUI_PIANO_ROLL_H
 #define LMMS_GUI_PIANO_ROLL_H
 
-#include <QVector>
-#include <QWidget>
-
 #include "Editor.h"
 #include "ComboBoxModel.h"
-#include "SerializingObject.h"
-#include "Note.h"
-#include "lmms_basics.h"
-#include "Song.h"
-#include "StepRecorder.h"
-#include "editors/StepRecorderWidget.h"
 #include "IPianoRollWindow.h"
 #include "IPianoRoll.h"
+#include "lmms_basics.h"
+#include "Note.h"
+#include "SerializingObject.h"
+#include "Song.h"
+#include "StepRecorder.h"
+
+#include "editors/StepRecorderWidget.h"
+
+#include <QVector>
+#include <QWidget>
 
 class QPainter;
 class QPixmap;

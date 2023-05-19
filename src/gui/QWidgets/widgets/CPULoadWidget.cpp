@@ -23,13 +23,13 @@
  *
  */
 
-
-#include <QPainter>
+#include "CPULoadWidget.h"
 
 #include "AudioEngine.h"
-#include "CPULoadWidget.h"
 #include "embed.h"
 #include "Engine.h"
+
+#include <QPainter>
 
 
 namespace lmms::gui

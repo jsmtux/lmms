@@ -28,10 +28,11 @@
 #define BIT_INVADER_H
 
 #include "AutomatableModel.h"
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
-#include "widgets/Graph.h"
 #include "MemoryManager.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/Graph.h"
 
 namespace lmms
 {

@@ -49,7 +49,10 @@ public:
 
 	int patternIndex();
 
-	ClipType getType() override { return ClipType::Pattern; }
+	ClipType getType() override
+	{
+		return ClipType::Pattern;
+	}
 
 private:
 	friend class PatternClipView;

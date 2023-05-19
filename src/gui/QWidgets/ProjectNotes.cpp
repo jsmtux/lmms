@@ -25,6 +25,12 @@
 
 #include "ProjectNotes.h"
 
+#include "embed.h"
+#include "Engine.h"
+#include "GuiApplication.h"
+#include "MainWindow.h"
+#include "Song.h"
+
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
@@ -36,12 +42,6 @@
 #include <QTextEdit>
 #include <QToolBar>
 #include <QDomCDATASection>
-
-#include "embed.h"
-#include "Engine.h"
-#include "GuiApplication.h"
-#include "MainWindow.h"
-#include "Song.h"
 
 
 namespace lmms::gui

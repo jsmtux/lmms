@@ -23,17 +23,17 @@
  *
  */
 
-#ifndef LMMS_DUMMY_INSTRUMENT_H
-#define LMMS_DUMMY_INSTRUMENT_H
-
-#include "Instrument.h"
-#include "instrument/InstrumentView.h"
-#include "Engine.h"
-
-#include <cstring>
+#ifndef LMMS_GUI_DUMMY_INSTRUMENT_H
+#define LMMS_GUI_DUMMY_INSTRUMENT_H
 
 #include "AudioEngine.h"
+#include "Engine.h"
+#include "Instrument.h"
 #include "QWidgetInstrumentPlugin.h"
+
+#include "instrument/InstrumentView.h"
+
+#include <cstring>
 
 namespace lmms
 {
@@ -77,4 +77,4 @@ public:
 
 } // namespace lmms
 
-#endif // LMMS_DUMMY_INSTRUMENT_H
+#endif // LMMS_GUI_DUMMY_INSTRUMENT_H

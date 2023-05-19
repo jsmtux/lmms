@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef LMMS_DUMMY_PLUGIN_H
-#define LMMS_DUMMY_PLUGIN_H
+#ifndef LMMS_GUI_DUMMY_PLUGIN_H
+#define LMMS_GUI_DUMMY_PLUGIN_H
 
 #include "Plugin.h"
 #include "PluginView.h"
@@ -69,4 +69,4 @@ protected:
 
 } // namespace lmms
 
-#endif // LMMS_DUMMY_PLUGIN_H
+#endif // LMMS_GUI_DUMMY_PLUGIN_H

@@ -29,12 +29,11 @@
 #include "DataFile.h"
 #include "embed.h"
 #include "MainWindow.h"
+#include "MidiClip.h"
 #include "PatternStore.h"
 #include "PatternTrack.h"
 #include "Song.h"
 #include "StringPairDrag.h"
-
-#include "MidiClip.h"
 
 #include "clips/ClipView.h"
 #include "tracks/TrackView.h"

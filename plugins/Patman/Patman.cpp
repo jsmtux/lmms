@@ -32,16 +32,17 @@
 #include "ConfigManager.h"
 #include "endian_handling.h"
 #include "Engine.h"
-#include "IFileDialog.h"
 #include "gui_templates.h"
+#include "IFileDialog.h"
+#include "IGuiApplication.h"
 #include "InstrumentTrack.h"
 #include "NotePlayHandle.h"
 #include "PathUtil.h"
-#include "widgets/PixmapButton.h"
 #include "Song.h"
 #include "StringPairDrag.h"
 #include "Clipboard.h"
-#include "IGuiApplication.h"
+
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 

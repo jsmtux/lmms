@@ -25,8 +25,8 @@
 #ifndef LMMS_GUI_LCD_SPINBOX_H
 #define LMMS_GUI_LCD_SPINBOX_H
 
-#include "LcdWidget.h"
 #include "AutomatableModelView.h"
+#include "LcdWidget.h"
 
 namespace lmms::gui
 {

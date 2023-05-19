@@ -24,14 +24,14 @@
  */
 
 
+#include "gui_templates.h"
+#include "LcdSpinBox.h"
+#include "MeterDialog.h"
+#include "MeterModel.h"
+
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVBoxLayout>
-
-#include "MeterDialog.h"
-#include "MeterModel.h"
-#include "gui_templates.h"
-#include "LcdSpinBox.h"
 
 namespace lmms::gui
 {

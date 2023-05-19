@@ -31,6 +31,7 @@
 #include "VstPlugin.h"
 
 #include "widgets/PixmapButton.h"
+
 #include "embed.h"
 
 #include "gui_templates.h"

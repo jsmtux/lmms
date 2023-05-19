@@ -30,12 +30,12 @@
 #include <QDomElement>
 #include <QLibrary>
 
+#include "AutomatableModel.h"
 #include "embed.h"
 #include "Engine.h"
 #include "IGuiApplication.h"
-#include "AutomatableModel.h"
-#include "Song.h"
 #include "PluginFactory.h"
+#include "Song.h"
 
 
 using lmms::gui::getGUIInterface;

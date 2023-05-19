@@ -22,19 +22,12 @@
  *
  */
 
-#include <memory>
-#include <QApplication>
-#include <QFontMetrics>
-#include <QInputDialog>
-#include <QMouseEvent>
-#include <QPainter>
+#include "Knob.h"
 
 #ifndef __USE_XOPEN
 #define __USE_XOPEN
 #endif
 
-#include "lmms_math.h"
-#include "Knob.h"
 #include "CaptionMenu.h"
 #include "ConfigManager.h"
 #include "ControllerConnection.h"
@@ -42,11 +35,19 @@
 #include "embed.h"
 #include "gui_templates.h"
 #include "GuiApplication.h"
+#include "lmms_math.h"
 #include "LocaleHelper.h"
 #include "MainWindow.h"
 #include "ProjectJournal.h"
 #include "SimpleTextFloat.h"
 #include "StringPairDrag.h"
+
+#include <memory>
+#include <QApplication>
+#include <QFontMetrics>
+#include <QInputDialog>
+#include <QMouseEvent>
+#include <QPainter>
 
 
 namespace lmms::gui

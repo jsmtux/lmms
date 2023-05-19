@@ -26,13 +26,12 @@
 #ifndef LMMS_GUI_CONTROLLER_CONNECTION_DIALOG_H
 #define LMMS_GUI_CONTROLLER_CONNECTION_DIALOG_H
 
-#include <QDialog>
-#include <QSortFilterProxyModel>
-#include <QStandardItemModel>
-
 #include "Controller.h"
 #include "AutomatableModel.h"
 
+#include <QDialog>
+#include <QSortFilterProxyModel>
+#include <QStandardItemModel>
 
 class QLineEdit;
 class QListView;

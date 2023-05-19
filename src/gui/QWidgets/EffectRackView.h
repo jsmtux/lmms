@@ -26,11 +26,11 @@
 #ifndef LMMS_GUI_EFFECT_RACK_VIEW_H
 #define LMMS_GUI_EFFECT_RACK_VIEW_H
 
-#include <QWidget>
-
 #include "EffectChain.h"
-#include "ModelView.h"
 #include "lmms_basics.h"
+#include "ModelView.h"
+
+#include <QWidget>
 
 class QScrollArea;
 class QVBoxLayout;

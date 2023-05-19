@@ -24,15 +24,14 @@
  */
 
 
+#include "PeakControllerDialog.h"
+
+#include "embed.h"
+#include "PeakController.h"
+
 #include <QLabel>
 #include <QPainter>
 #include <QIcon>
-
-#include "embed.h"
-
-#include "PeakControllerDialog.h"
-
-#include "PeakController.h"
 
 namespace lmms::gui
 {

@@ -22,13 +22,7 @@
  *
  */
 
-
-#include <QComboBox>
-#include <QImageReader>
-#include <QLabel>
-#include <QLayout>
-#include <QLineEdit>
-#include <QScrollArea>
+#include "SetupDialog.h"
 
 #include "AudioDeviceSetupWidget.h"
 #include "AudioEngine.h"
@@ -40,7 +34,6 @@
 #include "MainWindow.h"
 #include "MidiSetupWidget.h"
 #include "ProjectJournal.h"
-#include "SetupDialog.h"
 #include "TabButton.h"
 
 #include "widgets/TabBar.h"
@@ -71,6 +64,13 @@
 #include "MidiOss.h"
 #include "MidiSndio.h"
 #include "MidiWinMM.h"
+
+#include <QComboBox>
+#include <QImageReader>
+#include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
+#include <QScrollArea>
 
 
 namespace lmms::gui

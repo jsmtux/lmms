@@ -25,12 +25,12 @@
 #ifndef LMMS_GUI_TRACK_VIEW_H
 #define LMMS_GUI_TRACK_VIEW_H
 
-#include <QWidget>
-
 #include "JournallingObject.h"
 #include "ModelView.h"
 #include "TrackContentWidget.h"
 #include "TrackOperationsWidget.h"
+
+#include <QWidget>
 
 class QMenu;
 

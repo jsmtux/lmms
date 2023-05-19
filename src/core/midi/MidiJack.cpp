@@ -26,12 +26,11 @@
 
 #ifdef LMMS_HAVE_JACK
 
-
 #include "AudioEngine.h"
 #include "AudioJack.h"
 #include "ConfigManager.h"
-#include "IGuiApplication.h"
 #include "Engine.h"
+#include "IGuiApplication.h"
 
 namespace lmms
 {
@@ -52,7 +51,9 @@ static int JackMidiProcessCallback(jack_nframes_t nframes, void *arg)
 
 static void JackMidiShutdown(void *arg)
 {
-	gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(MidiJack::tr("JACK server down"), MidiJack::tr("The JACK server seems to be shuted down."));
+	gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+		MidiJack::tr("JACK server down"),
+		MidiJack::tr("The JACK server seems to be shuted down."));
 }
 
 MidiJack::MidiJack() :

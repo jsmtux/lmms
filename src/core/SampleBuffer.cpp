@@ -1142,6 +1142,7 @@ QString SampleBuffer::openAudioFile() const
 	}
 	// change dir to position of previously opened file
 	ofd->setDirectory(dir);
+	ofd->setFileMode(gui::IFileDialog::ExistingFiles);
 
 	// set filters
 	QStringList types;

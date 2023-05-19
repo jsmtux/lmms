@@ -22,13 +22,13 @@
  *
  */
 
-#include <QMouseEvent>
-
-#include "TimeDisplayWidget.h"
+#include "Engine.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
-#include "Engine.h"
 #include "Song.h"
+#include "TimeDisplayWidget.h"
+
+#include <QMouseEvent>
 
 
 namespace lmms::gui

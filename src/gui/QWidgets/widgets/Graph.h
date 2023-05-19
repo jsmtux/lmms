@@ -26,13 +26,13 @@
 #ifndef LMMS_GUI_GRAPH_H
 #define LMMS_GUI_GRAPH_H
 
-#include <QWidget>
-#include <QPixmap>
-#include <QCursor>
-
 #include "Model.h"
 #include "ModelView.h"
 #include "lmms_basics.h"
+
+#include <QWidget>
+#include <QPixmap>
+#include <QCursor>
 
 namespace lmms
 {

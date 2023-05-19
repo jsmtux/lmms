@@ -26,11 +26,12 @@
 #ifndef PATMAN_H
 #define PATMAN_H
 
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
 #include "SampleBuffer.h"
 #include "AutomatableModel.h"
 #include "MemoryManager.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 namespace lmms
 {

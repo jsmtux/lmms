@@ -24,6 +24,15 @@
 
 #include "PluginBrowser.h"
 
+#include "embed.h"
+#include "Engine.h"
+#include "InstrumentTrack.h"
+#include "PluginFactory.h"
+#include "Song.h"
+#include "StringPairDrag.h"
+
+#include "editors/TrackContainerView.h"
+
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
@@ -32,14 +41,6 @@
 #include <QPainter>
 #include <QStyleOption>
 #include <QTreeWidget>
-
-#include "embed.h"
-#include "Engine.h"
-#include "InstrumentTrack.h"
-#include "Song.h"
-#include "StringPairDrag.h"
-#include "editors/TrackContainerView.h"
-#include "PluginFactory.h"
 
 namespace lmms::gui
 {

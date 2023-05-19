@@ -1,13 +1,12 @@
 
 #include "AudioSdlSetupWidget.h"
 
-#include <QLabel>
-
+#ifdef LMMS_HAVE_SDL
 #include "AudioSdl.h"
 #include "ConfigManager.h"
 #include "gui_templates.h"
 
-#ifdef LMMS_HAVE_SDL
+#include <QLabel>
 
 namespace lmms {
 

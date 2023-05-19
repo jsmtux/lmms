@@ -29,11 +29,11 @@
 #include <QMutex>
 
 #include "AutomatableModel.h"
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
 #include "RemotePlugin.h"
 #include "zynaddsubfx/src/globals.h"
 
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 class QPushButton;
 

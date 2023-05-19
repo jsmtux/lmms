@@ -23,14 +23,11 @@
  *
  */
 
-#include <QHBoxLayout>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QMessageBox>
+#include "ControllerConnectionDialog.h"
 
 #include "AudioEngine.h"
-#include "ControllerConnectionDialog.h"
 #include "ControllerConnection.h"
+#include "embed.h"
 #include "MidiController.h"
 #include "MidiClient.h"
 #include "Song.h"
@@ -44,7 +41,10 @@
 #include "widgets/TabWidget.h"
 #include "widgets/ToolButton.h"
 
-#include "embed.h"
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QMessageBox>
 
 
 namespace lmms

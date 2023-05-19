@@ -43,11 +43,6 @@ namespace lmms
 class AutomationTrack;
 class TimePos;
 
-// namespace gui
-// {
-// class AutomationClipView;
-// } // namespace gui
-
 
 
 class LMMS_EXPORT AutomationClip : public Clip
@@ -174,7 +169,10 @@ public:
 	static const QString classNodeName() { return "automationclip"; }
 	QString nodeName() const override { return classNodeName(); }
 
-	ClipType getType() override { return ClipType::Automation; }
+	ClipType getType() override
+	{
+		return ClipType::Automation;
+	}
 
 
 	static bool isAutomated( const AutomatableModel * _m );
@@ -231,7 +229,6 @@ private:
 	static const float DEFAULT_MIN_VALUE;
 	static const float DEFAULT_MAX_VALUE;
 
-	// friend class gui::AutomationClipView;
 	friend class AutomationNode;
 
 } ;

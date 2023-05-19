@@ -22,11 +22,11 @@
  *
  */
 
+#include "LeftRightNav.h"
+
+#include "embed.h"
 
 #include <QHBoxLayout>
-
-#include "LeftRightNav.h"
-#include "embed.h"
 
 namespace lmms::gui
 {

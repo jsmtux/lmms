@@ -1,5 +1,5 @@
-#ifndef EEE5B5F2_6BF1_48FE_8A4F_08A09D561CBE
-#define EEE5B5F2_6BF1_48FE_8A4F_08A09D561CBE
+#ifndef LMMS_GUI_LFO_CONTROLLER_DIALOG_H
+#define LMMS_GUI_LFO_CONTROLLER_DIALOG_H
 
 #include "ControllerDialog.h"
 #include "LfoController.h"
@@ -39,4 +39,4 @@ private slots:
 
 }
 
-#endif /* EEE5B5F2_6BF1_48FE_8A4F_08A09D561CBE */
+#endif /* LMMS_GUI_LFO_CONTROLLER_DIALOG_H */

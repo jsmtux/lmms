@@ -24,13 +24,6 @@
  
 #include "SampleTrackWindow.h"
 
-#include <QCloseEvent>
-#include <QGridLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QMenu>
-#include <QVBoxLayout>
-
 #include "EffectRackView.h"
 #include "embed.h"
 #include "gui_templates.h"
@@ -45,6 +38,13 @@
 
 #include "tracks/SampleTrackView.h"
 #include "tracks/TrackLabelButton.h"
+
+#include <QCloseEvent>
+#include <QGridLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMenu>
+#include <QVBoxLayout>
 
 namespace lmms::gui
 {

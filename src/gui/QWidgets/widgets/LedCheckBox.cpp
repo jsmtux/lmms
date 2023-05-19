@@ -23,13 +23,14 @@
  */
 
 
-#include <QFontMetrics>
-#include <QPainter>
-
 #include "LedCheckBox.h"
+
 #include "DeprecationHelper.h"
 #include "embed.h"
 #include "gui_templates.h"
+
+#include <QFontMetrics>
+#include <QPainter>
 
 namespace lmms::gui
 {

@@ -22,12 +22,12 @@
  *
  */
 
+#include "SideBar.h"
+#include "SideBarWidget.h"
+
 #include <QStyleOptionToolButton>
 #include <QStylePainter>
 #include <QToolButton>
-
-#include "SideBar.h"
-#include "SideBarWidget.h"
 
 namespace lmms::gui
 {

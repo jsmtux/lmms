@@ -31,12 +31,13 @@
 #include "GbApuWrapper.h"
 #include "base64.h"
 #include "InstrumentTrack.h"
-#include "widgets/Knob.h"
 #include "AudioEngine.h"
 #include "NotePlayHandle.h"
-#include "widgets/PixmapButton.h"
 #include "Engine.h"
+
 #include "widgets/Graph.h"
+#include "widgets/Knob.h"
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 

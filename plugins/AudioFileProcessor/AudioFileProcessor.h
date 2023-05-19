@@ -31,11 +31,12 @@
 
 #include "ComboBoxModel.h"
 #include "Instrument.h"
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
 #include "SampleBuffer.h"
-#include "widgets/Knob.h"
 #include "PluginView.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/Knob.h"
 
 namespace lmms
 {

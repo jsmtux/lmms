@@ -24,24 +24,26 @@
 
 #include "TrackContentWidget.h"
 
-#include <QApplication>
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QPainter>
-
 #include "AutomationClip.h"
 #include "Clipboard.h"
 #include "DataFile.h"
 #include "Engine.h"
 #include "GuiApplication.h"
-#include "editors/PatternEditor.h"
-#include "editors/TrackContainerView.h"
 #include "PatternStore.h"
 #include "Song.h"
-#include "editors/SongEditor.h"
 #include "StringPairDrag.h"
-#include "clips/ClipView.h"
 #include "TrackView.h"
+
+#include "clips/ClipView.h"
+
+#include "editors/PatternEditor.h"
+#include "editors/SongEditor.h"
+#include "editors/TrackContainerView.h"
+
+#include <QApplication>
+#include <QContextMenuEvent>
+#include <QMenu>
+#include <QPainter>
 
 
 namespace lmms::gui

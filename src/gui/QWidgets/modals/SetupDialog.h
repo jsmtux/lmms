@@ -25,9 +25,6 @@
 #ifndef LMMS_GUI_SETUP_DIALOG_H
 #define LMMS_GUI_SETUP_DIALOG_H
 
-#include <QDialog>
-#include <QMap>
-
 #include "AudioDevice.h"
 #include "AudioDeviceSetupWidget.h"
 #include "lmmsconfig.h"
@@ -35,6 +32,9 @@
 #include "MidiSetupWidget.h"
 
 #include "widgets/LedCheckBox.h"
+
+#include <QDialog>
+#include <QMap>
 
 
 class QComboBox;

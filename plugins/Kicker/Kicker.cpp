@@ -31,14 +31,15 @@
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "InstrumentTrack.h"
-#include "widgets/Knob.h"
-#include "widgets/LedCheckBox.h"
 #include "NotePlayHandle.h"
 #include "KickerOsc.h"
-#include "widgets/TempoSyncKnob.h"
 
 #include "embed.h"
 #include "plugin_export.h"
+
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/TempoSyncKnob.h"
 
 namespace lmms
 {

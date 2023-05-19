@@ -50,12 +50,12 @@
 #include "AudioEngine.h"
 #include "ConfigManager.h"
 #include "GuiApplication.h"
+#include "IFileDialog.h"
+#include "IGuiApplication.h"
 #include "LocaleHelper.h"
 #include "MainWindow.h"
 #include "PathUtil.h"
 #include "Song.h"
-#include "IGuiApplication.h"
-#include "IFileDialog.h"
 
 #ifdef LMMS_BUILD_LINUX
 #	include <X11/Xlib.h>
@@ -587,8 +587,8 @@ void VstPlugin::savePreset()
 
 	QStringList types;
 	types << tr("VST Plugin Preset (*.fxp *.fxb)");
-	sfd->setDirectory(presName.section(": ", 1, 1) + tr(".fxp"));
 	sfd->setNameFilters(types);
+	sfd->setDirectory(presName.section(": ", 1, 1) + tr(".fxp"));
 
 	if (p_name != "") // remember last directory
 	{

@@ -28,9 +28,10 @@
 #define KICKER_H
 
 #include "AutomatableModel.h"
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
 #include "TempoSyncKnobModel.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 
 namespace lmms

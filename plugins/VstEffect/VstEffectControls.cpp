@@ -30,7 +30,6 @@
 #include <QScrollArea>
 
 #include "embed.h"
-#include "widgets/CustomTextKnob.h"
 #include "VstEffectControls.h"
 #include "VstEffectControlDialog.h"
 #include "VstEffect.h"
@@ -40,6 +39,9 @@
 #include "MainWindow.h"
 #include "GuiApplication.h"
 #include "SubWindow.h"
+
+#include "widgets/CustomTextKnob.h"
+
 #include <QApplication>
 
 namespace lmms

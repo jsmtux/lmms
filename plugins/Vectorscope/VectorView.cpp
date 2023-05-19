@@ -28,10 +28,11 @@
 #include <QImage>
 #include <QPainter>
 
-#include "modals/ColorChooser.h"
 #include "GuiApplication.h"
 #include "IMainWindow.h"
 #include "VecControls.h"
+
+#include "modals/ColorChooser.h"
 
 namespace lmms::gui
 {

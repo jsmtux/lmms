@@ -23,15 +23,13 @@
  *
  */
 
-
-
-#include <QStyleOptionFrame>
-#include <QPainter>
-
-#include "LcdWidget.h"
 #include "DeprecationHelper.h"
 #include "embed.h"
 #include "gui_templates.h"
+#include "LcdWidget.h"
+
+#include <QStyleOptionFrame>
+#include <QPainter>
 
 
 namespace lmms::gui

@@ -23,13 +23,13 @@
  */
 #include "MainApplication.h"
 
-#include <QDebug>
-#include <QFileOpenEvent>
-
 #include "Engine.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
 #include "Song.h"
+
+#include <QDebug>
+#include <QFileOpenEvent>
 
 namespace lmms::gui
 {

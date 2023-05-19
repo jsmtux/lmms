@@ -30,7 +30,6 @@
 
 #include "AudioEngine.h"
 #include "ControllerConnection.h"
-// #include "ControllerDialog.h"
 #include "LfoController.h"
 #include "MidiController.h"
 #include "PeakController.h"

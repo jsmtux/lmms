@@ -24,13 +24,13 @@
 
 #include "SimpleTextFloat.h"
 
-#include <QTimer>
-#include <QStyleOption>
-#include <QHBoxLayout>
-#include <QLabel>
-
 #include "GuiApplication.h"
 #include "MainWindow.h"
+
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QStyleOption>
+#include <QTimer>
 
 namespace lmms::gui
 {

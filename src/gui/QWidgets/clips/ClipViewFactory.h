@@ -1,5 +1,5 @@
-#ifndef BA9C9C5D_CA42_49E5_AB0D_376C079C0180
-#define BA9C9C5D_CA42_49E5_AB0D_376C079C0180
+#ifndef LMMS_UI_CLIP_VIEW_FACTORY_H
+#define LMMS_UI_CLIP_VIEW_FACTORY_H
 
 #include "Clip.h"
 
@@ -16,4 +16,4 @@ public:
 } // namespace gui
 } // namespace lmms
 
-#endif /* BA9C9C5D_CA42_49E5_AB0D_376C079C0180 */
+#endif /* LMMS_UI_CLIP_VIEW_FACTORY_H */

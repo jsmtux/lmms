@@ -29,11 +29,14 @@
 
 #include <stk/Instrmnt.h>
 
-#include "widgets/ComboBox.h"
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
-#include "widgets/Knob.h"
 #include "NotePlayHandle.h"
+
+#include "instrument/InstrumentView.h"
+
+#include "plugins/QWidgetInstrumentPlugin.h"
+
+#include "widgets/ComboBox.h"
+#include "widgets/Knob.h"
 #include "widgets/LedCheckBox.h"
 
 // As of Stk 4.4 all classes and types have been moved to the namespace "stk".

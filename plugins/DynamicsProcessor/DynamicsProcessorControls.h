@@ -28,6 +28,7 @@
 
 #include "EffectControls.h"
 #include "DynamicsProcessorControlDialog.h"
+
 #include "widgets/Graph.h"
 
 namespace lmms

@@ -89,6 +89,8 @@ SET(LMMS_UI_SRCS
 	modals/SetupDialog.cpp
 	modals/VersionedSaveDialog.cpp
 
+	plugins/DummyEffect.cpp
+
 	tracks/AutomationTrackView.cpp
 	tracks/FadeButton.cpp
 	tracks/InstrumentTrackView.cpp

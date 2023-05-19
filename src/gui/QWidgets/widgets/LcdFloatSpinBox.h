@@ -26,10 +26,10 @@
 #ifndef LMMS_GUI_LCD_FLOATSPINBOX_H
 #define LMMS_GUI_LCD_FLOATSPINBOX_H
 
-#include <QString>
-
-#include "LcdWidget.h"
 #include "AutomatableModelView.h"
+#include "LcdWidget.h"
+
+#include <QString>
 
 namespace lmms::gui
 {

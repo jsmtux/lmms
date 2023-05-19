@@ -23,17 +23,17 @@
  */
 
 
-#include <QLayout>
-#include <QLineEdit>
-#include <QMessageBox>
-#include <QPushButton>
-#include <QGroupBox>
 
 #include "DeprecationHelper.h"
 #include "VersionedSaveDialog.h"
 
 #include "widgets/LedCheckBox.h"
 
+#include <QLayout>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QGroupBox>
 
 namespace lmms::gui
 {

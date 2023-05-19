@@ -27,7 +27,6 @@
 
 #include "AutomatableButton.h"
 
-
 class QPixmap;
 
 

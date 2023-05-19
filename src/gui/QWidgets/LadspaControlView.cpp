@@ -23,15 +23,14 @@
  *
  */
 
-
-#include <QHBoxLayout>
-
+#include "LadspaBase.h"
 #include "LadspaControl.h"
 #include "LadspaControlView.h"
-#include "LadspaBase.h"
 
 #include "widgets/LedCheckBox.h"
 #include "widgets/TempoSyncKnob.h"
+
+#include <QHBoxLayout>
 
 
 namespace lmms::gui

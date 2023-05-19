@@ -25,10 +25,8 @@
 #ifndef LMMS_GUI_INSTRUMENT_TRACK_VIEW_H
 #define LMMS_GUI_INSTRUMENT_TRACK_VIEW_H
 
-#include "TrackView.h"
-
 #include "InstrumentTrack.h"
-
+#include "TrackView.h"
 
 namespace lmms::gui
 {

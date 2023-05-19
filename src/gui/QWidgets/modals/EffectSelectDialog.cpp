@@ -24,12 +24,13 @@
 
 #include "EffectSelectDialog.h"
 
-#include "gui/QWidgets/ui_EffectSelectDialog.h"
-
-#include "DummyEffect.h"
 #include "EffectChain.h"
 #include "embed.h"
 #include "PluginFactory.h"
+
+#include "gui/QWidgets/ui_EffectSelectDialog.h"
+
+#include "plugins/DummyEffect.h"
 
 #include <QLabel>
 

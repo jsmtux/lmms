@@ -27,6 +27,7 @@
 
 #include "PixmapButton.h"
 
+#include <QHBoxLayout>
 
 namespace lmms::gui
 {

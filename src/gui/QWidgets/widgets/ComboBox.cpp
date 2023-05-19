@@ -26,15 +26,15 @@
 
 #include "ComboBox.h"
 
+#include "CaptionMenu.h"
+#include "embed.h"
+#include "gui_templates.h"
+
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QStyleOptionFrame>
-
-#include "CaptionMenu.h"
-#include "embed.h"
-#include "gui_templates.h"
 
 namespace lmms::gui
 {

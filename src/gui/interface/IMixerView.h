@@ -5,7 +5,8 @@ namespace lmms::gui {
 
 class IMixerView {
 public:
-    virtual ~IMixerView() {}
+    virtual ~IMixerView()
+    { }
     virtual void refreshDisplay() = 0;
 };
 

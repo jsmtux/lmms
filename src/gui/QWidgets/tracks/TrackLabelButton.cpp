@@ -26,17 +26,18 @@
 
 #include "TrackLabelButton.h"
 
-#include <QMouseEvent>
-
 #include "ConfigManager.h"
 #include "embed.h"
 #include "Engine.h"
 #include "Instrument.h"
 #include "InstrumentTrack.h"
-#include "modals/RenameDialog.h"
 #include "Song.h"
 #include "TrackRenameLineEdit.h"
 #include "TrackView.h"
+
+#include "modals/RenameDialog.h"
+
+#include <QMouseEvent>
 
 namespace lmms::gui
 {

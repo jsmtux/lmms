@@ -23,18 +23,18 @@
  */
 
 
-#include <QMouseEvent>
-#include <QPainter>
-
-#include "Oscilloscope.h"
+#include "AudioEngine.h"
+#include "BufferManager.h"
+#include "embed.h"
+#include "Engine.h"
 #include "GuiApplication.h"
 #include "gui_templates.h"
 #include "MainWindow.h"
-#include "AudioEngine.h"
-#include "Engine.h"
+#include "Oscilloscope.h"
 #include "Song.h"
-#include "embed.h"
-#include "BufferManager.h"
+
+#include <QMouseEvent>
+#include <QPainter>
 
 namespace lmms::gui
 {

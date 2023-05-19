@@ -25,9 +25,9 @@
 #ifndef LMMS_GUI_TEXT_FLOAT_H
 #define LMMS_GUI_TEXT_FLOAT_H
 
-#include <QWidget>
-
 #include "lmms_export.h"
+
+#include <QWidget>
 
 class QLabel;
 

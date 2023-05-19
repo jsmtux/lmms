@@ -23,14 +23,7 @@
  *
  */
 
-#include <QGraphicsOpacityEffect>
-#include <QLayout>
-#include <QMouseEvent>
-#include <QPushButton>
-#include <QPainter>
-
 #include "EffectView.h"
-#include "DummyEffect.h"
 #include "embed.h"
 #include "GuiApplication.h"
 #include "gui_templates.h"
@@ -40,10 +33,18 @@
 #include "effectcontroldialogs/EffectControlDialog.h"
 #include "effectcontroldialogs/QWidgetEffectControls.h"
 
+#include "plugins/DummyEffect.h"
+
 #include "widgets/CaptionMenu.h"
 #include "widgets/Knob.h"
 #include "widgets/LedCheckBox.h"
 #include "widgets/TempoSyncKnob.h"
+
+#include <QGraphicsOpacityEffect>
+#include <QLayout>
+#include <QMouseEvent>
+#include <QPushButton>
+#include <QPainter>
 
 
 namespace lmms::gui

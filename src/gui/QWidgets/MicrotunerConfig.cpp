@@ -24,16 +24,6 @@
 
 #include "MicrotunerConfig.h"
 
-#include <QFile>
-#include <QGridLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QMessageBox>
-#include <QPlainTextEdit>
-#include <QPushButton>
-#include <QRegExp>
-#include <QTextStream>
-
 #include "embed.h"
 #include "Engine.h"
 #include "GuiApplication.h"
@@ -51,6 +41,16 @@
 #include "widgets/ComboBox.h"
 #include "widgets/LcdFloatSpinBox.h"
 #include "widgets/LcdSpinBox.h"
+
+#include <QFile>
+#include <QGridLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QPlainTextEdit>
+#include <QPushButton>
+#include <QRegExp>
+#include <QTextStream>
 
 namespace lmms::gui
 {

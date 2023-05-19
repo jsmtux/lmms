@@ -28,9 +28,10 @@
 #include "CrossoverEQControlDialog.h"
 #include "CrossoverEQControls.h"
 #include "embed.h"
-#include "widgets/LedCheckBox.h"
-#include "widgets/Knob.h"
+
 #include "widgets/Fader.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
 
 namespace lmms::gui
 {

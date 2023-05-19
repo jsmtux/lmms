@@ -42,23 +42,23 @@
 
 #include "AudioEngine.h"
 #include "ConfigManager.h"
-#include "widgets/CustomTextKnob.h"
 #include "Engine.h"
-#include "IFileDialog.h"
 #include "GuiApplication.h"
 #include "gui_templates.h"
+#include "IFileDialog.h"
 #include "InstrumentPlayHandle.h"
 #include "InstrumentTrack.h"
 #include "LocaleHelper.h"
 #include "MainWindow.h"
 #include "PathUtil.h"
-#include "widgets/PixmapButton.h"
 #include "Song.h"
 #include "StringPairDrag.h"
 #include "SubWindow.h"
-#include "widgets/TextFloat.h"
 #include "Clipboard.h"
 
+#include "widgets/CustomTextKnob.h"
+#include "widgets/PixmapButton.h"
+#include "widgets/TextFloat.h"
 
 #include "embed.h"
 

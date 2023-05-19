@@ -23,21 +23,8 @@
  *
  */
 
-
-#include <QApplication>
-#include <QDesktopServices>
-#include <QHBoxLayout>
-#include <QKeyEvent>
-#include <QLineEdit>
-#include <QMenu>
-#include <QPushButton>
-#include <QMdiArea>
-#include <QMdiSubWindow>
-#include <QMessageBox>
-#include <QShortcut>
-#include <QStringList>
-
 #include "FileBrowser.h"
+
 #include "AudioEngine.h"
 #include "ConfigManager.h"
 #include "DataFile.h"
@@ -60,6 +47,20 @@
 #include "instrument/InstrumentTrackWindow.h"
 
 #include "widgets/TextFloat.h"
+
+
+#include <QApplication>
+#include <QDesktopServices>
+#include <QHBoxLayout>
+#include <QKeyEvent>
+#include <QLineEdit>
+#include <QMenu>
+#include <QMessageBox>
+#include <QMdiArea>
+#include <QMdiSubWindow>
+#include <QPushButton>
+#include <QShortcut>
+#include <QStringList>
 
 namespace lmms::gui
 {

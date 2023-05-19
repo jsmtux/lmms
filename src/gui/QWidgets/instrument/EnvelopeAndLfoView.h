@@ -26,9 +26,9 @@
 #ifndef LMMS_GUI_ENVELOPE_AND_LFO_VIEW_H
 #define LMMS_GUI_ENVELOPE_AND_LFO_VIEW_H
 
-#include <QWidget>
-
 #include "ModelView.h"
+
+#include <QWidget>
 
 class QPaintEvent;
 class QPixmap;

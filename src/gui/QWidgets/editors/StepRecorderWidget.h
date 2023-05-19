@@ -23,10 +23,10 @@
 #ifndef LMMS_GUI_STEP_RECOREDER_WIDGET_H
 #define LMMS_GUI_STEP_RECOREDER_WIDGET_H
 
+#include "IStepRecorderWidget.h"
+
 #include <QWidget>
 #include <QColor>
-
-#include "IStepRecorderWidget.h"
 
 namespace lmms::gui
 {

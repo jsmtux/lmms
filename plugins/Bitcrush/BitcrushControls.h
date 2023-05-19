@@ -26,8 +26,9 @@
 #ifndef BITCRUSH_CONTROLS_H
 #define BITCRUSH_CONTROLS_H
 
-#include "effectcontroldialogs/QWidgetEffectControls.h"
 #include "BitcrushControlDialog.h"
+
+#include "effectcontroldialogs/QWidgetEffectControls.h"
 
 namespace lmms
 {

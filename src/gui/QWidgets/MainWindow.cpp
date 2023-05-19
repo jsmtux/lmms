@@ -24,17 +24,6 @@
 
 #include "MainWindow.h"
 
-#include <QApplication>
-#include <QCloseEvent>
-#include <QDesktopServices>
-#include <QDomElement>
-#include <QFileInfo>
-#include <QMdiArea>
-#include <QMenuBar>
-#include <QMessageBox>
-#include <QShortcut>
-#include <QSplitter>
-
 #include "ControllerRackView.h"
 #include "embed.h"
 #include "Engine.h"
@@ -42,8 +31,8 @@
 #include "MixerView.h"
 #include "GuiApplication.h"
 #include "ImportFilter.h"
+#include "lmmsversion.h"
 #include "MicrotunerConfig.h"
-#include "instrument/PianoView.h"
 #include "PluginBrowser.h"
 #include "PluginFactory.h"
 #include "PluginView.h"
@@ -63,22 +52,32 @@
 #include "editors/TimeLineWidget.h"
 
 #include "instrument/InstrumentTrackWindow.h"
+#include "instrument/PianoView.h"
 
 #include "menus/RecentProjectsMenu.h"
 #include "menus/TemplatesMenu.h"
 
-#include "modals/FileDialog.h"
-#include "modals/ExportProjectDialog.h"
-#include "modals/VersionedSaveDialog.h"
 #include "modals/AboutDialog.h"
+#include "modals/ExportProjectDialog.h"
+#include "modals/FileDialog.h"
 #include "modals/SetupDialog.h"
+#include "modals/VersionedSaveDialog.h"
 
 #include "widgets/TextFloat.h"
 #include "widgets/ToolButton.h"
 
 #include "tracks/InstrumentTrackView.h"
 
-#include "lmmsversion.h"
+#include <QApplication>
+#include <QCloseEvent>
+#include <QDesktopServices>
+#include <QDomElement>
+#include <QFileInfo>
+#include <QMdiArea>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QShortcut>
+#include <QSplitter>
 
 
 namespace lmms::gui
@@ -303,17 +302,28 @@ MainWindow::~MainWindow()
 	Engine::destroy();
 }
 
-void MainWindow::ShowInfoMessage(QString title, QString description) {
+void MainWindow::ShowInfoMessage(QString title, QString description)
+{
 	QMessageBox::information(this, title, description);
 }
 
-void MainWindow::ShowCriticalMessage(QString title, QString description) {
+void MainWindow::ShowCriticalMessage(QString title, QString description)
+{
 	QMessageBox::critical( this, title, description,
 						QMessageBox::Ok,
 						QMessageBox::NoButton );
 }
 
-void MainWindow::ShowWarningMessage(int line, int col, QString description) {
+
+void MainWindow::ShowWarnMessage(QString title, QString description)
+{
+	QMessageBox::warning( this, title, description,
+						QMessageBox::Ok,
+						QMessageBox::NoButton );
+}
+
+void MainWindow::ShowWarnMessageWithPosition(int line, int col, QString description)
+{
 	QMessageBox::warning(
 		nullptr, gui::MainWindow::tr("Configuration file"),
 		gui::MainWindow::tr("Error while parsing configuration file at line %1:%2: %3").
@@ -322,7 +332,8 @@ void MainWindow::ShowWarningMessage(int line, int col, QString description) {
 						arg(description));
 }
 
-void MainWindow::ShowTextFloatMessage(QString title, QString description, QPixmap image, int _timeout) {
+void MainWindow::ShowTextFloatMessage(QString title, QString description, QPixmap image, int _timeout)
+{
 	gui::TextFloat::displayMessage(
 		title,
 		description,
@@ -331,7 +342,8 @@ void MainWindow::ShowTextFloatMessage(QString title, QString description, QPixma
 	);
 }
 
-void MainWindow::ShowFileNotFoundMessage(QString path) {
+void MainWindow::ShowFileNotFoundMessage(QString path)
+{
 	QString title, message;
 	title = MainWindow::tr("Could not open file");
 	message = MainWindow::tr("Could not open file %1 "
@@ -347,7 +359,8 @@ void MainWindow::ShowFileNotFoundMessage(QString path) {
 	return;
 }
 
-ProgressModal* MainWindow::ShowProgressMessage(QString title, int min, int max) {
+ProgressModal* MainWindow::ShowProgressMessage(QString title, int min, int max)
+{
 	return new ProgressModal(title, min, max, this);
 }
 

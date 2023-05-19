@@ -22,13 +22,14 @@
  *
  */
 
-#include <QList>
-#include <QUrl>
-#include <QListView>
-#include <QStandardPaths>
+#include "FileDialog.h"
 
 #include "ConfigManager.h"
-#include "FileDialog.h"
+
+#include <QList>
+#include <QListView>
+#include <QStandardPaths>
+#include <QUrl>
 
 
 namespace lmms::gui

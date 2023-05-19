@@ -24,18 +24,18 @@
  */
 
 
-#include <QMdiArea>
-
 #include "TempoSyncKnob.h"
-#include "Engine.h"
+
 #include "CaptionMenu.h"
 #include "embed.h"
+#include "Engine.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
 #include "MeterDialog.h"
 #include "Song.h"
 #include "SubWindow.h"
 
+#include <QMdiArea>
 
 namespace lmms::gui
 {

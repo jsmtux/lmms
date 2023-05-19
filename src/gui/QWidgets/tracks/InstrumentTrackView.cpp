@@ -24,22 +24,15 @@
 
 #include "InstrumentTrackView.h"
 
-#include <QAction>
-#include <QApplication>
-#include <QDragEnterEvent>
-#include <QMdiArea>
-#include <QMdiSubWindow>
-#include <QMenu>
-
 #include "AudioEngine.h"
 #include "ConfigManager.h"
 #include "Engine.h"
 #include "FadeButton.h"
+#include "GuiApplication.h"
+#include "InstrumentTrack.h"
 #include "MidiCCRackView.h"
 #include "Mixer.h"
 #include "MixerView.h"
-#include "GuiApplication.h"
-#include "InstrumentTrack.h"
 #include "MainWindow.h"
 #include "MidiClient.h"
 #include "TrackLabelButton.h"
@@ -47,6 +40,13 @@
 #include "instrument/InstrumentTrackWindow.h"
 #include "menus/MidiPortMenu.h"
 #include "widgets/Knob.h"
+
+#include <QAction>
+#include <QApplication>
+#include <QDragEnterEvent>
+#include <QMdiArea>
+#include <QMdiSubWindow>
+#include <QMenu>
 
 
 namespace lmms::gui

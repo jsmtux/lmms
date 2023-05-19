@@ -29,9 +29,10 @@
 #include "DynamicsProcessorControls.h"
 #include "DynamicsProcessor.h"
 #include "base64.h"
-#include "widgets/Graph.h"
 #include "Engine.h"
 #include "Song.h"
+
+#include "widgets/Graph.h"
 
 namespace lmms
 {

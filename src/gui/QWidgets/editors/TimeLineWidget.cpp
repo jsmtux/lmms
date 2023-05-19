@@ -29,10 +29,9 @@
 #include <QPainter>
 #include <QToolBar>
 
-
-#include "TimeLineWidget.h"
 #include "embed.h"
 #include "GuiApplication.h"
+#include "TimeLineWidget.h"
 
 #include "widgets/NStateButton.h"
 #include "widgets/TextFloat.h"

@@ -25,11 +25,11 @@
 #ifndef LMMS_GUI_PIANO_VIEW_H
 #define LMMS_GUI_PIANO_VIEW_H
 
-#include <QPixmap>
-#include <QScrollBar>
-
 #include "AutomatableModel.h"
 #include "ModelView.h"
+
+#include <QPixmap>
+#include <QScrollBar>
 
 namespace lmms
 {

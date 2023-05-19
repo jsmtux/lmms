@@ -44,7 +44,8 @@ class TrackView;
 } // namespace gui
 
 
-enum class ClipType {
+enum class ClipType
+{
 	Automation,
 	Midi,
 	Pattern,

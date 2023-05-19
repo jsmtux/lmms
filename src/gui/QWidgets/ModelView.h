@@ -25,8 +25,9 @@
 #ifndef LMMS_GUI_MODEL_VIEW_H
 #define LMMS_GUI_MODEL_VIEW_H
 
-#include <QPointer>
 #include "Model.h"
+
+#include <QPointer>
 
 namespace lmms::gui
 {

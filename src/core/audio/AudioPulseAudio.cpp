@@ -30,7 +30,6 @@
 #ifdef LMMS_HAVE_PULSEAUDIO
 
 #include "ConfigManager.h"
-// #include "LcdSpinBox.h"
 #include "AudioEngine.h"
 #include "gui_templates.h"
 #include "Engine.h"

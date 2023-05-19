@@ -52,9 +52,10 @@
 
 // lmms/include/
 #include "AutomatableModel.h"
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
 #include "SubWindow.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 class QPushButton;
 class QComboBox;

@@ -70,7 +70,10 @@ public:
 	void setSampleStartFrame( f_cnt_t startFrame );
 	void setSamplePlayLength( f_cnt_t length );
 
-	ClipType getType() override { return ClipType::Sample; }
+	ClipType getType() override
+	{
+		return ClipType::Sample;
+	}
 
 	bool isPlaying() const;
 	void setIsPlaying(bool isPlaying);

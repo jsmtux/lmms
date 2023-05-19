@@ -25,10 +25,10 @@
 #ifndef LMMS_GUI_OSCILLOSCOPE_H
 #define LMMS_GUI_OSCILLOSCOPE_H
 
+#include "lmms_basics.h"
+
 #include <QWidget>
 #include <QPixmap>
-
-#include "lmms_basics.h"
 
 namespace lmms::gui
 {

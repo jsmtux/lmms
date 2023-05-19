@@ -33,9 +33,11 @@
 #define LB302_H
 
 #include "DspEffectLibrary.h"
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
 #include "NotePlayHandle.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+
 #include <QMutex>
 
 namespace lmms

@@ -47,12 +47,11 @@
 #ifndef LMMS_GUI_FADER_H
 #define LMMS_GUI_FADER_H
 
+#include "AutomatableModelView.h"
+
 #include <QElapsedTimer>
 #include <QPixmap>
 #include <QWidget>
-
-
-#include "AutomatableModelView.h"
 
 
 namespace lmms::gui

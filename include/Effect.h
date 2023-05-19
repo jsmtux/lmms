@@ -165,6 +165,11 @@ public:
 
 	virtual EffectControls * controls() = 0;
 
+	virtual bool isDummy()
+	{
+		return false;
+	}
+
 	static Effect * instantiate( const QString & _plugin_name,
 				Model * _parent,
 				Descriptor::SubPluginFeatures::Key * _key );

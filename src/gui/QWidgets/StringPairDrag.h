@@ -26,12 +26,12 @@
 #ifndef LMMS_GUI_STRING_PAIR_DRAG_H
 #define LMMS_GUI_STRING_PAIR_DRAG_H
 
+#include "lmms_export.h"
+
 #include <QDrag>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
-
-#include "lmms_export.h"
 
 class QPixmap;
 

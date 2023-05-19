@@ -27,12 +27,13 @@
 
 #include "Monstro.h"
 
-#include "widgets/ComboBox.h"
 #include "Engine.h"
 #include "InstrumentTrack.h"
 #include "gui_templates.h"
 #include "lmms_math.h"
 #include "interpolation.h"
+
+#include "widgets/ComboBox.h"
 
 #include "embed.h"
 

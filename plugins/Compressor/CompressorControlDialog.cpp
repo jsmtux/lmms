@@ -30,13 +30,14 @@
 #include <QPainter>
 #include <QWheelEvent>
 
-#include "widgets/AutomatableButton.h"
 #include "embed.h"
 #include "../Eq/EqFader.h"
 #include "GuiApplication.h"
 #include "interpolation.h"
-#include "widgets/Knob.h"
 #include "MainWindow.h"
+
+#include "widgets/AutomatableButton.h"
+#include "widgets/Knob.h"
 #include "widgets/PixmapButton.h"
 
 namespace lmms::gui

@@ -26,13 +26,16 @@
 #ifndef WATSYN_H
 #define WATSYN_H
 
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
-#include "widgets/Graph.h"
 #include "AutomatableModel.h"
-#include "widgets/TempoSyncKnob.h"
 #include <samplerate.h>
 #include "MemoryManager.h"
+
+#include "instrument/InstrumentView.h"
+
+#include "plugins/QWidgetInstrumentPlugin.h"
+
+#include "widgets/Graph.h"
+#include "widgets/TempoSyncKnob.h"
 
 namespace lmms
 {

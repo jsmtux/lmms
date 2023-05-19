@@ -31,10 +31,11 @@
 #include <QMutex>
 #include <samplerate.h>
 
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
-#include "widgets/LcdSpinBox.h"
 #include "MemoryManager.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/LcdSpinBox.h"
 
 class QLabel;
 

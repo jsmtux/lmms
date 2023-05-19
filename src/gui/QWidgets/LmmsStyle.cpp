@@ -23,7 +23,7 @@
  *
  */
 
-#include <array>
+#include "LmmsStyle.h"
 
 #include <QFile>
 #include <QApplication>
@@ -32,7 +32,7 @@
 #include <QStyleFactory>
 #include <QStyleOption>
 
-#include "LmmsStyle.h"
+#include <array>
 
 
 namespace lmms::gui

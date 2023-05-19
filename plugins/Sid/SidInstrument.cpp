@@ -35,8 +35,9 @@
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "InstrumentTrack.h"
-#include "widgets/Knob.h"
 #include "NotePlayHandle.h"
+
+#include "widgets/Knob.h"
 #include "widgets/PixmapButton.h"
 
 #include "embed.h"

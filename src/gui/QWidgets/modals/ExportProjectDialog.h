@@ -26,12 +26,13 @@
 #ifndef LMMS_GUI_EXPORT_PROJECT_DIALOG_H
 #define LMMS_GUI_EXPORT_PROJECT_DIALOG_H
 
-#include <QDialog>
-#include <memory>
 #include "gui/QWidgets/ui_export_project.h"
 
 #include "ProjectRenderer.h"
 #include "RenderManager.h"
+
+#include <QDialog>
+#include <memory>
 
 namespace lmms::gui
 {

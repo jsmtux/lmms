@@ -25,11 +25,10 @@
 #ifndef LMMS_GUI_TRACK_CONTENT_WIDGET_H
 #define LMMS_GUI_TRACK_CONTENT_WIDGET_H
 
-#include <QWidget>
-
 #include "JournallingObject.h"
 #include "TimePos.h"
 
+#include <QWidget>
 
 class QMimeData;
 

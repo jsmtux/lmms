@@ -25,10 +25,11 @@
 #include "MixerLineLcdSpinBox.h"
 
 #include "CaptionMenu.h"
-#include "MixerView.h"
 #include "GuiApplication.h"
-#include "tracks/TrackView.h"
+#include "MixerView.h"
+
 #include "widgets/LcdSpinBox.h"
+#include "tracks/TrackView.h"
 
 namespace lmms::gui
 {

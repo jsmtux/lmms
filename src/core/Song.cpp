@@ -32,14 +32,15 @@
 #include <cmath>
 
 #include "AutomationTrack.h"
-#include "IAutomationEditor.h"
 #include "ConfigManager.h"
 #include "ControllerConnection.h"
 #include "EnvelopeAndLfoParameters.h"
 #include "Mixer.h"
-#include "IGuiApplication.h"
 #include "ExportFilter.h"
+#include "IAutomationEditor.h"
+#include "IGuiApplication.h"
 #include "InstrumentTrack.h"
+#include "ITimeLineWidget.h"
 #include "Keymap.h"
 #include "NotePlayHandle.h"
 #include "MidiClip.h"
@@ -47,7 +48,6 @@
 #include "PatternTrack.h"
 #include "ProjectJournal.h"
 #include "Scale.h"
-#include "ITimeLineWidget.h"
 #include "PeakController.h"
 
 
@@ -1008,7 +1008,8 @@ void Song::loadProject( const QString & fileName )
 
 			if (getGUIInterface() != nullptr)
 			{
-				getGUIInterface()->mainWindowInterface()->ShowCriticalMessage(tr("Aborting project load"),
+				getGUIInterface()->mainWindowInterface()->ShowCriticalMessage(
+					tr("Aborting project load"),
 					tr("Project file contains local paths to plugins, which could be used to "
 						"run malicious code."));
 			}
@@ -1166,7 +1167,8 @@ void Song::loadProject( const QString & fileName )
 	{
 		if ( getGUIInterface() != nullptr )
 		{
-			getGUIInterface()->mainWindowInterface()->ShowInfoMessage(tr("LMMS Error report"), errorSummary());
+			getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+				tr("LMMS Error report"), errorSummary());
 		}
 		else
 		{

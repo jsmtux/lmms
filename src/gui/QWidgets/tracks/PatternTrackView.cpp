@@ -26,10 +26,11 @@
 
 #include "Engine.h"
 #include "GuiApplication.h"
-#include "editors/PatternEditor.h"
 #include "PatternStore.h"
 #include "PatternTrack.h"
 #include "TrackLabelButton.h"
+
+#include "editors/PatternEditor.h"
 
 namespace lmms::gui
 {

@@ -28,6 +28,7 @@
 
 #include "EffectControls.h"
 #include "WaveShaperControlDialog.h"
+
 #include "widgets/Graph.h"
 
 namespace lmms

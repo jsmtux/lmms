@@ -25,9 +25,9 @@
 #ifndef LMMS_GUI_CAPTION_MENU_H
 #define LMMS_GUI_CAPTION_MENU_H
 
-#include <QMenu>
-
 #include "lmms_export.h"
+
+#include <QMenu>
 
 namespace lmms::gui
 {

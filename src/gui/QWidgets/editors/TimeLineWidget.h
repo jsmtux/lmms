@@ -27,10 +27,9 @@
 
 #include "ITimeLineWidget.h"
 
-#include <QWidget>
-
 #include "Song.h"
 
+#include <QWidget>
 
 class QPixmap;
 class QToolBar;

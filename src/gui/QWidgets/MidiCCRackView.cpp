@@ -25,11 +25,6 @@
 
 #include "MidiCCRackView.h"
 
-#include <QGridLayout>
-#include <QScrollArea>
-#include <QVBoxLayout>
-#include <QWidget>
-
 #include "embed.h"
 #include "GuiApplication.h"
 #include "InstrumentTrack.h"
@@ -38,6 +33,11 @@
 
 #include "widgets/GroupBox.h"
 #include "widgets/Knob.h"
+
+#include <QGridLayout>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QWidget>
 
 namespace lmms::gui
 {

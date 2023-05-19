@@ -15,14 +15,16 @@ class DataFile;
 class Instrument;
 class InstrumentTrack;
 class Plugin;
+class Effect;
 
 namespace gui
 {
 
 class IGuiApplication {
 public:
-    virtual ~IGuiApplication() {}
-    virtual IMainWindow* mainWindowInterface() = 0;
+	virtual ~IGuiApplication()
+	{}
+	virtual IMainWindow* mainWindowInterface() = 0;
 	virtual IMixerView* mixerViewInterface() = 0;
 	virtual IPianoRollWindow* pianoRollInterface() = 0;
 	virtual IAutomationEditor* automationEditorInterface() = 0;
@@ -33,6 +35,7 @@ public:
 
 	virtual Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) = 0;
 	virtual Plugin* createDummyPlugin() = 0;
+	virtual Effect* createDummyEffect( Model * _parent, const QDomElement& originalPluginData ) = 0;
 	virtual std::unique_ptr<IFileDialog> createFileDialog(QString title) = 0;
 };
 

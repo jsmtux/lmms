@@ -23,20 +23,20 @@
  *
  */
 
-#include <QApplication>
-#include <QPushButton>
-#include <QScrollArea>
-#include <QMessageBox>
-#include <QVBoxLayout>
-
-#include "Song.h"
-#include "embed.h"
-#include "GuiApplication.h"
-#include "MainWindow.h"
 #include "ControllerRackView.h"
 #include "ControllerView.h"
+#include "embed.h"
+#include "GuiApplication.h"
 #include "LfoController.h"
+#include "MainWindow.h"
+#include "Song.h"
 #include "SubWindow.h"
+
+#include <QApplication>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QScrollArea>
+#include <QVBoxLayout>
 
 namespace lmms::gui
 {

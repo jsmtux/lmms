@@ -23,9 +23,9 @@
  */
  
 
-#include <QMouseEvent>
-
 #include "NStateButton.h"
+
+#include <QMouseEvent>
 
 
 namespace lmms::gui

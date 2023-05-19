@@ -23,12 +23,12 @@
 */
 
 
-#ifndef SIMPLE_TEXT_FLOAT_H
-#define SIMPLE_TEXT_FLOAT_H
-
-#include <QWidget>
+#ifndef LMMS_GUI_SIMPLE_TEXT_FLOAT_H
+#define LMMS_GUI_SIMPLE_TEXT_FLOAT_H
 
 #include "lmms_export.h"
+
+#include <QWidget>
 
 class QLabel;
 

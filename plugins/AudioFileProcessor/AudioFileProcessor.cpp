@@ -31,7 +31,6 @@
 #include <samplerate.h>
 
 #include "AudioEngine.h"
-#include "widgets/ComboBox.h"
 #include "ConfigManager.h"
 #include "DataFile.h"
 #include "Engine.h"
@@ -39,13 +38,15 @@
 #include "InstrumentTrack.h"
 #include "NotePlayHandle.h"
 #include "PathUtil.h"
-#include "widgets/PixmapButton.h"
 #include "Song.h"
 #include "StringPairDrag.h"
 #include "Clipboard.h"
 
 #include "embed.h"
 #include "plugin_export.h"
+
+#include "widgets/ComboBox.h"
+#include "widgets/PixmapButton.h"
 
 
 namespace lmms

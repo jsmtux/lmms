@@ -25,9 +25,9 @@
 #ifndef LMMS_GUI_AUTOMATABLE_BUTTON_H
 #define LMMS_GUI_AUTOMATABLE_BUTTON_H
 
-#include <QPushButton>
-
 #include "AutomatableModelView.h"
+
+#include <QPushButton>
 
 namespace lmms::gui
 {
