@@ -23,13 +23,13 @@
  */
 #include "PatternTrack.h"
 
-#include <QDomElement>
-
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "PatternClip.h"
 #include "PatternStore.h"
 #include "PlayHandle.h"
+
+#include <QDomElement>
 
 
 namespace lmms

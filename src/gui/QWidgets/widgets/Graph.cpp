@@ -23,12 +23,13 @@
  *
  */
 
-#include <QPainter>
-
 #include "Graph.h"
+
+#include "Oscillator.h"
 #include "StringPairDrag.h"
 #include "SampleBuffer.h"
-#include "Oscillator.h"
+
+#include <QPainter>
 
 namespace lmms
 {

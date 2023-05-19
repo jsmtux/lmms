@@ -25,15 +25,15 @@
 #ifndef LMMS_GUI_MAIN_WINDOW_H
 #define LMMS_GUI_MAIN_WINDOW_H
 
+#include "ConfigManager.h"
+#include "IMainWindow.h"
+
 #include <QBasicTimer>
 #include <QTimer>
 #include <QList>
 #include <QMainWindow>
 #include <QProgressDialog>
 #include <QTranslator>
-
-#include "ConfigManager.h"
-#include "IMainWindow.h"
 
 class QAction;
 class QDomElement;
@@ -84,7 +84,9 @@ public:
 
     void ShowCriticalMessage(QString title, QString description) override;
 
-    void ShowWarningMessage(int line, int col, QString description) override;
+    void ShowWarnMessage(QString title, QString description) override;
+
+    void ShowWarnMessageWithPosition(int line, int col, QString description) override;
 
     void ShowTextFloatMessage(QString title, QString description, QPixmap image, int _timeout) override;
 

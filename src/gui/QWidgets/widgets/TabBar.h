@@ -25,11 +25,11 @@
 #ifndef LMMS_GUI_TAB_BAR_H
 #define LMMS_GUI_TAB_BAR_H
 
+#include "lmms_export.h"
+
 #include <QBoxLayout>
 #include <QMap>
 #include <QWidget>
-
-#include "lmms_export.h"
 
 
 namespace lmms::gui

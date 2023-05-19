@@ -26,10 +26,10 @@
 #ifndef LMMS_GUI_MIDI_PORT_MENU_H
 #define LMMS_GUI_MIDI_PORT_MENU_H
 
-#include <QMenu>
-
 #include "ModelView.h"
 #include "MidiPort.h"
+
+#include <QMenu>
 
 class QAction;
 

@@ -1,5 +1,5 @@
-#ifndef C42BE371_6AA1_4AB9_8D37_9047F0153F50
-#define C42BE371_6AA1_4AB9_8D37_9047F0153F50
+#ifndef LMMS_GUI_PEAK_CONTROLLER_DIALOG_H
+#define LMMS_GUI_PEAK_CONTROLLER_DIALOG_H
 
 #include "PeakController.h"
 #include "ControllerDialog.h"
@@ -24,4 +24,4 @@ protected:
 
 }
 
-#endif /* C42BE371_6AA1_4AB9_8D37_9047F0153F50 */
+#endif /* LMMS_GUI_PEAK_CONTROLLER_DIALOG_H */

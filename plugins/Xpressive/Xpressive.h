@@ -29,9 +29,9 @@
 
 #include <QTextEdit>
 
-#include "widgets/Graph.h"
-#include "plugins/QWidgetInstrumentPlugin.h"
 #include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/Graph.h"
 
 #include "ExprSynth.h"
 

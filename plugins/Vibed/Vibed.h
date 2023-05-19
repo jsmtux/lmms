@@ -24,9 +24,10 @@
 #ifndef _VIBED_H
 #define _VIBED_H
 
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
 #include "NineButtonSelector.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 namespace lmms
 {

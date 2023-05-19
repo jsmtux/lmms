@@ -22,12 +22,9 @@
  *
  */
 
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QLabel>
+#include "InstrumentFunctionViews.h"
 
 #include "InstrumentFunctions.h"
-#include "InstrumentFunctionViews.h"
 #include "gui_templates.h"
 
 #include "widgets/ComboBox.h"
@@ -35,6 +32,9 @@
 #include "widgets/Knob.h"
 #include "widgets/TempoSyncKnob.h"
 
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QLabel>
 
 namespace lmms::gui
 {

@@ -24,16 +24,13 @@
  
 #include "SampleTrackView.h"
 
-#include <QApplication>
-#include <QMenu>
-
 #include "ConfigManager.h"
 #include "embed.h"
 #include "Engine.h"
 #include "FadeButton.h"
+#include "GuiApplication.h"
 #include "Mixer.h"
 #include "MixerView.h"
-#include "GuiApplication.h"
 #include "SampleClip.h"
 #include "SampleTrackWindow.h"
 #include "StringPairDrag.h"
@@ -41,6 +38,9 @@
 
 #include "editors/TrackContainerView.h"
 #include "widgets/Knob.h"
+
+#include <QApplication>
+#include <QMenu>
 
 
 namespace lmms::gui

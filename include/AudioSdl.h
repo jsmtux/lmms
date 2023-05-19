@@ -51,7 +51,8 @@ public:
 
 	inline static QString name()
 	{
-		return "SDL (Simple DirectMedia Layer)";
+		return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget",
+					"SDL (Simple DirectMedia Layer)" );
 	}
 
 private:

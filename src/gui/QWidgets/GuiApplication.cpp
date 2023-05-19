@@ -24,31 +24,30 @@
 
 #include "GuiApplication.h"
 
-#include "lmmsversion.h"
-
-#include "LmmsStyle.h"
-#include "LmmsPalette.h"
-#include "DataFile.h"
 
 #include "ConfigManager.h"
 #include "ControllerRackView.h"
-#include "DummyEffect.h"
+#include "DataFile.h"
+#include "LmmsPalette.h"
+#include "LmmsStyle.h"
+#include "lmmsversion.h"
 #include "MixerView.h"
 #include "MainWindow.h"
 #include "MicrotunerConfig.h"
 #include "ProjectNotes.h"
 
-#include "modals/FileDialog.h"
+#include "effectcontroldialogs/DummyEffectControlDialog.h"
 
 #include "editors/AutomationEditor.h"
 #include "editors/PatternEditor.h"
 #include "editors/PianoRoll.h"
 #include "editors/SongEditor.h"
 
-#include "plugins/DummyPlugin.h"
-#include "plugins/DummyInstrument.h"
+#include "modals/FileDialog.h"
 
-#include "effectcontroldialogs/DummyEffectControlDialog.h"
+#include "plugins/DummyEffect.h"
+#include "plugins/DummyInstrument.h"
+#include "plugins/DummyPlugin.h"
 
 
 #include <QApplication>
@@ -208,6 +207,11 @@ Instrument* GuiApplication::createDummyInstrument(InstrumentTrack *_instrument_t
 
 Plugin* GuiApplication::createDummyPlugin() {
 	return new DummyPlugin();
+}
+
+Effect* GuiApplication::createDummyEffect( Model * _parent, const QDomElement& originalPluginData )
+{
+	return new DummyEffect(_parent, originalPluginData);
 }
 
 std::unique_ptr<IFileDialog> GuiApplication::createFileDialog(QString title) {

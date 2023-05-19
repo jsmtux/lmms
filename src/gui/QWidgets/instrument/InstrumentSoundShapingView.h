@@ -25,10 +25,10 @@
 #ifndef LMMS_GUI_INSTRUMENT_SOUND_SHAPING_VIEW_H
 #define LMMS_GUI_INSTRUMENT_SOUND_SHAPING_VIEW_H
 
-#include <QWidget>
-
 #include "InstrumentSoundShaping.h"
 #include "ModelView.h"
+
+#include <QWidget>
 
 class QLabel;
 

@@ -23,12 +23,12 @@
  */
 
 
-#include <QTimer>
-#include <QPainter>
-
-#include "embed.h"
 #include "FadeButton.h"
 
+#include "embed.h"
+
+#include <QTimer>
+#include <QPainter>
 
 namespace lmms::gui
 {

@@ -35,9 +35,6 @@ RubberBand::RubberBand( QWidget * _parent ) :
 {
 }
 
-
-
-
 QVector<selectableObject *> RubberBand::selectedObjects() const
 {
 	QVector<selectableObject *> so = selectableObjects();
@@ -56,16 +53,10 @@ QVector<selectableObject *> RubberBand::selectedObjects() const
 	return( so );
 }
 
-
-
-
 void RubberBand::resizeEvent( QResizeEvent * _re )
 {
 	QRubberBand::resizeEvent( _re );
 }
-
-
-
 
 QVector<selectableObject *> RubberBand::selectableObjects() const
 {

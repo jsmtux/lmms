@@ -26,10 +26,10 @@
 #ifndef LMMS_GUI_MIXER_LINE_H
 #define LMMS_GUI_MIXER_LINE_H
 
-#include <QWidget>
-
 class QGraphicsView;
 class QLineEdit;
+
+#include <QWidget>
 
 namespace lmms::gui
 {

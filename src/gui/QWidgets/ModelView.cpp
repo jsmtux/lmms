@@ -22,9 +22,9 @@
  *
  */
 
-#include <QWidget>
-
 #include "ModelView.h"
+
+#include <QWidget>
 
 namespace lmms::gui
 {

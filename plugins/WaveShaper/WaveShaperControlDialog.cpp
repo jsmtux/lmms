@@ -28,10 +28,11 @@
 #include "WaveShaperControlDialog.h"
 #include "WaveShaperControls.h"
 #include "embed.h"
+
 #include "widgets/Graph.h"
 #include "widgets/Knob.h"
-#include "widgets/PixmapButton.h"
 #include "widgets/LedCheckBox.h"
+#include "widgets/PixmapButton.h"
 
 namespace lmms::gui
 {

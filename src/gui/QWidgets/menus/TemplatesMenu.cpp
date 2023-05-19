@@ -1,13 +1,11 @@
 #include "TemplatesMenu.h"
 
 #include "ConfigManager.h"
-#include "Engine.h"
-#include "Song.h"
-
 #include "embed.h"
 #include "GuiApplication.h"
+#include "Engine.h"
 #include "MainWindow.h"
-
+#include "Song.h"
 
 namespace lmms::gui
 {

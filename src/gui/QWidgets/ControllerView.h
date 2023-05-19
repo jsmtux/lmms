@@ -25,11 +25,11 @@
 #ifndef LMMS_GUI_CONTROLLER_VIEW_H
 #define LMMS_GUI_CONTROLLER_VIEW_H
 
-#include <QFrame>
-
 #include "AutomatableModel.h"
 #include "Controller.h"
 #include "ModelView.h"
+
+#include <QFrame>
 
 class QGroupBox;
 class QLabel;

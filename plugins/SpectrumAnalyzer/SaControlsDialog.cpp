@@ -30,16 +30,16 @@
 #include <QSplitter>
 #include <QWidget>
 
-#include "widgets/ComboBox.h"
 #include "ComboBoxModel.h"
-#include "widgets/Knob.h"
-#include "widgets/LedCheckBox.h"
-#include "widgets/PixmapButton.h"
 #include "SaControls.h"
 #include "SaProcessor.h"
 #include "SaSpectrumView.h"
 #include "SaWaterfallView.h"
 
+#include "widgets/ComboBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/PixmapButton.h"
 
 namespace lmms::gui
 {

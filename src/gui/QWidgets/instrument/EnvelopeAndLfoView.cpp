@@ -23,10 +23,8 @@
  *
  */
 
-#include <QMouseEvent>
-#include <QPainter>
-
 #include "EnvelopeAndLfoView.h"
+
 #include "EnvelopeAndLfoParameters.h"
 #include "embed.h"
 #include "Engine.h"
@@ -42,6 +40,9 @@
 #include "widgets/PixmapButton.h"
 #include "widgets/TempoSyncKnob.h"
 #include "widgets/TextFloat.h"
+
+#include <QMouseEvent>
+#include <QPainter>
 
 namespace lmms
 {

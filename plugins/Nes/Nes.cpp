@@ -30,8 +30,9 @@
 #include "Engine.h"
 #include "InstrumentTrack.h"
 #include "interpolation.h"
-#include "widgets/Knob.h"
 #include "Oscillator.h"
+
+#include "widgets/Knob.h"
 
 #include "embed.h"
 #include "plugin_export.h"

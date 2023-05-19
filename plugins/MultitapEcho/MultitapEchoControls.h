@@ -28,6 +28,7 @@
 
 #include "EffectControls.h"
 #include "MultitapEchoControlDialog.h"
+
 #include "widgets/Graph.h"
 
 namespace lmms

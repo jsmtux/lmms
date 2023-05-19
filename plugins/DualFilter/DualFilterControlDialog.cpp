@@ -26,10 +26,11 @@
 
 #include "DualFilterControlDialog.h"
 #include "DualFilterControls.h"
+#include "gui_templates.h"
+
+#include "widgets/ComboBox.h"
 #include "widgets/Knob.h"
 #include "widgets/LedCheckBox.h"
-#include "widgets/ComboBox.h"
-#include "gui_templates.h"
 
 namespace lmms::gui
 {

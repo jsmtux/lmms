@@ -25,6 +25,8 @@
 #ifndef LMMS_GUI_FILE_BROWSER_H
 #define LMMS_GUI_FILE_BROWSER_H
 
+#include "SideBarWidget.h"
+
 #include <QCheckBox>
 #include <QDir>
 #include <QMutex>
@@ -32,10 +34,6 @@
 	#include <QRecursiveMutex>
 #endif
 #include <QTreeWidget>
-
-
-#include "SideBarWidget.h"
-
 
 class QLineEdit;
 

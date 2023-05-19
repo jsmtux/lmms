@@ -26,9 +26,9 @@
 
 #include <QDomDocument>
 
-#include "IAutomationEditor.h"
 #include "AutomationClip.h"
 #include "Engine.h"
+#include "IAutomationEditor.h"
 #include "IGuiApplication.h"
 #include "Song.h"
 

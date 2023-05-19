@@ -22,10 +22,10 @@
 
 #include <QKeyEvent>
 
-#include "MidiClip.h"
-#include "IStepRecorderWidget.h"
-#include "IPianoRoll.h"
 #include "Engine.h"
+#include "IPianoRoll.h"
+#include "IStepRecorderWidget.h"
+#include "MidiClip.h"
 #include "Song.h"
 
 namespace lmms

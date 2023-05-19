@@ -25,10 +25,10 @@
 #ifndef LMMS_GUI_MIDI_CC_RACK_VIEW_H
 #define LMMS_GUI_MIDI_CC_RACK_VIEW_H
 
-#include <QWidget>
-
 #include "Midi.h"
 #include "SerializingObject.h"
+
+#include <QWidget>
 
 namespace lmms
 {

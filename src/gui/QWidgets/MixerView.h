@@ -25,20 +25,20 @@
 #ifndef LMMS_GUI_MIXER_VIEW_H
 #define LMMS_GUI_MIXER_VIEW_H
 
-#include <QWidget>
-#include <QHBoxLayout>
-#include <QStackedLayout>
-#include <QScrollArea>
-
-#include "ModelView.h"
-#include "Engine.h"
-#include "embed.h"
 #include "EffectRackView.h"
+#include "embed.h"
+#include "Engine.h"
 #include "IMixerView.h"
+#include "ModelView.h"
 #include "SampleTrack.h"
 
 #include "widgets/Fader.h"
 #include "widgets/PixmapButton.h"
+
+#include <QWidget>
+#include <QHBoxLayout>
+#include <QStackedLayout>
+#include <QScrollArea>
 
 class QButtonGroup;
 

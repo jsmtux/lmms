@@ -23,10 +23,10 @@
  *
  */
 
-#include <QCloseEvent>
-
 #include "EffectControlDialog.h"
 #include "EffectControls.h"
+
+#include <QCloseEvent>
 
 namespace lmms::gui
 {

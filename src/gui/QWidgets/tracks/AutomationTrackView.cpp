@@ -24,14 +24,16 @@
  */
  
 #include "AutomationTrackView.h"
+
 #include "AutomationClip.h"
 #include "AutomationTrack.h"
 #include "embed.h"
 #include "Engine.h"
 #include "ProjectJournal.h"
 #include "StringPairDrag.h"
-#include "editors/TrackContainerView.h"
 #include "TrackLabelButton.h"
+
+#include "editors/TrackContainerView.h"
 
 namespace lmms::gui
 {

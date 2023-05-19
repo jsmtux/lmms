@@ -30,8 +30,8 @@
 #include <QMdiSubWindow>
 #include <QMutex>
 
-#include "plugins/QWidgetInstrumentPlugin.h"
 #include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 
 class QPixmap;

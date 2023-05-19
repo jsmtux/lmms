@@ -26,9 +26,9 @@
 #ifndef LMMS_GUI_INSTRUMENT_MIDI_IO_VIEW_H
 #define LMMS_GUI_INSTRUMENT_MIDI_IO_VIEW_H
 
-#include <QWidget>
-
 #include "ModelView.h"
+
+#include <QWidget>
 
 class QToolButton;
 

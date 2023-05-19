@@ -27,9 +27,9 @@
 
 #include "IFileDialog.h"
 
-#include <QFileDialog>
-
 #include "lmms_export.h"
+
+#include <QFileDialog>
 
 namespace lmms::gui
 {

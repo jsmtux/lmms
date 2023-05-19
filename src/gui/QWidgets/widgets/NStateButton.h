@@ -25,11 +25,11 @@
 #ifndef LMMS_GUI_NSTATE_BUTTON_H
 #define LMMS_GUI_NSTATE_BUTTON_H
 
+#include "ToolButton.h"
+
 #include <QPixmap>
 #include <QVector>
 #include <QPair>
-
-#include "ToolButton.h"
 
 namespace lmms::gui
 {

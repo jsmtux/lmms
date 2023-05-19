@@ -26,9 +26,9 @@
 #ifndef LMMS_GUI_METER_DIALOG_H
 #define LMMS_GUI_METER_DIALOG_H
 
-#include <QWidget>
-
 #include "ModelView.h"
+
+#include <QWidget>
 
 namespace lmms::gui
 {

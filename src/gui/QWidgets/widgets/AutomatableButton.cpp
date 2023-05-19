@@ -25,11 +25,10 @@
 
 #include "AutomatableButton.h"
 
-#include <QMouseEvent>
-
 #include "CaptionMenu.h"
 #include "StringPairDrag.h"
 
+#include <QMouseEvent>
 
 namespace lmms::gui
 {

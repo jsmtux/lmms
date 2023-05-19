@@ -29,12 +29,11 @@
 #include <QLineEdit>
 #include <QLabel>
 
-#include "Engine.h"
-#include "IGuiApplication.h"
-#include "gui_templates.h"
-#include "ConfigManager.h"
-// #include "LcdSpinBox.h"
 #include "AudioEngine.h"
+#include "ConfigManager.h"
+#include "Engine.h"
+#include "gui_templates.h"
+#include "IGuiApplication.h"
 #include "MidiJack.h"
 
 
@@ -102,11 +101,12 @@ void AudioJack::restartAfterZombified()
 	{
 		m_active = false;
 		startProcessing();
-		gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(tr( "JACK client restarted" ),
+		gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+			tr( "JACK client restarted" ),
 			tr( "LMMS was kicked by JACK for some reason. "
 				"Therefore the JACK backend of LMMS has been "
 				"restarted. You will have to make manual "
-				"connections again." ));
+				"connections again." ) );
 	}
 	else
 	{
@@ -116,7 +116,7 @@ void AudioJack::restartAfterZombified()
 				"and starting a new instance failed. "
 				"Therefore LMMS is unable to proceed. "
 				"You should save your project and restart "
-						"JACK and LMMS." ));
+						"JACK and LMMS." ) );
 	}
 }
 

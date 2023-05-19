@@ -27,8 +27,8 @@
 #define LMMS_GUI_EFFECT_VIEW_H
 
 #include "AutomatableModel.h"
-#include "PluginView.h"
 #include "Effect.h"
+#include "PluginView.h"
 
 class QGraphicsOpacityEffect;
 class QGroupBox;

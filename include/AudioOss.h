@@ -54,7 +54,7 @@ public:
 
 	inline static QString name()
 	{
-		return "OSS (Open Sound System)";
+		return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", "OSS (Open Sound System)" );
 	}
 
 	static QString probeDevice();

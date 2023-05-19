@@ -25,10 +25,6 @@
 
 #include "InstrumentMiscView.h"
 
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QVBoxLayout>
-
 #include "gui_templates.h"
 #include "InstrumentTrack.h"
 
@@ -36,6 +32,9 @@
 #include "widgets/GroupBox.h"
 #include "widgets/LedCheckBox.h"
 
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QVBoxLayout>
 
 namespace lmms::gui
 {

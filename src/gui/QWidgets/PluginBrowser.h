@@ -25,10 +25,10 @@
 #ifndef LMMS_GUI_PLUGIN_BROWSER_H
 #define LMMS_GUI_PLUGIN_BROWSER_H
 
-#include <QPixmap>
-
-#include "SideBarWidget.h"
 #include "Plugin.h"
+#include "SideBarWidget.h"
+
+#include <QPixmap>
 
 class QLineEdit;
 class QTreeWidget;

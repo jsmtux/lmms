@@ -26,11 +26,11 @@
 #ifndef LMMS_GUI_TEMPO_SYNC_KNOB_H
 #define LMMS_GUI_TEMPO_SYNC_KNOB_H
 
-#include <QPixmap>
-#include <QPointer>
-
 #include "Knob.h"
 #include "TempoSyncKnobModel.h"
+
+#include <QPixmap>
+#include <QPointer>
 
 namespace lmms::gui
 {

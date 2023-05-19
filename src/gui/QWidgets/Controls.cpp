@@ -24,14 +24,14 @@
 
 #include "Controls.h"
 
-#include <QLabel>
-#include <QString>
-#include <QVBoxLayout>
-
 #include "widgets/ComboBox.h"
 #include "widgets/Knob.h"
 #include "widgets/LcdSpinBox.h"
 #include "widgets/LedCheckBox.h"
+
+#include <QLabel>
+#include <QString>
+#include <QVBoxLayout>
 
 
 namespace lmms::gui

@@ -26,8 +26,9 @@
 #ifndef AMPLIFIER_CONTROLS_H
 #define AMPLIFIER_CONTROLS_H
 
-#include "effectcontroldialogs/QWidgetEffectControls.h"
 #include "AmplifierControlDialog.h"
+
+#include "effectcontroldialogs/QWidgetEffectControls.h"
 
 namespace lmms
 {

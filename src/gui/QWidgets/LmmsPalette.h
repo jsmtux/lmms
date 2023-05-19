@@ -26,8 +26,9 @@
 #ifndef LMMS_GUI_LMMS_PALETTE_H
 #define LMMS_GUI_LMMS_PALETTE_H
 
-#include <QWidget>
 #include "lmms_export.h"
+
+#include <QWidget>
 
 namespace lmms::gui
 {

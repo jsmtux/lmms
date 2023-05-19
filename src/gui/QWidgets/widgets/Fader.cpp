@@ -46,15 +46,15 @@
 
 #include "Fader.h"
 
+#include "CaptionMenu.h"
+#include "ConfigManager.h"
+#include "embed.h"
+#include "lmms_math.h"
+#include "SimpleTextFloat.h"
+
 #include <QInputDialog>
 #include <QMouseEvent>
 #include <QPainter>
-
-#include "lmms_math.h"
-#include "embed.h"
-#include "CaptionMenu.h"
-#include "ConfigManager.h"
-#include "SimpleTextFloat.h"
 
 namespace lmms::gui
 {

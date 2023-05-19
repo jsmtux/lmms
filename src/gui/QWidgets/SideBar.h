@@ -25,8 +25,8 @@
 #ifndef LMMS_GUI_SIDE_BAR_H
 #define LMMS_GUI_SIDE_BAR_H
 
-#include <QMap>
 #include <QButtonGroup>
+#include <QMap>
 #include <QToolBar>
 
 class QToolButton;

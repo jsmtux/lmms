@@ -22,24 +22,15 @@
  *
  */
 
-
-#include <QCheckBox>
-#include <QLayout>
-#include <QMessageBox>
-#include <QPushButton>
-#include <QScrollArea>
-#include <QStyle>
-#include <QKeyEvent>
-
-#include "lmms_math.h"
-
 #include "MixerView.h"
-#include "MixerLine.h"
-#include "Mixer.h"
-#include "GuiApplication.h"
-#include "MainWindow.h"
+
 #include "AudioEngine.h"
+#include "GuiApplication.h"
 #include "InstrumentTrack.h"
+#include "lmms_math.h"
+#include "MainWindow.h"
+#include "Mixer.h"
+#include "MixerLine.h"
 #include "PatternStore.h"
 #include "SampleTrack.h"
 #include "SendButtonIndicator.h"
@@ -48,6 +39,14 @@
 #include "TrackContainer.h" // For TrackContainer::TrackList typedef
 
 #include "widgets/Knob.h"
+
+#include <QCheckBox>
+#include <QKeyEvent>
+#include <QLayout>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QScrollArea>
+#include <QStyle>
 
 namespace lmms::gui
 {

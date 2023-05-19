@@ -25,9 +25,9 @@
 #ifndef LMMS_GUI_PIXMAP_BUTTON_H
 #define LMMS_GUI_PIXMAP_BUTTON_H
 
-#include <QPixmap>
-
 #include "AutomatableButton.h"
+
+#include <QPixmap>
 
 namespace lmms::gui
 {

@@ -33,19 +33,20 @@
 #include <cmath>
 
 #include "Lb302.h"
-#include "widgets/AutomatableButton.h"
 #include "Engine.h"
 #include "InstrumentPlayHandle.h"
 #include "InstrumentTrack.h"
-#include "widgets/Knob.h"
-#include "widgets/LedCheckBox.h"
 #include "NotePlayHandle.h"
 #include "Oscillator.h"
-#include "widgets/PixmapButton.h"
 #include "BandLimitedWave.h"
 
 #include "embed.h"
 #include "plugin_export.h"
+
+#include "widgets/AutomatableButton.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/PixmapButton.h"
 
 // Envelope Recalculation period
 #define ENVINC 64

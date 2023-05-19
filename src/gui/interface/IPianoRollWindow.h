@@ -12,7 +12,8 @@ namespace gui {
 
 class IPianoRollWindow {
 public:
-    virtual ~IPianoRollWindow() {}
+    virtual ~IPianoRollWindow()
+    {}
     virtual int quantization() const = 0;
     virtual const MidiClip* currentMidiClip() const = 0;
     virtual void update() = 0;

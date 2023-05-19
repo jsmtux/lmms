@@ -1,5 +1,5 @@
-#ifndef Q_WIDGET_EFFECT_CONTROLS_H_
-#define Q_WIDGET_EFFECT_CONTROLS_H_
+#ifndef Q_WIDGET_EFFECT_CONTROLS_H
+#define Q_WIDGET_EFFECT_CONTROLS_H
 
 #include "EffectControls.h"
 
@@ -14,4 +14,4 @@ public:
 
 }
 
-#endif /* Q_WIDGET_EFFECT_CONTROLS_H_ */
+#endif /* Q_WIDGET_EFFECT_CONTROLS_H */

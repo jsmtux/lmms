@@ -5,7 +5,8 @@ namespace lmms::gui {
 
 class IPianoRoll {
 public:
-    virtual ~IPianoRoll() {}
+    virtual ~IPianoRoll()
+    {}
     virtual int quantization() const = 0;
     virtual void update() = 0;
 };

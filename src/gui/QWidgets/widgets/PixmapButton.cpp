@@ -24,11 +24,12 @@
  */
  
 
-#include <QMouseEvent>
-#include <QPainter>
+#include "embed.h"
 
 #include "PixmapButton.h"
-#include "embed.h"
+
+#include <QMouseEvent>
+#include <QPainter>
 
 namespace lmms::gui
 {

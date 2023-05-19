@@ -25,12 +25,11 @@
 #ifndef LMMS_GUI_CONTROLLER_RACK_VIEW_H
 #define LMMS_GUI_CONTROLLER_RACK_VIEW_H
 
+#include "lmms_basics.h"
+#include "SerializingObject.h"
+
 #include <QWidget>
 #include <QCloseEvent>
-
-#include "SerializingObject.h"
-#include "lmms_basics.h"
-
 
 class QPushButton;
 class QScrollArea;

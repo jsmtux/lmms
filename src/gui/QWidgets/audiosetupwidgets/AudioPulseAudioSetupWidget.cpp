@@ -32,14 +32,10 @@ AudioPulseAudioSetupWidget::AudioPulseAudioSetupWidget( QWidget * _parent ) :
 }
 
 
-
-
 AudioPulseAudioSetupWidget::~AudioPulseAudioSetupWidget()
 {
 	delete m_channels->model();
 }
-
-
 
 
 void AudioPulseAudioSetupWidget::saveSettings()

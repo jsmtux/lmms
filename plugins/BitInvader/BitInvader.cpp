@@ -29,18 +29,19 @@
 #include "AudioEngine.h"
 #include "base64.h"
 #include "Engine.h"
-#include "widgets/Graph.h"
 #include "InstrumentTrack.h"
-#include "widgets/Knob.h"
-#include "widgets/LedCheckBox.h"
 #include "NotePlayHandle.h"
-#include "widgets/PixmapButton.h"
 #include "Song.h"
 #include "interpolation.h"
 
 #include "embed.h"
 
 #include "plugin_export.h"
+
+#include "widgets/Graph.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/PixmapButton.h"
 
 namespace lmms
 {

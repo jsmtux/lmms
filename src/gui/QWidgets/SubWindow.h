@@ -27,10 +27,10 @@
 #ifndef LMMS_GUI_SUBWINDOW_H
 #define LMMS_GUI_SUBWINDOW_H
 
+#include "lmms_export.h"
+
 #include <QMdiSubWindow>
 #include <QString>
-
-#include "lmms_export.h"
 
 class QGraphicsDropShadowEffect;
 class QLabel;

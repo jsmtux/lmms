@@ -26,18 +26,11 @@
 
 #ifdef LMMS_HAVE_LV2
 
-#include <QGridLayout>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <lilv/lilv.h>
-#include <lv2/lv2plug.in/ns/ext/port-props/port-props.h>
-
 #include "AudioEngine.h"
 #include "Controls.h"
+#include "embed.h"
 #include "Engine.h"
 #include "GuiApplication.h"
-#include "embed.h"
 #include "gui_templates.h"
 #include "Lv2ControlBase.h"
 #include "Lv2Manager.h"
@@ -45,6 +38,14 @@
 #include "Lv2Ports.h"
 #include "MainWindow.h"
 #include "SubWindow.h"
+
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+
+#include <lilv/lilv.h>
+#include <lv2/lv2plug.in/ns/ext/port-props/port-props.h>
 
 
 namespace lmms::gui

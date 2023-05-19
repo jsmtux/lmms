@@ -22,14 +22,15 @@
  *
  */
 
-#include <QFileInfo>
-#include <QMessageBox>
-
 #include "ExportProjectDialog.h"
-#include "Song.h"
+
 #include "GuiApplication.h"
 #include "MainWindow.h"
 #include "OutputSettings.h"
+#include "Song.h"
+
+#include <QFileInfo>
+#include <QMessageBox>
 
 namespace lmms::gui
 {

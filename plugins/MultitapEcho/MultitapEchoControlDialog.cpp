@@ -27,11 +27,12 @@
 #include "MultitapEchoControlDialog.h"
 #include "MultitapEchoControls.h"
 #include "embed.h"
+
 #include "widgets/Graph.h"
-#include "widgets/LedCheckBox.h"
 #include "widgets/Knob.h"
-#include "widgets/TempoSyncKnob.h"
 #include "widgets/LcdSpinBox.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/TempoSyncKnob.h"
 
 namespace lmms::gui
 {

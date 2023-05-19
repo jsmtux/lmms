@@ -25,14 +25,13 @@
 #ifndef LMMS_GUI_KNOB_H
 #define LMMS_GUI_KNOB_H
 
+#include "AutomatableModelView.h"
+
 #include <memory>
 #include <QPixmap>
 #include <QWidget>
 #include <QPoint>
 #include <QTextDocument>
-
-#include "AutomatableModelView.h"
-
 
 class QPixmap;
 

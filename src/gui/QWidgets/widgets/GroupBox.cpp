@@ -22,16 +22,17 @@
  *
  */
 
-#include <QMouseEvent>
-#include <QPainter>
+#include "GroupBox.h"
 
 #ifndef __USE_XOPEN
 #define __USE_XOPEN
 #endif
 
-#include "GroupBox.h"
 #include "embed.h"
 #include "gui_templates.h"
+
+#include <QMouseEvent>
+#include <QPainter>
 
 
 namespace lmms::gui

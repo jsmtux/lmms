@@ -22,11 +22,10 @@
  *
  */
 
+#include "RenameDialog.h"
 
 #include <QKeyEvent>
 #include <QLineEdit>
-
-#include "RenameDialog.h"
 
 namespace lmms::gui
 {

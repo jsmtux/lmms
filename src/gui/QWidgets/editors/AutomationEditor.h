@@ -26,8 +26,6 @@
 #ifndef LMMS_GUI_AUTOMATION_EDITOR_H
 #define LMMS_GUI_AUTOMATION_EDITOR_H
 
-#include <QWidget>
-
 #include "Editor.h"
 
 #include "lmms_basics.h"
@@ -36,6 +34,8 @@
 #include "AutomationClip.h"
 #include "ComboBoxModel.h"
 #include "IAutomationEditor.h"
+
+#include <QWidget>
 
 class QPainter;
 class QPixmap;

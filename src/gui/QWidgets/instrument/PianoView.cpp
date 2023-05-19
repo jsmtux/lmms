@@ -35,6 +35,18 @@
  * \todo fill this out
  * \todo write isWhite inline function and replace throughout
  */
+#include "PianoView.h"
+
+#include "AutomatableModelView.h"
+#include "embed.h"
+#include "Engine.h"
+#include "gui_templates.h"
+#include "InstrumentTrack.h"
+#include "Piano.h"
+#include "Song.h"
+#include "StringPairDrag.h"
+
+#include "widgets/CaptionMenu.h"
 
 #include <cmath>
 
@@ -43,18 +55,6 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QVBoxLayout>
-
-#include "AutomatableModelView.h"
-#include "PianoView.h"
-#include "Piano.h"
-#include "embed.h"
-#include "Engine.h"
-#include "gui_templates.h"
-#include "InstrumentTrack.h"
-#include "Song.h"
-#include "StringPairDrag.h"
-
-#include "widgets/CaptionMenu.h"
 
 
 namespace lmms::gui

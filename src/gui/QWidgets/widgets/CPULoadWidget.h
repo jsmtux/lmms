@@ -26,12 +26,11 @@
 #ifndef LMMS_GUI_CPU_LOAD_WIDGET_H
 #define LMMS_GUI_CPU_LOAD_WIDGET_H
 
+#include "lmms_basics.h"
+
 #include <QTimer>
 #include <QPixmap>
 #include <QWidget>
-
-#include "lmms_basics.h"
-
 
 namespace lmms::gui
 {

@@ -22,12 +22,12 @@
  *
  */
 
-#include <QIcon>
-
-#include "InstrumentView.h"
 #include "embed.h"
 #include "InstrumentTrack.h"
 #include "InstrumentTrackWindow.h"
+#include "InstrumentView.h"
+
+#include <QIcon>
 
 namespace lmms::gui
 {

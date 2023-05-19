@@ -28,14 +28,14 @@
 
 #include "SubWindow.h"
 
+#include "embed.h"
+
 #include <QGraphicsDropShadowEffect>
 #include <QLabel>
 #include <QMdiArea>
 #include <QMoveEvent>
 #include <QPainter>
 #include <QPushButton>
-
-#include "embed.h"
 
 namespace lmms::gui
 {

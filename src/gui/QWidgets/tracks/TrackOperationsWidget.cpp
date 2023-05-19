@@ -24,13 +24,6 @@
 
 #include "TrackOperationsWidget.h"
 
-#include <QMenu>
-#include <QMessageBox>
-#include <QMouseEvent>
-#include <QPainter>
-#include <QPushButton>
-#include <QCheckBox>
-
 #include "AutomationClip.h"
 #include "AutomationTrackView.h"
 #include "ConfigManager.h"
@@ -49,6 +42,13 @@
 #include "modals/ColorChooser.h"
 
 #include "widgets/PixmapButton.h"
+
+#include <QMenu>
+#include <QMessageBox>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QPushButton>
+#include <QCheckBox>
 
 namespace lmms::gui
 {

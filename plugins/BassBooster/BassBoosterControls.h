@@ -25,8 +25,9 @@
 #ifndef BASSBOOSTER_CONTROLS_H
 #define BASSBOOSTER_CONTROLS_H
 
-#include "effectcontroldialogs/QWidgetEffectControls.h"
 #include "BassBoosterControlDialog.h"
+
+#include "effectcontroldialogs/QWidgetEffectControls.h"
 
 namespace lmms
 {

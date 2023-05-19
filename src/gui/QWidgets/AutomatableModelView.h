@@ -26,8 +26,8 @@
 #ifndef LMMS_GUI_AUTOMATABLE_MODEL_VIEW_H
 #define LMMS_GUI_AUTOMATABLE_MODEL_VIEW_H
 
-#include "ModelView.h"
 #include "AutomatableModel.h"
+#include "ModelView.h"
 
 class QMenu;
 class QMouseEvent;

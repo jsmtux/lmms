@@ -22,12 +22,11 @@
  *
  */
 
-
-#include "lmmsversion.h"
 #include "AboutDialog.h"
-#include "embed.h"
-#include "versioninfo.h"
 
+#include "embed.h"
+#include "lmmsversion.h"
+#include "versioninfo.h"
 
 namespace lmms::gui
 {

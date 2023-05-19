@@ -47,7 +47,6 @@
 
 #include "lmmsversion.h"
 
-
 namespace lmms
 {
 
@@ -301,8 +300,7 @@ bool DataFile::writeFile(const QString& filename, bool withResources)
 	auto showError = [this](QString title, QString body){
 		if (gui::getGUIInterface() != nullptr)
 		{
-			//Should display warning here
-			gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(title, body);
+			gui::getGUIInterface()->mainWindowInterface()->ShowWarnMessage(title, body);
 		}
 		else
 		{

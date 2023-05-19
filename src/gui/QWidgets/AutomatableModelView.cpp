@@ -22,20 +22,21 @@
  *
  */
 
-#include <QMenu>
-#include <QMouseEvent>
-
 #include "AutomatableModelView.h"
+
 #include "AutomationClip.h"
-#include "modals/ControllerConnectionDialog.h"
+#include "Clipboard.h"
 #include "ControllerConnection.h"
 #include "embed.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
 #include "StringPairDrag.h"
-#include "Clipboard.h"
 
 #include "editors/AutomationEditor.h"
+#include "modals/ControllerConnectionDialog.h"
+
+#include <QMenu>
+#include <QMouseEvent>
 
 
 namespace lmms::gui

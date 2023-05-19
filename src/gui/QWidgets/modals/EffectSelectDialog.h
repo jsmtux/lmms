@@ -25,11 +25,11 @@
 #ifndef LMMS_GUI_EFFECT_SELECT_DIALOG_H
 #define LMMS_GUI_EFFECT_SELECT_DIALOG_H
 
+#include "Effect.h"
+
 #include <QDialog>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
-
-#include "Effect.h"
 
 
 namespace Ui { class EffectSelectDialog; }

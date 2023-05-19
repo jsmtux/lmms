@@ -25,14 +25,6 @@
 
 #include "TrackView.h"
 
-#include <QApplication>
-#include <QHBoxLayout>
-#include <QMouseEvent>
-#include <QPainter>
-#include <QStyleOption>
-#include <QtGlobal>
-
-
 #include "AudioEngine.h"
 #include "ConfigManager.h"
 #include "DataFile.h"
@@ -47,6 +39,13 @@
 #include "clips/ClipViewFactory.h"
 
 #include "widgets/PixmapButton.h"
+
+#include <QApplication>
+#include <QHBoxLayout>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QStyleOption>
+#include <QtGlobal>
 
 
 namespace lmms::gui

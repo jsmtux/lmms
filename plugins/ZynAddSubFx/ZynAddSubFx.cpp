@@ -35,8 +35,6 @@
 #include "ZynAddSubFx.h"
 #include "ConfigManager.h"
 #include "Engine.h"
-#include "widgets/Knob.h"
-#include "widgets/LedCheckBox.h"
 #include "DataFile.h"
 #include "InstrumentPlayHandle.h"
 #include "InstrumentTrack.h"
@@ -47,6 +45,9 @@
 #include "LocalZynAddSubFx.h"
 #include "AudioEngine.h"
 #include "Clipboard.h"
+
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
 
 #include "embed.h"
 #include "plugin_export.h"

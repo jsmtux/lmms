@@ -25,9 +25,9 @@
 
 #include "AutomatableSlider.h"
 
-#include <QMouseEvent>
-
 #include "CaptionMenu.h"
+
+#include <QMouseEvent>
 
 
 namespace lmms::gui

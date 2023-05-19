@@ -25,10 +25,10 @@
 #ifndef LMMS_GUI_LCD_WIDGET_H
 #define LMMS_GUI_LCD_WIDGET_H
 
+#include "lmms_export.h"
+
 #include <QMap>
 #include <QWidget>
-
-#include "lmms_export.h"
 
 namespace lmms::gui
 {

@@ -24,11 +24,11 @@
 
 #include "MidiSetupWidget.h"
 
-#include <QLabel>
-#include <QLineEdit>
-
 #include "ConfigManager.h"
 #include "gui_templates.h"
+
+#include <QLabel>
+#include <QLineEdit>
 
 
 namespace lmms::gui

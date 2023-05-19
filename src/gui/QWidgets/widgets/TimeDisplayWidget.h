@@ -26,10 +26,10 @@
 #ifndef LMMS_GUI_TIME_DISPLAY_WIDGET_H
 #define LMMS_GUI_TIME_DISPLAY_WIDGET_H
 
-#include <QWidget>
-#include <QHBoxLayout>
-
 #include "LcdWidget.h"
+
+#include <QHBoxLayout>
+#include <QWidget>
 
 namespace lmms::gui
 {

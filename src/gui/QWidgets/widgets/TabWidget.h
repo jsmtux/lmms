@@ -25,8 +25,8 @@
 #ifndef LMMS_GUI_TAB_WIDGET_H
 #define LMMS_GUI_TAB_WIDGET_H
 
-#include <QWidget>
 #include <QMap>
+#include <QWidget>
 
 namespace lmms::gui
 {

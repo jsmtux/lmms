@@ -25,8 +25,6 @@
  
 #include "SampleTrack.h"
 
-#include <QDomElement>
-
 #include "EffectChain.h"
 #include "Mixer.h"
 #include "panning_constants.h"
@@ -37,6 +35,8 @@
 #include "SampleRecordHandle.h"
 #include "Song.h"
 #include "volume.h"
+
+#include <QDomElement>
 
 
 namespace lmms

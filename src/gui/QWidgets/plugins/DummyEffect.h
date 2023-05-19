@@ -61,7 +61,8 @@ public:
 		return "DummyControls";
 	}
 
-	gui::EffectControlDialog * createView() override {
+	gui::EffectControlDialog * createView() override
+	{
 		return nullptr;
 	}
 } ;
@@ -92,12 +93,21 @@ public:
 		return false;
 	}
 
+	QDomElement saveState( QDomDocument & _doc, QDomElement & _parent ) override
+	{
+		_parent.appendChild(originalPluginData());
+		return QDomElement();
+	}
+
 	const QDomElement& originalPluginData() const
 	{
 		return m_originalPluginData;
 	}
 
-
+	bool isDummy() override
+	{
+		return true;
+	}
 
 private:
 	DummyEffectControls m_controls;

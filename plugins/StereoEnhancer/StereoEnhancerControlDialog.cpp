@@ -26,9 +26,11 @@
 
 
 #include "StereoEnhancerControlDialog.h"
-#include <QHBoxLayout>
-#include "widgets/Knob.h"
 #include "StereoEnhancerControls.h"
+
+#include "widgets/Knob.h"
+
+#include <QHBoxLayout>
 
 namespace lmms::gui
 {

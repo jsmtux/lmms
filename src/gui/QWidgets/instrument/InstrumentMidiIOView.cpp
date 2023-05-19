@@ -22,12 +22,8 @@
  *
  */
 
-#include <QToolButton>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QVBoxLayout>
-
 #include "InstrumentMidiIOView.h"
+
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "embed.h"
@@ -38,6 +34,11 @@
 
 #include "widgets/GroupBox.h"
 #include "widgets/LcdSpinBox.h"
+
+#include <QToolButton>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QVBoxLayout>
 
 namespace lmms::gui
 {

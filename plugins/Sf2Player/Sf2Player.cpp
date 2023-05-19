@@ -33,19 +33,18 @@
 #include "AudioEngine.h"
 #include "ConfigManager.h"
 #include "Engine.h"
+#include "IGuiApplication.h"
 #include "InstrumentTrack.h"
 #include "InstrumentPlayHandle.h"
-#include "widgets/Knob.h"
 #include "NotePlayHandle.h"
+#include "PatchesDialog.h"
 #include "PathUtil.h"
-#include "widgets/PixmapButton.h"
 #include "Song.h"
 #include "fluidsynthshims.h"
 
-#include "IGuiApplication.h"
-
-#include "PatchesDialog.h"
+#include "widgets/Knob.h"
 #include "widgets/LcdSpinBox.h"
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 #include "plugin_export.h"

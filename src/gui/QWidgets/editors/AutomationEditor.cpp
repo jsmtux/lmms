@@ -27,18 +27,6 @@
 
 #include "AutomationEditor.h"
 
-#include <cmath>
-
-#include <QApplication>
-#include <QInputDialog>
-#include <QKeyEvent>
-#include <QLabel>
-#include <QPainter>
-#include <QPainterPath>
-#include <QScrollBar>
-#include <QStyleOption>
-#include <QToolTip>
-
 #ifndef __USE_XOPEN
 #define __USE_XOPEN
 #endif
@@ -61,6 +49,18 @@
 #include "widgets/ComboBox.h"
 #include "widgets/Knob.h"
 #include "widgets/TextFloat.h"
+
+#include <cmath>
+
+#include <QApplication>
+#include <QInputDialog>
+#include <QKeyEvent>
+#include <QLabel>
+#include <QPainter>
+#include <QPainterPath>
+#include <QScrollBar>
+#include <QStyleOption>
+#include <QToolTip>
 
 namespace lmms::gui
 {

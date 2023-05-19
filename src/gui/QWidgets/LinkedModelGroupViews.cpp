@@ -24,10 +24,11 @@
 
 #include "LinkedModelGroupViews.h"
 
-#include <QPushButton>
 #include "Controls.h"
 #include "ControlLayout.h"
 #include "LinkedModelGroups.h"
+
+#include <QPushButton>
 
 namespace lmms::gui
 {

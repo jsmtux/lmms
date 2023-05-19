@@ -25,11 +25,10 @@
 #ifndef LMMS_GUI_GROUP_BOX_H
 #define LMMS_GUI_GROUP_BOX_H
 
-#include <QWidget>
-
 #include "AutomatableModelView.h"
 #include "PixmapButton.h"
 
+#include <QWidget>
 
 class QPixmap;
 

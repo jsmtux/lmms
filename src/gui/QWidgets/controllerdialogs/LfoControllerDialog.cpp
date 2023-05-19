@@ -23,10 +23,9 @@
  *
  */
 
+#include "LfoControllerDialog.h"
 
 #include "embed.h"
-
-#include "LfoControllerDialog.h"
 
 #include "LfoController.h"
 

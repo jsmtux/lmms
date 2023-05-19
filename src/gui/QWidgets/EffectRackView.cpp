@@ -23,17 +23,17 @@
  *
  */
 
-#include <QApplication>
-#include <QPushButton>
-#include <QScrollArea>
-#include <QVBoxLayout>
-
 #include "EffectRackView.h"
 #include "EffectView.h"
 
 #include "modals/EffectSelectDialog.h"
 
 #include "widgets/GroupBox.h"
+
+#include <QApplication>
+#include <QPushButton>
+#include <QScrollArea>
+#include <QVBoxLayout>
 
 
 namespace lmms::gui

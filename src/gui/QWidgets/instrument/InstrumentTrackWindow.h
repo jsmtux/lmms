@@ -25,11 +25,11 @@
 #ifndef LMMS_GUI_INSTRUMENT_TRACK_WINDOW_H
 #define LMMS_GUI_INSTRUMENT_TRACK_WINDOW_H
 
-#include <QWidget>
-
+#include "InstrumentTrack.h"
 #include "ModelView.h"
 #include "SerializingObject.h"
-#include "InstrumentTrack.h"
+
+#include <QWidget>
 
 class QLabel;
 class QLineEdit;

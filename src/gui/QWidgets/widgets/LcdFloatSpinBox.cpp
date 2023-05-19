@@ -26,6 +26,13 @@
 
 #include "LcdFloatSpinBox.h"
 
+#include "CaptionMenu.h"
+#include "DeprecationHelper.h"
+#include "embed.h"
+#include "GuiApplication.h"
+#include "gui_templates.h"
+#include "MainWindow.h"
+
 #include <cmath>
 
 #include <QHBoxLayout>
@@ -36,13 +43,6 @@
 #include <QPixmap>
 #include <QStyleOptionFrame>
 #include <QVBoxLayout>
-
-#include "CaptionMenu.h"
-#include "DeprecationHelper.h"
-#include "embed.h"
-#include "GuiApplication.h"
-#include "gui_templates.h"
-#include "MainWindow.h"
 
 namespace lmms::gui
 {

@@ -23,10 +23,11 @@
  *
  */
 
-#include <QCloseEvent>
-
 #include "ControllerDialog.h"
+
 #include "Controller.h"
+
+#include <QCloseEvent>
 
 namespace lmms::gui
 {

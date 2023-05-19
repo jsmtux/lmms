@@ -26,9 +26,11 @@
 #ifndef _TRIPLE_OSCILLATOR_H
 #define _TRIPLE_OSCILLATOR_H
 
-#include "plugins/QWidgetInstrumentPlugin.h"
-#include "instrument/InstrumentView.h"
 #include "AutomatableModel.h"
+
+#include "instrument/InstrumentView.h"
+
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 namespace lmms
 {

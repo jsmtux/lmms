@@ -26,61 +26,98 @@
 #define LMMS_GUI_GUI_APPLICATION_H
 
 #include "IGuiApplication.h"
-#include "Instrument.h"
-#include "Engine.h"
+
 #include "AudioEngine.h"
+#include "Engine.h"
+#include "Effect.h"
+#include "Instrument.h"
 
 namespace lmms::gui
 {
 
 class ProgressModal : public IProgressModal {
 public:
-    int value() { return 0; }
-    void setValue(int _value) {  }
-    bool wasCanceled() { return false; }
-    void updateDescription(QString description) {}
+	int value()
+	{
+		return 0;
+	}
+	void setValue(int _value)
+	{ }
+	bool wasCanceled()
+	{
+		return false;
+	}
+	void updateDescription(QString description)
+	{}
 };
 
 
 class MainWindow: public IMainWindow {
 public:
-    void ShowInfoMessage(QString title, QString description) {}
-    void ShowCriticalMessage(QString title, QString description) {}
-    void ShowTextFloatMessage(QString title, QString description, QPixmap image, int _timeout) {}
-    void ShowFileNotFoundMessage(QString path) {}
-    void ShowWarningMessage(int line, int col, QString description) {}
-    IProgressModal* ShowProgressMessage(QString title, int min, int max) {
+	void ShowInfoMessage(QString title, QString description)
+	{}
+	void ShowWarnMessage(QString title, QString description)
+	{}
+	void ShowCriticalMessage(QString title, QString description)
+	{}
+	void ShowTextFloatMessage(QString title, QString description, QPixmap image, int _timeout)
+	{}
+	void ShowFileNotFoundMessage(QString path)
+	{}
+	void ShowWarnMessageWithPosition(int line, int col, QString description)
+	{}
+	IProgressModal* ShowProgressMessage(QString title, int min, int max)
+	{
 		return new ProgressModal();
 	}
 };
 
 class MixerView: public IMixerView {
 public:
-    void refreshDisplay() {}
+	void refreshDisplay()
+	{}
 };
 
 class PianoRollWindow : public IPianoRollWindow {
 public:
-    int quantization() const { return 0; };
-    const MidiClip* currentMidiClip() const { return nullptr; }
-    void update() {}
+	int quantization() const
+	{
+		return 0;
+	};
+	const MidiClip* currentMidiClip() const
+	{
+		return nullptr;
+	}
+	void update()
+	{}
 };
 
 class AutomationEditor: public IAutomationEditor{
 public:
-    void updateAfterClipChange() {}
-
+	void updateAfterClipChange()
+	{}
 };
 
 class FileDialog: public IFileDialog {
 public:
-    void setDirectory(const QString& directory) {}
-    void setNameFilters(const QStringList &filters) {}
-    void selectFile(const QString &filename) {}
-    int exec() { return IFileDialog::Accepted; }
-    QStringList selectedFiles() const { return QStringList();}
-	void setAcceptMode(IFileDialog::AcceptMode mode) override {}
-	void setFileMode(IFileDialog::FileMode mode) override {}
+	void setDirectory(const QString& directory)
+	{}
+	void setNameFilters(const QStringList &filters)
+	{}
+	void selectFile(const QString &filename)
+	{}
+	int exec()
+	{
+		return IFileDialog::Accepted;
+	}
+	QStringList selectedFiles() const
+	{
+		return QStringList();
+	}
+	void setAcceptMode(IFileDialog::AcceptMode mode) override
+	{}
+	void setFileMode(IFileDialog::FileMode mode) override
+	{}
 };
 
 
@@ -139,6 +176,24 @@ public:
 	}
 };
 
+class DummyEffect : public Effect
+{
+public:
+	DummyEffect( Model * _parent, const QDomElement& originalPluginData ) :
+		Effect( nullptr, _parent, nullptr )
+	{ }
+
+	EffectControls * controls() override
+	{
+		return nullptr;
+	}
+
+	bool processAudioBuffer( sampleFrame *, const fpp_t ) override
+	{
+		return false;
+	}
+};
+
 class LMMS_EXPORT GuiApplication: public IGuiApplication
 {
 public:
@@ -147,22 +202,44 @@ public:
 
 	static GuiApplication* instance();
 
-	IMainWindow* mainWindowInterface() override { return &m_mainWindow; }
-	IMixerView* mixerViewInterface() override { return &m_mixerView; }
-	IPianoRollWindow* pianoRollInterface() override { return &m_pianoRoll; }
-	IAutomationEditor* automationEditorInterface() override { return &m_automationEditor; }
-
-	Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) override {
+	IMainWindow* mainWindowInterface() override
+	{
+		return &m_mainWindow;
+	}
+	IMixerView* mixerViewInterface() override
+	{
+		return &m_mixerView;
+	}
+	IPianoRollWindow* pianoRollInterface() override
+	{
+		return &m_pianoRoll;
+	}
+	IAutomationEditor* automationEditorInterface() override
+	{
+		return &m_automationEditor;
+	}
+	Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) override
+	{
 		return new DummyInstrument(_instrument_track);
 	}
-	Plugin* createDummyPlugin() override { return new DummyPlugin; }
-	std::unique_ptr<IFileDialog> createFileDialog(QString title) override {
+	Plugin* createDummyPlugin() override
+	{
+		return new DummyPlugin;
+	}
+	Effect* createDummyEffect( Model * _parent, const QDomElement& originalPluginData )
+	{
+		return new DummyEffect(_parent, originalPluginData);
+	}
+	std::unique_ptr<IFileDialog> createFileDialog(QString title) override
+	{
 		return std::make_unique<FileDialog>();
 	}
-
-	void clear() override {}
-	void restoreState(QDomNode& node) override {}
-	void saveState(DataFile& dataFile) override {}
+	void clear() override
+	{}
+	void restoreState(QDomNode& node) override
+	{}
+	void saveState(DataFile& dataFile) override
+	{}
 private:
 	MainWindow m_mainWindow;
 	MixerView m_mixerView;

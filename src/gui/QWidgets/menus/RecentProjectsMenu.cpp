@@ -1,14 +1,13 @@
 #include "RecentProjectsMenu.h"
 
-#include <QFileInfo>
-
 #include "ConfigManager.h"
-#include "Engine.h"
-#include "Song.h"
-
 #include "embed.h"
+#include "Engine.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
+#include "Song.h"
+
+#include <QFileInfo>
 
 namespace lmms::gui
 {

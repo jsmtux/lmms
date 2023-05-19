@@ -23,9 +23,10 @@
  *
  */
 
+#include "LmmsPalette.h"
+
 #include <QApplication>
 #include <QStyle>
-#include "LmmsPalette.h"
 
 
 namespace lmms::gui

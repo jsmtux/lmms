@@ -49,7 +49,7 @@ public:
 
 	inline static QString name()
 	{
-		return "Dummy (no sound output)";
+		return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", "Dummy (no sound output)" );
 	}
 
 private:

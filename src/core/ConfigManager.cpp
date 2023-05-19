@@ -30,8 +30,8 @@
 #include <QTextStream>
 
 #include "ConfigManager.h"
-#include "ProjectVersion.h"
 #include "IGuiApplication.h"
+#include "ProjectVersion.h"
 
 #include "lmmsversion.h"
 
@@ -515,7 +515,8 @@ void ConfigManager::loadConfigFile(const QString & configFile)
 		}
 		else if (gui::getGUIInterface() != nullptr)
 		{
-			gui::getGUIInterface()->mainWindowInterface()->ShowWarningMessage(errorLine, errorCol, errorString);
+			gui::getGUIInterface()->mainWindowInterface()->ShowWarnMessageWithPosition(
+				errorLine, errorCol, errorString);
 		}
 		cfg_file.close();
 	}

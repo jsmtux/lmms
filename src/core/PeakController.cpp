@@ -31,8 +31,8 @@
 
 #include "AudioEngine.h"
 #include "EffectChain.h"
-#include "plugins/PeakControllerEffect/PeakControllerEffect.h"
 #include "IGuiApplication.h"
+#include "plugins/PeakControllerEffect/PeakControllerEffect.h"
 
 using lmms::gui::getGUIInterface;
 

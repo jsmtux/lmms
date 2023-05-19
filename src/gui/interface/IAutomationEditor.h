@@ -10,9 +10,9 @@ namespace lmms::gui{
 
 class IAutomationEditor{
 public:
-    virtual ~IAutomationEditor() {}
-    virtual void updateAfterClipChange() = 0;
-
+	virtual ~IAutomationEditor()
+	{}
+	virtual void updateAfterClipChange() = 0;
 };
 
 }

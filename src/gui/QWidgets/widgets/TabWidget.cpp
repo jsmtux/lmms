@@ -25,15 +25,15 @@
 
 #include "TabWidget.h"
 
+#include "DeprecationHelper.h"
+#include "embed.h"
+#include "gui_templates.h"
+
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPixmap>
 #include <QToolTip>
 #include <QWheelEvent>
-
-#include "DeprecationHelper.h"
-#include "embed.h"
-#include "gui_templates.h"
 
 namespace lmms::gui
 {

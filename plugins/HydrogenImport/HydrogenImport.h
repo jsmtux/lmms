@@ -3,8 +3,9 @@
 
 #include <QString>
 
-#include "plugins/QWidgetImportFilter.h"
 #include "TrackContainer.h"
+
+#include "plugins/QWidgetImportFilter.h"
 
 namespace lmms
 {

@@ -25,25 +25,26 @@
 
 #include "MixerLine.h"
 
-#include <cstdlib>
+#include "embed.h"
+#include "gui_templates.h"
+#include "GuiApplication.h"
+#include "Mixer.h"
+#include "MixerView.h"
+#include "SendButtonIndicator.h"
+#include "Song.h"
+
+#include "modals/ColorChooser.h"
+
+#include "widgets/CaptionMenu.h"
+#include "widgets/Knob.h"
+#include "widgets/LcdWidget.h"
 
 #include <QGraphicsProxyWidget>
 #include <QGraphicsView>
 #include <QLineEdit>
 #include <QPainter>
 
-#include "embed.h"
-#include "Mixer.h"
-#include "MixerView.h"
-#include "gui_templates.h"
-#include "GuiApplication.h"
-#include "SendButtonIndicator.h"
-#include "Song.h"
-
-#include "widgets/CaptionMenu.h"
-#include "modals/ColorChooser.h"
-#include "widgets/Knob.h"
-#include "widgets/LcdWidget.h"
+#include <cstdlib>
 
 namespace lmms::gui
 {

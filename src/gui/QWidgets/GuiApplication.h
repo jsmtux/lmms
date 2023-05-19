@@ -25,18 +25,19 @@
 #ifndef LMMS_GUI_GUI_APPLICATION_H
 #define LMMS_GUI_GUI_APPLICATION_H
 
-#include <QObject>
-
-#include "lmms_export.h"
-#include "lmmsconfig.h"
-#include "ProjectNotes.h"
 #include "IGuiApplication.h"
 #include "MainWindow.h"
 #include "MixerView.h"
+#include "lmms_export.h"
+#include "lmmsconfig.h"
+#include "ProjectNotes.h"
+
 #include "editors/PatternEditor.h"
 #include "editors/SongEditor.h"
 #include "editors/PianoRoll.h"
 #include "editors/AutomationEditor.h"
+
+#include <QObject>
 
 class QLabel;
 
@@ -75,6 +76,7 @@ public:
 
 	Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) override;
 	Plugin* createDummyPlugin() override;
+	Effect* createDummyEffect( Model * _parent, const QDomElement& originalPluginData ) override;
 	std::unique_ptr<IFileDialog> createFileDialog(QString title) override;
 
 	void clear() override;

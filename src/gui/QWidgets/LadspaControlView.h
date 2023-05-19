@@ -26,9 +26,9 @@
 #ifndef LMMS_GUI_LADSPA_CONTROL_VIEW_H
 #define LMMS_GUI_LADSPA_CONTROL_VIEW_H
 
-#include <QWidget>
-
 #include "ModelView.h"
+
+#include <QWidget>
 
 namespace lmms
 {

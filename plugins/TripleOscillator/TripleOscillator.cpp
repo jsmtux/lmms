@@ -28,15 +28,16 @@
 
 #include "TripleOscillator.h"
 #include "AudioEngine.h"
-#include "widgets/AutomatableButton.h"
 #include "debug.h"
 #include "Engine.h"
 #include "InstrumentTrack.h"
-#include "widgets/Knob.h"
 #include "NotePlayHandle.h"
 #include "Oscillator.h"
-#include "widgets/PixmapButton.h"
 #include "SampleBuffer.h"
+
+#include "widgets/AutomatableButton.h"
+#include "widgets/Knob.h"
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 #include "plugin_export.h"

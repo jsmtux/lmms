@@ -24,15 +24,6 @@
 
 #include "InstrumentTrackWindow.h"
 
-#include <QDir>
-#include <QDropEvent>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QMenu>
-#include <QPushButton>
-#include <QVBoxLayout>
-
 #include "ConfigManager.h"
 #include "DataFile.h"
 #include "EffectRackView.h"
@@ -73,6 +64,15 @@
 #include "widgets/LeftRightNav.h"
 #include "widgets/MixerLineLcdSpinBox.h"
 #include "widgets/TabWidget.h"
+
+#include <QDir>
+#include <QDropEvent>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMenu>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 namespace lmms::gui
 {

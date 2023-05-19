@@ -24,11 +24,11 @@
 
 #include "SideBarWidget.h"
 
+#include "embed.h"
+
 #include <QFontMetrics>
 #include <QPainter>
 #include <QPushButton>
-
-#include "embed.h"
 
 namespace lmms::gui
 {

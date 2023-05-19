@@ -29,11 +29,12 @@
 #include "GuiApplication.h"
 #include "InstrumentPlayHandle.h"
 #include "InstrumentTrack.h"
-#include "widgets/Knob.h"
 #include "MidiEventToByteSeq.h"
 #include "MainWindow.h"
 #include "gui_templates.h"
 #include "Song.h"
+
+#include "widgets/Knob.h"
 
 #include <QApplication>
 #include <QComboBox>

@@ -1,15 +1,13 @@
 #include "TrackViewFactory.h"
 
-#include "InstrumentTrackView.h"
-#include "PatternTrackView.h"
-#include "SampleTrackView.h"
-#include "AutomationTrackView.h"
-
-#include "GuiApplication.h"
-
-#include "PatternTrack.h"
-#include "SampleTrack.h"
 #include "AutomationTrack.h"
+#include "AutomationTrackView.h"
+#include "GuiApplication.h"
+#include "InstrumentTrackView.h"
+#include "PatternTrack.h"
+#include "PatternTrackView.h"
+#include "SampleTrack.h"
+#include "SampleTrackView.h"
 
 namespace lmms::gui {
 

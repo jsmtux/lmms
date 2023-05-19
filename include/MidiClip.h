@@ -107,7 +107,10 @@ public:
 
 	bool empty();
 
-	ClipType getType() override { return ClipType::Midi; }
+	ClipType getType() override
+	{
+		return ClipType::Midi;
+	}
 
 
 	using Model::dataChanged;

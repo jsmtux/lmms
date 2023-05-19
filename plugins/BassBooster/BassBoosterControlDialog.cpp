@@ -29,6 +29,7 @@
 #include "BassBoosterControlDialog.h"
 #include "BassBoosterControls.h"
 #include "embed.h"
+
 #include "widgets/Knob.h"
 
 

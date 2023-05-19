@@ -23,14 +23,6 @@
  *
  */
 
-
-#include <QLabel>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QMdiArea>
-#include <QInputDialog>
-#include <QVBoxLayout>
-
 #include "ControllerView.h"
 
 #include "embed.h"
@@ -42,6 +34,13 @@
 
 #include "controllerdialogs/ControllerDialog.h"
 #include "controllerdialogs/ControllerDialogsFactory.h"
+
+#include <QLabel>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QMdiArea>
+#include <QInputDialog>
+#include <QVBoxLayout>
 
 namespace lmms::gui
 {

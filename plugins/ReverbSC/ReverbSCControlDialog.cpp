@@ -26,8 +26,9 @@
 #include "ReverbSCControlDialog.h"
 
 #include "embed.h"
-#include "widgets/Knob.h"
 #include "ReverbSCControls.h"
+
+#include "widgets/Knob.h"
 
 namespace lmms::gui
 {

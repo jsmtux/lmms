@@ -63,13 +63,15 @@
 #include "MainWindow.h"
 #include "MidiClip.h"
 #include "PatternStore.h"
-#include "instrument/PianoView.h"
 #include "PositionLine.h"
 #include "SongEditor.h"
 #include "TimeLineWidget.h"
 
 #include "editors/StepRecorderWidget.h"
 #include "modals/FileDialog.h"
+
+#include "instrument/PianoView.h"
+
 #include "widgets/ComboBox.h"
 #include "widgets/TextFloat.h"
 #include "widgets/SimpleTextFloat.h"

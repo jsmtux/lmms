@@ -35,7 +35,6 @@
 #include "Rubberband.h"
 #include "TimePos.h"
 
-
 class QVBoxLayout;
 
 namespace lmms

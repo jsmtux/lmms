@@ -25,9 +25,9 @@
 #ifndef LMMS_GUI_ABOUT_DIALOG_H
 #define LMMS_GUI_ABOUT_DIALOG_H
 
-#include <QDialog>
-
 #include "gui/QWidgets/ui_about_dialog.h"
+
+#include <QDialog>
 
 namespace lmms::gui
 {

@@ -25,10 +25,9 @@
 #ifndef LMMS_GUI_AUTOMATABLE_SLIDER_H
 #define LMMS_GUI_AUTOMATABLE_SLIDER_H
 
-#include <QSlider>
-
 #include "AutomatableModelView.h"
 
+#include <QSlider>
 
 namespace lmms::gui
 {

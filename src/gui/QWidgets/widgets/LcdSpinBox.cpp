@@ -23,12 +23,13 @@
  *
  */
 
+#include "LcdSpinBox.h"
+
+#include "CaptionMenu.h"
+
 #include <cmath>
 #include <QMouseEvent>
 #include <QInputDialog>
-
-#include "LcdSpinBox.h"
-#include "CaptionMenu.h"
 
 
 namespace lmms::gui
