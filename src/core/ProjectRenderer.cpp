@@ -29,10 +29,10 @@
 #include "Song.h"
 #include "PerfLog.h"
 
-#include "AudioFileWave.h"
-#include "AudioFileOgg.h"
-#include "AudioFileMP3.h"
-#include "AudioFileFlac.h"
+#include "audio/AudioFileWave.h"
+#include "audio/AudioFileOgg.h"
+#include "audio/AudioFileMP3.h"
+#include "audio/AudioFileFlac.h"
 
 
 namespace lmms
@@ -78,7 +78,7 @@ const std::array<ProjectRenderer::FileEncodeDevice, 5> ProjectRenderer::fileEnco
 
 
 
-ProjectRenderer::ProjectRenderer( const AudioEngine::qualitySettings & qualitySettings,
+ProjectRenderer::ProjectRenderer( const IAudioEngine::qualitySettings & qualitySettings,
 					const OutputSettings & outputSettings,
 					ExportFileFormats exportFileFormat,
 					const QString & outputFilename ) :

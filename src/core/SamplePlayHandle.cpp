@@ -24,7 +24,7 @@
 
 #include "SamplePlayHandle.h"
 #include "AudioEngine.h"
-#include "AudioPort.h"
+#include "audio/AudioPort.h"
 #include "Engine.h"
 #include "Note.h"
 #include "PatternTrack.h"

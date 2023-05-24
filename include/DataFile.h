@@ -26,6 +26,8 @@
 #ifndef LMMS_DATA_FILE_H
 #define LMMS_DATA_FILE_H
 
+#include "IDataFile.h"
+
 #include <map>
 #include <QDomDocument>
 
@@ -40,7 +42,7 @@ namespace lmms
 class ProjectVersion;
 
 
-class LMMS_EXPORT DataFile : public QDomDocument
+class LMMS_EXPORT DataFile : public QDomDocument, public IDataFile
 {
 	MM_OPERATORS
 

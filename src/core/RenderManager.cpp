@@ -33,9 +33,8 @@
 namespace lmms
 {
 
-
 RenderManager::RenderManager(
-		const AudioEngine::qualitySettings & qualitySettings,
+		const IAudioEngine::qualitySettings & qualitySettings,
 		const OutputSettings & outputSettings,
 		ProjectRenderer::ExportFileFormats fmt,
 		QString outputPath) :
@@ -180,7 +179,8 @@ void RenderManager::restoreMutedState()
 // Determine the output path for a track when rendering tracks individually
 QString RenderManager::pathForTrack(const Track *track, int num)
 {
-	QString extension = ProjectRenderer::getFileExtensionFromFormat( m_format );
+	// QString extension = ProjectRenderer::getFileExtensionFromFormat( m_format );
+	QString extension = "TET";
 	QString name = track->name();
 	name = name.remove(QRegExp(FILENAME_FILTER));
 	name = QString( "%1_%2%3" ).arg( num ).arg( name ).arg( extension );

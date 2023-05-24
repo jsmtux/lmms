@@ -30,6 +30,8 @@
 #include <QHash>
 #include <QString>
 
+#include "ISong.h"
+
 #include "TrackContainer.h"
 #include "AudioEngine.h"
 #include "Controller.h"
@@ -61,7 +63,7 @@ const bpm_t MaxTempo = 999;
 const tick_t MaxSongLength = 9999 * DefaultTicksPerBar;
 
 
-class LMMS_EXPORT Song : public TrackContainer
+class LMMS_EXPORT Song : public TrackContainer, public ISong
 {
 	Q_OBJECT
 	mapPropertyFromModel( int,getTempo,setTempo,m_tempoModel );
@@ -98,6 +100,10 @@ public:
 	void collectError( const QString error );
 	bool hasErrors();
 	QString errorSummary();
+
+	bool isEmpty() const override {
+		return TrackContainer::isEmpty();
+	}
 
 	class PlayPos : public TimePos
 	{

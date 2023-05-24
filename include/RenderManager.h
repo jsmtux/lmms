@@ -26,6 +26,8 @@
 #ifndef LMMS_RENDER_MANAGER_H
 #define LMMS_RENDER_MANAGER_H
 
+#include "IRenderManager.h"
+
 #include <memory>
 
 #include "ProjectRenderer.h"
@@ -36,12 +38,11 @@ namespace lmms
 {
 
 
-class RenderManager : public QObject
+class RenderManager : public IRenderManager
 {
-	Q_OBJECT
 public:
 	RenderManager(
-		const AudioEngine::qualitySettings & qualitySettings,
+		const IAudioEngine::qualitySettings & qualitySettings,
 		const OutputSettings & outputSettings,
 		ProjectRenderer::ExportFileFormats fmt,
 		QString outputPath);
@@ -56,9 +57,12 @@ public:
 
 	void abortProcessing();
 
+	IProjectRenderer* getProjectRenderer() {
+		return m_activeRenderer.get();
+	}
+
 signals:
 	void progressChanged( int );
-	void finished();
 
 private slots:
 	void renderNextTrack();
@@ -70,8 +74,8 @@ private:
 
 	void render( QString outputPath );
 
-	const AudioEngine::qualitySettings m_qualitySettings;
-	const AudioEngine::qualitySettings m_oldQualitySettings;
+	const IAudioEngine::qualitySettings m_qualitySettings;
+	const IAudioEngine::qualitySettings m_oldQualitySettings;
 	const OutputSettings m_outputSettings;
 	ProjectRenderer::ExportFileFormats m_format;
 	QString m_outputPath;

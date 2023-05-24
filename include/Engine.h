@@ -32,6 +32,8 @@
 #include "lmms_export.h"
 #include "lmms_basics.h"
 
+#include "IEngine.h"
+
 namespace lmms
 {
 
@@ -48,7 +50,7 @@ class GuiApplication;
 }
 
 
-class LMMS_EXPORT Engine : public QObject
+class LMMS_EXPORT Engine : public QObject, public IEngine
 {
 	Q_OBJECT
 public:
@@ -115,6 +117,9 @@ public:
 
 	static void setDndPluginKey(void* newKey);
 	static void* pickDndPluginKey();
+
+    ISong* getSongInterface() override;
+    IAudioEngine* getAudioEngineInterface() override;
 
 signals:
 	void initProgress(const QString &msg);

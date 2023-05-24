@@ -26,7 +26,7 @@
 #ifndef LMMS_INSTRUMENT_TRACK_H
 #define LMMS_INSTRUMENT_TRACK_H
 
-#include "AudioPort.h"
+#include "audio/AudioPort.h"
 #include "InstrumentFunctions.h"
 #include "InstrumentSoundShaping.h"
 #include "Microtuner.h"

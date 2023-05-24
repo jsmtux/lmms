@@ -55,17 +55,8 @@
 
 #include <csignal>
 
-#include "ConfigManager.h"
-#include "DataFile.h"
-#include "NotePlayHandle.h"
-#include "embed.h"
-#include "Engine.h"
-#include "ImportFilter.h"
-#include "MixHelpers.h"
+#include "ICoreApplication.h"
 #include "OutputSettings.h"
-#include "ProjectRenderer.h"
-#include "RenderManager.h"
-#include "Song.h"
 
 #ifdef LMMS_DEBUG_FPE
 #include <fenv.h> // For feenableexcept
@@ -119,7 +110,7 @@ void consoleMessageHandler(QtMsgType type,
 
 
 inline void loadTranslation( const QString & tname,
-	const QString & dir = lmms::ConfigManager::inst()->localeDir() )
+	const QString & dir)
 {
 	auto t = new QTranslator(QCoreApplication::instance());
 	QString name = tname + ".qm";
@@ -288,9 +279,10 @@ int main( int argc, char * * argv )
 	// Make Qt's debug message handlers work
 	qInstallMessageHandler(consoleMessageHandler);
 #endif
+	ICoreApplication* coreApplication = getCoreApplication();
+	IConfigManager* configManager = coreApplication->getConfigManager();
 
-	// initialize memory managers
-	NotePlayHandleManager::init();
+	coreApplication->init();
 
 	// intialize RNG
 	srand( getpid() + time( 0 ) );
@@ -343,9 +335,9 @@ int main( int argc, char * * argv )
 
 	QCoreApplication * app = new QCoreApplication( argc, argv );
 
-	AudioEngine::qualitySettings qs( AudioEngine::qualitySettings::Mode_HighQuality );
+	IAudioEngine::qualitySettings qs( IAudioEngine::qualitySettings::Mode_HighQuality );
 	OutputSettings os( 44100, OutputSettings::BitRateSettings(160, false), OutputSettings::Depth_16Bit, OutputSettings::StereoMode_JointStereo );
-	ProjectRenderer::ExportFileFormats eff = ProjectRenderer::WaveFile;
+	IProjectRenderer::ExportFileFormats eff = IProjectRenderer::WaveFile;
 
 	// second of two command-line parsing stages
 	for( int i = 1; i < argc; ++i )
@@ -372,16 +364,16 @@ int main( int argc, char * * argv )
 			}
 
 
-			DataFile dataFile( QString::fromLocal8Bit( argv[i] ) );
+			auto dataFile = coreApplication->createDataFile( QString::fromLocal8Bit( argv[i] ) );
 
 			if( argc > i+1 ) // output file specified
 			{
-				dataFile.writeFile( QString::fromLocal8Bit( argv[i+1] ) );
+				dataFile->writeFile( QString::fromLocal8Bit( argv[i+1] ) );
 			}
 			else // no output file specified; use stdout
 			{
 				QTextStream ts( stdout );
-				dataFile.write( ts );
+				dataFile->write( ts );
 				fflush( stdout );
 			}
 
@@ -396,12 +388,12 @@ int main( int argc, char * * argv )
 				return noInputFileError();
 			}
 
-			DataFile dataFile(QString::fromLocal8Bit(argv[i]));
+			auto dataFile = coreApplication->createDataFile(QString::fromLocal8Bit(argv[i]));
 
 			if (argc > i+1) // Project bundle file name given
 			{
 				printf("Making bundle\n");
-				dataFile.writeFile(QString::fromLocal8Bit(argv[i+1]), true);
+				dataFile->writeFile(QString::fromLocal8Bit(argv[i+1]), true);
 				return EXIT_SUCCESS;
 			}
 			else
@@ -497,23 +489,23 @@ int main( int argc, char * * argv )
 
 			if( ext == "wav" )
 			{
-				eff = ProjectRenderer::WaveFile;
+				eff = IProjectRenderer::WaveFile;
 			}
 #ifdef LMMS_HAVE_OGGVORBIS
 			else if( ext == "ogg" )
 			{
-				eff = ProjectRenderer::OggFile;
+				eff = IProjectRenderer::OggFile;
 			}
 #endif
 #ifdef LMMS_HAVE_MP3LAME
 			else if( ext == "mp3" )
 			{
-				eff = ProjectRenderer::MP3File;
+				eff = IProjectRenderer::MP3File;
 			}
 #endif
 			else if (ext == "flac")
 			{
-				eff = ProjectRenderer::FlacFile;
+				eff = IProjectRenderer::FlacFile;
 			}
 			else
 			{
@@ -609,19 +601,19 @@ int main( int argc, char * * argv )
 
 			if( ip == "linear" )
 			{
-		qs.interpolation = AudioEngine::qualitySettings::Interpolation_Linear;
+		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_Linear;
 			}
 			else if( ip == "sincfastest" )
 			{
-		qs.interpolation = AudioEngine::qualitySettings::Interpolation_SincFastest;
+		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_SincFastest;
 			}
 			else if( ip == "sincmedium" )
 			{
-		qs.interpolation = AudioEngine::qualitySettings::Interpolation_SincMedium;
+		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_SincMedium;
 			}
 			else if( ip == "sincbest" )
 			{
-		qs.interpolation = AudioEngine::qualitySettings::Interpolation_SincBest;
+		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_SincBest;
 			}
 			else
 			{
@@ -643,16 +635,16 @@ int main( int argc, char * * argv )
 			switch( o )
 			{
 				case 1:
-		qs.oversampling = AudioEngine::qualitySettings::Oversampling_None;
+		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_None;
 		break;
 				case 2:
-		qs.oversampling = AudioEngine::qualitySettings::Oversampling_2x;
+		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_2x;
 		break;
 				case 4:
-		qs.oversampling = AudioEngine::qualitySettings::Oversampling_4x;
+		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_4x;
 		break;
 				case 8:
-		qs.oversampling = AudioEngine::qualitySettings::Oversampling_8x;
+		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_8x;
 		break;
 				default:
 				return usageError( QString( "Invalid oversampling %1" ).arg( argv[i] ) );
@@ -718,21 +710,21 @@ int main( int argc, char * * argv )
 		fileCheck( fileToImport );
 	}
 
-	ConfigManager::inst()->loadConfigFile(configFile);
+	configManager->loadConfigFile(configFile);
 
 	// Hidden settings
-	MixHelpers::setNaNHandler( ConfigManager::inst()->value( "app",
+	coreApplication->setNaNHandler( configManager->value( "app",
 						"nanhandler", "1" ).toInt() );
 
 	// set language
-	QString pos = ConfigManager::inst()->value( "app", "language" );
+	QString pos = configManager->value( "app", "language" );
 	if( pos.isEmpty() )
 	{
 		pos = QLocale::system().name().left( 2 );
 	}
 
 	// load actual translation for LMMS
-	loadTranslation( pos );
+	loadTranslation( pos, configManager->localeDir() );
 
 	// load translation for Qt-widgets/-dialogs
 #ifdef QT_TRANSLATIONS_DIR
@@ -740,7 +732,7 @@ int main( int argc, char * * argv )
 	loadTranslation(QString("qt_") + pos, QT_TRANSLATIONS_DIR);
 #endif
 	// override it with bundled/custom one, if exists
-	loadTranslation(QString("qt_") + pos, ConfigManager::inst()->localeDir());
+	loadTranslation(QString("qt_") + pos, configManager->localeDir());
 
 
 	// try to set realtime priority
@@ -778,37 +770,33 @@ int main( int argc, char * * argv )
 		fprintf( stderr, "Signal initialization failed.\n" );
 	}
 #endif
-
-	bool destroyEngine = false;
+	auto engine = coreApplication->createEngine(true);
 
 	// if we have an output file for rendering, just render the song
 	// without starting the GUI
 	if( !renderOut.isEmpty() )
 	{
-		Engine::init( true );
-		destroyEngine = true;
-
 		printf( "Loading project...\n" );
-		Engine::getSong()->loadProject( fileToLoad );
-		if( Engine::getSong()->isEmpty() )
+		engine->getSongInterface()->loadProject( fileToLoad );
+		if( engine->getSongInterface()->isEmpty() )
 		{
 			printf("The project %s is empty, aborting!\n", fileToLoad.toUtf8().constData() );
 			exit( EXIT_FAILURE );
 		}
 		printf( "Done\n" );
 
-		Engine::getSong()->setExportLoop( renderLoop );
+		engine->getSongInterface()->setExportLoop( renderLoop );
 
 		// when rendering multiple tracks, renderOut is a directory
 		// otherwise, it is a file, so we need to append the file extension
-		if ( !renderTracks )
-		{
-			renderOut = baseName( renderOut ) +
-				ProjectRenderer::getFileExtensionFromFormat(eff);
-		}
+		// if ( !renderTracks )
+		// {
+		// 	renderOut = baseName( renderOut ) +
+		// 		ProjectRenderer::getFileExtensionFromFormat(eff);
+		// }
 
 		// create renderer
-		auto r = new RenderManager(qs, os, eff, renderOut);
+		IRenderManager* r = coreApplication->createRenderManager(qs, os, eff, renderOut);
 		QCoreApplication::instance()->connect( r,
 				SIGNAL(finished()), SLOT(quit()));
 
@@ -820,7 +808,7 @@ int main( int argc, char * * argv )
 
 		if( profilerOutputFile.isEmpty() == false )
 		{
-			Engine::audioEngine()->profiler().setOutputFile( profilerOutputFile );
+			engine->getAudioEngineInterface()->setProfilerOutputFile( profilerOutputFile );
 		}
 
 		// start now!
@@ -840,11 +828,6 @@ int main( int argc, char * * argv )
 	const int ret = app->exec();
 	delete app;
 
-	if( destroyEngine )
-	{
-		Engine::destroy();
-	}
-
 	// ProjectRenderer::updateConsoleProgress() doesn't return line after render
 	if( coreOnly )
 	{
@@ -861,8 +844,7 @@ int main( int argc, char * * argv )
 	}
 #endif
 
-
-	NotePlayHandleManager::free();
+	coreApplication->free();
 
 	return ret;
 }

@@ -25,7 +25,7 @@
 #ifndef LMMS_SAMPLE_TRACK_H
 #define LMMS_SAMPLE_TRACK_H
 
-#include "AudioPort.h"
+#include "audio/AudioPort.h"
 #include "Track.h"
 
 

@@ -42,6 +42,7 @@
 #include "FifoBuffer.h"
 #include "AudioEngineProfiler.h"
 #include "PlayHandle.h"
+#include "IAudioEngine.h"
 
 
 namespace lmms
@@ -63,7 +64,7 @@ const int BYTES_PER_SURROUND_FRAME = sizeof( surroundSampleFrame );
 
 const float OUTPUT_SAMPLE_MULTIPLIER = 32767.0f;
 
-class LMMS_EXPORT AudioEngine : public QObject
+class LMMS_EXPORT AudioEngine : public QObject, public IAudioEngine
 {
 	Q_OBJECT
 public:
@@ -107,89 +108,6 @@ public:
 		AudioEngine* m_audioEngine;
 	};
 
-	struct qualitySettings
-	{
-		enum Mode
-		{
-			Mode_Draft,
-			Mode_HighQuality,
-			Mode_FinalMix
-		} ;
-
-		enum Interpolation
-		{
-			Interpolation_Linear,
-			Interpolation_SincFastest,
-			Interpolation_SincMedium,
-			Interpolation_SincBest
-		} ;
-
-		enum Oversampling
-		{
-			Oversampling_None,
-			Oversampling_2x,
-			Oversampling_4x,
-			Oversampling_8x
-		} ;
-
-		Interpolation interpolation;
-		Oversampling oversampling;
-
-		qualitySettings(Mode m)
-		{
-			switch (m)
-			{
-				case Mode_Draft:
-					interpolation = Interpolation_Linear;
-					oversampling = Oversampling_None;
-					break;
-				case Mode_HighQuality:
-					interpolation =
-						Interpolation_SincFastest;
-					oversampling = Oversampling_2x;
-					break;
-				case Mode_FinalMix:
-					interpolation = Interpolation_SincBest;
-					oversampling = Oversampling_8x;
-					break;
-			}
-		}
-
-		qualitySettings(Interpolation i, Oversampling o) :
-			interpolation(i),
-			oversampling(o)
-		{
-		}
-
-		int sampleRateMultiplier() const
-		{
-			switch( oversampling )
-			{
-				case Oversampling_None: return 1;
-				case Oversampling_2x: return 2;
-				case Oversampling_4x: return 4;
-				case Oversampling_8x: return 8;
-			}
-			return 1;
-		}
-
-		int libsrcInterpolation() const
-		{
-			switch( interpolation )
-			{
-				case Interpolation_Linear:
-					return SRC_ZERO_ORDER_HOLD;
-				case Interpolation_SincFastest:
-					return SRC_SINC_FASTEST;
-				case Interpolation_SincMedium:
-					return SRC_SINC_MEDIUM_QUALITY;
-				case Interpolation_SincBest:
-					return SRC_SINC_BEST_QUALITY;
-			}
-			return SRC_LINEAR;
-		}
-	} ;
-
 	void initDevices();
 	void clear();
 	void clearNewPlayHandles();
@@ -211,7 +129,7 @@ public:
 	//! Set new audio device. Old device will be deleted,
 	//! unless it's stored using storeAudioDevice
 	void setAudioDevice( AudioDevice * _dev,
-				const struct qualitySettings & _qs,
+				const struct IAudioEngine::qualitySettings & _qs,
 				bool _needs_fifo,
 				bool startNow );
 	void storeAudioDevice();
@@ -270,12 +188,16 @@ public:
 		return m_profiler;
 	}
 
+	void setProfilerOutputFile(QString path) override {
+		m_profiler.setOutputFile(path);
+	}
+
 	int cpuLoad() const
 	{
 		return m_profiler.cpuLoad();
 	}
 
-	const qualitySettings & currentQualitySettings() const
+	const IAudioEngine::qualitySettings & currentQualitySettings() const
 	{
 		return m_qualitySettings;
 	}
@@ -345,7 +267,7 @@ public:
 		return hasFifoWriter() ? m_fifo->read() : renderNextBuffer();
 	}
 
-	void changeQuality(const struct qualitySettings & qs);
+	void changeQuality(const struct IAudioEngine::qualitySettings & qs);
 
 	inline bool isMetronomeActive() const { return m_metronomeActive; }
 	inline void setMetronomeActive(bool value = true) { m_metronomeActive = value; }
@@ -440,7 +362,7 @@ private:
 	ConstPlayHandleList m_playHandlesToRemove;
 
 
-	struct qualitySettings m_qualitySettings;
+	struct IAudioEngine::qualitySettings m_qualitySettings;
 	float m_masterGain;
 
 	bool m_isProcessing;

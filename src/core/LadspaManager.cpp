@@ -51,7 +51,7 @@ LadspaManager::LadspaManager()
 
 	ladspaDirectories.push_back( "plugins:ladspa" );
 #ifndef LMMS_BUILD_WIN32
-	ladspaDirectories.push_back( qApp->applicationDirPath() + '/' + LIB_DIR + "ladspa" );
+	// ladspaDirectories.push_back( qApp->applicationDirPath() + '/' + LIB_DIR + "ladspa" );
 	ladspaDirectories.push_back( "/usr/lib/ladspa" );
 	ladspaDirectories.push_back( "/usr/lib64/ladspa" );
 	ladspaDirectories.push_back( "/usr/local/lib/ladspa" );

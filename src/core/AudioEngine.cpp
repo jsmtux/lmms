@@ -29,7 +29,7 @@
 #include "lmmsconfig.h"
 
 #include "AudioEngineWorkerThread.h"
-#include "AudioPort.h"
+#include "audio/AudioPort.h"
 #include "Mixer.h"
 #include "Song.h"
 #include "EnvelopeAndLfoParameters.h"
@@ -39,15 +39,15 @@
 #include "MemoryHelper.h"
 
 // platform-specific audio-interface-classes
-#include "AudioAlsa.h"
-#include "AudioJack.h"
-#include "AudioOss.h"
-#include "AudioSndio.h"
-#include "AudioPortAudio.h"
-#include "AudioSoundIo.h"
-#include "AudioPulseAudio.h"
-#include "AudioSdl.h"
-#include "AudioDummy.h"
+#include "audio/AudioAlsa.h"
+#include "audio/AudioJack.h"
+#include "audio/AudioOss.h"
+#include "audio/AudioSndio.h"
+#include "audio/AudioPortAudio.h"
+#include "audio/AudioSoundIo.h"
+#include "audio/AudioPulseAudio.h"
+#include "audio/AudioSdl.h"
+#include "audio/AudioDummy.h"
 
 // platform-specific midi-interface-classes
 #include "MidiAlsaRaw.h"
@@ -81,7 +81,7 @@ AudioEngine::AudioEngine( bool renderOnly ) :
 	m_workers(),
 	m_numWorkers( QThread::idealThreadCount()-1 ),
 	m_newPlayHandles( PlayHandle::MaxNumber ),
-	m_qualitySettings( qualitySettings::Mode_Draft ),
+	m_qualitySettings( IAudioEngine::qualitySettings::Mode_Draft ),
 	m_masterGain( 1.0f ),
 	m_isProcessing( false ),
 	m_audioDev( nullptr ),
@@ -570,7 +570,7 @@ AudioEngine::StereoSample AudioEngine::getPeakValues(sampleFrame * ab, const f_c
 
 
 
-void AudioEngine::changeQuality(const struct qualitySettings & qs)
+void AudioEngine::changeQuality(const struct IAudioEngine::qualitySettings & qs)
 {
 	// don't delete the audio-device
 	stopProcessing();
@@ -611,7 +611,7 @@ void AudioEngine::doSetAudioDevice( AudioDevice * _dev )
 
 
 void AudioEngine::setAudioDevice(AudioDevice * _dev,
-				const struct qualitySettings & _qs,
+				const struct IAudioEngine::qualitySettings & _qs,
 				bool _needs_fifo,
 				bool startNow)
 {

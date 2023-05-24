@@ -27,7 +27,7 @@
 #ifdef LMMS_HAVE_JACK
 
 #include "AudioEngine.h"
-#include "AudioJack.h"
+#include "audio/AudioJack.h"
 #include "ConfigManager.h"
 #include "Engine.h"
 #include "IGuiApplication.h"

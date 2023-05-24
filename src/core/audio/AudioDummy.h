@@ -25,9 +25,10 @@
 #ifndef LMMS_AUDIO_DUMMY_H
 #define LMMS_AUDIO_DUMMY_H
 
-#include "AudioDevice.h"
 #include "AudioEngine.h"
 #include "MicroTimer.h"
+
+#include "AudioDevice.h"
 
 namespace lmms
 {

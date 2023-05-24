@@ -31,7 +31,7 @@
 
 #include "AudioDeviceSetupWidget.h"
 
-#include "AudioAlsa.h"
+#include "audio/AudioAlsa.h"
 
 
 class QComboBox;

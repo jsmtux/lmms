@@ -167,6 +167,15 @@ void *Engine::pickDndPluginKey()
 }
 
 
+ISong* Engine::getSongInterface()
+{
+	return Engine::getSong();
+}
+
+IAudioEngine* Engine::getAudioEngineInterface()
+{
+	return Engine::audioEngine();
+}
 
 
 Engine * Engine::s_instanceOfMe = nullptr;

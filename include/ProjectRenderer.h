@@ -25,10 +25,11 @@
 #ifndef LMMS_PROJECT_RENDERER_H
 #define LMMS_PROJECT_RENDERER_H
 
-#include "AudioFileDevice.h"
+#include "audio/AudioFileDevice.h"
 #include "lmmsconfig.h"
 #include "AudioEngine.h"
 #include "OutputSettings.h"
+#include "IProjectRenderer.h"
 
 #include "lmms_export.h"
 
@@ -36,19 +37,10 @@ namespace lmms
 {
 
 
-class LMMS_EXPORT ProjectRenderer : public QThread
+class LMMS_EXPORT ProjectRenderer : public QThread, public IProjectRenderer
 {
 	Q_OBJECT
 public:
-	enum ExportFileFormats: int
-	{
-		WaveFile,
-		FlacFile,
-		OggFile,
-		MP3File,
-		NumFileFormats
-	} ;
-
 	struct FileEncodeDevice
 	{
 		bool isAvailable() const { return m_getDevInst != nullptr; }
@@ -60,7 +52,7 @@ public:
 	} ;
 
 
-	ProjectRenderer( const AudioEngine::qualitySettings & _qs,
+	ProjectRenderer( const IAudioEngine::qualitySettings & _qs,
 				const OutputSettings & _os,
 				ExportFileFormats _file_format,
 				const QString & _out_file );
@@ -74,7 +66,7 @@ public:
 	static ExportFileFormats getFileFormatFromExtension(
 							const QString & _ext );
 
-	static QString getFileExtensionFromFormat( ExportFileFormats fmt );
+	QString getFileExtensionFromFormat( ExportFileFormats fmt );
 
 	static const std::array<FileEncodeDevice, 5> fileEncodeDevices;
 
@@ -93,7 +85,7 @@ private:
 	void run() override;
 
 	AudioFileDevice * m_fileDev;
-	AudioEngine::qualitySettings m_qualitySettings;
+	IAudioEngine::qualitySettings m_qualitySettings;
 
 	volatile int m_progress;
 	volatile bool m_abort;

@@ -25,6 +25,8 @@
 #ifndef LMMS_CONFIG_MANAGER_H
 #define LMMS_CONFIG_MANAGER_H
 
+#include "IConfigManager.h"
+
 #include "lmmsconfig.h"
 
 #include <QMap>
@@ -54,7 +56,7 @@ const QString TRACK_ICON_PATH = "track_icons/";
 const QString LOCALE_PATH = "locale/";
 const QString PORTABLE_MODE_FILE = "/portable_mode.txt";
 
-class LMMS_EXPORT ConfigManager : public QObject
+class LMMS_EXPORT ConfigManager : public QObject, public IConfigManager
 {
 	Q_OBJECT
 
@@ -214,7 +216,7 @@ public:
 		return m_recentlyOpenedProjects;
 	}
 
-	QString localeDir() const
+	QString localeDir() const override
 	{
 		return m_dataDir + LOCALE_PATH;
 	}
@@ -240,15 +242,15 @@ public:
 	void addRecentlyOpenedProject(const QString & _file);
 
 	const QString & value(const QString & cls,
-					const QString & attribute) const;
+					const QString & attribute) const override;
 	const QString & value(const QString & cls,
 					const QString & attribute,
-					const QString & defaultVal) const;
+					const QString & defaultVal) const override;
 	void setValue(const QString & cls, const QString & attribute,
 						const QString & value);
 	void deleteValue(const QString & cls, const QString & attribute);
 
-	void loadConfigFile(const QString & configFile = "");
+	void loadConfigFile(const QString & configFile = "") override;
 	void saveConfigFile();
 
 
