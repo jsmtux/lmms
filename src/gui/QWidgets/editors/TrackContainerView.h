@@ -1,5 +1,5 @@
 /*
- * TrackContainerView.h - view-component for TrackContainer
+ * TrackContainerView.h - view-component for ITrackContainer
  *
  * Copyright (c) 2004-2014 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
@@ -39,21 +39,21 @@ class QVBoxLayout;
 namespace lmms
 {
 
-class InstrumentTrack;
-class Track;
-class TrackContainer;
+class IInstrumentTrack;
+class ITrack;
+class ITrackContainer;
 
 class InstrumentLoaderThread : public QThread
 {
 Q_OBJECT
 public:
-	InstrumentLoaderThread( QObject *parent = 0, InstrumentTrack *it = 0,
+	InstrumentLoaderThread( QObject *parent = 0, IInstrumentTrack *it = 0,
 		QString name = "" );
 
 	void run() override;
 
 private:
-	InstrumentTrack *m_it;
+	IInstrumentTrack *m_it;
 	QString m_name;
 	QThread *m_containerThread;
 };
@@ -69,7 +69,7 @@ class TrackContainerView : public QWidget,
 {
 	Q_OBJECT
 public:
-	TrackContainerView( TrackContainer* tc );
+	TrackContainerView( ITrackContainer* tc );
 	~TrackContainerView() override;
 
 	void saveSettings( QDomDocument & _doc, QDomElement & _this ) override;
@@ -113,12 +113,12 @@ public:
 	}
 
 
-	TrackContainer* model()
+	ITrackContainer* model()
 	{
 		return m_tc;
 	}
 
-	const TrackContainer* model() const
+	const ITrackContainer* model() const
 	{
 		return m_tc;
 	}
@@ -151,7 +151,7 @@ public:
 
 public slots:
 	void realignTracks();
-	lmms::gui::TrackView * createTrackView( lmms::Track * _t );
+	lmms::gui::TrackView * createTrackView( lmms::ITrack * _t );
 	void deleteTrackView( lmms::gui::TrackView * _tv );
 
 	void dropEvent( QDropEvent * _de ) override;
@@ -193,7 +193,7 @@ private:
 	} ;
 	friend class TrackContainerView::scrollArea;
 
-	TrackContainer* m_tc;
+	ITrackContainer* m_tc;
 	using trackViewList = QList<TrackView*>;
 	trackViewList m_trackViews;
 

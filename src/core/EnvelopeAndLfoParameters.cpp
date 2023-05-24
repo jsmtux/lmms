@@ -91,7 +91,7 @@ void EnvelopeAndLfoParameters::LfoInstances::remove( EnvelopeAndLfoParameters * 
 EnvelopeAndLfoParameters::EnvelopeAndLfoParameters(
 					float _value_for_zero_amount,
 							QObject * _parent ) :
-	Model( _parent ),
+	IEnvelopeAndLfoParameters( _parent ),
 	m_used( false ),
 	m_predelayModel( 0.0, 0.0, 2.0, 0.001, this, tr( "Env pre-delay" ) ),
 	m_attackModel( 0.0, 0.0, 2.0, 0.001, this, tr( "Env attack" ) ),
@@ -505,7 +505,7 @@ void EnvelopeAndLfoParameters::updateSampleVars()
 				expKnobVal( m_lfoAttackModel.value() ) );
 	m_lfoOscillationFrames = static_cast<f_cnt_t>(
 						frames_per_lfo_oscillation *
-						m_lfoSpeedModel.value() );
+						m_lfoSpeedModel.wrappedModel()->value() );
 	if( m_x100Model.value() )
 	{
 		m_lfoOscillationFrames /= 100;

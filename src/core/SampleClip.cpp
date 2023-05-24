@@ -26,18 +26,23 @@
 
 #include <QDomElement>
 
+#include "audio/AudioPort.h"
+
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "ITimeLineWidget.h"
 #include "TrackContainer.h"
 #include "SampleBuffer.h"
-#include "SampleTrack.h"
+#include "tracks/SampleTrack.h"
 #include "Song.h"
 
 
 namespace lmms
 {
 
+ISampleClip* createSampleClip(ISampleClip& clip) {
+	return new SampleClip(static_cast<SampleClip&>(clip));
+}
 
 SampleClip::SampleClip( SampleTrack * _track ) :
 	TypedClip( _track ),
@@ -70,7 +75,7 @@ SampleClip::SampleClip( SampleTrack * _track ) :
 	//care about mute Clips
 	connect( this, SIGNAL(dataChanged()), this, SLOT(playbackPositionChanged()));
 	//care about mute track
-	connect( getTrack()->getMutedModel(), SIGNAL(dataChanged()),
+	connect( getTrack()->getMutedModel()->model(), SIGNAL(dataChanged()),
 			this, SLOT(playbackPositionChanged()), Qt::DirectConnection );
 	//care about Clip position
 	connect( this, SIGNAL(positionChanged()), this, SLOT(updateTrackClips()));
@@ -143,7 +148,7 @@ void SampleClip::setSampleBuffer( SampleBuffer* sb )
 	m_sampleBuffer = sb;
 	updateLength();
 
-	emit sampleChanged();
+	emit m_sampleClipModel.sampleChanged();
 }
 
 
@@ -166,7 +171,7 @@ void SampleClip::setSampleFile( const QString & _sf )
 
 	setStartTimeOffset( 0 );
 
-	emit sampleChanged();
+	emit m_sampleClipModel.sampleChanged();
 	emit playbackPositionChanged();
 }
 
@@ -184,7 +189,7 @@ void SampleClip::toggleRecord()
 
 void SampleClip::playbackPositionChanged()
 {
-	Engine::audioEngine()->removePlayHandlesOfTypes( getTrack(), PlayHandle::TypeSamplePlayHandle );
+	Engine::audioEngine()->removePlayHandlesOfTypes( getTrack(), std::set{PlayHandleType::TypeSamplePlayHandle} );
 	auto st = dynamic_cast<SampleTrack*>(getTrack());
 	st->setPlayingClips( false );
 }
@@ -222,7 +227,7 @@ void SampleClip::setIsPlaying(bool isPlaying)
 
 void SampleClip::updateLength()
 {
-	emit sampleChanged();
+	emit m_sampleClipModel.sampleChanged();
 }
 
 
@@ -319,7 +324,7 @@ void SampleClip::loadSettings( const QDomElement & _this )
 	if(_this.hasAttribute("reversed"))
 	{
 		m_sampleBuffer->setReversed(true);
-		emit wasReversed(); // tell SampleClipView to update the view
+		emit m_sampleClipModel.wasReversed(); // tell SampleClipView to update the view
 	}
 }
 

@@ -36,8 +36,8 @@ class QMenu;
 namespace lmms
 {
 
-class Track;
-class Clip;
+class ITrack;
+class IClip;
 
 
 namespace gui
@@ -59,15 +59,15 @@ class TrackView : public QWidget, public JournallingObject
 {
 	Q_OBJECT
 public:
-	TrackView( Track * _track, TrackContainerView* tcv );
+	TrackView( ITrack * _track, TrackContainerView* tcv );
 	~TrackView() override = default;
 
-	inline const Track * getTrack() const
+	inline const ITrack * getTrack() const
 	{
 		return m_track;
 	}
 
-	inline Track * getTrack()
+	inline ITrack * getTrack()
 	{
 		return m_track;
 	}
@@ -143,7 +143,7 @@ private:
 		ResizeTrack
 	} ;
 
-	Track * m_track;
+	ITrack * m_track;
 	TrackContainerView * m_trackContainerView;
 
 	TrackOperationsWidget m_trackOperationsWidget;
@@ -163,7 +163,7 @@ private:
 
 
 private slots:
-	void createClipView( lmms::Clip * clip );
+	void createClipView( IClip * clip );
 	void muteChanged();
 
 } ;

@@ -27,6 +27,7 @@
 
 #include "lmms_basics.h"
 #include "SerializingObject.h"
+#include "IController.h"
 
 #include <QWidget>
 #include <QCloseEvent>
@@ -38,8 +39,6 @@ class QVBoxLayout;
 
 namespace lmms
 {
-
-class Controller;
 
 namespace gui
 {
@@ -65,8 +64,8 @@ public:
 
 public slots:
 	void deleteController( lmms::gui::ControllerView * _view );
-	void onControllerAdded( lmms::Controller * );
-	void onControllerRemoved( lmms::Controller * );
+	void onControllerAdded( lmms::IController * );
+	void onControllerRemoved( lmms::IController * );
 
 protected:
 	void closeEvent( QCloseEvent * _ce ) override;

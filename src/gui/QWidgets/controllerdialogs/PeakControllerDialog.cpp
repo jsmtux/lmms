@@ -27,7 +27,7 @@
 #include "PeakControllerDialog.h"
 
 #include "embed.h"
-#include "PeakController.h"
+#include "IController.h"
 
 #include <QLabel>
 #include <QPainter>
@@ -37,7 +37,7 @@ namespace lmms::gui
 {
 
 
-PeakControllerDialog::PeakControllerDialog( Controller * _model, QWidget * _parent ) :
+PeakControllerDialog::PeakControllerDialog( IController * _model, QWidget * _parent ) :
 	ControllerDialog( _model, _parent )
 {
 	setWindowTitle( tr( "PEAK" ) );

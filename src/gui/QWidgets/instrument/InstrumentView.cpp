@@ -23,7 +23,7 @@
  */
 
 #include "embed.h"
-#include "InstrumentTrack.h"
+#include "ITrack.h"
 #include "InstrumentTrackWindow.h"
 #include "InstrumentView.h"
 

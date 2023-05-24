@@ -40,7 +40,7 @@ class DynProcEffect : public Effect
 {
 public:
 	DynProcEffect( Model * _parent,
-			const Descriptor::SubPluginFeatures::Key * _key );
+			const PluginDescriptor::Key * _key );
 	~DynProcEffect() override;
 	bool processAudioBuffer( sampleFrame * _buf,
 							const fpp_t _frames ) override;

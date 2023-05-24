@@ -31,7 +31,7 @@ class QLineEdit;
 
 #include <QWidget>
 
-#include "AutomatableModel.h"
+#include "IModels.h"
 
 namespace lmms::gui
 {
@@ -62,7 +62,7 @@ public:
 	inline int channelIndex() { return m_channelIndex; }
 	void setChannelIndex(int index);
 
-	void setSendModel(FloatModel* model);
+	void setSendModel(IFloatAutomatableModel* model);
 	SendButtonIndicator * m_sendBtn;
 
 	QBrush backgroundActive() const;

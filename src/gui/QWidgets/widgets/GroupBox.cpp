@@ -39,7 +39,7 @@ namespace lmms::gui
 {
 
 
-GroupBox::GroupBox( const QString & _caption, BoolModel* model, QWidget * _parent ) :
+GroupBox::GroupBox( const QString & _caption, IBoolAutomatableModel* model, QWidget * _parent ) :
 	QWidget( _parent ),
 	BoolModelView( model, this ),
 	m_caption( _caption ),
@@ -53,8 +53,8 @@ GroupBox::GroupBox( const QString & _caption, BoolModel* model, QWidget * _paren
 
 	setAutoFillBackground( true );
 	unsetCursor();
-	QObject::connect( model, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( model, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( model->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( model->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 }
 
 

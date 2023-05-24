@@ -1,11 +1,11 @@
 #include "RecentProjectsMenu.h"
 
-#include "ConfigManager.h"
+#include "IConfigManager.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
-#include "Song.h"
+#include "ISong.h"
 
 #include <QFileInfo>
 
@@ -30,7 +30,7 @@ RecentProjectsMenu::RecentProjectsMenu(QWidget *parent) :
 void RecentProjectsMenu::fillMenu()
 {
 	clear();
-	QStringList rup = ConfigManager::inst()->recentlyOpenedProjects();
+	QStringList rup = IConfigManager::Instance()->recentlyOpenedProjects();
 
 	auto projectFileIcon = embed::getIconPixmap( "project_file" );
 
@@ -41,7 +41,7 @@ void RecentProjectsMenu::fillMenu()
 	{
 		QFileInfo recentFile(fileName);
 		if (!recentFile.exists() ||
-			fileName == ConfigManager::inst()->recoveryFile() )
+			fileName == IConfigManager::Instance()->recoveryFile() )
 		{
 			continue;
 		}
@@ -75,7 +75,7 @@ void RecentProjectsMenu::openProject(QAction * _action )
 	{
 		const QString f = _action->text().replace("&&", "&");
 		mainWindow->setCursor( Qt::WaitCursor );
-		Engine::getSong()->loadProject( f );
+		IEngine::Instance()->getSongInterface()->loadProject( f );
 		mainWindow->setCursor( Qt::ArrowCursor );
 	}
 }

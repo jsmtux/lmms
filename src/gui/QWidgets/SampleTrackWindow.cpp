@@ -29,7 +29,7 @@
 #include "gui_templates.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
-#include "Song.h"
+#include "ISong.h"
 #include "SubWindow.h"
 
 #include "widgets/Knob.h"
@@ -95,7 +95,7 @@ SampleTrackWindow::SampleTrackWindow(SampleTrackView * tv) :
 	Qt::Alignment widgetAlignment = Qt::AlignHCenter | Qt::AlignCenter;
 
 	// set up volume knob
-	m_volumeKnob = new Knob(knobBright_26, &m_track->m_volumeModel, nullptr, tr("Sample volume"));
+	m_volumeKnob = new Knob(knobBright_26, m_track->volumeModel(), nullptr, tr("Sample volume"));
 	m_volumeKnob->setVolumeKnob(true);
 	m_volumeKnob->setHintText(tr("Volume:"), "%");
 
@@ -109,7 +109,7 @@ SampleTrackWindow::SampleTrackWindow(SampleTrackView * tv) :
 
 
 	// set up panning knob
-	m_panningKnob = new Knob(knobBright_26, &m_track->m_panningModel, nullptr, tr("Panning"));
+	m_panningKnob = new Knob(knobBright_26, m_track->panningModel(), nullptr, tr("Panning"));
 	m_panningKnob->setHintText(tr("Panning:"), "");
 
 	basicControlsLayout->addWidget(m_panningKnob, 0, 1);
@@ -125,7 +125,7 @@ SampleTrackWindow::SampleTrackWindow(SampleTrackView * tv) :
 
 
 	// setup spinbox for selecting Mixer-channel
-	m_mixerChannelNumber = new MixerLineLcdSpinBox(2, &m_track->m_mixerChannelModel, nullptr, tr("Mixer channel"), m_stv);
+	m_mixerChannelNumber = new MixerLineLcdSpinBox(2, m_track->mixerChannelModel(), nullptr, tr("Mixer channel"), m_stv);
 
 	basicControlsLayout->addWidget(m_mixerChannelNumber, 0, 3);
 	basicControlsLayout->setAlignment(m_mixerChannelNumber, widgetAlignment);
@@ -137,21 +137,21 @@ SampleTrackWindow::SampleTrackWindow(SampleTrackView * tv) :
 
 	generalSettingsLayout->addLayout(basicControlsLayout);
 
-	m_effectRack = new EffectRackView(tv->model()->audioPort()->effects());
+	m_effectRack = new EffectRackView(tv->model()->audioPortInterface()->effectsInterface());
 	m_effectRack->setFixedSize(EffectRackView::DEFAULT_WIDTH, 242);
 
 	vlayout->addWidget(generalSettingsWidget);
 	vlayout->addWidget(m_effectRack);
 
-	QObject::connect( m_track, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_track, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_track->baseTrack()->model(), &Model::dataChanged, this, [this](){update();});
+	QObject::connect( m_track->baseTrack()->model(), &Model::propertiesChanged, this, [this](){update();});
 
 	update();
 
-	m_nameLineEdit->setText(m_track->name());
+	m_nameLineEdit->setText(m_track->baseTrack()->name());
 
-	connect(m_track, SIGNAL(nameChanged()),
-			this, SLOT(updateName()));
+	connect(m_track->baseTrack(), &ITrack::nameChanged,
+			this, &SampleTrackWindow::updateName);
 
 	updateName();
 
@@ -188,11 +188,11 @@ void SampleTrackWindow::setSampleTrackView(SampleTrackView* tv)
 
 void SampleTrackWindow::updateName()
 {
-	setWindowTitle(m_track->name().length() > 25 ? (m_track->name().left(24) + "...") : m_track->name());
+	setWindowTitle(m_track->baseTrack()->name().length() > 25 ? (m_track->baseTrack()->name().left(24) + "...") : m_track->baseTrack()->name());
 
-	if(m_nameLineEdit->text() != m_track->name())
+	if(m_nameLineEdit->text() != m_track->baseTrack()->name())
 	{
-		m_nameLineEdit->setText(m_track->name());
+		m_nameLineEdit->setText(m_track->baseTrack()->name());
 	}
 }
 
@@ -200,8 +200,8 @@ void SampleTrackWindow::updateName()
 
 void SampleTrackWindow::textChanged(const QString& new_name)
 {
-	m_track->setName(new_name);
-	Engine::getSong()->setModified();
+	m_track->baseTrack()->setName(new_name);
+	IEngine::Instance()->getSongInterface()->setModified();
 }
 
 

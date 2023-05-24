@@ -31,24 +31,26 @@
 #include <algorithm>
 #include <cmath>
 
-#include "AutomationTrack.h"
+#include "AutomationClip.h"
 #include "ConfigManager.h"
 #include "ControllerConnection.h"
 #include "EnvelopeAndLfoParameters.h"
 #include "Mixer.h"
-#include "ExportFilter.h"
 #include "IAutomationEditor.h"
 #include "IGuiApplication.h"
-#include "InstrumentTrack.h"
 #include "ITimeLineWidget.h"
 #include "Keymap.h"
 #include "NotePlayHandle.h"
-#include "MidiClip.h"
 #include "PatternStore.h"
-#include "PatternTrack.h"
 #include "ProjectJournal.h"
 #include "Scale.h"
 #include "PeakController.h"
+
+
+#include "tracks/AutomationTrack.h"
+#include "tracks/InstrumentTrack.h"
+#include "tracks/MidiClip.h"
+#include "tracks/PatternTrack.h"
 
 
 namespace lmms
@@ -110,8 +112,8 @@ Song::Song() :
 			this, SLOT(masterPitchChanged()));*/
 
 	qRegisterMetaType<lmms::Note>( "lmms::Note" );
-	for (auto& scale : m_scales) {scale = std::make_shared<Scale>();}
-	for (auto& keymap : m_keymaps) {keymap = std::make_shared<Keymap>();}
+	for (auto& scale : m_scales) {scale = std::make_unique<Scale>();}
+	for (auto& keymap : m_keymaps) {keymap = std::make_unique<Keymap>();}
 }
 
 
@@ -352,7 +354,7 @@ void Song::processAutomations(const TrackList &tracklist, TimePos timeStart, fpp
 	AutomatedValueMap values;
 	TrackList tracks;
 
-	QSet<const AutomatableModel*> recordedModels;
+	QSet<const IAutomatableModelBase*> recordedModels;
 
 	int clipNum = -1;
 
@@ -377,7 +379,7 @@ void Song::processAutomations(const TrackList &tracklist, TimePos timeStart, fpp
 	}
 
 	Track::clipVector clips;
-	for (Track* track : tracks)
+	for (ITrack* track : tracks)
 	{
 		if (track->type() == Track::AutomationTrack) {
 			track->getClipsInRange(clips, 0, timeStart);
@@ -385,14 +387,14 @@ void Song::processAutomations(const TrackList &tracklist, TimePos timeStart, fpp
 	}
 
 	// Process recording
-	for (Clip* clip : clips)
+	for (IClip* clip : clips)
 	{
 		auto p = dynamic_cast<AutomationClip *>(clip);
 		TimePos relTime = timeStart - p->startPosition();
 		if (p->isRecording() && relTime >= 0 && relTime < p->length())
 		{
-			const AutomatableModel* recordedModel = p->firstObject();
-			p->recordValue(relTime, recordedModel->value<float>());
+			const auto* recordedModel = p->firstObject();
+			p->recordValue(relTime, recordedModel->valueAsFloat());
 
 			recordedModels << recordedModel;
 		}
@@ -402,7 +404,7 @@ void Song::processAutomations(const TrackList &tracklist, TimePos timeStart, fpp
 	// so we can move the control back to any connected controller again
 	for (auto it = m_oldAutomatedValues.begin(); it != m_oldAutomatedValues.end(); it++)
 	{
-		AutomatableModel * am = it.key();
+		auto* am = it.key();
 		if (am->controllerConnection() && !values.contains(am))
 		{
 			am->setUseControllerValue(true);
@@ -530,14 +532,14 @@ void Song::playPattern()
 
 
 
-void Song::playMidiClip( const MidiClip* midiClipToPlay, bool loop )
+void Song::playMidiClip( const IMidiClip* midiClipToPlay, bool loop )
 {
 	if( isStopped() == false )
 	{
 		stop();
 	}
 
-	m_midiClipToPlay = midiClipToPlay;
+	m_midiClipToPlay = dynamic_cast<const MidiClip*>(midiClipToPlay);
 	m_loopMidiClip = loop;
 
 	if( m_midiClipToPlay != nullptr )
@@ -671,7 +673,7 @@ void Song::stop()
 	// back to their controllers.
 	for (auto it = m_oldAutomatedValues.begin(); it != m_oldAutomatedValues.end(); it++)
 	{
-		AutomatableModel * am = it.key();
+		auto * am = it.key();
 		am->setUseControllerValue(true);
 	}
 	m_oldAutomatedValues.clear();
@@ -770,7 +772,7 @@ void Song::removeBar()
 
 void Song::addPatternTrack()
 {
-	Track * t = Track::create(Track::PatternTrack, &m_trackContainer);
+	ITrack * t = Track::create(Track::PatternTrack, &m_trackContainer);
 	Engine::patternStore()->setCurrentPattern(dynamic_cast<PatternTrack*>(t)->patternIndex());
 }
 
@@ -896,7 +898,7 @@ void Song::createNewProject()
 	m_oldFileName = "";
 	setProjectFileName("");
 
-	Track * t;
+	ITrack * t;
 	t = Track::create( Track::InstrumentTrack, &m_trackContainer );
 	dynamic_cast<InstrumentTrack * >( t )->loadInstrument(
 					"tripleoscillator" );
@@ -1111,7 +1113,7 @@ void Song::loadProject( const QString & fileName )
 
 	// Remove dummy controllers that was added for correct connections
 	m_controllers.erase(std::remove_if(m_controllers.begin(), m_controllers.end(),
-		[](Controller* c){return c->type() == Controller::DummyController;}),
+		[](IController* c){return c->type() == IController::DummyController;}),
 		m_controllers.end());
 
 	// resolve all IDs so that autoModels are automated
@@ -1327,7 +1329,7 @@ void Song::exportProjectMidi(QString const & exportFileName) const
 	TrackList const & tracks = m_trackContainer.tracks();
 	TrackList const & patternStoreTracks = Engine::patternStore()->trackContainer().tracks();
 
-	ExportFilter *exf = dynamic_cast<ExportFilter *> (Plugin::instantiate("midiexport", nullptr, nullptr));
+	IExportFilter *exf = InstantiateMidiExportFilter();
 	if (exf)
 	{
 		exf->tryExport(tracks, patternStoreTracks, getTempo(), m_masterPitchModel.value(), exportFileName);
@@ -1366,7 +1368,7 @@ void Song::setProjectFileName(QString const & projectFileName)
 
 
 
-void Song::addController( Controller * controller )
+void Song::addController( IController * controller )
 {
 	if( controller && !m_controllers.contains( controller ) )
 	{
@@ -1380,7 +1382,7 @@ void Song::addController( Controller * controller )
 
 
 
-void Song::removeController( Controller * controller )
+void Song::removeController( IController * controller )
 {
 	int index = m_controllers.indexOf( controller );
 	if( index != -1 )
@@ -1446,39 +1448,39 @@ bool Song::isSavingProject() const {
 }
 
 
-std::shared_ptr<const Scale> Song::getScale(unsigned int index) const
+const std::unique_ptr<Scale>& Song::getScale(unsigned int index) const
 {
 	if (index >= MaxScaleCount) {index = 0;}
 
-	return std::atomic_load(&m_scales[index]);
+	return m_scales[index];
 }
 
 
-std::shared_ptr<const Keymap> Song::getKeymap(unsigned int index) const
+const std::unique_ptr<Keymap>& Song::getKeymap(unsigned int index) const
 {
 	if (index >= MaxKeymapCount) {index = 0;}
 
-	return std::atomic_load(&m_keymaps[index]);
+	return m_keymaps[index];
 }
 
 
-void Song::setScale(unsigned int index, std::shared_ptr<Scale> newScale)
+void Song::setScale(unsigned int index, IScale* newScale)
 {
 	if (index >= MaxScaleCount) {index = 0;}
 
 	Engine::audioEngine()->requestChangeInModel();
-	std::atomic_store(&m_scales[index], newScale);
+	m_scales[index].reset(static_cast<Scale*>(newScale));
 	emit scaleListChanged(index);
 	Engine::audioEngine()->doneChangeInModel();
 }
 
 
-void Song::setKeymap(unsigned int index, std::shared_ptr<Keymap> newMap)
+void Song::setKeymap(unsigned int index, IKeymap* newMap)
 {
 	if (index >= MaxKeymapCount) {index = 0;}
 
 	Engine::audioEngine()->requestChangeInModel();
-	std::atomic_store(&m_keymaps[index], newMap);
+	m_keymaps[index].reset(static_cast<Keymap*>(newMap));
 	emit keymapListChanged(index);
 	Engine::audioEngine()->doneChangeInModel();
 }

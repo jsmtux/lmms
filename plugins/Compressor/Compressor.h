@@ -41,7 +41,7 @@ class CompressorEffect : public Effect
 {
 	Q_OBJECT
 public:
-	CompressorEffect(Model* parent, const Descriptor::SubPluginFeatures::Key* key);
+	CompressorEffect(Model* parent, const PluginDescriptor::Key* key);
 	~CompressorEffect() override = default;
 	bool processAudioBuffer(sampleFrame* buf, const fpp_t frames) override;
 

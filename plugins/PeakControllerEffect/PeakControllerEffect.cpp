@@ -64,7 +64,7 @@ Plugin::Descriptor PLUGIN_EXPORT peakcontrollereffect_plugin_descriptor =
 
 PeakControllerEffect::PeakControllerEffect(
 			Model * _parent,
-			const Descriptor::SubPluginFeatures::Key * _key ) :
+			const PluginDescriptor::Key * _key ) :
 	Effect( &peakcontrollereffect_plugin_descriptor, _parent, _key ),
 	m_effectId( rand() ),
 	m_peakControls( this ),
@@ -156,7 +156,7 @@ extern "C"
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model * _parent, void * _data )
 {
 	return new PeakControllerEffect( _parent,
-		static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>( _data ) );
+		static_cast<const Plugin::PluginDescriptor::Key *>( _data ) );
 }
 
 }

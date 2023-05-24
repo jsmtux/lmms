@@ -25,10 +25,10 @@
 #include "PluginBrowser.h"
 
 #include "embed.h"
-#include "Engine.h"
-#include "InstrumentTrack.h"
-#include "PluginFactory.h"
-#include "Song.h"
+#include "IEngine.h"
+#include "ITrack.h"
+#include "IPluginFactory.h"
+#include "ISong.h"
 #include "StringPairDrag.h"
 
 #include "editors/TrackContainerView.h"
@@ -162,7 +162,7 @@ void PluginBrowser::addPlugins()
 	m_descTree->clear();
 
 	// Fetch and sort all instrument plugin descriptors
-	auto descs = getPluginFactory()->descriptors(Plugin::Instrument);
+	auto descs = IPluginFactory::Instance()->descriptors(PluginTypes::Instrument);
 	std::sort(descs.begin(), descs.end(),
 		[](auto d1, auto d2)
 		{
@@ -180,7 +180,7 @@ void PluginBrowser::addPlugins()
 		if (desc->subPluginFeatures)
 		{
 			// Fetch and sort all subplugins for this plugin descriptor
-			auto subPluginKeys = Plugin::Descriptor::SubPluginFeatures::KeyList{};
+			auto subPluginKeys = PluginDescriptor::SubPluginFeatures::KeyList{};
 			desc->subPluginFeatures->listSubPluginKeys(desc, subPluginKeys);
 			std::sort(subPluginKeys.begin(), subPluginKeys.end(),
 				[](const auto& l, const auto& r)
@@ -195,7 +195,7 @@ void PluginBrowser::addPlugins()
 		}
 		else
 		{
-			addPlugin(Plugin::Descriptor::SubPluginFeatures::Key(desc, desc->name), lmmsRoot);
+			addPlugin(PluginDescriptor::Key(desc, desc->name), lmmsRoot);
 		}
 	}
 }
@@ -284,7 +284,7 @@ void PluginDescWidget::mousePressEvent( QMouseEvent * _me )
 {
 	if ( _me->button() == Qt::LeftButton )
 	{
-		Engine::setDndPluginKey(&m_pluginKey);
+		setEngineDndPluginKey(&m_pluginKey);
 		new StringPairDrag("instrument",
 			QString::fromUtf8(m_pluginKey.desc->name), m_logo, this);
 		leaveEvent( _me );
@@ -305,8 +305,8 @@ void PluginDescWidget::contextMenuEvent(QContextMenuEvent* e)
 
 void PluginDescWidget::openInNewInstrumentTrack(QString value)
 {
-	TrackContainer* tc = &Engine::getSong()->trackContainer();
-	auto it = dynamic_cast<InstrumentTrack*>(Track::create(Track::InstrumentTrack, tc));
+	auto* tc = &IEngine::Instance()->getSongInterface()->trackContainer();
+	auto it = createInstrumentTrack(tc);
 	auto ilt = new InstrumentLoaderThread(this, it, value);
 	ilt->start();
 }

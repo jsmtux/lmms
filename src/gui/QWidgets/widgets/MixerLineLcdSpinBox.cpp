@@ -24,6 +24,8 @@
 
 #include "MixerLineLcdSpinBox.h"
 
+#include <QPointer>
+
 #include "CaptionMenu.h"
 #include "GuiApplication.h"
 #include "MixerView.h"
@@ -58,7 +60,7 @@ void MixerLineLcdSpinBox::contextMenuEvent(QContextMenuEvent* event)
 	// an QApplication::restoreOverrideCursor()-call...
 	mouseReleaseEvent(nullptr);
 
-	QPointer<CaptionMenu> contextMenu = new CaptionMenu(model()->displayName(), this);
+	QPointer<CaptionMenu> contextMenu = new CaptionMenu(model()->model()->displayName(), this);
 
 	if (QMenu *mixerMenu = m_tv->createMixerMenu(
 		tr("Assign to:"), tr("New Mixer Channel")))

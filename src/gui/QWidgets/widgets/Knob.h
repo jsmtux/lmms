@@ -71,9 +71,6 @@ class LMMS_EXPORT Knob : public QWidget, public FloatModelView
 	Q_PROPERTY(QColor arcActiveColor MEMBER m_arcActiveColor)
 	Q_PROPERTY(QColor arcInactiveColor MEMBER m_arcInactiveColor)
 
-	mapPropertyFromModel(bool,isVolumeKnob,setVolumeKnob,m_volumeKnob);
-	mapPropertyFromModel(float,volumeRatio,setVolumeRatio,m_volumeRatio);
-
 	Q_PROPERTY(knobTypes knobNum READ knobNum WRITE setknobNum)
 	
 	Q_PROPERTY(QColor textColor READ textColor WRITE setTextColor)
@@ -82,8 +79,8 @@ class LMMS_EXPORT Knob : public QWidget, public FloatModelView
 	void onKnobNumUpdated(); //!< to be called when you updated @a m_knobNum
 
 public:
-	Knob( knobTypes _knob_num, FloatModel* _model, QWidget * _parent = nullptr, const QString & _name = QString() );
-	Knob( FloatModel* _model, QWidget * _parent = nullptr, const QString & _name = QString() ); //!< default ctor
+	Knob( knobTypes _knob_num, IFloatAutomatableModel* _model, QWidget * _parent = nullptr, const QString & _name = QString() );
+	Knob( IFloatAutomatableModel* _model, QWidget * _parent = nullptr, const QString & _name = QString() ); //!< default ctor
 	Knob( const Knob& other ) = delete;
 
 	// TODO: remove
@@ -123,7 +120,21 @@ public:
 	QColor textColor() const;
 	void setTextColor( const QColor & c );
 
+	void setVolumeKnob(bool active) {
+		m_volumeKnob->setValue(active);
+	}
 
+	bool isVolumeKnob() const {
+		return m_volumeKnob->value();
+	}
+
+	float volumeRatio() const {
+		return m_volumeRatio->value();
+	}
+	
+	void setVolumeRatio(float value) {
+		m_volumeRatio->setValue(value);
+	}
 signals:
 	void sliderPressed();
 	void sliderReleased();
@@ -178,8 +189,8 @@ private:
 	QTextDocument* m_tdRenderer;
 
 	std::unique_ptr<QPixmap> m_knobPixmap;
-	BoolModel m_volumeKnob;
-	FloatModel m_volumeRatio;
+	std::unique_ptr<IBoolAutomatableModel> m_volumeKnob;
+	std::unique_ptr<IFloatAutomatableModel> m_volumeRatio;
 
 	QPoint m_lastMousePos; //!< mouse position in last mouseMoveEvent
 	float m_leftOver;

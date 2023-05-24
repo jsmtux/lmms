@@ -32,9 +32,9 @@
 #include <QTimeLine>
 
 #include "ActionGroup.h"
-#include "AudioDevice.h"
-#include "AudioEngine.h"
-#include "ConfigManager.h"
+#include "IAudioDevice.h"
+#include "IAudioEngine.h"
+#include "IConfigManager.h"
 #include "DeprecationHelper.h"
 #include "embed.h"
 #include "GuiApplication.h"
@@ -65,35 +65,33 @@ namespace lmms::gui
 const QVector<float> SongEditor::m_zoomLevels =
 		{ 0.125f, 0.25f, 0.5f, 1.0f, 2.0f, 4.0f, 8.0f, 16.0f };
 
-SongEditor::SongEditor( Song * song ) :
+SongEditor::SongEditor( ISong * song ) :
 	TrackContainerView( &song->trackContainer() ),
 	m_song( song ),
-	m_zoomingModel(new ComboBoxModel()),
-	m_snappingModel(new ComboBoxModel()),
+	m_zoomingModel(MFact::createComboBox(this)),
+	m_snappingModel(MFact::createComboBox(this)),
 	m_proportionalSnap( false ),
 	m_scrollBack( false ),
-	m_smoothScroll( ConfigManager::inst()->value( "ui", "smoothscroll" ).toInt() ),
+	m_smoothScroll( IConfigManager::Instance()->value( "ui", "smoothscroll" ).toInt() ),
 	m_mode(DrawMode),
 	m_origin(),
 	m_scrollPos(),
 	m_mousePos(),
 	m_rubberBandStartTrackview(0),
 	m_rubberbandStartTimePos(0),
-	m_currentZoomingValue(m_zoomingModel->value()),
-	m_trackHeadWidth(ConfigManager::inst()->value("ui", "compacttrackbuttons").toInt()==1
+	m_currentZoomingValue(m_zoomingModel->wrappedModel()->value()),
+	m_trackHeadWidth(IConfigManager::Instance()->value("ui", "compacttrackbuttons").toInt()==1
 					 ? DEFAULT_SETTINGS_WIDGET_WIDTH_COMPACT + TRACK_OP_WIDTH_COMPACT
 					 : DEFAULT_SETTINGS_WIDGET_WIDTH + TRACK_OP_WIDTH),
 	m_selectRegion(false)
 {
-	m_zoomingModel->setParent(this);
-	m_snappingModel->setParent(this);
 	m_timeLine = new TimeLineWidget( m_trackHeadWidth, 32,
 					pixelsPerBar(),
-					m_song->m_playPos[Song::Mode_PlaySong],
+					m_song->getPlayPos(ISong::Mode_PlaySong),
 					m_currentPosition,
-					Song::Mode_PlaySong, this );
+					ISong::Mode_PlaySong, this );
 	connect( this, SIGNAL( positionChanged( const lmms::TimePos& ) ),
-				m_song->m_playPos[Song::Mode_PlaySong].m_timeLine,
+				m_song->getPlayPos(ISong::Mode_PlaySong).m_timeLine,
 			SLOT( updatePosition( const lmms::TimePos& ) ) );
 	connect( m_timeLine, SIGNAL( positionChanged( const lmms::TimePos& ) ),
 			this, SLOT( updatePosition( const lmms::TimePos& ) ) );
@@ -115,7 +113,7 @@ SongEditor::SongEditor( Song * song ) :
 			 
 	// Ensure loop markers snap to same increments as clips. Zoom & proportional
 	// snap changes are handled in zoomingChanged() and toggleProportionalSnap()
-	connect(m_snappingModel, &ComboBoxModel::dataChanged,
+	connect(m_snappingModel->wrappedModel()->model(), &Model::dataChanged,
 		[this]() { m_timeLine->setSnapSize(getSnapSize()); });
 
 
@@ -124,7 +122,7 @@ SongEditor::SongEditor( Song * song ) :
 
 	getGUI()->mainWindow()->addSpacingToToolBar( 40 );
 
-	m_tempoSpinBox = new LcdSpinBox( 3, &m_song->m_tempoModel, tb, tr( "Tempo" ) );
+	m_tempoSpinBox = new LcdSpinBox( 3, &m_song->tempoModel(), tb, tr( "Tempo" ) );
 	m_tempoSpinBox->setLabel( tr( "TEMPO" ) );
 	m_tempoSpinBox->setToolTip(tr("Tempo in BPM"));
 
@@ -145,7 +143,7 @@ SongEditor::SongEditor( Song * song ) :
 
 	getGUI()->mainWindow()->addSpacingToToolBar( 10 );
 
-	m_timeSigDisplay = new MeterDialog( &m_song->m_timeSigModel, this, true );
+	m_timeSigDisplay = new MeterDialog( &m_song->getTimeSigModelInterface(), this, true );
 	getGUI()->mainWindow()->addWidgetToToolBar( m_timeSigDisplay );
 
 	getGUI()->mainWindow()->addSpacingToToolBar( 10 );
@@ -153,7 +151,7 @@ SongEditor::SongEditor( Song * song ) :
 	auto master_vol_lbl = new QLabel(tb);
 	master_vol_lbl->setPixmap( embed::getIconPixmap( "master_volume" ) );
 
-	m_masterVolumeSlider = new AutomatableSlider( &m_song->m_masterVolumeModel, tb,
+	m_masterVolumeSlider = new AutomatableSlider( &m_song->masterVolumeModel(), tb,
 							tr( "Master volume" ) );
 	m_masterVolumeSlider->setOrientation( Qt::Vertical );
 	m_masterVolumeSlider->setPageStep( 1 );
@@ -185,7 +183,7 @@ SongEditor::SongEditor( Song * song ) :
 	master_pitch_lbl->setPixmap( embed::getIconPixmap( "master_pitch" ) );
 	master_pitch_lbl->setFixedHeight( 64 );
 
-	m_masterPitchSlider = new AutomatableSlider( &m_song->m_masterPitchModel, tb, tr( "Global transposition" ) );
+	m_masterPitchSlider = new AutomatableSlider( &m_song->masterPitchModel(), tb, tr( "Global transposition" ) );
 	m_masterPitchSlider->setOrientation( Qt::Vertical );
 	m_masterPitchSlider->setPageStep( 1 );
 	m_masterPitchSlider->setTickPosition( QSlider::TicksLeft );
@@ -246,12 +244,12 @@ SongEditor::SongEditor( Song * song ) :
 	{
 		m_zoomingModel->addItem( QString( "%1\%" ).arg( zoomLevel * 100 ) );
 	}
-	m_zoomingModel->setInitValue(
+	m_zoomingModel->wrappedModel()->setInitValue(
 			m_zoomingModel->findText( "100%" ) );
-	connect( m_zoomingModel, SIGNAL(dataChanged()),
-					this, SLOT(zoomingChanged()));
-	connect( m_zoomingModel, SIGNAL(dataChanged()),
-					m_positionLine, SLOT(update()));
+	connect( m_zoomingModel->wrappedModel()->model(), &Model::dataChanged,
+					this, &SongEditor::zoomingChanged);
+	connect( m_zoomingModel->wrappedModel()->model(), &Model::dataChanged,
+					m_positionLine, [this](){m_positionLine->update();});
 
 	//Set up snapping model, 2^i
 	for ( int i = 3; i >= -4; i-- )
@@ -269,7 +267,7 @@ SongEditor::SongEditor( Song * song ) :
 			m_snappingModel->addItem( QString( "1/%1 Bar" ).arg( 1 << (-i) ) );
 		}
 	}
-	m_snappingModel->setInitValue( m_snappingModel->findText( "1 Bar" ) );
+	m_snappingModel->wrappedModel()->setInitValue( m_snappingModel->findText( "1 Bar" ) );
 
 	setFocusPolicy( Qt::StrongFocus );
 	setFocus();
@@ -294,11 +292,11 @@ void SongEditor::loadSettings( const QDomElement& element )
 float SongEditor::getSnapSize() const
 {
 	// 1 Bar is the third value in the snapping dropdown
-	int val = -m_snappingModel->value() + 3;
+	int val = -m_snappingModel->wrappedModel()->value() + 3;
 	// If proportional snap is on, we snap to finer values when zoomed in
 	if (m_proportionalSnap)
 	{
-		val = val - m_zoomingModel->value() + 3;
+		val = val - m_zoomingModel->wrappedModel()->value() + 3;
 	}
 	val = std::max(val, -6); // -6 gives 1/64th bar snapping. Lower values cause crashing.
 
@@ -312,8 +310,8 @@ float SongEditor::getSnapSize() const
 
 QString SongEditor::getSnapSizeString() const
 {
-	int val = -m_snappingModel->value() + 3;
-	val = val - m_zoomingModel->value() + 3;
+	int val = -m_snappingModel->wrappedModel()->value() + 3;
+	val = val - m_zoomingModel->wrappedModel()->value() + 3;
 	val = std::max(val, -6); // -6 gives 1/64th bar snapping. Lower values cause crashing.
 
 	if ( val >= 0 ){
@@ -335,9 +333,9 @@ QString SongEditor::getSnapSizeString() const
 
 void SongEditor::setHighQuality( bool hq )
 {
-	Engine::audioEngine()->changeQuality( AudioEngine::qualitySettings(
-			hq ? AudioEngine::qualitySettings::Mode_HighQuality :
-				AudioEngine::qualitySettings::Mode_Draft ) );
+	IEngine::Instance()->getAudioEngineInterface()->changeQuality( IAudioEngine::qualitySettings(
+			hq ? IAudioEngine::qualitySettings::Mode_HighQuality :
+				IAudioEngine::qualitySettings::Mode_Draft ) );
 }
 
 
@@ -367,7 +365,7 @@ void SongEditor::selectRegionFromPixels(int xStart, int xEnd)
 		//we save the position of scrollbars, mouse position and zooming level
 		m_origin = QPoint(xStart, 0);
 		m_scrollPos = QPoint(m_leftRightScroll->value(), contentWidget()->verticalScrollBar()->value());
-		m_currentZoomingValue = zoomingModel()->value();
+		m_currentZoomingValue = zoomingModel()->wrappedModel()->value();
 
 		//calculate the song position where the mouse was clicked
 		m_rubberbandStartTimePos = TimePos((xStart - m_trackHeadWidth)
@@ -399,10 +397,10 @@ void SongEditor::updateRubberband()
 		int originX = m_origin.x();
 
 		//take care of the zooming
-		if (m_currentZoomingValue != m_zoomingModel->value())
+		if (m_currentZoomingValue != m_zoomingModel->wrappedModel()->value())
 		{
 			originX = m_trackHeadWidth + (originX - m_trackHeadWidth)
-					* m_zoomLevels[m_zoomingModel->value()] / m_zoomLevels[m_currentZoomingValue];
+					* m_zoomLevels[m_zoomingModel->wrappedModel()->value()] / m_zoomLevels[m_currentZoomingValue];
 		}
 
 		//take care of the scrollbar position
@@ -492,7 +490,7 @@ void SongEditor::keyPressEvent( QKeyEvent * ke )
 		tick_t t = m_song->currentTick() - TimePos::ticksPerBar();
 		if( t >= 0 )
 		{
-			m_song->setPlayPos( t, Song::Mode_PlaySong );
+			m_song->setPlayPos( t, ISong::Mode_PlaySong );
 		}
 	}
 	else if( ke->key() == Qt::Key_Right )
@@ -500,12 +498,12 @@ void SongEditor::keyPressEvent( QKeyEvent * ke )
 		tick_t t = m_song->currentTick() + TimePos::ticksPerBar();
 		if( t < MaxSongLength )
 		{
-			m_song->setPlayPos( t, Song::Mode_PlaySong );
+			m_song->setPlayPos( t, ISong::Mode_PlaySong );
 		}
 	}
 	else if( ke->key() == Qt::Key_Home )
 	{
-		m_song->setPlayPos( 0, Song::Mode_PlaySong );
+		m_song->setPlayPos( 0, ISong::Mode_PlaySong );
 	}
 	else if( ke->key() == Qt::Key_Delete || ke->key() == Qt::Key_Backspace )
 	{
@@ -537,7 +535,7 @@ void SongEditor::wheelEvent( QWheelEvent * we )
 {
 	if( we->modifiers() & Qt::ControlModifier )
 	{
-		int z = m_zoomingModel->value();
+		int z = m_zoomingModel->wrappedModel()->value();
 
 		if(we->angleDelta().y() > 0)
 		{
@@ -562,7 +560,7 @@ void SongEditor::wheelEvent( QWheelEvent * we )
 		m_zoomingModel->setValue( z );
 
 		// update timeline
-		m_song->m_playPos[Song::Mode_PlaySong].m_timeLine->
+		m_song->getPlayPos(ISong::Mode_PlaySong).m_timeLine->
 					setPixelsPerBar( pixelsPerBar() );
 		// and make sure, all Clip's are resized and relocated
 		realignTracks();
@@ -612,7 +610,7 @@ void SongEditor::mousePressEvent(QMouseEvent *me)
 		//we save the position of scrollbars, mouse position and zooming level
 		m_scrollPos = QPoint(m_leftRightScroll->value(), contentWidget()->verticalScrollBar()->value());
 		m_origin = contentWidget()->mapFromParent(QPoint(me->pos().x(), me->pos().y()));
-		m_currentZoomingValue = zoomingModel()->value();
+		m_currentZoomingValue = zoomingModel()->wrappedModel()->value();
 
 		//paint the rubberband
 		rubberBand()->setEnabled(true);
@@ -655,14 +653,14 @@ void SongEditor::setMasterVolume( int new_val )
 {
 	updateMasterVolumeFloat( new_val );
 
-	if( !m_mvsStatus->isVisible() && !m_song->m_loadingProject
+	if( !m_mvsStatus->isVisible() && !m_song->isLoadingProject()
 					&& m_masterVolumeSlider->showStatus() )
 	{
 		m_mvsStatus->moveGlobal( m_masterVolumeSlider,
 			QPoint( m_masterVolumeSlider->width() + 2, -2 ) );
 		m_mvsStatus->setVisibilityTimeOut( 1000 );
 	}
-	Engine::audioEngine()->setMasterGain( new_val / 100.0f );
+	IEngine::Instance()->getAudioEngineInterface()->setMasterGain( new_val / 100.0f );
 }
 
 
@@ -673,7 +671,7 @@ void SongEditor::showMasterVolumeFloat( void )
 	m_mvsStatus->moveGlobal( m_masterVolumeSlider,
 			QPoint( m_masterVolumeSlider->width() + 2, -2 ) );
 	m_mvsStatus->show();
-	updateMasterVolumeFloat( m_song->m_masterVolumeModel.value() );
+	updateMasterVolumeFloat( m_song->masterVolumeModel().value() );
 }
 
 
@@ -698,7 +696,7 @@ void SongEditor::hideMasterVolumeFloat( void )
 void SongEditor::setMasterPitch( int new_val )
 {
 	updateMasterPitchFloat( new_val );
-	if( m_mpsStatus->isVisible() == false && m_song->m_loadingProject == false
+	if( m_mpsStatus->isVisible() == false && m_song->isLoadingProject() == false
 					&& m_masterPitchSlider->showStatus() )
 	{
 		m_mpsStatus->moveGlobal( m_masterPitchSlider,
@@ -715,7 +713,7 @@ void SongEditor::showMasterPitchFloat( void )
 	m_mpsStatus->moveGlobal( m_masterPitchSlider,
 			QPoint( m_masterPitchSlider->width() + 2, -2 ) );
 	m_mpsStatus->show();
-	updateMasterPitchFloat( m_song->m_masterPitchModel.value() );
+	updateMasterPitchFloat( m_song->masterPitchModel().value() );
 }
 
 
@@ -780,7 +778,7 @@ static inline void animateScroll( QScrollBar *scrollBar, int newVal, bool smooth
 void SongEditor::updatePosition( const TimePos & t )
 {
 	int widgetWidth, trackOpWidth;
-	if( ConfigManager::inst()->value( "ui", "compacttrackbuttons" ).toInt() )
+	if( IConfigManager::Instance()->value( "ui", "compacttrackbuttons" ).toInt() )
 	{
 		widgetWidth = DEFAULT_SETTINGS_WIDGET_WIDTH_COMPACT;
 		trackOpWidth = TRACK_OP_WIDTH_COMPACT;
@@ -791,11 +789,11 @@ void SongEditor::updatePosition( const TimePos & t )
 		trackOpWidth = TRACK_OP_WIDTH;
 	}
 
-	if( ( m_song->isPlaying() && m_song->m_playMode == Song::Mode_PlaySong
+	if( ( m_song->isPlaying() && m_song->playMode() == ISong::Mode_PlaySong
 		  && m_timeLine->autoScroll() == TimeLineAutoScrollStates::AutoScrollEnabled) ||
 							m_scrollBack == true )
 	{
-		m_smoothScroll = ConfigManager::inst()->value( "ui", "smoothscroll" ).toInt();
+		m_smoothScroll = IConfigManager::Instance()->value( "ui", "smoothscroll" ).toInt();
 		const int w = width() - widgetWidth
 							- trackOpWidth
 							- contentWidget()->verticalScrollBar()->width(); // width of right scrollbar
@@ -811,7 +809,7 @@ void SongEditor::updatePosition( const TimePos & t )
 		m_scrollBack = false;
 	}
 
-	const int x = m_song->m_playPos[Song::Mode_PlaySong].m_timeLine->
+	const int x = m_song->getPlayPos(ISong::Mode_PlaySong).m_timeLine->
 							markerX( t ) + 8;
 	if( x >= trackOpWidth + widgetWidth -1 )
 	{
@@ -839,15 +837,15 @@ void SongEditor::updatePositionLine()
 
 void SongEditor::zoomingChanged()
 {
-	setPixelsPerBar( m_zoomLevels[m_zoomingModel->value()] * DEFAULT_PIXELS_PER_BAR );
+	setPixelsPerBar( m_zoomLevels[m_zoomingModel->wrappedModel()->value()] * DEFAULT_PIXELS_PER_BAR );
 
-	m_song->m_playPos[Song::Mode_PlaySong].m_timeLine->
+	m_song->getPlayPos(ISong::Mode_PlaySong).m_timeLine->
 					setPixelsPerBar( pixelsPerBar() );
 	realignTracks();
 	updateRubberband();
 	m_timeLine->setSnapSize(getSnapSize());
 	
-	emit zoomingValueChanged( m_zoomLevels[m_zoomingModel->value()] );
+	emit zoomingValueChanged( m_zoomLevels[m_zoomingModel->wrappedModel()->value()] );
 }
 
 
@@ -899,7 +897,7 @@ int SongEditor::indexOfTrackView(const TrackView *tv)
 
 
 
-ComboBoxModel *SongEditor::zoomingModel() const
+IComboBoxModelWrapper *SongEditor::zoomingModel() const
 {
 	return m_zoomingModel;
 }
@@ -907,7 +905,7 @@ ComboBoxModel *SongEditor::zoomingModel() const
 
 
 
-ComboBoxModel *SongEditor::snappingModel() const
+IComboBoxModelWrapper *SongEditor::snappingModel() const
 {
 	return m_snappingModel;
 }
@@ -915,13 +913,13 @@ ComboBoxModel *SongEditor::snappingModel() const
 
 
 
-SongEditorWindow::SongEditorWindow(Song* song) :
-	Editor(Engine::audioEngine()->audioDev()->supportsCapture(), false),
+SongEditorWindow::SongEditorWindow(ISong* song) :
+	Editor(IEngine::Instance()->getAudioEngineInterface()->audioDeviceInterface()->supportsCapture(), false),
 	m_editor(new SongEditor(song)),
 	m_crtlAction( nullptr ),
 	m_snapSizeLabel( new QLabel( m_toolBar ) )
 {
-	setWindowTitle( tr( "Song-Editor" ) );
+	setWindowTitle( tr( "ISong-Editor" ) );
 	setWindowIcon( embed::getIconPixmap( "songeditor" ) );
 
 	setCentralWidget(m_editor);
@@ -996,7 +994,8 @@ SongEditorWindow::SongEditorWindow(Song* song) :
 	m_zoomingComboBox->setFixedSize( 80, ComboBox::DEFAULT_HEIGHT );
 	m_zoomingComboBox->move( 580, 4 );
 	m_zoomingComboBox->setToolTip(tr("Horizontal zooming"));
-	connect(m_editor->zoomingModel(), SIGNAL(dataChanged()), this, SLOT(updateSnapLabel()));
+	connect(m_editor->zoomingModel()->wrappedModel()->model(), &Model::dataChanged,
+		this, &SongEditorWindow::updateSnapLabel);
 
 	zoomToolBar->addWidget( zoom_lbl );
 	zoomToolBar->addWidget( m_zoomingComboBox );
@@ -1009,7 +1008,8 @@ SongEditorWindow::SongEditorWindow(Song* song) :
 	m_snappingComboBox = new ComboBox( m_editor->m_snappingModel, m_toolBar );
 	m_snappingComboBox->setFixedSize( 80, ComboBox::DEFAULT_HEIGHT );
 	m_snappingComboBox->setToolTip(tr("Clip snapping size"));
-	connect(m_editor->snappingModel(), SIGNAL(dataChanged()), this, SLOT(updateSnapLabel()));
+	connect(m_editor->snappingModel()->wrappedModel()->model(), &Model::dataChanged,
+		this, &SongEditorWindow::updateSnapLabel);
 
 	m_setProportionalSnapAction = new QAction(embed::getIconPixmap("proportional_snap"),
 											 tr("Toggle proportional snap on/off"), this);
@@ -1077,13 +1077,13 @@ void SongEditorWindow::changeEvent(QEvent *event)
 void SongEditorWindow::play()
 {
 	emit playTriggered();
-	if( Engine::getSong()->playMode() != Song::Mode_PlaySong )
+	if( IEngine::Instance()->getSongInterface()->playMode() != ISong::Mode_PlaySong )
 	{
-		Engine::getSong()->playSong();
+		IEngine::Instance()->getSongInterface()->playSong();
 	}
 	else
 	{
-		Engine::getSong()->togglePause();
+		IEngine::Instance()->getSongInterface()->togglePause();
 	}
 }
 

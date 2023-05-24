@@ -24,7 +24,8 @@
 
 #include "Editor.h"
 
-#include "Song.h"
+#include "ISong.h"
+#include "IEngine.h"
 
 #include "embed.h"
 
@@ -70,7 +71,7 @@ DropToolBar * Editor::addDropToolBar(QWidget * parent, Qt::ToolBarArea whereToAd
 
 void Editor::togglePlayStop()
 {
-	if (Engine::getSong()->isPlaying())
+	if (IEngine::Instance()->getSongInterface()->isPlaying())
 		stop();
 	else
 		play();
@@ -78,7 +79,7 @@ void Editor::togglePlayStop()
 
 void Editor::togglePause()
 {
-	Engine::getSong()->togglePause();
+	IEngine::Instance()->getSongInterface()->togglePause();
 }
 
 void Editor::toggleMaximize()

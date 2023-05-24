@@ -48,7 +48,7 @@ namespace lmms::gui
 {
 
 
-LcdFloatSpinBox::LcdFloatSpinBox(int numWhole, int numFrac, FloatModel* _model, const QString& name, QWidget* parent) :
+LcdFloatSpinBox::LcdFloatSpinBox(int numWhole, int numFrac, IFloatAutomatableModel* _model, const QString& name, QWidget* parent) :
 	FloatModelView(_model, this),
 	m_wholeDisplay(numWhole, parent, name, false),
 	m_fractionDisplay(numFrac, parent, name, true),
@@ -61,7 +61,7 @@ LcdFloatSpinBox::LcdFloatSpinBox(int numWhole, int numFrac, FloatModel* _model, 
 }
 
 
-LcdFloatSpinBox::LcdFloatSpinBox(int numWhole, int numFrac, const QString& style, const QString& name, FloatModel* _model, QWidget* parent) :
+LcdFloatSpinBox::LcdFloatSpinBox(int numWhole, int numFrac, const QString& style, const QString& name, IFloatAutomatableModel* _model, QWidget* parent) :
 	FloatModelView(_model, this),
 	m_wholeDisplay(numWhole, style, parent, name, false),
 	m_fractionDisplay(numFrac, style, parent, name, true),
@@ -102,8 +102,8 @@ void LcdFloatSpinBox::layoutSetup(const QString &style)
 	outerLayout->setSizeConstraint(QLayout::SetFixedSize);
 	this->setLayout(outerLayout);
 
-	QObject::connect( m_model, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_model, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_model->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_model->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 	update();
 }
 
@@ -122,7 +122,7 @@ void LcdFloatSpinBox::update()
 
 void LcdFloatSpinBox::contextMenuEvent(QContextMenuEvent* event)
 {
-	CaptionMenu contextMenu(model()->displayName());
+	CaptionMenu contextMenu(model()->model()->displayName());
 	addDefaultActions(&contextMenu);
 	contextMenu.exec(QCursor::pos());
 }
@@ -137,7 +137,7 @@ void LcdFloatSpinBox::mousePressEvent(QMouseEvent* event)
 		m_mouseMoving = true;
 		m_origMousePos = event->globalPos();
 
-		AutomatableModel *thisModel = model();
+		auto *thisModel = model();
 		if (thisModel)
 		{
 			thisModel->addJournalCheckPoint();
@@ -224,7 +224,7 @@ void LcdFloatSpinBox::enterValue()
 float LcdFloatSpinBox::getStep() const
 {
 	if (m_intStep) { return 1; }
-	else { return model()->step<float>(); }
+	else { return model()->step(); }
 }
 
 

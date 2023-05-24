@@ -39,7 +39,7 @@ namespace lmms
 class BitcrushEffect : public Effect
 {
 public:
-	BitcrushEffect( Model* parent, const Descriptor::SubPluginFeatures::Key* key );
+	BitcrushEffect( Model* parent, const PluginDescriptor::Key* key );
 	~BitcrushEffect() override;
 	bool processAudioBuffer( sampleFrame* buf, const fpp_t frames ) override;
 

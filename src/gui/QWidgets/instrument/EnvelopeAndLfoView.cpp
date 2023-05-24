@@ -25,15 +25,15 @@
 
 #include "EnvelopeAndLfoView.h"
 
-#include "EnvelopeAndLfoParameters.h"
+#include "IEnvelopeAndLfoParameters.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "gui_templates.h"
-#include "AudioEngine.h"
-#include "DataFile.h"
-#include "Oscillator.h"
+#include "IAudioEngine.h"
+#include "IDataFile.h"
+#include "IOscillator.h"
 #include "StringPairDrag.h"
-#include "Track.h"
+#include "ITrack.h"
 
 #include "widgets/Knob.h"
 #include "widgets/LedCheckBox.h"
@@ -87,7 +87,7 @@ QPixmap * EnvelopeAndLfoView::s_lfoGraph = nullptr;
 
 
 
-EnvelopeAndLfoView::EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidget * _parent ) :
+EnvelopeAndLfoView::EnvelopeAndLfoView( IEnvelopeAndLfoParameters* params, QWidget * _parent ) :
 	QWidget( _parent ),
 	m_params( params )
 {
@@ -103,72 +103,72 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidge
 	QObject::connect( m_params, SIGNAL(dataChanged()), this, SLOT(update()));
 	QObject::connect( m_params, SIGNAL(propertiesChanged()), this, SLOT(update()));
 
-	m_predelayKnob = new Knob( knobBright_26, &m_params->m_predelayModel, this );
+	m_predelayKnob = new Knob( knobBright_26, m_params->predelayModel(), this );
 	m_predelayKnob->setLabel( tr( "DEL" ) );
 	m_predelayKnob->move( PREDELAY_KNOB_X, ENV_KNOBS_Y );
 	m_predelayKnob->setHintText( tr( "Pre-delay:" ), "" );
 
 
-	m_attackKnob = new Knob( knobBright_26, &m_params->m_attackModel, this );
+	m_attackKnob = new Knob( knobBright_26, m_params->attackModel(), this );
 	m_attackKnob->setLabel( tr( "ATT" ) );
 	m_attackKnob->move( ATTACK_KNOB_X, ENV_KNOBS_Y );
 	m_attackKnob->setHintText( tr( "Attack:" ), "" );
 
 
-	m_holdKnob = new Knob( knobBright_26, &m_params->m_holdModel, this );
+	m_holdKnob = new Knob( knobBright_26, m_params->holdModel(), this );
 	m_holdKnob->setLabel( tr( "HOLD" ) );
 	m_holdKnob->move( HOLD_KNOB_X, ENV_KNOBS_Y );
 	m_holdKnob->setHintText( tr( "Hold:" ), "" );
 
 
-	m_decayKnob = new Knob( knobBright_26, &m_params->m_decayModel, this );
+	m_decayKnob = new Knob( knobBright_26, m_params->decayModel(), this );
 	m_decayKnob->setLabel( tr( "DEC" ) );
 	m_decayKnob->move( DECAY_KNOB_X, ENV_KNOBS_Y );
 	m_decayKnob->setHintText( tr( "Decay:" ), "" );
 
 
-	m_sustainKnob = new Knob( knobBright_26, &m_params->m_sustainModel, this );
+	m_sustainKnob = new Knob( knobBright_26, m_params->sustainModel(), this );
 	m_sustainKnob->setLabel( tr( "SUST" ) );
 	m_sustainKnob->move( SUSTAIN_KNOB_X, ENV_KNOBS_Y );
 	m_sustainKnob->setHintText( tr( "Sustain:" ), "" );
 
 
-	m_releaseKnob = new Knob( knobBright_26, &m_params->m_releaseModel, this );
+	m_releaseKnob = new Knob( knobBright_26, m_params->releaseModel(), this );
 	m_releaseKnob->setLabel( tr( "REL" ) );
 	m_releaseKnob->move( RELEASE_KNOB_X, ENV_KNOBS_Y );
     m_releaseKnob->setHintText( tr( "Release:" ), "" );
 
 
-	m_amountKnob = new Knob( knobBright_26, &m_params->m_amountModel, this );
+	m_amountKnob = new Knob( knobBright_26, m_params->amountModel(), this );
 	m_amountKnob->setLabel( tr( "AMT" ) );
 	m_amountKnob->move( AMOUNT_KNOB_X, ENV_GRAPH_Y );
 	m_amountKnob->setHintText( tr( "Modulation amount:" ), "" );
 
 
-	m_lfoPredelayKnob = new Knob( knobBright_26, &m_params->m_lfoPredelayModel, this );
+	m_lfoPredelayKnob = new Knob( knobBright_26, m_params->lfoPredelayModel(), this );
 	m_lfoPredelayKnob->setLabel( tr( "DEL" ) );
 	m_lfoPredelayKnob->move( LFO_PREDELAY_KNOB_X, LFO_KNOB_Y );
 	m_lfoPredelayKnob->setHintText( tr( "Pre-delay:" ), "" );
 
 
-	m_lfoAttackKnob = new Knob( knobBright_26, &m_params->m_lfoAttackModel, this );
+	m_lfoAttackKnob = new Knob( knobBright_26, m_params->lfoAttackModel(), this );
 	m_lfoAttackKnob->setLabel( tr( "ATT" ) );
 	m_lfoAttackKnob->move( LFO_ATTACK_KNOB_X, LFO_KNOB_Y );
 	m_lfoAttackKnob->setHintText( tr( "Attack:" ), "" );
 
 
-	m_lfoSpeedKnob = new TempoSyncKnob( knobBright_26, &m_params->m_lfoSpeedModel, this );
+	m_lfoSpeedKnob = new TempoSyncKnob( knobBright_26, m_params->lfoSpeedModel(), this );
 	m_lfoSpeedKnob->setLabel( tr( "SPD" ) );
 	m_lfoSpeedKnob->move( LFO_SPEED_KNOB_X, LFO_KNOB_Y );
 	m_lfoSpeedKnob->setHintText( tr( "Frequency:" ), "" );
 
 
-	m_lfoAmountKnob = new Knob( knobBright_26, &m_params->m_lfoAmountModel, this );
+	m_lfoAmountKnob = new Knob( knobBright_26, m_params->lfoAmountModel(), this );
 	m_lfoAmountKnob->setLabel( tr( "AMT" ) );
 	m_lfoAmountKnob->move( LFO_AMOUNT_KNOB_X, LFO_KNOB_Y );
 	m_lfoAmountKnob->setHintText( tr( "Modulation amount:" ), "" );
 
-	BoolModel* sin_lfo_btn_model = new BoolModel(false, this);
+	IBoolAutomatableModel* sin_lfo_btn_model = MFact::create(false, this);
 	auto sin_lfo_btn = new PixmapButton(this, sin_lfo_btn_model);
 	sin_lfo_btn->move( LFO_SHAPES_X, LFO_SHAPES_Y );
 	sin_lfo_btn->setActiveGraphic( embed::getIconPixmap(
@@ -176,7 +176,7 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidge
 	sin_lfo_btn->setInactiveGraphic( embed::getIconPixmap(
 							"sin_wave_inactive" ) );
 
-	BoolModel* triangle_lfo_btn_model = new BoolModel(false, this);
+	IBoolAutomatableModel* triangle_lfo_btn_model = MFact::create(false, this);
 	auto triangle_lfo_btn = new PixmapButton(this, triangle_lfo_btn_model);
 	triangle_lfo_btn->move( LFO_SHAPES_X+15, LFO_SHAPES_Y );
 	triangle_lfo_btn->setActiveGraphic( embed::getIconPixmap(
@@ -184,7 +184,7 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidge
 	triangle_lfo_btn->setInactiveGraphic( embed::getIconPixmap(
 						"triangle_wave_inactive" ) );
 
-	BoolModel* saw_lfo_btn_model = new BoolModel(false, this);
+	IBoolAutomatableModel* saw_lfo_btn_model = MFact::create(false, this);
 	auto saw_lfo_btn = new PixmapButton(this, saw_lfo_btn_model);
 	saw_lfo_btn->move( LFO_SHAPES_X+30, LFO_SHAPES_Y );
 	saw_lfo_btn->setActiveGraphic( embed::getIconPixmap(
@@ -192,7 +192,7 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidge
 	saw_lfo_btn->setInactiveGraphic( embed::getIconPixmap(
 							"saw_wave_inactive" ) );
 
-	BoolModel* sqr_lfo_btn_model = new BoolModel(false, this);
+	IBoolAutomatableModel* sqr_lfo_btn_model = MFact::create(false, this);
 	auto sqr_lfo_btn = new PixmapButton(this, sqr_lfo_btn_model);
 	sqr_lfo_btn->move( LFO_SHAPES_X+45, LFO_SHAPES_Y );
 	sqr_lfo_btn->setActiveGraphic( embed::getIconPixmap(
@@ -200,7 +200,7 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidge
 	sqr_lfo_btn->setInactiveGraphic( embed::getIconPixmap(
 						"square_wave_inactive" ) );
 
-	BoolModel* m_userLfoBtn_model = new BoolModel(false, this);
+	IBoolAutomatableModel* m_userLfoBtn_model = MFact::create(false, this);
 	m_userLfoBtn = new PixmapButton( this, m_userLfoBtn_model);
 	m_userLfoBtn->move( LFO_SHAPES_X+75, LFO_SHAPES_Y );
 	m_userLfoBtn->setActiveGraphic( embed::getIconPixmap(
@@ -211,7 +211,7 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidge
 	connect( m_userLfoBtn, SIGNAL(toggled(bool)),
 				this, SLOT(lfoUserWaveChanged()));
 
-	BoolModel* random_lfo_btn_model = new BoolModel(false, this);
+	IBoolAutomatableModel* random_lfo_btn_model = MFact::create(false, this);
 	auto random_lfo_btn = new PixmapButton(this, random_lfo_btn_model);
 	random_lfo_btn->move( LFO_SHAPES_X+60, LFO_SHAPES_Y );
 	random_lfo_btn->setActiveGraphic( embed::getIconPixmap(
@@ -219,7 +219,7 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidge
 	random_lfo_btn->setInactiveGraphic( embed::getIconPixmap(
 						"random_wave_inactive" ) );
 
-	m_lfoWaveBtnGrp = new automatableButtonGroup( &m_params->m_lfoWaveModel, this);
+	m_lfoWaveBtnGrp = new automatableButtonGroup( m_params->lfoWaveModel(), this);
 	m_lfoWaveBtnGrp->addButton( sin_lfo_btn );
 	m_lfoWaveBtnGrp->addButton( triangle_lfo_btn );
 	m_lfoWaveBtnGrp->addButton( saw_lfo_btn );
@@ -227,13 +227,13 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidge
 	m_lfoWaveBtnGrp->addButton( m_userLfoBtn );
 	m_lfoWaveBtnGrp->addButton( random_lfo_btn );
 
-	m_x100Cb = new LedCheckBox( tr( "FREQ x 100" ), &m_params->m_x100Model, this );
+	m_x100Cb = new LedCheckBox( tr( "FREQ x 100" ), m_params->x100Model(), this );
 	m_x100Cb->setFont( pointSizeF( m_x100Cb->font(), 6.5 ) );
 	m_x100Cb->move( LFO_PREDELAY_KNOB_X, LFO_GRAPH_Y + 36 );
 	m_x100Cb->setToolTip(tr("Multiply LFO frequency by 100"));
 
 
-	m_controlEnvAmountCb = new LedCheckBox( tr( "MODULATE ENV AMOUNT" ), &m_params->m_controlEnvAmountModel,
+	m_controlEnvAmountCb = new LedCheckBox( tr( "MODULATE ENV AMOUNT" ), m_params->controlEnvAmountModel(),
 			this );
 	m_controlEnvAmountCb->move( LFO_PREDELAY_KNOB_X, LFO_GRAPH_Y + 54 );
 	m_controlEnvAmountCb->setFont( pointSizeF( m_controlEnvAmountCb->font(), 6.5 ) );
@@ -266,25 +266,25 @@ void EnvelopeAndLfoView::mousePressEvent( QMouseEvent * _me )
 	if( QRect( ENV_GRAPH_X, ENV_GRAPH_Y, s_envGraph->width(),
 			s_envGraph->height() ).contains( _me->pos() ) == true )
 	{
-		if( m_params->m_amountModel.value() < 1.0f )
+		if( m_params->amountModel()->value() < 1.0f )
 		{
-			m_params->m_amountModel.setValue( 1.0f );
+			m_params->amountModel()->setValue( 1.0f );
 		}
 		else
 		{
-			m_params->m_amountModel.setValue( 0.0f );
+			m_params->amountModel()->setValue( 0.0f );
 		}
 	}
 	else if( QRect( LFO_GRAPH_X, LFO_GRAPH_Y, s_lfoGraph->width(),
 			s_lfoGraph->height() ).contains( _me->pos() ) == true )
 	{
-		if( m_params->m_lfoAmountModel.value() < 1.0f )
+		if( m_params->lfoAmountModel()->value() < 1.0f )
 		{
-			m_params->m_lfoAmountModel.setValue( 1.0f );
+			m_params->lfoAmountModel()->setValue( 1.0f );
 		}
 		else
 		{
-			m_params->m_lfoAmountModel.setValue( 0.0f );
+			m_params->lfoAmountModel()->setValue( 0.0f );
 		}
 	}
 }
@@ -296,7 +296,7 @@ void EnvelopeAndLfoView::dragEnterEvent( QDragEnterEvent * _dee )
 {
 	StringPairDrag::processDragEnterEvent( _dee,
 					QString( "samplefile,clip_%1" ).arg(
-							Track::SampleTrack ) );
+							ITrack::SampleTrack ) );
 }
 
 
@@ -308,21 +308,21 @@ void EnvelopeAndLfoView::dropEvent( QDropEvent * _de )
 	QString value = StringPairDrag::decodeValue( _de );
 	if( type == "samplefile" )
 	{
-		m_params->m_userWave.setAudioFile(
+		m_params->userWave()->setAudioFile(
 					StringPairDrag::decodeValue( _de ) );
 		m_userLfoBtn->model()->setValue( true );
-		m_params->m_lfoWaveModel.setValue(EnvelopeAndLfoParameters::UserDefinedWave);
+		m_params->lfoWaveModel()->setValue(IEnvelopeAndLfoParameters::UserDefinedWave);
 		_de->accept();
 		update();
 	}
-	else if( type == QString( "clip_%1" ).arg( Track::SampleTrack ) )
+	else if( type == QString( "clip_%1" ).arg( ITrack::SampleTrack ) )
 	{
-		DataFile dataFile( value.toUtf8() );
-		m_params->m_userWave.setAudioFile( dataFile.content().
+		auto dataFile = std::unique_ptr<IDataFile>(createDataFile( value.toUtf8() ));
+		m_params->userWave()->setAudioFile( dataFile->content().
 					firstChildElement().firstChildElement().
 					firstChildElement().attribute( "src" ) );
 		m_userLfoBtn->model()->setValue( true );
-		m_params->m_lfoWaveModel.setValue(EnvelopeAndLfoParameters::UserDefinedWave);
+		m_params->lfoWaveModel()->setValue(IEnvelopeAndLfoParameters::UserDefinedWave);
 		_de->accept();
 		update();
 	}
@@ -344,7 +344,7 @@ void EnvelopeAndLfoView::paintEvent( QPaintEvent * )
 
 	p.setFont( pointSize<8>( p.font() ) );
 
-	const float gray_amount = 1.0f - fabsf( m_amountKnob->value<float>() );
+	const float gray_amount = 1.0f - fabsf( m_amountKnob->model()->value() );
 
 	p.setPen( QPen( QColor( static_cast<int>( 96 * gray_amount ),
 				static_cast<int>( 255 - 159 * gray_amount ),
@@ -357,12 +357,12 @@ void EnvelopeAndLfoView::paintEvent( QPaintEvent * )
 	const int y_base = ENV_GRAPH_Y + s_envGraph->height() - 3;
 	const int avail_height = s_envGraph->height() - 6;
 	
-	int x1 = static_cast<int>( m_predelayKnob->value<float>() * TIME_UNIT_WIDTH );
-	int x2 = x1 + static_cast<int>( m_attackKnob->value<float>() * TIME_UNIT_WIDTH );
-	int x3 = x2 + static_cast<int>( m_holdKnob->value<float>() * TIME_UNIT_WIDTH );
-	int x4 = x3 + static_cast<int>( ( m_decayKnob->value<float>() *
-						( 1 - m_sustainKnob->value<float>() ) ) * TIME_UNIT_WIDTH );
-	int x5 = x4 + static_cast<int>( m_releaseKnob->value<float>() * TIME_UNIT_WIDTH );
+	int x1 = static_cast<int>( m_predelayKnob->model()->value() * TIME_UNIT_WIDTH );
+	int x2 = x1 + static_cast<int>( m_attackKnob->model()->value() * TIME_UNIT_WIDTH );
+	int x3 = x2 + static_cast<int>( m_holdKnob->model()->value() * TIME_UNIT_WIDTH );
+	int x4 = x3 + static_cast<int>( ( m_decayKnob->model()->value() *
+						( 1 - m_sustainKnob->model()->value() ) ) * TIME_UNIT_WIDTH );
+	int x5 = x4 + static_cast<int>( m_releaseKnob->model()->value() * TIME_UNIT_WIDTH );
 
 	if( x5 > 174 )
 	{
@@ -389,20 +389,20 @@ void EnvelopeAndLfoView::paintEvent( QPaintEvent * )
 
 	p.drawLine( x3, y_base-avail_height, x4, static_cast<int>( y_base -
 								avail_height +
-				( 1 - m_sustainKnob->value<float>() ) * avail_height ) );
+				( 1 - m_sustainKnob->model()->value() ) * avail_height ) );
 	p.fillRect( x3 - 1, y_base - 2 - avail_height, 4, 4,
 							end_points_bg_color );
 	p.fillRect( x3, y_base - 1 - avail_height, 2, 2, end_points_color );
 	
 	p.drawLine( x4, static_cast<int>( y_base - avail_height +
-						( 1 - m_sustainKnob->value<float>() ) *
+						( 1 - m_sustainKnob->model()->value() ) *
 						avail_height ), x5, y_base );
 	p.fillRect( x4 - 1, static_cast<int>( y_base - avail_height +
-						( 1 - m_sustainKnob->value<float>() ) *
+						( 1 - m_sustainKnob->model()->value() ) *
 						avail_height ) - 2, 4, 4,
 							end_points_bg_color );
 	p.fillRect( x4, static_cast<int>( y_base - avail_height +
-						( 1 - m_sustainKnob->value<float>() ) *
+						( 1 - m_sustainKnob->model()->value() ) *
 						avail_height ) - 1, 2, 2,
 							end_points_color );
 	p.fillRect( x5 - 1, y_base - 2, 4, 4, end_points_bg_color );
@@ -415,9 +415,9 @@ void EnvelopeAndLfoView::paintEvent( QPaintEvent * )
 	int graph_y_base = LFO_GRAPH_Y + 3 + LFO_GRAPH_H / 2;
 
 	const float frames_for_graph = SECS_PER_LFO_OSCILLATION *
-				Engine::audioEngine()->baseSampleRate() / 10;
+				IEngine::Instance()->getAudioEngineInterface()->baseSampleRate() / 10;
 
-	const float lfo_gray_amount = 1.0f - fabsf( m_lfoAmountKnob->value<float>() );
+	const float lfo_gray_amount = 1.0f - fabsf( m_lfoAmountKnob->model()->value() );
 	p.setPen( QPen( QColor( static_cast<int>( 96 * lfo_gray_amount ),
 				static_cast<int>( 255 - 159 * lfo_gray_amount ),
 				static_cast<int>( 128 - 32 *
@@ -425,57 +425,57 @@ void EnvelopeAndLfoView::paintEvent( QPaintEvent * )
 									1.5 ) );
 
 
-	float osc_frames = m_params->m_lfoOscillationFrames;
+	float osc_frames = m_params->lfoOscillationFrames();
 
-	if( m_params->m_x100Model.value() )
+	if( m_params->x100Model()->value() )
 	{
 		osc_frames *= 100.0f;
 	}
 
 	// userWaveSample() may be used, called out of loop for efficiency
-	m_params->m_userWave.dataReadLock();
+	m_params->userWave()->dataReadLock();
 	float old_y = 0;
 	for( int x = 0; x <= LFO_GRAPH_W; ++x )
 	{
 		float val = 0.0;
 		float cur_sample = x * frames_for_graph / LFO_GRAPH_W;
 		if( static_cast<f_cnt_t>( cur_sample ) >
-						m_params->m_lfoPredelayFrames )
+						m_params->lfoPredelayFrames() )
 		{
 			float phase = ( cur_sample -=
-					m_params->m_lfoPredelayFrames ) /
+					m_params->lfoPredelayFrames() ) /
 								osc_frames;
-			switch( m_params->m_lfoWaveModel.value() )
+			switch( m_params->lfoWaveModel()->value() )
 			{
-				case EnvelopeAndLfoParameters::SineWave:
-					val = Oscillator::sinSample( phase );
+				case IEnvelopeAndLfoParameters::SineWave:
+					val = IOscillator::sinSample( phase );
 					break;
-				case EnvelopeAndLfoParameters::TriangleWave:
-					val = Oscillator::triangleSample(
+				case IEnvelopeAndLfoParameters::TriangleWave:
+					val = IOscillator::triangleSample(
 								phase );
 					break;
-				case EnvelopeAndLfoParameters::SawWave:
-					val = Oscillator::sawSample( phase );
+				case IEnvelopeAndLfoParameters::SawWave:
+					val = IOscillator::sawSample( phase );
 					break;
-				case EnvelopeAndLfoParameters::SquareWave:
-					val = Oscillator::squareSample( phase );
+				case IEnvelopeAndLfoParameters::SquareWave:
+					val = IOscillator::squareSample( phase );
 					break;
-				case EnvelopeAndLfoParameters::RandomWave:
-					if( x % (int)( 900 * m_lfoSpeedKnob->value<float>() + 1 ) == 0 )
+				case IEnvelopeAndLfoParameters::RandomWave:
+					if( x % (int)( 900 * m_lfoSpeedKnob->model()->wrappedModel()->value() + 1 ) == 0 )
 					{
-						m_randomGraph = Oscillator::noiseSample( 0.0f );
+						m_randomGraph = IOscillator::noiseSample( 0.0f );
 					}
 					val = m_randomGraph;
 					break;
-				case EnvelopeAndLfoParameters::UserDefinedWave:
-					val = m_params->m_userWave.
+				case IEnvelopeAndLfoParameters::UserDefinedWave:
+					val = m_params->userWave()->
 							userWaveSample( phase );
 					break;
 			}
 			if( static_cast<f_cnt_t>( cur_sample ) <=
-						m_params->m_lfoAttackFrames )
+						m_params->lfoAttackFrames() )
 			{
-				val *= cur_sample / m_params->m_lfoAttackFrames;
+				val *= cur_sample / m_params->lfoAttackFrames();
 			}
 		}
 		float cur_y = -LFO_GRAPH_H / 2.0f * val;
@@ -484,11 +484,11 @@ void EnvelopeAndLfoView::paintEvent( QPaintEvent * )
 						graph_y_base + cur_y ) );
 		old_y = cur_y;
 	}
-	m_params->m_userWave.dataUnlock();
+	m_params->userWave()->dataUnlock();
 
 	p.setPen( QColor( 201, 201, 225 ) );
 	int ms_per_osc = static_cast<int>( SECS_PER_LFO_OSCILLATION *
-						m_lfoSpeedKnob->value<float>() *
+						m_lfoSpeedKnob->model()->wrappedModel()->value() *
 								1000.0f );
 	p.drawText( LFO_GRAPH_X + 4, LFO_GRAPH_Y + s_lfoGraph->height() - 6,
 							tr( "ms/LFO:" ) );
@@ -502,10 +502,10 @@ void EnvelopeAndLfoView::paintEvent( QPaintEvent * )
 
 void EnvelopeAndLfoView::lfoUserWaveChanged()
 {
-	if( m_params->m_lfoWaveModel.value() ==
-				EnvelopeAndLfoParameters::UserDefinedWave )
+	if( m_params->lfoWaveModel()->value() ==
+				IEnvelopeAndLfoParameters::UserDefinedWave )
 	{
-		if( m_params->m_userWave.frames() <= 1 )
+		if( m_params->userWave()->frames() <= 1 )
 		{
 			TextFloat::displayMessage( tr( "Hint" ),
 				tr( "Drag and drop a sample into this window." ),

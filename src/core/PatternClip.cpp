@@ -28,7 +28,7 @@
  
 #include "Engine.h"
 #include "PatternStore.h"
-#include "PatternTrack.h"
+#include "tracks/PatternTrack.h"
 
 namespace lmms
 {

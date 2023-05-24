@@ -50,7 +50,7 @@ Plugin::Descriptor PLUGIN_EXPORT multitapecho_plugin_descriptor =
 }
 
 
-MultitapEchoEffect::MultitapEchoEffect( Model* parent, const Descriptor::SubPluginFeatures::Key* key ) :
+MultitapEchoEffect::MultitapEchoEffect( Model* parent, const PluginDescriptor::Key* key ) :
 	Effect( &multitapecho_plugin_descriptor, parent, key ),
 	m_stages( 1 ),
 	m_controls( this ),
@@ -170,7 +170,7 @@ extern "C"
 // necessary for getting instance out of shared lib
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model* parent, void* data )
 {
-	return new MultitapEchoEffect( parent, static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>( data ) );
+	return new MultitapEchoEffect( parent, static_cast<const Plugin::PluginDescriptor::Key *>( data ) );
 }
 
 }

@@ -25,7 +25,7 @@
 #ifndef LMMS_GUI_INSTRUMENT_TRACK_WINDOW_H
 #define LMMS_GUI_INSTRUMENT_TRACK_WINDOW_H
 
-#include "InstrumentTrack.h"
+#include "ITrack.h"
 #include "SerializingObject.h"
 
 #include <QWidget>
@@ -72,12 +72,12 @@ public:
 		return m_tabWidget;
 	}
 
-	InstrumentTrack * model()
+	IInstrumentTrack * model()
 	{
 		return m_track;
 	}
 
-	const InstrumentTrack * model() const
+	const IInstrumentTrack * model() const
 	{
 		return m_track;
 	}
@@ -128,7 +128,7 @@ private:
 	//! required to keep the old look when using a variable sized tab widget
 	void adjustTabSize(QWidget *w);
 
-	InstrumentTrack * m_track;
+	IInstrumentTrack * m_track;
 	InstrumentTrackView * m_itv;
 
 	// widgets on the top of an instrument-track-window

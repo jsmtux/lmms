@@ -25,9 +25,9 @@
 
 #include "CPULoadWidget.h"
 
-#include "AudioEngine.h"
+#include "IAudioEngine.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 
 #include <QPainter>
 
@@ -92,7 +92,7 @@ void CPULoadWidget::paintEvent( QPaintEvent *  )
 void CPULoadWidget::updateCpuLoad()
 {
 	// smooth load-values a bit
-	int new_load = ( m_currentLoad + Engine::audioEngine()->cpuLoad() ) / 2;
+	int new_load = ( m_currentLoad + IEngine::Instance()->getAudioEngineInterface()->cpuLoad() ) / 2;
 	if( new_load != m_currentLoad )
 	{
 		m_currentLoad = new_load;

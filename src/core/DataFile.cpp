@@ -36,11 +36,10 @@
 
 #include "base64.h"
 #include "ConfigManager.h"
-#include "Effect.h"
 #include "embed.h"
 #include "IGuiApplication.h"
 #include "LocaleHelper.h"
-#include "PluginFactory.h"
+#include "IPluginFactory.h"
 #include "ProjectVersion.h"
 #include "Track.h"
 #include "PathUtil.h"
@@ -50,6 +49,13 @@
 namespace lmms
 {
 
+
+std::unique_ptr<IDataFile> createDataFile(const QString& fileName) {
+	return std::make_unique<DataFile>(fileName);
+}
+std::unique_ptr<IDataFile> createDataFile( IDataFile::Types type ) {
+	return std::make_unique<DataFile>(type);
+}
 
 static void findIds(const QDomElement& elem, QList<jo_id_t>& idList);
 
@@ -112,7 +118,7 @@ namespace
 
 
 DataFile::DataFile( Type type ) :
-	QDomDocument( "lmms-project" ),
+	IDataFile( "lmms-project" ),
 	m_fileName(""),
 	m_content(),
 	m_head(),
@@ -139,7 +145,6 @@ DataFile::DataFile( Type type ) :
 
 
 DataFile::DataFile( const QString & _fileName ) :
-	QDomDocument(),
 	m_fileName(_fileName),
 	m_content(),
 	m_head(),
@@ -169,7 +174,6 @@ DataFile::DataFile( const QString & _fileName ) :
 
 
 DataFile::DataFile( const QByteArray & _data ) :
-	QDomDocument(),
 	m_fileName(""),
 	m_content(),
 	m_head(),
@@ -213,7 +217,7 @@ bool DataFile::validate( QString extension )
 	case Type::UnknownType:
 		if (! ( extension == "mmp" || extension == "mpt" || extension == "mmpz" ||
 				extension == "xpf" || extension == "xml" ||
-				( extension == "xiz" && ! getPluginFactory()->pluginSupportingExtension(extension).isNull()) ||
+				( extension == "xiz" && ! IPluginFactory::Instance()->pluginSupportingExtension(extension).isNull) ||
 				extension == "sf2" || extension == "sf3" || extension == "pat" || extension == "mid" ||
 				extension == "dll"
 #ifdef LMMS_BUILD_LINUX
@@ -990,7 +994,7 @@ void DataFile::upgrade_0_4_0_beta1()
 			{
 				QString name = l[0].toString();
 				QVariant u = l[1];
-				EffectKey::AttributeMap m;
+				PluginDescriptor::Key::AttributeMap m;
 				// VST-effect?
 				if( u.type() == QVariant::String )
 				{
@@ -1003,7 +1007,7 @@ void DataFile::upgrade_0_4_0_beta1()
 					m["plugin"] = sl.value( 0 );
 					m["file"] = sl.value( 1 );
 				}
-				EffectKey key( nullptr, name, m );
+				PluginDescriptor::Key key( nullptr, name, m );
 				el.appendChild( key.saveXML( *this ) );
 			}
 		}

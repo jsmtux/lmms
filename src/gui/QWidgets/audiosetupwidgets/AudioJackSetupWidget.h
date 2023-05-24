@@ -3,8 +3,8 @@
 
 #include <QLineEdit>
 
+#include "IAudioDevice.h"
 #include "AudioDeviceSetupWidget.h"
-#include "AudioJack.h"
 
 #include "widgets/LcdSpinBox.h"
 
@@ -18,7 +18,7 @@ public:
 
     inline static QString name()
     {
-        return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", AudioJack::name() );
+        return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", AudioJackName() );
     }
 
     void saveSettings() override;

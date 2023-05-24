@@ -27,7 +27,7 @@
 
 #include "Clip.h"
 #include "Engine.h"
-#include "PatternTrack.h"
+#include "tracks/PatternTrack.h"
 #include "Song.h"
 
 namespace lmms
@@ -38,11 +38,11 @@ PatternStore::PatternStore() :
 	m_trackContainer(this),
 	m_patternComboBoxModel(this)
 {
-	connect(&m_patternComboBoxModel, &ComboBoxModel::dataChanged,
+	connect(m_patternComboBoxModel.model(), &IntModel::dataChanged,
 			Engine::getSong(), &Song::updatePatternTracks);
 	// we *always* want to receive updates even in case pattern actually did
 	// not change upon setCurrentPattern()-call
-	connect(&m_patternComboBoxModel, &ComboBoxModel::dataUnchanged,
+	connect(m_patternComboBoxModel.model(), &IntModel::dataUnchanged,
 			Engine::getSong(), &Song::updatePatternTracks);
 }
 
@@ -60,7 +60,7 @@ bool PatternStore::play(TimePos start, fpp_t frames, f_cnt_t offset, int clipNum
 
 	start = start % (lengthOfPattern(clipNum) * TimePos::ticksPerBar());
 
-	for (Track * t : m_trackContainer.tracks())
+	for (ITrack * t : m_trackContainer.tracks())
 	{
 		if (t->play(start, frames, offset, clipNum))
 		{
@@ -77,7 +77,7 @@ bar_t PatternStore::lengthOfPattern(int pattern) const
 {
 	TimePos maxLength = TimePos::ticksPerBar();
 
-	for (Track * t : m_trackContainer.tracks())
+	for (ITrack * t : m_trackContainer.tracks())
 	{
 		// Don't create Clips here if they don't exist
 		if (pattern < t->numOfClips())
@@ -94,7 +94,7 @@ bar_t PatternStore::lengthOfPattern(int pattern) const
 
 void PatternStore::removePattern(int pattern)
 {
-	for (Track * t : m_trackContainer.tracks())
+	for (ITrack * t : m_trackContainer.tracks())
 	{
 		delete t->getClip(pattern);
 		t->removeBar(pattern * DefaultTicksPerBar);
@@ -110,7 +110,7 @@ void PatternStore::removePattern(int pattern)
 
 void PatternStore::swapPattern(int pattern1, int pattern2)
 {
-	for (Track * t : m_trackContainer.tracks())
+	for (ITrack * t : m_trackContainer.tracks())
 	{
 		t->swapPositionOfClips(pattern1, pattern2);
 	}
@@ -125,7 +125,7 @@ void PatternStore::updatePatternTrack(Clip* clip)
 	PatternTrack * t = PatternTrack::findPatternTrack(clip->startPosition() / DefaultTicksPerBar);
 	if (t != nullptr)
 	{
-		t->dataChanged();
+		t->model()->dataChanged();
 	}
 }
 
@@ -134,7 +134,7 @@ void PatternStore::updatePatternTrack(Clip* clip)
 
 void PatternStore::fixIncorrectPositions()
 {
-	for (Track * t : m_trackContainer.tracks())
+	for (ITrack * t : m_trackContainer.tracks())
 	{
 		for (int i = 0; i < Engine::getSong()->numOfPatterns(); ++i)
 		{
@@ -185,7 +185,7 @@ void PatternStore::updateComboBox()
 
 void PatternStore::createClipsForPattern(int pattern)
 {
-	for (Track * t : m_trackContainer.tracks())
+	for (ITrack * t : m_trackContainer.tracks())
 	{
 		t->createClipsForPattern(pattern);
 	}

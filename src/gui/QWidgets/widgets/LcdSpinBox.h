@@ -35,9 +35,9 @@ class LMMS_EXPORT LcdSpinBox : public LcdWidget, public IntModelView
 {
 	Q_OBJECT
 public:
-	LcdSpinBox( int numDigits, IntModel* _model, QWidget* parent, const QString& name = QString() );
+	LcdSpinBox( int numDigits, IIntAutomatableModel* _model, QWidget* parent, const QString& name = QString() );
 
-	LcdSpinBox( int numDigits, const QString& style, IntModel* _model, QWidget* parent, const QString& name = QString() );
+	LcdSpinBox( int numDigits, const QString& style, IIntAutomatableModel* _model, QWidget* parent, const QString& name = QString() );
 
 	~LcdSpinBox() override = default;
 
@@ -79,7 +79,7 @@ signals:
 
 } ;
 
-using LcdSpinBoxModel = IntModel;
+// using LcdSpinBoxModel = IIntAutomatableModel;
 
 } // namespace lmms::gui
 

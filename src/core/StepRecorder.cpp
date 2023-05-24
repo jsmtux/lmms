@@ -25,12 +25,18 @@
 #include "Engine.h"
 #include "IPianoRoll.h"
 #include "IStepRecorderWidget.h"
-#include "MidiClip.h"
 #include "Song.h"
+
+#include "tracks/MidiClip.h"
 
 namespace lmms
 {
 
+
+IStepRecorder* createStepRecorder(gui::IPianoRoll& pianoRoll, gui::IStepRecorderWidget& stepRecorderWidget)
+{
+	return new StepRecorder(pianoRoll, stepRecorderWidget);
+}
 
 using std::min;
 using std::max;
@@ -242,7 +248,7 @@ void StepRecorder::applyStep()
 
 	m_midiClip->rearrangeAllNotes();
 	m_midiClip->updateLength();
-	m_midiClip->model().dataChanged();
+	m_midiClip->model()->dataChanged();
 	Engine::getSong()->setModified();
 
 	prepareNewStep();
@@ -274,14 +280,14 @@ void StepRecorder::prepareNewStep()
 	updateWidget();
 }
 
-void StepRecorder::setCurrentMidiClip( MidiClip* newMidiClip )
+void StepRecorder::setCurrentMidiClip( IMidiClip* newMidiClip )
 {
 	if(m_midiClip != nullptr && m_midiClip != newMidiClip)
 	{
 		dismissStep();
 	}
 
-	m_midiClip = newMidiClip;
+	m_midiClip = dynamic_cast<MidiClip*>(newMidiClip);
 }
 
 void StepRecorder::removeNotesReleasedForTooLong()

@@ -31,7 +31,7 @@
 namespace lmms
 {
 
-class MidiClip;
+class IMidiClip;
 
 namespace gui
 {
@@ -42,7 +42,7 @@ class MidiClipView : public ClipView
 	Q_OBJECT
 
 public:
-	MidiClipView( MidiClip* clip, TrackView* parent );
+	MidiClipView( IMidiClip* clip, TrackView* parent );
 	~MidiClipView() override = default;
 
 	Q_PROPERTY(QColor noteFillColor READ getNoteFillColor WRITE setNoteFillColor)
@@ -63,7 +63,7 @@ public:
 	void setMutedNoteBorderColor(QColor const & color) { m_mutedNoteBorderColor = color; }
 
 public slots:
-	lmms::MidiClip* getMidiClip();
+	lmms::IMidiClip* getMidiClip();
 	void update() override;
 
 
@@ -90,7 +90,7 @@ private:
 	static QPixmap * s_stepBtnOff;
 	static QPixmap * s_stepBtnOffLight;
 
-	MidiClip* m_clip;
+	IMidiClip* m_clip;
 	QPixmap m_paintPixmap;
 
 	QColor m_noteFillColor;

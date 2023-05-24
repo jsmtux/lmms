@@ -34,7 +34,7 @@ namespace lmms::gui
 {
 
 
-AutomatableSlider::AutomatableSlider( IntModel* _model, QWidget * _parent,
+AutomatableSlider::AutomatableSlider( IIntAutomatableModel* _model, QWidget * _parent,
 						const QString & _name ) :
 	QSlider( _parent ),
 	IntModelView( _model, this ),
@@ -47,12 +47,12 @@ AutomatableSlider::AutomatableSlider( IntModel* _model, QWidget * _parent,
 	connect( this, SIGNAL(sliderMoved(int)),
 					this, SLOT(moveSlider(int)));
 
-	QObject::connect( m_model, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_model, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_model->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_model->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 
 	QSlider::setRange( model()->minValue(), model()->maxValue() );
 	updateSlider();
-	connect( model(), SIGNAL(dataChanged()),
+	connect( model()->model(), SIGNAL(dataChanged()),
 				this, SLOT(updateSlider()));
 	update();
 }
@@ -65,7 +65,7 @@ AutomatableSlider::AutomatableSlider( IntModel* _model, QWidget * _parent,
 
 void AutomatableSlider::contextMenuEvent( QContextMenuEvent * _me )
 {
-	CaptionMenu contextMenu( model()->displayName() );
+	CaptionMenu contextMenu( model()->model()->displayName() );
 	addDefaultActions( &contextMenu );
 	contextMenu.exec( QCursor::pos() );
 }

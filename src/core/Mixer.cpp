@@ -31,9 +31,9 @@
 #include "Mixer.h"
 #include "MixHelpers.h"
 
-#include "InstrumentTrack.h"
-#include "SampleTrack.h"
-#include "TrackContainer.h" // For TrackList typedef
+#include "tracks/InstrumentTrack.h"
+#include "tracks/SampleTrack.h"
+#include "TrackContainer.h"
 
 namespace lmms
 {
@@ -187,7 +187,6 @@ void MixerChannel::doProcessing()
 
 
 Mixer::Mixer() :
-	JournallingObject(),
 	m_mixerModel(nullptr),
 	m_mixerChannels()
 {
@@ -284,7 +283,7 @@ void Mixer::deleteChannel( int index )
 	Engine::audioEngine()->requestChangeInModel();
 
 	// go through every instrument and adjust for the channel index change
-	for( Track* t : Engine::getTracks() )
+	for( ITrack* t : Engine::getTracks() )
 	{
 		if( t->type() == Track::InstrumentTrack )
 		{
@@ -544,7 +543,7 @@ bool Mixer::checkInfiniteLoop( MixerChannel * from, MixerChannel * to )
 
 
 // how much does fromChannel send its output to the input of toChannel?
-FloatModel * Mixer::channelSendModel( mix_ch_t fromChannel, mix_ch_t toChannel )
+IFloatAutomatableModel * Mixer::channelSendModel( mix_ch_t fromChannel, mix_ch_t toChannel )
 {
 	if( fromChannel == toChannel )
 	{

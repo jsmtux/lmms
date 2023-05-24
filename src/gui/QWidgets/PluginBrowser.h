@@ -60,7 +60,7 @@ class PluginDescWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	using PluginKey = Plugin::Descriptor::SubPluginFeatures::Key;
+	using PluginKey = PluginDescriptor::Key;
 	PluginDescWidget( const PluginKey & _pk, QWidget * _parent );
 	QString name() const;
 	void openInNewInstrumentTrack(QString value);

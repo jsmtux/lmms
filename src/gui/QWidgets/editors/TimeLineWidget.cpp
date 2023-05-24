@@ -43,7 +43,7 @@ namespace lmms::gui
 QPixmap * TimeLineWidget::s_posMarkerPixmap = nullptr;
 
 TimeLineWidget::TimeLineWidget( const int xoff, const int yoff, const float ppb,
-			Song::PlayPos & pos, const TimePos & begin, Song::PlayModes mode,
+			ISong::PlayPos & pos, const TimePos & begin, ISong::PlayModes mode,
 							QWidget * parent ) :
 	QWidget( parent ),
 	m_inactiveLoopColor( 52, 63, 53, 64 ),
@@ -92,7 +92,7 @@ TimeLineWidget::TimeLineWidget( const int xoff, const int yoff, const float ppb,
 	connect( updateTimer, SIGNAL(timeout()),
 					this, SLOT(updatePosition()));
 	updateTimer->start( 1000 / 60 );  // 60 fps
-	connect( Engine::getSong(), SIGNAL(timeSignatureChanged(int,int)),
+	connect( IEngine::Instance()->getSongInterface(), SIGNAL(timeSignatureChanged(int,int)),
 					this, SLOT(update()));
 }
 
@@ -368,11 +368,11 @@ void TimeLineWidget::mouseMoveEvent( QMouseEvent* event )
 	{
 		case MovePositionMarker:
 			m_pos.setTicks(t.getTicks());
-			Engine::getSong()->setToTime(t, m_mode);
-			if (!( Engine::getSong()->isPlaying()))
+			IEngine::Instance()->getSongInterface()->setToTime(t, m_mode);
+			if (!( IEngine::Instance()->getSongInterface()->isPlaying()))
 			{
-				//Song::Mode_None is used when nothing is being played.
-				Engine::getSong()->setToTime(t, Song::Mode_None);
+				//ISong::Mode_None is used when nothing is being played.
+				IEngine::Instance()->getSongInterface()->setToTime(t, ISong::Mode_None);
 			}
 			m_pos.setCurrentFrame( 0 );
 			m_pos.setJumped( true );

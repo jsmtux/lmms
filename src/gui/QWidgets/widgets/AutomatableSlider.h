@@ -36,7 +36,7 @@ class AutomatableSlider : public QSlider, public IntModelView
 {
 	Q_OBJECT
 public:
-	AutomatableSlider( IntModel* _model, QWidget * _parent, const QString & _name = QString() );
+	AutomatableSlider( IIntAutomatableModel* _model, QWidget * _parent, const QString & _name = QString() );
 	~AutomatableSlider() override = default;
 
 	bool showStatus()
@@ -68,7 +68,7 @@ private slots:
 } ;
 
 
-using sliderModel = IntModel;
+// using sliderModel = IntModel;
 
 } // namespace lmms::gui
 

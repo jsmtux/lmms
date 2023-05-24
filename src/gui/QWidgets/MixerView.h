@@ -27,9 +27,8 @@
 
 #include "EffectRackView.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "IMixerView.h"
-#include "SampleTrack.h"
 
 #include "widgets/Fader.h"
 #include "widgets/PixmapButton.h"

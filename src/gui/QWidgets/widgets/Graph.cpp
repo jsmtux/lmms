@@ -25,9 +25,9 @@
 
 #include "Graph.h"
 
-#include "Oscillator.h"
+#include "IOscillator.h"
 #include "StringPairDrag.h"
-#include "SampleBuffer.h"
+#include "ISampleBuffer.h"
 
 #include <QPainter>
 
@@ -512,7 +512,7 @@ void graphModel::setWaveToSine()
 {
 	for( int i = 0; i < length(); i++ )
 	{
-		m_samples[i] = Oscillator::sinSample(
+		m_samples[i] = IOscillator::sinSample(
 				i / static_cast<float>( length() ) );
 	}
 
@@ -525,7 +525,7 @@ void graphModel::setWaveToTriangle()
 {
 	for( int i = 0; i < length(); i++ )
 	{
-		m_samples[i] = Oscillator::triangleSample(
+		m_samples[i] = IOscillator::triangleSample(
 				i / static_cast<float>( length() ) );
 	}
 
@@ -538,7 +538,7 @@ void graphModel::setWaveToSaw()
 {
 	for( int i = 0; i < length(); i++ )
 	{
-		m_samples[i] = Oscillator::sawSample(
+		m_samples[i] = IOscillator::sawSample(
 				i / static_cast<float>( length() ) );
 	}
 
@@ -551,7 +551,7 @@ void graphModel::setWaveToSquare()
 {
 	for( int i = 0; i < length(); i++ )
 	{
-		m_samples[i] = Oscillator::squareSample(
+		m_samples[i] = IOscillator::squareSample(
 				i / static_cast<float>( length() ) );
 	}
 
@@ -564,7 +564,7 @@ void graphModel::setWaveToNoise()
 {
 	for( int i = 0; i < length(); i++ )
 	{
-		m_samples[i] = Oscillator::noiseSample(
+		m_samples[i] = IOscillator::noiseSample(
 				i / static_cast<float>( length() ) );
 	}
 
@@ -573,7 +573,7 @@ void graphModel::setWaveToNoise()
 
 QString graphModel::setWaveToUser()
 {
-	auto sampleBuffer = new SampleBuffer;
+	auto sampleBuffer = createSampleBuffer();
 	QString fileName = sampleBuffer->openAndSetWaveformFile();
 	if( fileName.isEmpty() == false )
 	{
@@ -585,8 +585,6 @@ QString graphModel::setWaveToUser()
 		}
 		sampleBuffer->dataUnlock();
 	}
-
-	sharedObject::unref( sampleBuffer );
 
 	emit samplesChanged( 0, length() - 1 );
 	return fileName;

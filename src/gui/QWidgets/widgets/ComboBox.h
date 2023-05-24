@@ -26,7 +26,7 @@
 #define LMMS_GUI_COMBOBOX_H
 
 #include "AutomatableModelView.h"
-#include "ComboBoxModel.h"
+#include "IModels.h"
 
 #include <QMenu>
 #include <QWidget>
@@ -38,18 +38,21 @@ class LMMS_EXPORT ComboBox : public QWidget, public IntModelView
 {
 	Q_OBJECT
 public:
-	ComboBox( IntModel* _model, QWidget* parent = nullptr, const QString& name = QString() );
+	ComboBox( IComboBoxModelWrapper* _model, QWidget* parent = nullptr, const QString& name = QString() );
 	~ComboBox() override = default;
 
-	ComboBoxModel* model()
-	{
-		return static_cast<ComboBoxModel*>(m_model);
+	IComboBoxModelWrapper* comboboxModel() {
+		return m_comboboxModel;
 	}
+	// ComboBoxModel* model()
+	// {
+	// 	return static_cast<ComboBoxModel*>(m_model);
+	// }
 
-	const ComboBoxModel* model() const
-	{
-		return static_cast<ComboBoxModel*>(m_model);
-	}
+	// const ComboBoxModel* model() const
+	// {
+	// 	return static_cast<ComboBoxModel*>(m_model);
+	// }
 
 	static constexpr int DEFAULT_HEIGHT = 22;
 
@@ -73,6 +76,7 @@ private:
 	QMenu m_menu;
 
 	bool m_pressed;
+	IComboBoxModelWrapper* m_comboboxModel;
 
 
 private slots:

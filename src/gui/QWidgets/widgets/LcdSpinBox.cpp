@@ -35,7 +35,7 @@
 namespace lmms::gui
 {
 
-LcdSpinBox::LcdSpinBox( int numDigits, IntModel* _model, QWidget* parent, const QString& name ) :
+LcdSpinBox::LcdSpinBox( int numDigits, IIntAutomatableModel* _model, QWidget* parent, const QString& name ) :
 	LcdWidget( numDigits, parent, name ),
 	IntModelView( _model, this ),
 	m_remainder( 0.f ),
@@ -48,7 +48,7 @@ LcdSpinBox::LcdSpinBox( int numDigits, IntModel* _model, QWidget* parent, const 
 
 
 
-LcdSpinBox::LcdSpinBox( int numDigits, const QString& style, IntModel* _model, QWidget* parent, const QString& name ) :
+LcdSpinBox::LcdSpinBox( int numDigits, const QString& style, IIntAutomatableModel* _model, QWidget* parent, const QString& name ) :
 	LcdWidget( numDigits, style, parent, name ),
 	IntModelView( _model, this ),
 	m_remainder( 0.f ),
@@ -69,7 +69,7 @@ void LcdSpinBox::update()
 
 void LcdSpinBox::contextMenuEvent(QContextMenuEvent* event)
 {
-	CaptionMenu contextMenu(model()->displayName());
+	CaptionMenu contextMenu(model()->model()->displayName());
 	addDefaultActions(&contextMenu);
 	contextMenu.exec(QCursor::pos());
 }
@@ -86,7 +86,7 @@ void LcdSpinBox::mousePressEvent( QMouseEvent* event )
 		m_mouseMoving = true;
 		m_lastMousePos = event->globalPos();
 
-		AutomatableModel *thisModel = model();
+		auto *thisModel = model();
 		if( thisModel )
 		{
 			thisModel->addJournalCheckPoint();
@@ -114,7 +114,7 @@ void LcdSpinBox::mouseMoveEvent( QMouseEvent* event )
 				fdy = qBound( -4.f, fdy/4.f, 4.f );
 			}
 			float floatValNotRounded =
-				model()->value() + m_remainder - fdy / 2.f * model()->step<int>();
+				model()->value() + m_remainder - fdy / 2.f * model()->step();
 			float floatValRounded = roundf( floatValNotRounded );
 			m_remainder = floatValNotRounded - floatValRounded;
 			model()->setValue( floatValRounded );
@@ -142,7 +142,7 @@ void LcdSpinBox::mouseReleaseEvent(QMouseEvent*)
 void LcdSpinBox::wheelEvent(QWheelEvent * we)
 {
 	we->accept();
-	model()->setValue(model()->value() + ((we->angleDelta().y() > 0) ? 1 : -1) * model()->step<int>());
+	model()->setValue(model()->value() + ((we->angleDelta().y() > 0) ? 1 : -1) * model()->step());
 	emit manualChange();
 }
 
@@ -164,7 +164,7 @@ void LcdSpinBox::enterValue()
 			model()->value(),
 			model()->minValue(),
 			model()->maxValue(),
-			model()->step<int>(), &ok );
+			model()->step(), &ok );
 
 	if( ok )
 	{

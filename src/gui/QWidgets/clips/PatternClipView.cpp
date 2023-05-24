@@ -28,25 +28,25 @@
 #include <QMenu>
 #include <QPainter>
 
-#include "Engine.h"
+#include "IEngine.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
-#include "PatternClip.h"
-#include "PatternStore.h"
-#include "PatternTrack.h"
+#include "IClip.h"
+#include "IPatternStore.h"
+#include "ITrack.h"
 #include "modals/RenameDialog.h"
 
 namespace lmms::gui
 {
 
 
-PatternClipView::PatternClipView(PatternClip* _clip, TrackView* _tv) :
-	ClipView( _clip, _tv ),
-	m_patternClip(dynamic_cast<PatternClip*>(_clip)),
+PatternClipView::PatternClipView(IPatternClip* _clip, TrackView* _tv) :
+	ClipView( _clip->baseClip(), _tv ),
+	m_patternClip(dynamic_cast<IPatternClip*>(_clip)),
 	m_paintPixmap()
 {
-	connect( _clip->getTrack(), SIGNAL(dataChanged()), 
-			this, SLOT(update()));
+	connect( _clip->baseClip()->getITrack()->model(), &Model::dataChanged, 
+			this, [this](){update();});
 
 	setStyle( QApplication::style() );
 }
@@ -116,8 +116,10 @@ void PatternClipView::paintEvent(QPaintEvent*)
 	
 	// bar lines
 	const int lineSize = 3;
-	int pixelsPerPattern = Engine::patternStore()->lengthOfPattern(m_patternClip->patternIndex()) * pixelsPerBar();
-	int offset = static_cast<int>(m_patternClip->startTimeOffset() * (pixelsPerBar() / TimePos::ticksPerBar()))
+	int pixelsPerPattern = IEngine::Instance()->getPatternStoreInterface()
+		->lengthOfPattern(m_patternClip->patternIndex()) * pixelsPerBar();
+	int offset = static_cast<int>(m_patternClip->baseClip()->startTimeOffset()
+			* (pixelsPerBar() / TimePos::ticksPerBar()))
 			% pixelsPerPattern;
 	if (offset < 2) {
 		offset += pixelsPerPattern;
@@ -136,7 +138,7 @@ void PatternClipView::paintEvent(QPaintEvent*)
 	}
 
 	// clip name
-	paintTextLabel(m_patternClip->name(), p);
+	paintTextLabel(m_patternClip->baseClip()->name(), p);
 
 	// inner border
 	p.setPen( c.lighter( 130 ) );
@@ -148,7 +150,7 @@ void PatternClipView::paintEvent(QPaintEvent*)
 	p.drawRect( 0, 0, rect().right(), rect().bottom() );
 	
 	// draw the 'muted' pixmap only if the clip was manualy muted
-	if (m_patternClip->isMuted())
+	if (m_patternClip->baseClip()->isMuted())
 	{
 		const int spacing = BORDER_WIDTH;
 		const int size = 14;
@@ -166,7 +168,8 @@ void PatternClipView::paintEvent(QPaintEvent*)
 
 void PatternClipView::openInPatternEditor()
 {
-	Engine::patternStore()->setCurrentPattern(m_patternClip->patternIndex());
+	IEngine::Instance()->getPatternStoreInterface()
+		->setCurrentPattern(m_patternClip->patternIndex());
 
 	getGUI()->mainWindow()->togglePatternEditorWin(true);
 }
@@ -174,24 +177,24 @@ void PatternClipView::openInPatternEditor()
 
 
 
-void PatternClipView::resetName() { m_patternClip->setName(""); }
+void PatternClipView::resetName() { m_patternClip->baseClip()->setName(""); }
 
 
 
 
 void PatternClipView::changeName()
 {
-	QString s = m_patternClip->name();
+	QString s = m_patternClip->baseClip()->name();
 	RenameDialog rename_dlg( s );
 	rename_dlg.exec();
-	m_patternClip->setName(s);
+	m_patternClip->baseClip()->setName(s);
 }
 
 
 
 void PatternClipView::update()
 {
-	setToolTip(m_patternClip->name());
+	setToolTip(m_patternClip->baseClip()->name());
 
 	ClipView::update();
 }

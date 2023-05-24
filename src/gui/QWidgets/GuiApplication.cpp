@@ -25,9 +25,8 @@
 #include "GuiApplication.h"
 
 
-#include "ConfigManager.h"
 #include "ControllerRackView.h"
-#include "DataFile.h"
+#include "IDataFile.h"
 #include "LmmsPalette.h"
 #include "LmmsStyle.h"
 #include "lmmsversion.h"
@@ -46,8 +45,7 @@
 #include "modals/FileDialog.h"
 
 #include "plugins/DummyEffect.h"
-#include "plugins/DummyInstrument.h"
-#include "plugins/DummyPlugin.h"
+// #include "plugins/DummyInstrument.h"
 
 
 #include <QApplication>
@@ -88,22 +86,22 @@ GuiApplication* GuiApplication::instance()
 
 
 
-GuiApplication::GuiApplication()
+GuiApplication::GuiApplication(IProjectRenderer* _renderer)
 {
 	// prompt the user to create the LMMS working directory (e.g. ~/Documents/lmms) if it doesn't exist
-	if ( !ConfigManager::inst()->hasWorkingDir() &&
+	if ( !IConfigManager::Instance()->hasWorkingDir() &&
 		QMessageBox::question( nullptr,
 				tr( "Working directory" ),
 				tr( "The LMMS working directory %1 does not "
 				"exist. Create it now? You can change the directory "
-				"later via Edit -> Settings." ).arg( ConfigManager::inst()->workingDir() ),
+				"later via Edit -> Settings." ).arg( IConfigManager::Instance()->workingDir() ),
 					QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes ) == QMessageBox::Yes)
 	{
-		ConfigManager::inst()->createWorkingDir();
+		IConfigManager::Instance()->createWorkingDir();
 	}
 	// Init style and palette
-	QDir::addSearchPath("artwork", ConfigManager::inst()->themeDir());
-	QDir::addSearchPath("artwork", ConfigManager::inst()->defaultThemeDir());
+	QDir::addSearchPath("artwork", IConfigManager::Instance()->themeDir());
+	QDir::addSearchPath("artwork", IConfigManager::Instance()->defaultThemeDir());
 	QDir::addSearchPath("artwork", ":/artwork");
 
 	auto lmmsstyle = new LmmsStyle();
@@ -143,23 +141,23 @@ GuiApplication::GuiApplication()
 	splashScreen.update();
 	qApp->processEvents();
 
-	connect(Engine::inst(), SIGNAL(initProgress(const QString&)), 
+	connect(IEngine::Instance(), SIGNAL(initProgress(const QString&)), 
 		this, SLOT(displayInitProgress(const QString&)));
 
 	// Init central engine which handles all components of LMMS
-	Engine::init(false);
+	InitializeEngine(false);
 
 	s_instance = this;
 
 	displayInitProgress(tr("Preparing UI"));
 
-	m_mainWindow = new MainWindow;
+	m_mainWindow = new MainWindow(_renderer);
 	connect(m_mainWindow, SIGNAL(destroyed(QObject*)), this, SLOT(childDestroyed(QObject*)));
 	connect(m_mainWindow, SIGNAL(initProgress(const QString&)), 
 		this, SLOT(displayInitProgress(const QString&)));
 
 	displayInitProgress(tr("Preparing song editor"));
-	m_songEditor = new SongEditorWindow(Engine::getSong());
+	m_songEditor = new SongEditorWindow(IEngine::Instance()->getSongInterface());
 	connect(m_songEditor, SIGNAL(destroyed(QObject*)), this, SLOT(childDestroyed(QObject*)));
 
 	displayInitProgress(tr("Preparing mixer"));
@@ -179,7 +177,7 @@ GuiApplication::GuiApplication()
 	connect(m_microtunerConfig, SIGNAL(destroyed(QObject*)), this, SLOT(childDestroyed(QObject*)));
 
 	displayInitProgress(tr("Preparing pattern editor"));
-	m_patternEditor = new PatternEditorWindow(Engine::patternStore());
+	m_patternEditor = new PatternEditorWindow(IEngine::Instance()->getPatternStoreInterface());
 	connect(m_patternEditor, SIGNAL(destroyed(QObject*)), this, SLOT(childDestroyed(QObject*)));
 
 	displayInitProgress(tr("Preparing piano roll"));
@@ -199,19 +197,6 @@ GuiApplication::GuiApplication()
 GuiApplication::~GuiApplication()
 {
 	s_instance = nullptr;
-}
-
-Instrument* GuiApplication::createDummyInstrument(InstrumentTrack *_instrument_track) {
-	return new DummyInstrument(_instrument_track);
-}
-
-Plugin* GuiApplication::createDummyPlugin() {
-	return new DummyPlugin();
-}
-
-Effect* GuiApplication::createDummyEffect( Model * _parent, const QDomElement& originalPluginData )
-{
-	return new DummyEffect(_parent, originalPluginData);
 }
 
 std::unique_ptr<IFileDialog> GuiApplication::createFileDialog(QString title) {
@@ -269,7 +254,7 @@ void GuiApplication::restoreState(QDomNode& node) {
 	}
 }
 
-void GuiApplication::saveState(DataFile& dataFile) {
+void GuiApplication::saveState(IDataFile& dataFile) {
 	m_controllerRackView->saveState( dataFile, dataFile.content() );
 	m_automationEditor->m_editor->saveState( dataFile, dataFile.content() );
 	m_projectNotes->SerializingObject::saveState( dataFile, dataFile.content() );

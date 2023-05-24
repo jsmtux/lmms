@@ -27,7 +27,7 @@
 
 #include "ITimeLineWidget.h"
 
-#include "Song.h"
+#include "ISong.h"
 
 #include <QWidget>
 
@@ -63,8 +63,8 @@ public:
 	} ;
 
 
-	TimeLineWidget(int xoff, int yoff, float ppb, Song::PlayPos & pos,
-				const TimePos & begin, Song::PlayModes mode, QWidget * parent);
+	TimeLineWidget(int xoff, int yoff, float ppb, ISong::PlayPos & pos,
+				const TimePos & begin, ISong::PlayModes mode, QWidget * parent);
 	~TimeLineWidget() override;
 
 	inline QColor const & getBarLineColor() const { return m_barLineColor; }
@@ -94,7 +94,7 @@ public:
 	inline int const & getLoopRectangleVerticalPadding() const { return m_loopRectangleVerticalPadding; }
 	inline void setLoopRectangleVerticalPadding(int const & loopRectangleVerticalPadding) { m_loopRectangleVerticalPadding = loopRectangleVerticalPadding; }
 
-	inline Song::PlayPos & pos()
+	inline ISong::PlayPos & pos()
 	{
 		return( m_pos );
 	}
@@ -218,9 +218,9 @@ private:
 	int m_posMarkerX;
 	float m_ppb;
 	float m_snapSize;
-	Song::PlayPos & m_pos;
+	ISong::PlayPos & m_pos;
 	const TimePos & m_begin;
-	const Song::PlayModes m_mode;
+	const ISong::PlayModes m_mode;
 	TimePos m_loopPos[2];
 
 	TimePos m_savedPos;

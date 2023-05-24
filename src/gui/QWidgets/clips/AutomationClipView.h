@@ -32,7 +32,7 @@
 namespace lmms
 {
 
-class AutomationClip;
+class IAutomationClip;
 
 namespace gui
 {
@@ -44,7 +44,7 @@ class AutomationClipView : public ClipView
 
 
 public:
-	AutomationClipView( AutomationClip * _clip, TrackView * _parent );
+	AutomationClipView( IAutomationClip * _clip, TrackView * _parent );
 	~AutomationClipView() override = default;
 
 public slots:
@@ -70,7 +70,7 @@ protected:
 
 
 private:
-	AutomationClip * m_clip;
+	IAutomationClip * m_clip;
 	QPixmap m_paintPixmap;
 	
 	QStaticText m_staticTextName;

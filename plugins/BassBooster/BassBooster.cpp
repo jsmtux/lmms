@@ -51,7 +51,7 @@ Plugin::Descriptor PLUGIN_EXPORT bassbooster_plugin_descriptor =
 
 
 
-BassBoosterEffect::BassBoosterEffect( Model* parent, const Descriptor::SubPluginFeatures::Key* key ) :
+BassBoosterEffect::BassBoosterEffect( Model* parent, const PluginDescriptor::Key* key ) :
 	Effect( &bassbooster_plugin_descriptor, parent, key ),
 	m_frequencyChangeNeeded( false ),
 	m_bbFX( DspEffectLibrary::FastBassBoost( 70.0f, 1.0f, 2.8f ) ),
@@ -151,7 +151,7 @@ extern "C"
 // necessary for getting instance out of shared lib
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model* parent, void* data )
 {
-	return new BassBoosterEffect( parent, static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>( data ) );
+	return new BassBoosterEffect( parent, static_cast<const Plugin::PluginDescriptor::Key *>( data ) );
 }
 
 }

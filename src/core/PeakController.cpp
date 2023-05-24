@@ -32,7 +32,7 @@
 #include "AudioEngine.h"
 #include "EffectChain.h"
 #include "IGuiApplication.h"
-#include "plugins/PeakControllerEffect/PeakControllerEffect.h"
+#include "IPeakControllerEffect.h"
 
 using lmms::gui::getGUIInterface;
 
@@ -47,7 +47,7 @@ bool PeakController::m_buggedFile;
 
 
 PeakController::PeakController( QObject * _parent,
-		PeakControllerEffect * _peak_effect ) :
+		IPeakControllerEffect * _peak_effect ) :
 	Controller( Controller::PeakController, _parent, tr( "Peak Controller" ) ),
 	m_peakEffect( _peak_effect ),
 	m_currentSample( 0.0f )
@@ -59,9 +59,9 @@ PeakController::PeakController( QObject * _parent,
 			this, SLOT(handleDestroyedEffect()));
 	}
 	connect( Engine::audioEngine(), SIGNAL(sampleRateChanged()), this, SLOT(updateCoeffs()));
-	connect( m_peakEffect->attackModel(), SIGNAL(dataChanged()),
+	connect( m_peakEffect->attackModel()->model(), SIGNAL(dataChanged()),
 			this, SLOT(updateCoeffs()), Qt::DirectConnection );
-	connect( m_peakEffect->decayModel(), SIGNAL(dataChanged()),
+	connect( m_peakEffect->decayModel()->model(), SIGNAL(dataChanged()),
 			this, SLOT(updateCoeffs()), Qt::DirectConnection );
 	m_coeffNeedsUpdate = true;
 }
@@ -71,9 +71,9 @@ PeakController::PeakController( QObject * _parent,
 
 PeakController::~PeakController()
 {
-	if( m_peakEffect != nullptr && m_peakEffect->effectChain() != nullptr )
+	if( m_peakEffect != nullptr )
 	{
-		m_peakEffect->effectChain()->removeEffect( m_peakEffect );
+		m_peakEffect->removeFromEffectChain();
 	}
 }
 
@@ -147,7 +147,7 @@ void PeakController::saveSettings( QDomDocument & _doc, QDomElement & _this )
 	{
 		Controller::saveSettings( _doc, _this );
 
-		_this.setAttribute( "effectId", m_peakEffect->m_effectId );
+		_this.setAttribute( "effectId", m_peakEffect->effectId() );
 	}
 }
 
@@ -166,7 +166,7 @@ void PeakController::loadSettings( const QDomElement & _this )
 	PeakControllerEffectVector::Iterator i;
 	for( i = s_effects.begin(); i != s_effects.end(); ++i )
 	{
-		if( (*i)->m_effectId == effectId )
+		if( (*i)->effectId() == effectId )
 		{
 			m_peakEffect = *i;
 			return;
@@ -195,13 +195,13 @@ PeakController * PeakController::getControllerBySetting(const QDomElement & _thi
 	PeakControllerEffectVector::Iterator i;
 
 	//Backward compatibility for bug in <= 0.4.15 . For >= 1.0.0 ,
-	//foundCount should always be 1 because m_effectId is initialized with rand()
+	//foundCount should always be 1 because effectId() is initialized with rand()
 	int foundCount = 0;
 	if( m_buggedFile == false )
 	{
 		for( i = s_effects.begin(); i != s_effects.end(); ++i )
 		{
-			if( (*i)->m_effectId == effectId )
+			if( (*i)->effectId() == effectId )
 			{
 				foundCount++;
 			}
@@ -212,7 +212,7 @@ PeakController * PeakController::getControllerBySetting(const QDomElement & _thi
 			int newEffectId = 0;
 			for( i = s_effects.begin(); i != s_effects.end(); ++i )
 			{
-				(*i)->m_effectId = newEffectId++;
+				(*i)->setEffectId(newEffectId++);
 			}
 			getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
 				tr("Peak Controller Bug"),
@@ -233,9 +233,9 @@ PeakController * PeakController::getControllerBySetting(const QDomElement & _thi
 
 	for( i = s_effects.begin(); i != s_effects.end(); ++i )
 	{
-		if( (*i)->m_effectId == effectId )
+		if( (*i)->effectId() == effectId )
 		{
-			return (*i)->controller();
+			return static_cast<PeakController*>((*i)->controller());
 		}
 	}
 

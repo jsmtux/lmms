@@ -29,29 +29,30 @@
 #include <QPainter>
 
 #include "embed.h"
-#include "PathUtil.h"
-#include "SampleBuffer.h"
-#include "SampleClip.h"
-#include "SampleTrack.h"
-#include "Song.h"
+#include "IPathUtil.h"
+#include "ISampleBuffer.h"
+#include "IEngine.h"
+#include "IClip.h"
+#include "ITrack.h"
+#include "ISong.h"
 #include "StringPairDrag.h"
 
 namespace lmms::gui
 {
 
 
-SampleClipView::SampleClipView( SampleClip * _clip, TrackView * _tv ) :
-	ClipView( _clip, _tv ),
+SampleClipView::SampleClipView( ISampleClip * _clip, TrackView * _tv ) :
+	ClipView( _clip->baseClip(), _tv ),
 	m_clip( _clip ),
 	m_paintPixmap()
 {
 	// update UI and tooltip
 	updateSample();
 
-	// track future changes of SampleClip
-	connect(m_clip, SIGNAL(sampleChanged()), this, SLOT(updateSample()));
+	// track future changes of ISampleClip
+	connect(&m_clip->sampleClipModel(), &SampleClipModel::sampleChanged, this, &SampleClipView::updateSample);
 
-	connect(m_clip, SIGNAL(wasReversed()), this, SLOT(update()));
+	connect(&m_clip->sampleClipModel(), &SampleClipModel::wasReversed, this, [this](){update();});
 
 	setStyle( QApplication::style() );
 }
@@ -61,8 +62,8 @@ void SampleClipView::updateSample()
 	update();
 	// set tooltip to filename so that user can see what sample this
 	// sample-clip contains
-	setToolTip(m_clip->m_sampleBuffer->audioFile() != "" ?
-					PathUtil::toAbsolute(m_clip->m_sampleBuffer->audioFile()) :
+	setToolTip(m_clip->iSampleBuffer()->audioFile() != "" ?
+					PathUtil::toAbsolute(m_clip->iSampleBuffer()->audioFile()) :
 					tr( "Double-click to open sample" ) );
 }
 
@@ -113,12 +114,12 @@ void SampleClipView::dropEvent( QDropEvent * _de )
 	}
 	else if( StringPairDrag::decodeKey( _de ) == "sampledata" )
 	{
-		m_clip->m_sampleBuffer->loadFromBase64(
+		m_clip->iSampleBuffer()->loadFromBase64(
 					StringPairDrag::decodeValue( _de ) );
 		m_clip->updateLength();
 		update();
 		_de->accept();
-		Engine::getSong()->setModified();
+		IEngine::Instance()->getSongInterface()->setModified();
 	}
 	else
 	{
@@ -141,7 +142,7 @@ void SampleClipView::mousePressEvent( QMouseEvent * _me )
 	{
 		if( _me->button() == Qt::MiddleButton && _me->modifiers() == Qt::ControlModifier )
 		{
-			auto sClip = dynamic_cast<SampleClip*>(getClip());
+			auto sClip = dynamic_cast<ISampleClip*>(getClip());
 			if( sClip )
 			{
 				sClip->updateTrackClips();
@@ -158,7 +159,7 @@ void SampleClipView::mouseReleaseEvent(QMouseEvent *_me)
 {
 	if( _me->button() == Qt::MiddleButton && !_me->modifiers() )
 	{
-		auto sClip = dynamic_cast<SampleClip*>(getClip());
+		auto sClip = dynamic_cast<ISampleClip*>(getClip());
 		if( sClip )
 		{
 			sClip->playbackPositionChanged();
@@ -172,18 +173,18 @@ void SampleClipView::mouseReleaseEvent(QMouseEvent *_me)
 
 void SampleClipView::mouseDoubleClickEvent( QMouseEvent * )
 {
-	QString af = m_clip->m_sampleBuffer->openAudioFile();
+	QString af = m_clip->iSampleBuffer()->openAudioFile();
 
 	if ( af.isEmpty() ) {} //Don't do anything if no file is loaded
-	else if ( af == m_clip->m_sampleBuffer->audioFile() )
+	else if ( af == m_clip->iSampleBuffer()->audioFile() )
 	{	//Instead of reloading the existing file, just reset the size
-		int length = (int) ( m_clip->m_sampleBuffer->frames() / Engine::framesPerTick() );
-		m_clip->changeLength(length);
+		int length = (int) ( m_clip->iSampleBuffer()->frames() / IEngine::Instance()->getFramesPerTick() );
+		m_clip->baseClip()->changeLength(length);
 	}
 	else
 	{	//Otherwise load the new file as ususal
 		m_clip->setSampleFile( af );
-		Engine::getSong()->setModified();
+		IEngine::Instance()->getSongInterface()->setModified();
 	}
 }
 
@@ -209,7 +210,7 @@ void SampleClipView::paintEvent( QPaintEvent * pe )
 
 	QPainter p( &m_paintPixmap );
 
-	bool muted = m_clip->getTrack()->isMuted() || m_clip->isMuted();
+	bool muted = m_clip->baseClip()->getITrack()->isMuted() || m_clip->baseClip()->isMuted();
 	bool selected = isSelected();
 
 	QLinearGradient lingrad(0, 0, 0, height());
@@ -232,8 +233,8 @@ void SampleClipView::paintEvent( QPaintEvent * pe )
 		p.fillRect( rect(), c );
 	}
 
-	auto clipColor = m_clip->hasColor()
-			? m_clip->getEffectiveColor()
+	auto clipColor = m_clip->baseClip()->hasColor()
+			? m_clip->baseClip()->getEffectiveColor()
 			: painter.pen().brush().color();
 
 	p.setPen(clipColor);
@@ -252,19 +253,21 @@ void SampleClipView::paintEvent( QPaintEvent * pe )
 	const int spacing = BORDER_WIDTH + 1;
 	const float ppb = fixedClips() ?
 			( parentWidget()->width() - 2 * BORDER_WIDTH )
-					/ (float) m_clip->length().getBar() :
+					/ (float) m_clip->baseClip()->length().getBar() :
 								pixelsPerBar();
 
-	float nom = Engine::getSong()->getTimeSigModel().getNumerator();
-	float den = Engine::getSong()->getTimeSigModel().getDenominator();
+	float nom = IEngine::Instance()->getSongInterface()->getTimeSigModelInterface()
+				.getNumeratorModel().value();
+	float den = IEngine::Instance()->getSongInterface()->getTimeSigModelInterface()
+				.getDenominatorModel().value();
 	float ticksPerBar = DefaultTicksPerBar * nom / den;
 
-	float offset =  m_clip->startTimeOffset() / ticksPerBar * pixelsPerBar();
+	float offset =  m_clip->baseClip()->startTimeOffset() / ticksPerBar * pixelsPerBar();
 	QRect r = QRect( offset, spacing,
 			qMax( static_cast<int>( m_clip->sampleLength() * ppb / ticksPerBar ), 1 ), rect().bottom() - 2 * spacing );
-	m_clip->m_sampleBuffer->visualize( p, r, pe->rect() );
+	m_clip->iSampleBuffer()->visualize( p, r, pe->rect() );
 
-	QString name = PathUtil::cleanName(m_clip->m_sampleBuffer->audioFile());
+	QString name = PathUtil::cleanName(m_clip->iSampleBuffer()->audioFile());
 	paintTextLabel(name, p);
 
 	// disable antialiasing for borders, since its not needed
@@ -280,7 +283,7 @@ void SampleClipView::paintEvent( QPaintEvent * pe )
 	p.drawRect( 0, 0, rect().right(), rect().bottom() );
 
 	// draw the 'muted' pixmap only if the clip was manualy muted
-	if( m_clip->isMuted() )
+	if( m_clip->baseClip()->isMuted() )
 	{
 		const int spacing = BORDER_WIDTH;
 		const int size = 14;
@@ -317,8 +320,8 @@ void SampleClipView::paintEvent( QPaintEvent * pe )
 
 void SampleClipView::reverseSample()
 {
-	m_clip->sampleBuffer()->setReversed(!m_clip->sampleBuffer()->reversed());
-	Engine::getSong()->setModified();
+	m_clip->iSampleBuffer()->setReversed(!m_clip->iSampleBuffer()->reversed());
+	IEngine::Instance()->getSongInterface()->setModified();
 	update();
 }
 
@@ -338,18 +341,18 @@ bool SampleClipView::splitClip( const TimePos pos )
 	//clip (bad), and a clip the same length as the original one (pointless).
 	if ( splitPos > m_initialClipPos && splitPos < m_initialClipEnd )
 	{
-		m_clip->getTrack()->addJournalCheckPoint();
-		m_clip->getTrack()->saveJournallingState( false );
+		m_clip->baseClip()->getITrack()->addJournalCheckPoint();
+		m_clip->baseClip()->getITrack()->saveJournallingState( false );
 
-		auto rightClip = new SampleClip(*m_clip);
+		auto rightClip = createSampleClip(*m_clip);
 
-		m_clip->changeLength( splitPos - m_initialClipPos );
+		m_clip->baseClip()->changeLength( splitPos - m_initialClipPos );
 
-		rightClip->movePosition( splitPos );
-		rightClip->changeLength( m_initialClipEnd - splitPos );
-		rightClip->setStartTimeOffset( m_clip->startTimeOffset() - m_clip->length() );
+		rightClip->baseClip()->movePosition( splitPos );
+		rightClip->baseClip()->changeLength( m_initialClipEnd - splitPos );
+		rightClip->baseClip()->setStartTimeOffset( m_clip->baseClip()->startTimeOffset() - m_clip->baseClip()->length() );
 
-		m_clip->getTrack()->restoreJournallingState();
+		m_clip->baseClip()->getITrack()->restoreJournallingState();
 		return true;
 	}
 	else { return false; }

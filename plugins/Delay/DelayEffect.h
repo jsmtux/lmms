@@ -37,7 +37,7 @@ class StereoDelay;
 class DelayEffect : public Effect
 {
 public:
-	DelayEffect(Model* parent , const Descriptor::SubPluginFeatures::Key* key );
+	DelayEffect(Model* parent , const PluginDescriptor::Key* key );
 	~DelayEffect() override;
 	bool processAudioBuffer( sampleFrame* buf, const fpp_t frames ) override;
 	EffectControls* controls() override

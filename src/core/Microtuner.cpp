@@ -69,9 +69,9 @@ float Microtuner::keyToFreq(int key, int userBaseNote) const
 	if (!song) {return 0;}
 
 	// Get keymap and scale selected at this moment
-	std::shared_ptr<const Keymap> keymap = song->getKeymap(m_keymapModel.value());
-	std::shared_ptr<const Scale> scale = song->getScale(m_scaleModel.value());
-	const std::vector<Interval> &intervals = scale->getIntervals();
+	auto& keymap = song->getKeymap(m_keymapModel.value());
+	auto& scale = song->getScale(m_scaleModel.value());
+	const auto& intervals = scale->getIntervals();
 
 	// Convert MIDI key to scale degree + octave offset.
 	// The octaves are primarily driven by the keymap wraparound: octave count is increased or decreased if the key
@@ -101,11 +101,11 @@ float Microtuner::keyToFreq(int key, int userBaseNote) const
 	const int baseScaleDegree = baseDegree_rem >= 0 ? baseDegree_rem : baseDegree_rem + octaveDegree;
 
 	// Compute frequency of the middle note and return the final frequency
-	const double octaveRatio = intervals[octaveDegree].getRatio();
+	const double octaveRatio = intervals[octaveDegree]->getRatio();
 	const float middleFreq = (keymap->getBaseFreq() / pow(octaveRatio, (baseScaleOctave + baseKeymapOctave)))
-								/ intervals[baseScaleDegree].getRatio();
+								/ intervals[baseScaleDegree]->getRatio();
 
-	return middleFreq * intervals[scaleDegree].getRatio() * pow(octaveRatio, keymapOctave + scaleOctave);
+	return middleFreq * intervals[scaleDegree]->getRatio() * pow(octaveRatio, keymapOctave + scaleOctave);
 }
 
 int Microtuner::octaveSize() const
@@ -166,8 +166,8 @@ void Microtuner::updateKeymapList(int index)
 void Microtuner::saveSettings(QDomDocument &document, QDomElement &element)
 {
 	m_enabledModel.saveSettings(document, element, "enabled");
-	m_scaleModel.saveSettings(document, element, "scale");
-	m_keymapModel.saveSettings(document, element, "keymap");
+	m_scaleModel.model()->saveSettings(document, element, "scale");
+	m_keymapModel.model()->saveSettings(document, element, "keymap");
 	m_keyRangeImportModel.saveSettings(document, element, "range_import");
 }
 
@@ -175,8 +175,8 @@ void Microtuner::saveSettings(QDomDocument &document, QDomElement &element)
 void Microtuner::loadSettings(const QDomElement &element)
 {
 	m_enabledModel.loadSettings(element, "enabled");
-	m_scaleModel.loadSettings(element, "scale");
-	m_keymapModel.loadSettings(element, "keymap");
+	m_scaleModel.model()->loadSettings(element, "scale");
+	m_keymapModel.model()->loadSettings(element, "keymap");
 	m_keyRangeImportModel.loadSettings(element, "range_import");
 }
 

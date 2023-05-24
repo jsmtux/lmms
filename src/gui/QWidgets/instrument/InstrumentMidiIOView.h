@@ -34,7 +34,7 @@ namespace lmms
 {
 
 class InstrumentTrack;
-class MidiPort;
+class IMidiPort;
 
 namespace gui
 {
@@ -48,11 +48,11 @@ class InstrumentMidiIOView : public QWidget
 {
 	Q_OBJECT
 public:
-	InstrumentMidiIOView( MidiPort* mp, QWidget* parent );
+	InstrumentMidiIOView( IMidiPort* mp, QWidget* parent );
 	~InstrumentMidiIOView() override = default;
 
 private:
-	MidiPort* m_model;
+	IMidiPort* m_model;
 	GroupBox * m_midiInputGroupBox;
 	LcdSpinBox * m_inputChannelSpinBox;
 	LcdSpinBox * m_fixedInputVelocitySpinBox;

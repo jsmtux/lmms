@@ -25,7 +25,7 @@
 #ifndef LMMS_GUI_INSTRUMENT_SOUND_SHAPING_VIEW_H
 #define LMMS_GUI_INSTRUMENT_SOUND_SHAPING_VIEW_H
 
-#include "InstrumentSoundShaping.h"
+#include "IInstrumentSoundShaping.h"
 
 #include <QWidget>
 
@@ -45,14 +45,14 @@ class InstrumentSoundShapingView : public QWidget
 {
 	Q_OBJECT
 public:
-	InstrumentSoundShapingView( InstrumentSoundShaping* m_ss, QWidget * _parent );
+	InstrumentSoundShapingView( IInstrumentSoundShaping* m_ss, QWidget * _parent );
 	~InstrumentSoundShapingView() override;
 
 	void setFunctionsHidden( bool hidden );
 private:
-	InstrumentSoundShaping * m_ss;
+	IInstrumentSoundShaping * m_ss;
 	TabWidget * m_targetsTabWidget;
-	EnvelopeAndLfoView * m_envLfoViews[InstrumentSoundShaping::NumTargets];
+	EnvelopeAndLfoView * m_envLfoViews[IInstrumentSoundShaping::NumTargets];
 
 	// filter-stuff
 	GroupBox * m_filterGroupBox;

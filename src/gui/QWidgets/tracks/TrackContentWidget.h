@@ -35,7 +35,7 @@ class QMimeData;
 namespace lmms
 {
 
-class Track;
+class ITrack;
 
 namespace gui
 {
@@ -126,7 +126,7 @@ protected:
 
 
 private:
-	Track * getTrack();
+	ITrack * getTrack();
 	TimePos getPosition( int mouseX );
 
 	TrackView * m_trackView;

@@ -28,6 +28,7 @@
 #include <QObject>
 
 
+#include "Controller.h"
 #include "Song.h"
 #include "ControllerConnection.h"
 
@@ -35,11 +36,13 @@ namespace lmms
 {
 
 
+std::unique_ptr<IControllerConnection> createControllerconnection( IController* controller) {
+	return std::make_unique<ControllerConnection>(controller);
+}
+
 ControllerConnectionVector ControllerConnection::s_connections;
 
-
-
-ControllerConnection::ControllerConnection(Controller * _controller) :
+ControllerConnection::ControllerConnection(IController * _controller) :
 	m_controller( nullptr ),
 	m_controllerId( -1 ),
 	m_ownsController(false)
@@ -93,7 +96,7 @@ void ControllerConnection::setController( int /*_controllerId*/ )
 
 
 
-void ControllerConnection::setController( Controller * _controller )
+void ControllerConnection::setController( IController * _controller )
 {
 	if( m_ownsController && m_controller )
 	{
@@ -158,7 +161,7 @@ void ControllerConnection::finalizeConnections()
 {
 	for( int i = 0; i < s_connections.size(); ++i )
 	{
-		ControllerConnection * c = s_connections[i];
+		ControllerConnection * c = static_cast<ControllerConnection*>(s_connections[i]);
 		if ( !c->isFinalized() && c->m_controllerId <
 				Engine::getSong()->controllers().size() )
 		{

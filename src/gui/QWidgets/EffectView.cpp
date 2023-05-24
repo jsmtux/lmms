@@ -50,7 +50,7 @@
 namespace lmms::gui
 {
 
-EffectView::EffectView( Effect * _effect, QWidget * _parent ) :
+EffectView::EffectView( IEffect * _effect, QWidget * _parent ) :
 	QWidget( _parent ),
 	m_effect(_effect),
 	m_bg( embed::getIconPixmap( "effect_plugin" ) ),
@@ -61,31 +61,31 @@ EffectView::EffectView( Effect * _effect, QWidget * _parent ) :
 	setFixedSize(EffectView::DEFAULT_WIDTH, EffectView::DEFAULT_HEIGHT);
 
 	// Disable effects that are of type "DummyEffect"
-	bool isEnabled = !dynamic_cast<DummyEffect *>( effect() );
-	m_bypass = new LedCheckBox( &effect()->m_enabledModel, this, "", isEnabled ? LedCheckBox::Green : LedCheckBox::Red );
+	bool isEnabled = !dynamic_cast<IDummyEffect *>( effect() );
+	m_bypass = new LedCheckBox( effect()->enabledModel(), this, "", isEnabled ? LedCheckBox::Green : LedCheckBox::Red );
 	m_bypass->move( 3, 3 );
 	m_bypass->setEnabled( isEnabled );
 
 	m_bypass->setToolTip(tr("On/Off"));
 
-	m_wetDry = new Knob( knobBright_26, &effect()->m_wetDryModel, this );
+	m_wetDry = new Knob( knobBright_26, effect()->wetDryModel(), this );
 	m_wetDry->setLabel( tr( "W/D" ) );
 	m_wetDry->move( 40 - m_wetDry->width() / 2, 5 );
 	m_wetDry->setEnabled( isEnabled );
 	m_wetDry->setHintText( tr( "Wet Level:" ), "" );
 
 
-	m_autoQuit = new TempoSyncKnob( knobBright_26, &effect()->m_autoQuitModel, this );
+	m_autoQuit = new TempoSyncKnob( knobBright_26, effect()->autoQuitModel(), this );
 	m_autoQuit->setLabel( tr( "DECAY" ) );
 	m_autoQuit->move( 78 - m_autoQuit->width() / 2, 5 );
-	m_autoQuit->setEnabled( isEnabled && !effect()->m_autoQuitDisabled );
+	m_autoQuit->setEnabled( isEnabled && !effect()->autoQuitDisabled() );
 	m_autoQuit->setHintText( tr( "Time:" ), "ms" );
 
 
-	m_gate = new Knob( knobBright_26, &effect()->m_gateModel, this );
+	m_gate = new Knob( knobBright_26, effect()->gateModel(), this );
 	m_gate->setLabel( tr( "GATE" ) );
 	m_gate->move( 116 - m_gate->width() / 2, 5 );
-	m_gate->setEnabled( isEnabled && !effect()->m_autoQuitDisabled );
+	m_gate->setEnabled( isEnabled && !effect()->autoQuitDisabled() );
 	m_gate->setHintText( tr( "Gate:" ), "" );
 
 	if( effect()->controls()->controlCount() > 0 )
@@ -197,7 +197,7 @@ void EffectView::closeEffects()
 
 void EffectView::contextMenuEvent( QContextMenuEvent * )
 {
-	QPointer<CaptionMenu> contextMenu = new CaptionMenu( effect()->model()->displayName(), this );
+	QPointer<CaptionMenu> contextMenu = new CaptionMenu( effect()->displayName(), this );
 	contextMenu->addAction( embed::getIconPixmap( "arp_up" ),
 						tr( "Move &up" ),
 						this, SLOT(moveUp()));
@@ -262,7 +262,7 @@ void EffectView::paintEvent( QPaintEvent * )
 	f.setBold( true );
 	p.setFont( f );
 
-	QString elidedText = p.fontMetrics().elidedText( effect()->model()->displayName(), Qt::ElideRight, width() - 22 );
+	QString elidedText = p.fontMetrics().elidedText( effect()->displayName(), Qt::ElideRight, width() - 22 );
 
 	p.setPen( palette().shadow().color() );
 	p.drawText( 6, 55, elidedText );

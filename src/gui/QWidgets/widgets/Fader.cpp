@@ -47,7 +47,7 @@
 #include "Fader.h"
 
 #include "CaptionMenu.h"
-#include "ConfigManager.h"
+#include "IConfigManager.h"
 #include "embed.h"
 #include "lmms_math.h"
 #include "SimpleTextFloat.h"
@@ -65,7 +65,7 @@ QPixmap * Fader::s_back = nullptr;
 QPixmap * Fader::s_leds = nullptr;
 QPixmap * Fader::s_knob = nullptr;
 
-Fader::Fader( FloatModel * _model, const QString & _name, QWidget * _parent ) :
+Fader::Fader( IFloatAutomatableModel * _model, const QString & _name, QWidget * _parent ) :
 	QWidget( _parent ),
 	FloatModelView( _model, this ),
 	m_fPeakValue_L( 0.0 ),
@@ -108,7 +108,7 @@ Fader::Fader( FloatModel * _model, const QString & _name, QWidget * _parent ) :
 }
 
 
-Fader::Fader( FloatModel * model, const QString & name, QWidget * parent, QPixmap * back, QPixmap * leds, QPixmap * knob ) :
+Fader::Fader( IFloatAutomatableModel * model, const QString & name, QWidget * parent, QPixmap * back, QPixmap * leds, QPixmap * knob ) :
 	QWidget( parent ),
 	FloatModelView( model, this ),
 	m_fPeakValue_L( 0.0 ),
@@ -135,7 +135,7 @@ Fader::Fader( FloatModel * model, const QString & name, QWidget * parent, QPixma
 	init(model, name);
 }
 
-void Fader::init(FloatModel * model, QString const & name)
+void Fader::init(IFloatAutomatableModel * model, QString const & name)
 {
 	setWindowTitle( name );
 	setAttribute( Qt::WA_OpaquePaintEvent, false );
@@ -143,8 +143,8 @@ void Fader::init(FloatModel * model, QString const & name)
 	setMinimumSize( backgroundSize );
 	setMaximumSize( backgroundSize );
 	resize( backgroundSize );
-	QObject::connect( model, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( model, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( model->model(), &Model::dataChanged, this, [this](){update();});
+	QObject::connect( model->model(), &Model::propertiesChanged, this, [this](){update();});
 	setHintText( "Volume:","%");
 }
 
@@ -169,7 +169,7 @@ void Fader::mouseMoveEvent( QMouseEvent *mouseEvent )
 
 		float delta = dy * ( model()->maxValue() - model()->minValue() ) / (float) ( height() - ( *m_knob ).height() );
 
-		const auto step = model()->step<float>();
+		const auto step = model()->step();
 		float newValue = static_cast<float>( static_cast<int>( ( m_startValue + delta ) / step + 0.5 ) ) * step;
 		model()->setValue( newValue );
 
@@ -185,7 +185,7 @@ void Fader::mousePressEvent( QMouseEvent* mouseEvent )
 	if( mouseEvent->button() == Qt::LeftButton &&
 			! ( mouseEvent->modifiers() & Qt::ControlModifier ) )
 	{
-		AutomatableModel *thisModel = model();
+		auto *thisModel = model();
 		if( thisModel )
 		{
 			thisModel->addJournalCheckPoint();
@@ -240,7 +240,7 @@ void Fader::mouseReleaseEvent( QMouseEvent * mouseEvent )
 {
 	if( mouseEvent && mouseEvent->button() == Qt::LeftButton )
 	{
-		AutomatableModel *thisModel = model();
+		auto *thisModel = model();
 		if( thisModel )
 		{
 			thisModel->restoreJournallingState();
@@ -320,7 +320,7 @@ void Fader::setPeak_R( float fPeak )
 // update tooltip showing value and adjust position while changing fader value
 void Fader::updateTextFloat()
 {
-	if( ConfigManager::inst()->value( "app", "displaydbfs" ).toInt() && m_conversionFactor == 100.0 )
+	if( IConfigManager::Instance()->value( "app", "displaydbfs" ).toInt() && m_conversionFactor == 100.0 )
 	{
 		s_textFloat->setText( QString("Volume: %1 dBFS").
 				arg( ampToDbfs( model()->value() ), 3, 'f', 2 ) );

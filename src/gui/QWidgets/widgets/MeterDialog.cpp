@@ -27,7 +27,7 @@
 #include "gui_templates.h"
 #include "LcdSpinBox.h"
 #include "MeterDialog.h"
-#include "MeterModel.h"
+#include "IModels.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -37,7 +37,7 @@ namespace lmms::gui
 {
 
 
-MeterDialog::MeterDialog( MeterModel* mm, QWidget * _parent, bool _simple ) :
+MeterDialog::MeterDialog( IMeterModel* mm, QWidget * _parent, bool _simple ) :
 	QWidget( _parent )
 {
 	auto vlayout = new QVBoxLayout(this);
@@ -49,7 +49,7 @@ MeterDialog::MeterDialog( MeterModel* mm, QWidget * _parent, bool _simple ) :
 	num_layout->setSpacing( 0 );
 	num_layout->setContentsMargins(0, 0, 0, 0);
 
-	m_numerator = new LcdSpinBox( 2,  &mm->numeratorModel(), num, tr( "Meter Numerator" ) );
+	m_numerator = new LcdSpinBox( 2,  &mm->getNumeratorModel(), num, tr( "Meter Numerator" ) );
 	m_numerator->setToolTip(tr("Meter numerator"));
 
 	num_layout->addWidget( m_numerator );
@@ -69,7 +69,7 @@ MeterDialog::MeterDialog( MeterModel* mm, QWidget * _parent, bool _simple ) :
 	den_layout->setSpacing( 0 );
 	den_layout->setContentsMargins(0, 0, 0, 0);
 
-	m_denominator = new LcdSpinBox( 2,  &mm->denominatorModel(), den, tr( "Meter Denominator" ) );
+	m_denominator = new LcdSpinBox( 2,  &mm->getDenominatorModel(), den, tr( "Meter Denominator" ) );
 	m_denominator->setToolTip(tr("Meter denominator"));
 	if( _simple )
 	{

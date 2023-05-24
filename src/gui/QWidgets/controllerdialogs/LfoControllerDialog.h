@@ -2,22 +2,27 @@
 #define LMMS_GUI_LFO_CONTROLLER_DIALOG_H
 
 #include "ControllerDialog.h"
-#include "LfoController.h"
+#include "IController.h"
 
 namespace lmms::gui {
+
+class Knob;
+class TempoSyncKnob;
+class PixmapButton;
+class automatableButtonGroup;
 
 class LfoControllerDialog : public ControllerDialog
 {
 	Q_OBJECT
 public:
-	LfoControllerDialog( LfoController * _controller, QWidget * _parent );
+	LfoControllerDialog( IController * _controller, QWidget * _parent );
 	~LfoControllerDialog() override;
 
 
 protected:
 	void contextMenuEvent( QContextMenuEvent * _me ) override;
 
-	LfoController * m_lfo;
+	ILfoController * m_lfo;
 
 	Knob * m_baseKnob;
 	TempoSyncKnob * m_speedKnob;

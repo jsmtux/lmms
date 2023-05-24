@@ -27,10 +27,8 @@
 
 #include "IGuiApplication.h"
 
-#include "AudioEngine.h"
-#include "Engine.h"
-#include "Effect.h"
-#include "Instrument.h"
+#include "ICoreApplication.h"
+
 
 namespace lmms::gui
 {
@@ -84,7 +82,7 @@ public:
 	{
 		return 0;
 	};
-	const MidiClip* currentMidiClip() const
+	const IMidiClip* currentMidiClip() const
 	{
 		return nullptr;
 	}
@@ -120,80 +118,6 @@ public:
 	{}
 };
 
-
-class DummyInstrument : public Instrument
-{
-public:
-	DummyInstrument( InstrumentTrack * _instrument_track ) :
-		Instrument( _instrument_track, nullptr )
-	{
-	}
-
-	~DummyInstrument() override = default;
-
-	void playNote( NotePlayHandle *, sampleFrame * buffer ) override
-	{
-		memset( buffer, 0, sizeof( sampleFrame ) *
-			Engine::audioEngine()->framesPerPeriod() );
-	}
-
-	void saveSettings( QDomDocument &, QDomElement & ) override
-	{
-	}
-
-	void loadSettings( const QDomElement & ) override
-	{
-	}
-
-	QString nodeName() const override
-	{
-		return "dummyinstrument";
-	}
-};
-
-
-class DummyPlugin : public Plugin
-{
-public:
-	DummyPlugin() :
-		Plugin( nullptr, nullptr )
-	{
-	}
-
-	~DummyPlugin() override = default;
-
-	void saveSettings( QDomDocument &, QDomElement & ) override
-	{
-	}
-
-	void loadSettings( const QDomElement & ) override
-	{
-	}
-
-	QString nodeName() const override
-	{
-		return "DummyPlugin";
-	}
-};
-
-class DummyEffect : public Effect
-{
-public:
-	DummyEffect( Model * _parent, const QDomElement& originalPluginData ) :
-		Effect( nullptr, _parent, nullptr )
-	{ }
-
-	EffectControls * controls() override
-	{
-		return nullptr;
-	}
-
-	bool processAudioBuffer( sampleFrame *, const fpp_t ) override
-	{
-		return false;
-	}
-};
-
 class LMMS_EXPORT GuiApplication: public IGuiApplication
 {
 public:
@@ -218,18 +142,6 @@ public:
 	{
 		return &m_automationEditor;
 	}
-	Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) override
-	{
-		return new DummyInstrument(_instrument_track);
-	}
-	Plugin* createDummyPlugin() override
-	{
-		return new DummyPlugin;
-	}
-	Effect* createDummyEffect( Model * _parent, const QDomElement& originalPluginData ) override
-	{
-		return new DummyEffect(_parent, originalPluginData);
-	}
 	std::unique_ptr<IFileDialog> createFileDialog(QString title) override
 	{
 		return std::make_unique<FileDialog>();
@@ -238,7 +150,7 @@ public:
 	{}
 	void restoreState(QDomNode& node) override
 	{}
-	void saveState(DataFile& dataFile) override
+	void saveState(IDataFile& dataFile) override
 	{}
 private:
 	MainWindow m_mainWindow;

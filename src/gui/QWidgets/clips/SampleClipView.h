@@ -30,7 +30,7 @@
 namespace lmms
 {
 
-class SampleClip;
+class ISampleClip;
 
 namespace gui
 {
@@ -41,7 +41,7 @@ class SampleClipView : public ClipView
 	Q_OBJECT
 
 public:
-	SampleClipView( SampleClip * _clip, TrackView * _tv );
+	SampleClipView( ISampleClip * _clip, TrackView * _tv );
 	~SampleClipView() override = default;
 
 public slots:
@@ -61,7 +61,7 @@ protected:
 
 
 private:
-	SampleClip * m_clip;
+	ISampleClip * m_clip;
 	QPixmap m_paintPixmap;
 	bool splitClip( const TimePos pos ) override;
 } ;

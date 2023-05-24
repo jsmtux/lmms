@@ -27,6 +27,7 @@
 
 #include <QDomElement>
 
+#include "IPlugin.h"
 #include "Effect.h"
 #include "EffectControls.h"
 
@@ -69,11 +70,11 @@ public:
 
 
 
-class DummyEffect : public Effect
+class DummyEffect : public Effect, public IDummyEffect
 {
 	Q_OBJECT
 public:
-	DummyEffect( Model * _parent, const QDomElement& originalPluginData ) :
+	DummyEffect( IEffectChain * _parent, const QDomElement& originalPluginData ) :
 		Effect( nullptr, _parent, nullptr ),
 		m_controls( this ),
 		m_originalPluginData( originalPluginData )

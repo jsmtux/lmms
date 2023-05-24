@@ -4,8 +4,8 @@
 #include <QLineEdit>
 
 #include "AudioDeviceSetupWidget.h"
+#include "IAudioDevice.h"
 #include "lmmsconfig.h"
-#include "AudioSdl.h"
 
 #ifdef LMMS_HAVE_SDL
 
@@ -18,7 +18,7 @@ public:
     ~AudioSdlSetupWidget() override = default;
 
     inline static QString name() {
-        return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", AudioSdl::name() );
+        return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", AudioSdlName() );
     }
 
     void saveSettings() override;

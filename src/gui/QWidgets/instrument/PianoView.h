@@ -25,7 +25,7 @@
 #ifndef LMMS_GUI_PIANO_VIEW_H
 #define LMMS_GUI_PIANO_VIEW_H
 
-#include "AutomatableModel.h"
+#include "IModels.h"
 
 #include <QPixmap>
 #include <QScrollBar>
@@ -33,7 +33,7 @@
 namespace lmms
 {
 
-class Piano;
+class IPiano;
 
 namespace gui
 {
@@ -42,7 +42,7 @@ class PianoView : public QWidget
 {
 	Q_OBJECT
 public:
-	PianoView( Piano* piano, QWidget * _parent );
+	PianoView( IPiano* piano, QWidget * _parent );
 	~PianoView() override = default;
 
 	static int getKeyFromKeyEvent( QKeyEvent * _ke );
@@ -69,7 +69,7 @@ private:
 	int getKeyX( int _key_num ) const;
 	int getKeyWidth(int key_num) const;
 	int getKeyHeight(int key_num) const;
-	IntModel *getNearestMarker(int key, QString* title = nullptr);
+	IIntAutomatableModel *getNearestMarker(int key, QString* title = nullptr);
 
 	static QPixmap * s_whiteKeyPm;
 	static QPixmap * s_blackKeyPm;
@@ -78,12 +78,12 @@ private:
 	static QPixmap * s_whiteKeyDisabledPm;
 	static QPixmap * s_blackKeyDisabledPm;
 
-	Piano * m_piano;
+	IPiano * m_piano;
 
 	QScrollBar * m_pianoScroll;
 	int m_startKey;					//!< first key when drawing
 	int m_lastKey;					//!< previously pressed key
-	IntModel *m_movedNoteModel;		//!< note marker which is being moved
+	IIntAutomatableModel *m_movedNoteModel;		//!< note marker which is being moved
 
 
 

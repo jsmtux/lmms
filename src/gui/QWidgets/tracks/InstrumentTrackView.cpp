@@ -24,17 +24,17 @@
 
 #include "InstrumentTrackView.h"
 
-#include "AudioEngine.h"
-#include "ConfigManager.h"
-#include "Engine.h"
+#include "IAudioEngine.h"
+#include "IConfigManager.h"
+#include "IEngine.h"
 #include "FadeButton.h"
 #include "GuiApplication.h"
-#include "InstrumentTrack.h"
+#include "ITrack.h"
 #include "MidiCCRackView.h"
-#include "Mixer.h"
+#include "IMixer.h"
 #include "MixerView.h"
 #include "MainWindow.h"
-#include "MidiClient.h"
+#include "IMidiClient.h"
 #include "TrackLabelButton.h"
 
 #include "instrument/InstrumentTrackWindow.h"
@@ -53,8 +53,8 @@ namespace lmms::gui
 {
 
 
-InstrumentTrackView::InstrumentTrackView( InstrumentTrack * _it, TrackContainerView* tcv ) :
-	TrackView( _it, tcv ),
+InstrumentTrackView::InstrumentTrackView( IInstrumentTrack * _it, TrackContainerView* tcv ) :
+	TrackView( _it->baseTrack(), tcv ),
 	m_instrumentTrack(_it),
 	m_window( nullptr ),
 	m_lastPos( -1, -1 )
@@ -71,15 +71,15 @@ InstrumentTrackView::InstrumentTrackView( InstrumentTrack * _it, TrackContainerV
 	connect( m_tlb, SIGNAL(toggled(bool)),
 			this, SLOT(toggleInstrumentWindow(bool)));
 
-	connect( _it, SIGNAL(nameChanged()),
+	connect( _it->baseTrack()->model(), SIGNAL(nameChanged()),
 			m_tlb, SLOT(update()));
 
-	connect(ConfigManager::inst(), SIGNAL(valueChanged(QString,QString,QString)),
+	connect(IConfigManager::Instance(), SIGNAL(valueChanged(QString,QString,QString)),
 			this, SLOT(handleConfigChange(QString,QString,QString)));
 
 	// creation of widgets for track-settings-widget
 	int widgetWidth;
-	if( ConfigManager::inst()->value( "ui",
+	if( IConfigManager::Instance()->value( "ui",
 					  "compacttrackbuttons" ).toInt() )
 	{
 		widgetWidth = DEFAULT_SETTINGS_WIDGET_WIDTH_COMPACT;
@@ -89,7 +89,7 @@ InstrumentTrackView::InstrumentTrackView( InstrumentTrack * _it, TrackContainerV
 		widgetWidth = DEFAULT_SETTINGS_WIDGET_WIDTH;
 	}
 
-	m_volumeKnob = new Knob( knobSmall_17,  &_it->m_volumeModel, getTrackSettingsWidget(),
+	m_volumeKnob = new Knob( knobSmall_17,  _it->volumeModel(), getTrackSettingsWidget(),
 							tr( "Volume" ) );
 	m_volumeKnob->setVolumeKnob( true );
 	m_volumeKnob->setHintText( tr( "Volume:" ), "%" );
@@ -97,7 +97,7 @@ InstrumentTrackView::InstrumentTrackView( InstrumentTrack * _it, TrackContainerV
 	m_volumeKnob->setLabel( tr( "VOL" ) );
 	m_volumeKnob->show();
 
-	m_panningKnob = new Knob( knobSmall_17, &_it->m_panningModel, getTrackSettingsWidget(),
+	m_panningKnob = new Knob( knobSmall_17, _it->panningModel(), getTrackSettingsWidget(),
 							tr( "Panning" ) );
 	m_panningKnob->setHintText(tr("Panning:"), "%");
 	m_panningKnob->move( widgetWidth-24, 2 );
@@ -107,16 +107,16 @@ InstrumentTrackView::InstrumentTrackView( InstrumentTrack * _it, TrackContainerV
 	m_midiMenu = new QMenu( tr( "MIDI" ), this );
 
 	// sequenced MIDI?
-	if( !Engine::audioEngine()->midiClient()->isRaw() )
+	if( !IEngine::Instance()->getAudioEngineInterface()->midiClientInterface()->isRaw() )
 	{
-		_it->m_midiPort.m_readablePortsMenu = new MidiPortMenu(
-							MidiPort::Input, &_it->m_midiPort );
-		_it->m_midiPort.m_writablePortsMenu = new MidiPortMenu(
-							MidiPort::Output, &_it->m_midiPort );
+		_it->midiPortInterface()->setReadablePortsMenu( new MidiPortMenu(
+							IMidiPort::Input, _it->midiPortInterface()));
+		_it->midiPortInterface()->setWritablePortsMenu( new MidiPortMenu(
+							IMidiPort::Output, _it->midiPortInterface()));
 		m_midiInputAction = m_midiMenu->addMenu(
-					_it->m_midiPort.m_readablePortsMenu );
+					_it->midiPortInterface()->readablePortsMenu() );
 		m_midiOutputAction = m_midiMenu->addMenu(
-					_it->m_midiPort.m_writablePortsMenu );
+					_it->midiPortInterface()->writablePortsMenu() );
 	}
 	else
 	{
@@ -128,7 +128,7 @@ InstrumentTrackView::InstrumentTrackView( InstrumentTrack * _it, TrackContainerV
 						SLOT(midiInSelected()));
 		connect( m_midiOutputAction, SIGNAL(changed()), this,
 					SLOT(midiOutSelected()));
-		connect( &_it->m_midiPort, SIGNAL(modeChanged()),
+		connect( _it->midiPortInterface()->midiPortModel(), SIGNAL(modeChanged()),
 				this, SLOT(midiConfigChanged()));
 	}
 
@@ -154,10 +154,10 @@ InstrumentTrackView::InstrumentTrackView( InstrumentTrack * _it, TrackContainerV
 				this, SLOT(activityIndicatorPressed()));
 	connect( m_activityIndicator, SIGNAL(released()),
 				this, SLOT(activityIndicatorReleased()));
-	connect( _it, SIGNAL(newNote()),
-			 m_activityIndicator, SLOT(activate()));
-	connect( _it, SIGNAL(endNote()),
-	 		m_activityIndicator, SLOT(noteEnd()));
+	connect( _it->instrumentTrackModel(), &InstrumentTrackModel::newNote,
+			 m_activityIndicator, &FadeButton::activate);
+	connect( _it->instrumentTrackModel(), &InstrumentTrackModel::endNote,
+	 		m_activityIndicator, &FadeButton::noteEnd);
 }
 
 
@@ -168,8 +168,8 @@ InstrumentTrackView::~InstrumentTrackView()
 	delete m_window;
 	m_window = nullptr;
 
-	delete model()->m_midiPort.m_readablePortsMenu;
-	delete model()->m_midiPort.m_writablePortsMenu;
+	delete model()->midiPortInterface()->readablePortsMenu();
+	delete model()->midiPortInterface()->writablePortsMenu();
 }
 
 
@@ -221,9 +221,9 @@ InstrumentTrackWindow * InstrumentTrackView::topLevelInstrumentTrackWindow()
 void InstrumentTrackView::createMixerLine()
 {
 	int channelIndex = getGUI()->mixerView()->addNewChannel();
-	auto channel = Engine::mixer()->mixerChannel(channelIndex);
+	auto channel = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface(channelIndex);
 
-	channel->m_name = getTrack()->name();
+	channel->setName(getTrack()->name());
 	if (getTrack()->useColor()) { channel->setColor (getTrack()->color()); }
 
 	assignMixerLine(channelIndex);
@@ -285,7 +285,7 @@ void InstrumentTrackView::dropEvent( QDropEvent * _de )
 
 void InstrumentTrackView::toggleInstrumentWindow( bool _on )
 {
-	if (_on && ConfigManager::inst()->value("ui", "oneinstrumenttrackwindow").toInt())
+	if (_on && IConfigManager::Instance()->value("ui", "oneinstrumenttrackwindow").toInt())
 	{
 		if (topLevelInstrumentTrackWindow())
 		{
@@ -301,7 +301,7 @@ void InstrumentTrackView::toggleInstrumentWindow( bool _on )
 
 void InstrumentTrackView::activityIndicatorPressed()
 {
-	model()->processInEvent( MidiEvent( MidiNoteOn, 0, DefaultKey, MidiDefaultVelocity ) );
+	model()->processInEvent( *createMidiEvent( MidiNoteOn, 0, DefaultKey, MidiDefaultVelocity ) );
 }
 
 
@@ -309,7 +309,7 @@ void InstrumentTrackView::activityIndicatorPressed()
 
 void InstrumentTrackView::activityIndicatorReleased()
 {
-	model()->processInEvent( MidiEvent( MidiNoteOff, 0, DefaultKey, 0 ) );
+	model()->processInEvent( *createMidiEvent( MidiNoteOff, 0, DefaultKey, 0 ) );
 }
 
 
@@ -320,7 +320,7 @@ void InstrumentTrackView::midiInSelected()
 {
 	if( model() )
 	{
-		model()->m_midiPort.setReadable( m_midiInputAction->isChecked() );
+		model()->midiPortInterface()->setReadable( m_midiInputAction->isChecked() );
 	}
 }
 
@@ -331,7 +331,7 @@ void InstrumentTrackView::midiOutSelected()
 {
 	if( model() )
 	{
-		model()->m_midiPort.setWritable( m_midiOutputAction->isChecked() );
+		model()->midiPortInterface()->setWritable( m_midiOutputAction->isChecked() );
 	}
 }
 
@@ -340,8 +340,8 @@ void InstrumentTrackView::midiOutSelected()
 
 void InstrumentTrackView::midiConfigChanged()
 {
-	m_midiInputAction->setChecked( model()->m_midiPort.isReadable() );
-	m_midiOutputAction->setChecked( model()->m_midiPort.isWritable() );
+	m_midiInputAction->setChecked( model()->midiPortInterface()->isReadable() );
+	m_midiOutputAction->setChecked( model()->midiPortInterface()->isWritable() );
 }
 
 
@@ -352,12 +352,12 @@ QMenu * InstrumentTrackView::createMixerMenu(QString title, QString newMixerLabe
 {
 	int channelIndex = model()->mixerChannelModel()->value();
 
-	MixerChannel *mixerChannel = Engine::mixer()->mixerChannel( channelIndex );
+	IMixerChannel *mixerChannel = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( channelIndex );
 
 	// If title allows interpolation, pass channel index and name
 	if ( title.contains( "%2" ) )
 	{
-		title = title.arg( channelIndex ).arg( mixerChannel->m_name );
+		title = title.arg( channelIndex ).arg( mixerChannel->getName() );
 	}
 
 	auto mixerMenu = new QMenu(title);
@@ -365,14 +365,14 @@ QMenu * InstrumentTrackView::createMixerMenu(QString title, QString newMixerLabe
 	mixerMenu->addAction( newMixerLabel, this, SLOT(createMixerLine()));
 	mixerMenu->addSeparator();
 
-	for (int i = 0; i < Engine::mixer()->numChannels(); ++i)
+	for (int i = 0; i < IEngine::Instance()->getMixerInterface()->numChannels(); ++i)
 	{
-		MixerChannel * currentChannel = Engine::mixer()->mixerChannel( i );
+		IMixerChannel * currentChannel = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( i );
 
 		if ( currentChannel != mixerChannel )
 		{
-			auto index = currentChannel->m_channelIndex;
-			QString label = tr( "%1: %2" ).arg( currentChannel->m_channelIndex ).arg( currentChannel->m_name );
+			auto index = currentChannel->channelIndex();
+			QString label = tr( "%1: %2" ).arg( currentChannel->channelIndex() ).arg( currentChannel->getName() );
 			mixerMenu->addAction(label, [this, index](){
 				assignMixerLine(index);
 			});

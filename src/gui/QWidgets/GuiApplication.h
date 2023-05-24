@@ -25,6 +25,7 @@
 #ifndef LMMS_GUI_GUI_APPLICATION_H
 #define LMMS_GUI_GUI_APPLICATION_H
 
+#include "IPlugin.h"
 #include "IGuiApplication.h"
 #include "MainWindow.h"
 #include "MixerView.h"
@@ -41,7 +42,12 @@
 
 class QLabel;
 
-namespace lmms::gui
+namespace lmms
+{
+
+class IProjectRenderer;
+
+namespace gui
 {
 
 class ControllerRackView;
@@ -52,7 +58,7 @@ class LMMS_EXPORT GuiApplication : public QObject, public IGuiApplication
 {
 	Q_OBJECT;
 public:
-	explicit GuiApplication();
+	explicit GuiApplication(IProjectRenderer* renderer);
 	~GuiApplication() override;
 
 	static GuiApplication* instance();
@@ -74,14 +80,11 @@ public:
 	IAutomationEditor* automationEditorInterface() override { return m_automationEditor; }
 	ControllerRackView* getControllerRackView() { return m_controllerRackView; }
 
-	Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) override;
-	Plugin* createDummyPlugin() override;
-	Effect* createDummyEffect( Model * _parent, const QDomElement& originalPluginData ) override;
 	std::unique_ptr<IFileDialog> createFileDialog(QString title) override;
 
 	void clear() override;
 	void restoreState(QDomNode& node) override;
-	void saveState(DataFile& dataFile) override;
+	void saveState(IDataFile& dataFile) override;
 
 public slots:
 	void displayInitProgress(const QString &msg);
@@ -107,6 +110,7 @@ private:
 // Short-hand function
 LMMS_EXPORT GuiApplication* getGUI();
 
-} // namespace lmms::gui
+} // namespace gui
+} // namespace lmms
 
 #endif // LMMS_GUI_GUI_APPLICATION_H

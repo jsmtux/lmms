@@ -24,10 +24,10 @@
  
 #include "PatternTrackView.h"
 
-#include "Engine.h"
+#include "IEngine.h"
 #include "GuiApplication.h"
-#include "PatternStore.h"
-#include "PatternTrack.h"
+#include "IPatternStore.h"
+#include "ITrack.h"
 #include "TrackLabelButton.h"
 
 #include "editors/PatternEditor.h"
@@ -35,8 +35,8 @@
 namespace lmms::gui
 {
 
-PatternTrackView::PatternTrackView(PatternTrack* pt, TrackContainerView* tcv) :
-	TrackView(pt, tcv),
+PatternTrackView::PatternTrackView(IPatternTrack* pt, TrackContainerView* tcv) :
+	TrackView(pt->baseTrack(), tcv),
 	m_patternTrack(pt)
 {
 	setFixedHeight( 32 );
@@ -50,8 +50,8 @@ PatternTrackView::PatternTrackView(PatternTrack* pt, TrackContainerView* tcv) :
 	connect( m_trackLabel, SIGNAL(clicked(bool)),
 			this, SLOT(clickedTrackLabel()));
 
-	QObject::connect( pt, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( pt, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( pt->baseTrack()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( pt->baseTrack()->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 }
 
 
@@ -59,7 +59,7 @@ PatternTrackView::PatternTrackView(PatternTrack* pt, TrackContainerView* tcv) :
 
 PatternTrackView::~PatternTrackView()
 {
-	getGUI()->patternEditor()->m_editor->removeViewsForPattern(PatternTrack::s_infoMap[m_patternTrack]);
+	getGUI()->patternEditor()->m_editor->removeViewsForPattern(IPatternTrack::getInfoMap(m_patternTrack));
 }
 
 
@@ -67,7 +67,7 @@ PatternTrackView::~PatternTrackView()
 
 bool PatternTrackView::close()
 {
-	getGUI()->patternEditor()->m_editor->removeViewsForPattern(PatternTrack::s_infoMap[m_patternTrack]);
+	getGUI()->patternEditor()->m_editor->removeViewsForPattern(IPatternTrack::getInfoMap(m_patternTrack));
 	return TrackView::close();
 }
 
@@ -76,7 +76,7 @@ bool PatternTrackView::close()
 
 void PatternTrackView::clickedTrackLabel()
 {
-	Engine::patternStore()->setCurrentPattern(m_patternTrack->patternIndex());
+	IEngine::Instance()->getPatternStoreInterface()->setCurrentPattern(m_patternTrack->patternIndex());
 	getGUI()->patternEditor()->parentWidget()->show();
 	getGUI()->patternEditor()->setFocus(Qt::ActiveWindowFocusReason);
 }

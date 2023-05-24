@@ -34,7 +34,7 @@ class QPixmap;
 namespace lmms
 {
 
-class EnvelopeAndLfoParameters;
+class IEnvelopeAndLfoParameters;
 
 namespace gui
 {
@@ -51,7 +51,7 @@ class EnvelopeAndLfoView : public QWidget
 {
 	Q_OBJECT
 public:
-	EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidget * _parent );
+	EnvelopeAndLfoView( IEnvelopeAndLfoParameters* params, QWidget * _parent );
 	~EnvelopeAndLfoView() override;
 
 protected:
@@ -69,7 +69,7 @@ private:
 	static QPixmap * s_envGraph;
 	static QPixmap * s_lfoGraph;
 
-	EnvelopeAndLfoParameters * m_params;
+	IEnvelopeAndLfoParameters * m_params;
 
 
 	// envelope stuff

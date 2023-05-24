@@ -54,7 +54,7 @@ Plugin::Descriptor PLUGIN_EXPORT flanger_plugin_descriptor =
 
 
 
-FlangerEffect::FlangerEffect( Model *parent, const Plugin::Descriptor::SubPluginFeatures::Key *key ) :
+FlangerEffect::FlangerEffect( Model *parent, const Plugin::PluginDescriptor::Key *key ) :
 	Effect( &flanger_plugin_descriptor, parent, key ),
 	m_flangerControls( this )
 {
@@ -164,7 +164,7 @@ extern "C"
 //needed for getting plugin out of shared lib
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model* parent, void* data )
 {
-	return new FlangerEffect( parent , static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>( data ) );
+	return new FlangerEffect( parent , static_cast<const Plugin::PluginDescriptor::Key *>( data ) );
 }
 
 }}

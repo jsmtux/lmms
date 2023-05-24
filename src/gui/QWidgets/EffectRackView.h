@@ -26,7 +26,7 @@
 #ifndef LMMS_GUI_EFFECT_RACK_VIEW_H
 #define LMMS_GUI_EFFECT_RACK_VIEW_H
 
-#include "EffectChain.h"
+#include "IEffectChain.h"
 #include "lmms_basics.h"
 
 #include <QWidget>
@@ -45,7 +45,7 @@ class EffectRackView : public QWidget
 {
 	Q_OBJECT
 public:
-	EffectRackView( EffectChain* _fxChain, QWidget* parent = nullptr );
+	EffectRackView( IEffectChain* _fxChain, QWidget* parent = nullptr );
 	~EffectRackView() override;
 
 	static constexpr int DEFAULT_WIDTH = 245;
@@ -63,7 +63,8 @@ private slots:
 
 
 private:
-	EffectChain* m_fxChain;
+	IEffectChain* m_effectChain;
+
 
 	QVector<EffectView *> m_effectViews;
 

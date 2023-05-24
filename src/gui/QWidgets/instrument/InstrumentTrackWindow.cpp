@@ -24,30 +24,29 @@
 
 #include "InstrumentTrackWindow.h"
 
-#include "ConfigManager.h"
-#include "DataFile.h"
+#include "IConfigManager.h"
+#include "IDataFile.h"
 #include "EffectRackView.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "FileBrowser.h"
 #include "GuiApplication.h"
 #include "gui_templates.h"
-#include "Instrument.h"
-#include "InstrumentFunctions.h"
+#include "IPlugin.h"
 #include "InstrumentFunctionViews.h"
 #include "InstrumentMidiIOView.h"
 #include "InstrumentMiscView.h"
 #include "InstrumentSoundShapingView.h"
-#include "InstrumentTrack.h"
+#include "ITrack.h"
 #include "MainWindow.h"
 #include "PianoView.h"
-#include "PluginFactory.h"
+#include "IPluginFactory.h"
 #include "PluginView.h"
-#include "Song.h"
+#include "ISong.h"
 #include "StringPairDrag.h"
 #include "SubWindow.h"
-
-#include "plugins/QWidgetInstrumentPlugin.h"
+#include "IMicrotuner.h"
+#include "plugininterfaces/IQWidgetInstrumentPlugin.h"
 
 #include "editors/TrackContainerView.h"
 
@@ -152,7 +151,7 @@ InstrumentTrackWindow::InstrumentTrackWindow( InstrumentTrackView * _itv ) :
 	Qt::Alignment widgetAlignment = Qt::AlignHCenter | Qt::AlignCenter;
 
 	// set up volume knob
-	m_volumeKnob = new Knob( knobBright_26, &m_track->m_volumeModel, nullptr, tr( "Volume" ) );
+	m_volumeKnob = new Knob( knobBright_26, m_track->volumeModel(), nullptr, tr( "Volume" ) );
 	m_volumeKnob->setVolumeKnob( true );
 	m_volumeKnob->setHintText( tr( "Volume:" ), "%" );
 
@@ -166,7 +165,7 @@ InstrumentTrackWindow::InstrumentTrackWindow( InstrumentTrackView * _itv ) :
 
 
 	// set up panning knob
-	m_panningKnob = new Knob( knobBright_26, &m_track->m_panningModel, nullptr, tr( "Panning" ) );
+	m_panningKnob = new Knob( knobBright_26, m_track->panningModel(), nullptr, tr( "Panning" ) );
 	m_panningKnob->setHintText( tr( "Panning:" ), "" );
 
 	basicControlsLayout->addWidget( m_panningKnob, 0, 1 );
@@ -182,9 +181,9 @@ InstrumentTrackWindow::InstrumentTrackWindow( InstrumentTrackView * _itv ) :
 
 
 	// set up pitch knob
-	if( m_track->instrument() && m_track->instrument()->flags().testFlag( Instrument::IsNotBendable ) == false )
+	if( m_track->instrument() && m_track->instrument()->flags().testFlag( IInstrument::IsNotBendable ) == false )
 	{
-		m_pitchKnob = new Knob( knobBright_26, &m_track->m_pitchModel, nullptr, tr( "Pitch" ) );
+		m_pitchKnob = new Knob( knobBright_26, m_track->pitchModel(), nullptr, tr( "Pitch" ) );
 		m_pitchKnob->setHintText( tr( "Pitch:" ), " " + tr( "cents" ) );
 
 		basicControlsLayout->addWidget( m_pitchKnob, 0, 3 );
@@ -196,7 +195,7 @@ InstrumentTrackWindow::InstrumentTrackWindow( InstrumentTrackView * _itv ) :
 		basicControlsLayout->setAlignment( m_pitchLabel, labelAlignment );
 
 		// set up pitch range knob
-		m_pitchRangeSpinBox= new LcdSpinBox( 2, &m_track->m_pitchRangeModel, nullptr, tr( "Pitch range (semitones)" ) );
+		m_pitchRangeSpinBox= new LcdSpinBox( 2, m_track->pitchRangeModel(), nullptr, tr( "Pitch range (semitones)" ) );
 
 		basicControlsLayout->addWidget( m_pitchRangeSpinBox, 0, 4 );
 		basicControlsLayout->setAlignment( m_pitchRangeSpinBox, widgetAlignment );
@@ -212,7 +211,7 @@ InstrumentTrackWindow::InstrumentTrackWindow( InstrumentTrackView * _itv ) :
 
 
 	// setup spinbox for selecting Mixer-channel
-	m_mixerChannelNumber = new MixerLineLcdSpinBox( 2, &m_track->m_mixerChannelModel, nullptr, tr( "Mixer channel" ), m_itv );
+	m_mixerChannelNumber = new MixerLineLcdSpinBox( 2, m_track->mixerChannelModel(), nullptr, tr( "Mixer channel" ), m_itv );
 
 	basicControlsLayout->addWidget( m_mixerChannelNumber, 0, 6 );
 	basicControlsLayout->setAlignment( m_mixerChannelNumber, widgetAlignment );
@@ -247,24 +246,24 @@ InstrumentTrackWindow::InstrumentTrackWindow( InstrumentTrackView * _itv ) :
 
 
 	// create tab-widgets
-	m_ssView = new InstrumentSoundShapingView( &m_track->m_soundShaping, m_tabWidget );
+	m_ssView = new InstrumentSoundShapingView( m_track->soundShaping(), m_tabWidget );
 
 	// FUNC tab
 	auto instrumentFunctions = new QWidget(m_tabWidget);
 	auto instrumentFunctionsLayout = new QVBoxLayout(instrumentFunctions);
 	instrumentFunctionsLayout->setContentsMargins(5, 5, 5, 5);
-	m_noteStackingView = new InstrumentFunctionNoteStackingView( &m_track->m_noteStacking );
-	m_arpeggioView = new InstrumentFunctionArpeggioView( &m_track->m_arpeggio );
+	m_noteStackingView = new InstrumentFunctionNoteStackingView( m_track->noteStacking() );
+	m_arpeggioView = new InstrumentFunctionArpeggioView( m_track->arpeggio() );
 
 	instrumentFunctionsLayout->addWidget( m_noteStackingView );
 	instrumentFunctionsLayout->addWidget( m_arpeggioView );
 	instrumentFunctionsLayout->addStretch();
 
 	// MIDI tab
-	m_midiView = new InstrumentMidiIOView( &m_track->m_midiPort, m_tabWidget );
+	m_midiView = new InstrumentMidiIOView( m_track->midiPortInterface(), m_tabWidget );
 
 	// FX tab
-	m_effectView = new EffectRackView( m_track->m_audioPort.effects(), m_tabWidget );
+	m_effectView = new EffectRackView( m_track->audioPortInterface()->effectsInterface(), m_tabWidget );
 
 	// MISC tab
 	m_miscView = new InstrumentMiscView( m_track, m_tabWidget );
@@ -282,7 +281,7 @@ InstrumentTrackWindow::InstrumentTrackWindow( InstrumentTrackView * _itv ) :
 	adjustTabSize(m_miscView);
 
 	// setup piano-widget
-	m_pianoView = new PianoView( &m_track->m_piano, this );
+	m_pianoView = new PianoView( m_track->piano(), this );
 	m_pianoView->setMinimumHeight( PIANO_HEIGHT );
 	m_pianoView->setMaximumHeight( PIANO_HEIGHT );
 
@@ -292,26 +291,23 @@ InstrumentTrackWindow::InstrumentTrackWindow( InstrumentTrackView * _itv ) :
 	vlayout->insertItem(1, new QWidgetItem(m_tabWidget));
 	vlayout->addWidget( m_pianoView );
 	
-	QObject::connect( m_itv->model(), SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_itv->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_itv->model()->baseTrack()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_itv->model()->baseTrack()->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 	update();
 
 	m_track = m_itv->model();
 
-	m_nameLineEdit->setText( m_track->name() );
+	m_nameLineEdit->setText( m_track->baseTrack()->name() );
 
-	m_track->disconnect( SIGNAL(nameChanged()), this );
-	m_track->disconnect( SIGNAL(instrumentChanged()), this );
-
-	connect( m_track, SIGNAL(nameChanged()),
+	connect( m_track->baseTrack(), SIGNAL(nameChanged()),
 			this, SLOT(updateName()));
-	connect( m_track, SIGNAL(instrumentChanged()),
+	connect( m_track->baseTrack(), SIGNAL(instrumentChanged()),
 			this, SLOT(updateInstrumentView()));
 
-	if (m_track->instrument() && m_track->instrument()->flags().testFlag(Instrument::IsMidiBased))
+	if (m_track->instrument() && m_track->instrument()->flags().testFlag(IInstrument::IsMidiBased))
 	{
 		m_miscView->microtunerGroupBox()->hide();
-		m_track->m_microtuner.enabledModel()->setValue(false);
+		m_track->microtuner()->enabledModel()->setValue(false);
 	}
 	else
 	{
@@ -376,7 +372,7 @@ void InstrumentTrackWindow::saveSettingsBtnClicked()
 {
 	FileDialog sfd(this, tr("Save preset"), "", tr("XML preset file (*.xpf)"));
 
-	QString presetRoot = ConfigManager::inst()->userPresetsDir();
+	QString presetRoot = IConfigManager::Instance()->userPresetsDir();
 	if(!QDir(presetRoot).exists())
 	{
 		QDir().mkdir(presetRoot);
@@ -389,7 +385,7 @@ void InstrumentTrackWindow::saveSettingsBtnClicked()
 	sfd.setAcceptMode(IFileDialog::AcceptSave);
 	sfd.setDirectory(presetRoot + m_track->instrumentName());
 	sfd.setFileMode( IFileDialog::AnyFile );
-	QString fname = m_track->name();
+	QString fname = m_track->baseTrack()->name();
 	sfd.selectFile(fname.remove(QRegExp(FILENAME_FILTER)));
 	sfd.setDefaultSuffix( "xpf");
 
@@ -397,17 +393,17 @@ void InstrumentTrackWindow::saveSettingsBtnClicked()
 		!sfd.selectedFiles().isEmpty() &&
 		!sfd.selectedFiles().first().isEmpty() )
 	{
-		DataFile dataFile(DataFile::InstrumentTrackSettings);
-		QDomElement& content(dataFile.content());
+		auto dataFile = createDataFile(IDataFile::InstrumentTrackSettings);
+		QDomElement& content(dataFile->content());
 
-		m_track->setSimpleSerializing();
-		m_track->saveSettings(dataFile, content);
+		m_track->baseTrack()->setSimpleSerializing();
+		m_track->saveSettings(*dataFile, content);
 		//We don't want to save muted & solo settings when we're saving a preset
 		content.setAttribute("muted", 0);
 		content.setAttribute("solo", 0);
 		content.setAttribute("mutedBeforeSolo", 0);
 		QString f = sfd.selectedFiles()[0];
-		dataFile.writeFile(f);
+		dataFile->writeFile(f);
 	}
 }
 
@@ -417,11 +413,11 @@ void InstrumentTrackWindow::saveSettingsBtnClicked()
 
 void InstrumentTrackWindow::updateName()
 {
-	setWindowTitle( m_track->name().length() > 25 ? ( m_track->name().left(24)+"..." ) : m_track->name() );
+	setWindowTitle( m_track->baseTrack()->name().length() > 25 ? ( m_track->baseTrack()->name().left(24)+"..." ) : m_track->baseTrack()->name() );
 
-	if( m_nameLineEdit->text() != m_track->name() )
+	if( m_nameLineEdit->text() != m_track->baseTrack()->name() )
 	{
-		m_nameLineEdit->setText( m_track->name() );
+		m_nameLineEdit->setText( m_track->baseTrack()->name() );
 	}
 }
 
@@ -432,20 +428,20 @@ void InstrumentTrackWindow::updateName()
 void InstrumentTrackWindow::updateInstrumentView()
 {
 	delete m_instrumentView;
-	if( m_track->m_instrument != nullptr )
+	if( m_track->instrument() != nullptr )
 	{
-		m_instrumentView = static_cast<QWidgetInstrumentPlugin*>(m_track->m_instrument)->createView( m_tabWidget );
+		m_instrumentView = static_cast<IQWidgetInstrumentPlugin*>(m_track->instrument()->guiSpecificPlugin())->createView( m_tabWidget );
 		m_tabWidget->addTab( m_instrumentView, tr( "Plugin" ), "plugin_tab", 0 );
 		m_tabWidget->setActiveTab( 0 );
 
-		m_ssView->setFunctionsHidden( m_track->m_instrument->flags().testFlag( Instrument::IsSingleStreamed ) );
+		m_ssView->setFunctionsHidden( m_track->instrument()->flags().testFlag( IInstrument::IsSingleStreamed ) );
 
 		// TODO: find a way of reapplying this
 		// modelChanged(); 		// Get the instrument window to refresh
-		m_track->dataChanged(); // Get the text on the trackButton to change
+		m_track->baseTrack()->model()->dataChanged(); // Get the text on the trackButton to change
 
 		adjustTabSize(m_instrumentView);
-		m_pianoView->setVisible(m_track->m_instrument->hasNoteInput());
+		m_pianoView->setVisible(m_track->instrument()->hasNoteInput());
 		// adjust window size
 		layout()->invalidate();
 		resize(sizeHint());
@@ -463,8 +459,8 @@ void InstrumentTrackWindow::updateInstrumentView()
 
 void InstrumentTrackWindow::textChanged( const QString& newName )
 {
-	m_track->setName( newName );
-	Engine::getSong()->setModified();
+	m_track->baseTrack()->setName( newName );
+	IEngine::Instance()->getSongInterface()->setModified();
 }
 
 
@@ -542,28 +538,27 @@ void InstrumentTrackWindow::dropEvent( QDropEvent* event )
 	{
 		m_track->loadInstrument( value, nullptr, true /* DnD */ );
 
-		Engine::getSong()->setModified();
+		IEngine::Instance()->getSongInterface()->setModified();
 
 		event->accept();
 		setFocus();
 	}
 	else if( type == "presetfile" )
 	{
-		DataFile dataFile(value);
-		m_track->replaceInstrument(dataFile);
+		auto dataFile = createDataFile(value);
+		m_track->replaceInstrument(*dataFile);
 		event->accept();
 		setFocus();
 	}
 	else if( type == "pluginpresetfile" )
 	{
 		const QString ext = FileItem::extension( value );
-		Instrument * i = m_track->instrument();
+		auto* i = m_track->instrument();
 
 		if( !i->descriptor()->supportsFileType( ext ) )
 		{
-			PluginFactory::PluginInfoAndKey piakn =
-				getPluginFactory()->pluginSupportingExtension(ext);
-			i = m_track->loadInstrument(piakn.info.name(), &piakn.key);
+			auto piakn = IPluginFactory::Instance()->pluginSupportingExtension(ext);
+			i = m_track->loadInstrument(piakn.name, &piakn.key);
 		}
 
 		i->loadFile( value );

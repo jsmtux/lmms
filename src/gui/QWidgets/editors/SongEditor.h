@@ -35,8 +35,8 @@ class QScrollBar;
 namespace lmms
 {
 
-class Song;
-class ComboBoxModel;
+class ISong;
+class IComboBoxModelWrapper;
 
 namespace gui
 {
@@ -63,14 +63,14 @@ public:
 		SelectMode
 	};
 
-	SongEditor( Song * song );
+	SongEditor( ISong * song );
 	~SongEditor() override = default;
 
 	void saveSettings( QDomDocument& doc, QDomElement& element ) override;
 	void loadSettings( const QDomElement& element ) override;
 
-	ComboBoxModel *zoomingModel() const;
-	ComboBoxModel *snappingModel() const;
+	IComboBoxModelWrapper *zoomingModel() const;
+	IComboBoxModelWrapper *snappingModel() const;
 	float getSnapSize() const;
 	QString getSnapSizeString() const;
 
@@ -124,7 +124,7 @@ private:
 	int indexOfTrackView(const TrackView* tv);
 
 
-	Song * m_song;
+	ISong * m_song;
 
 	QScrollBar * m_leftRightScroll;
 
@@ -141,8 +141,8 @@ private:
 
 	PositionLine * m_positionLine;
 
-	ComboBoxModel* m_zoomingModel;
-	ComboBoxModel* m_snappingModel;
+	IComboBoxModelWrapper* m_zoomingModel;
+	IComboBoxModelWrapper* m_snappingModel;
 	bool m_proportionalSnap;
 
 	static const QVector<float> m_zoomLevels;
@@ -175,7 +175,7 @@ class SongEditorWindow : public Editor
 {
 	Q_OBJECT
 public:
-	SongEditorWindow( Song* song );
+	SongEditorWindow( ISong* song );
 
 	QSize sizeHint() const override;
 

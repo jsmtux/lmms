@@ -25,7 +25,7 @@
 
 #include "ControllerDialog.h"
 
-#include "Controller.h"
+#include "IController.h"
 
 #include <QCloseEvent>
 
@@ -33,7 +33,7 @@ namespace lmms::gui
 {
 
 
-ControllerDialog::ControllerDialog( Controller * _controller,
+ControllerDialog::ControllerDialog( IController * _controller,
 							QWidget * _parent ) :
 	QWidget( _parent ),
 	m_model( _controller )

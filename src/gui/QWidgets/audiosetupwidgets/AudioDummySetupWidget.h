@@ -2,8 +2,7 @@
 #define LMMS_GUI_AUDIO_DUMMY_SETUP_WIDGET_H
 
 #include "AudioDeviceSetupWidget.h"
-
-#include "AudioDummy.h"
+#include "IAudioDevice.h"
 
 namespace lmms {
 
@@ -17,7 +16,7 @@ public:
 
     inline static QString name()
     {
-        return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", AudioDummy::name() );
+        return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", AudioDummyName() );
     }
 
     ~AudioDummySetupWidget() override = default;

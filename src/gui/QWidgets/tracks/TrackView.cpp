@@ -25,13 +25,13 @@
 
 #include "TrackView.h"
 
-#include "AudioEngine.h"
-#include "ConfigManager.h"
-#include "DataFile.h"
-#include "Engine.h"
+#include "IAudioEngine.h"
+#include "IConfigManager.h"
+#include "IDataFile.h"
+#include "IEngine.h"
 #include "FadeButton.h"
 #include "StringPairDrag.h"
-#include "Track.h"
+#include "ITrack.h"
 
 #include "editors/TrackContainerView.h"
 
@@ -60,11 +60,11 @@ namespace lmms::gui
  *  \param tcv The track Container View for us to be displayed in.
  *  \todo Is my description of these properties correct?
  */
-TrackView::TrackView( Track * track, TrackContainerView * tcv ) :
+TrackView::TrackView( ITrack * track, TrackContainerView * tcv ) :
 	QWidget( tcv->contentWidget() ),   /*!< The Track Container View's content widget. */
 	m_track( track ),                  /*!< The track we're displaying */
 	m_trackContainerView( tcv ),       /*!< The track Container View we're displayed in */
-	m_trackOperationsWidget( this,  &m_track->m_mutedModel,  &m_track->m_soloModel ),    /*!< Our trackOperationsWidget */
+	m_trackOperationsWidget( this,  m_track->getMutedModel(),  m_track->soloModel() ),    /*!< Our trackOperationsWidget */
 	m_trackSettingsWidget( this ),      /*!< Our trackSettingsWidget */
 	m_trackContentWidget( this ),       /*!< Our trackContentWidget */
 	m_action( NoAction )                /*!< The action we're currently performing */
@@ -92,21 +92,21 @@ TrackView::TrackView( Track * track, TrackContainerView * tcv ) :
 
 	connect( m_track, SIGNAL(destroyedTrack()), this, SLOT(close()));
 	connect( m_track,
-		SIGNAL(clipAdded(lmms::Clip*)),
-			this, SLOT(createClipView(lmms::Clip*)),
+		SIGNAL(clipAdded(lmms::IClip*)),
+			this, SLOT(createClipView(lmms::IClip*)),
 			Qt::QueuedConnection );
 
-	connect( &m_track->m_mutedModel, SIGNAL(dataChanged()),
+	connect( m_track->getMutedModel()->model(), SIGNAL(dataChanged()),
 			&m_trackContentWidget, SLOT(update()));
 
-	connect(&m_track->m_mutedModel, SIGNAL(dataChanged()),
+	connect(m_track->getMutedModel()->model(), SIGNAL(dataChanged()),
 			this, SLOT(muteChanged()));
 
-	connect( &m_track->m_soloModel, SIGNAL(dataChanged()),
+	connect( m_track->soloModel()->model(), SIGNAL(dataChanged()),
 			m_track, SLOT(toggleSolo()), Qt::DirectConnection );
 
 	// create views for already existing clips
-	for (const auto& clip : m_track->m_clips)
+	for (const auto& clip : m_track->getClips())
 	{
 		createClipView(clip);
 	}
@@ -138,7 +138,7 @@ TrackView::TrackView( Track * track, TrackContainerView * tcv ) :
  */
 void TrackView::resizeEvent( QResizeEvent * re )
 {
-	if( ConfigManager::inst()->value( "ui",
+	if( IConfigManager::Instance()->value( "ui",
 					  "compacttrackbuttons" ).toInt() )
 	{
 		m_trackOperationsWidget.setFixedSize( TRACK_OP_WIDTH_COMPACT, height() - 1 );
@@ -224,10 +224,10 @@ void TrackView::dropEvent( QDropEvent * de )
 	{
 		// value contains our XML-data so simply create a
 		// DataFile which does the rest for us...
-		DataFile dataFile( value.toUtf8() );
-		Engine::audioEngine()->requestChangeInModel();
-		m_track->restoreState( dataFile.content().firstChild().toElement() );
-		Engine::audioEngine()->doneChangeInModel();
+		auto dataFile = createDataFile( value.toUtf8() );
+		IEngine::Instance()->getAudioEngineInterface()->requestChangeInModel();
+		m_track->restoreState( dataFile->content().firstChild().toElement() );
+		IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 		de->accept();
 	}
 }
@@ -261,7 +261,7 @@ void TrackView::mousePressEvent( QMouseEvent * me )
 	}
 
 
-	int widgetTotal = ConfigManager::inst()->value( "ui",
+	int widgetTotal = IConfigManager::Instance()->value( "ui",
 							"compacttrackbuttons" ).toInt()==1 ?
 		DEFAULT_SETTINGS_WIDGET_WIDTH_COMPACT + TRACK_OP_WIDTH_COMPACT :
 		DEFAULT_SETTINGS_WIDGET_WIDTH + TRACK_OP_WIDTH;
@@ -325,7 +325,7 @@ void TrackView::mousePressEvent( QMouseEvent * me )
  */
 void TrackView::mouseMoveEvent( QMouseEvent * me )
 {
-	int widgetTotal = ConfigManager::inst()->value( "ui",
+	int widgetTotal = IConfigManager::Instance()->value( "ui",
 							"compacttrackbuttons" ).toInt()==1 ?
 		DEFAULT_SETTINGS_WIDGET_WIDTH_COMPACT + TRACK_OP_WIDTH_COMPACT :
 		DEFAULT_SETTINGS_WIDGET_WIDTH + TRACK_OP_WIDTH;
@@ -366,7 +366,7 @@ void TrackView::mouseMoveEvent( QMouseEvent * me )
 
 	if( height() < DEFAULT_TRACK_HEIGHT )
 	{
-		setToolTip(m_track->m_name);
+		setToolTip(m_track->name());
 	}
 }
 
@@ -406,12 +406,12 @@ void TrackView::paintEvent( QPaintEvent * pe )
 
 
 
-/*! \brief Create a Clip View in this track View.
+/*! \brief Create a IClip View in this track View.
  *
- *  \param clip the Clip to create the view for.
+ *  \param clip the IClip to create the view for.
  *  \todo is this a good description for what this method does?
  */
-void TrackView::createClipView( Clip * clip )
+void TrackView::createClipView( IClip * clip )
 {
 	ClipView * tv = ClipViewFactory::createClipView( this, clip );
 	if( clip->getSelectViewOnCreate() == true )
@@ -427,7 +427,7 @@ void TrackView::createClipView( Clip * clip )
 void TrackView::muteChanged()
 {
 	FadeButton * indicator = getActivityIndicator();
-	if (indicator) { setIndicatorMute(indicator, m_track->m_mutedModel.value()); }
+	if (indicator) { setIndicatorMute(indicator, m_track->getMutedModel()->value()); }
 }
 
 

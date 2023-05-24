@@ -23,8 +23,8 @@
  *
  */
 
-#include "LadspaBase.h"
-#include "LadspaControl.h"
+// #include "LadspaBase.h"
+// #include "LadspaControl.h"
 #include "LadspaControlView.h"
 
 #include "widgets/LedCheckBox.h"

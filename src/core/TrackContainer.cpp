@@ -34,19 +34,17 @@
 #include "TrackContainer.h"
 #include "PatternClip.h"
 #include "PatternStore.h"
-#include "PatternTrack.h"
 #include "Song.h"
 
 #include "IGuiApplication.h"
 
+#include "tracks/PatternTrack.h"
 
 namespace lmms
 {
 
 
 TrackContainer::TrackContainer(TrackContainerCb* _trackContainerCb) :
-	Model( nullptr ),
-	JournallingObject(),
 	m_tracksMutex(),
 	m_tracks(),
 	m_trackContainerCb(_trackContainerCb)
@@ -250,7 +248,7 @@ AutomatedValueMap TrackContainer::automatedValuesFromAllTracks(TimePos time, int
 	}
 	Track::clipVector clips;
 
-	for (Track* track: trackList)
+	for (ITrack* track: trackList)
 	{
 		if (track->isMuted()) {
 			continue;
@@ -276,7 +274,7 @@ AutomatedValueMap TrackContainer::automatedValuesFromAllTracks(TimePos time, int
 
 	Q_ASSERT(std::is_sorted(clips.begin(), clips.end(), Clip::comparePosition));
 
-	for(Clip* clip : clips)
+	for(IClip* clip : clips)
 	{
 		if (clip->isMuted() || clip->startPosition() > time) {
 			continue;
@@ -293,7 +291,7 @@ AutomatedValueMap TrackContainer::automatedValuesFromAllTracks(TimePos time, int
 			}
 			float value = p->valueAt(relTime);
 
-			for (AutomatableModel* model : p->objects())
+			for (auto* model : p->objects())
 			{
 				valueMap[model] = value;
 			}

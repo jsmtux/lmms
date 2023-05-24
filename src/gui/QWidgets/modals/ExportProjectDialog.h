@@ -28,8 +28,8 @@
 
 #include "gui/QWidgets/ui_export_project.h"
 
-#include "ProjectRenderer.h"
-#include "RenderManager.h"
+#include "IProjectRenderer.h"
+#include "IRenderManager.h"
 
 #include <QDialog>
 #include <memory>
@@ -42,7 +42,7 @@ class ExportProjectDialog : public QDialog, public Ui::ExportProjectDialog
 {
 	Q_OBJECT
 public:
-	ExportProjectDialog( const QString & _file_name, QWidget * _parent, bool multi_export );
+	ExportProjectDialog( const QString & _file_name, QWidget * _parent, IProjectRenderer* _project_renderer, bool multi_export = false );
 
 protected:
 	void reject() override;
@@ -63,8 +63,9 @@ private:
 	QString m_fileExtension;
 	bool m_multiExport;
 
-	ProjectRenderer::ExportFileFormats m_ft;
-	std::unique_ptr<RenderManager> m_renderManager;
+	IProjectRenderer* m_projectRenderer;
+	IProjectRenderer::ExportFileFormats m_ft;
+	std::unique_ptr<IRenderManager> m_renderManager;
 } ;
 
 

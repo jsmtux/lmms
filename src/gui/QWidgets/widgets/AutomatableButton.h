@@ -26,6 +26,7 @@
 #define LMMS_GUI_AUTOMATABLE_BUTTON_H
 
 #include "AutomatableModelView.h"
+#include "IModels.h"
 
 #include <QPushButton>
 
@@ -41,7 +42,7 @@ class LMMS_EXPORT AutomatableButton : public QPushButton, public BoolModelView
 public:
 	// AutomatableButton( QWidget * _parent, const QString & _name
 	// 		= QString() );
-	AutomatableButton( QWidget * _parent, BoolModel* model, const QString & _name
+	AutomatableButton( QWidget * _parent, IBoolAutomatableModel* model, const QString & _name
 			= QString() );
 	~AutomatableButton() override;
 
@@ -84,7 +85,7 @@ class LMMS_EXPORT automatableButtonGroup : public QWidget, public IntModelView
 {
 	Q_OBJECT
 public:
-	automatableButtonGroup( IntModel* _model, QWidget * _parent, const QString & _name
+	automatableButtonGroup( IIntAutomatableModel* _model, QWidget * _parent, const QString & _name
 			= QString() );
 	~automatableButtonGroup() override;
 

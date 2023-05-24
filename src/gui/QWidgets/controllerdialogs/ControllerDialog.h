@@ -31,7 +31,7 @@
 namespace lmms
 {
 
-class Controller;
+class IController;
 
 namespace gui
 {
@@ -40,7 +40,7 @@ class ControllerDialog : public QWidget
 {
     Q_OBJECT
 public:
-	ControllerDialog( Controller * _controller, QWidget * _parent );
+	ControllerDialog( IController * _controller, QWidget * _parent );
 
 	~ControllerDialog() override = default;
 
@@ -52,7 +52,7 @@ signals:
 protected:
 	void closeEvent( QCloseEvent * _ce ) override;
 
-	Controller* m_model;
+	IController* m_model;
 } ;
 
 

@@ -2,8 +2,7 @@
 #include "AudioSdlSetupWidget.h"
 
 #ifdef LMMS_HAVE_SDL
-#include "AudioSdl.h"
-#include "ConfigManager.h"
+#include "IConfigManager.h"
 #include "gui_templates.h"
 
 #include <QLabel>
@@ -13,7 +12,7 @@ namespace lmms {
 AudioSdlSetupWidget::AudioSdlSetupWidget( QWidget * _parent ) :
 	AudioDeviceSetupWidget( AudioSdlSetupWidget::name(), _parent )
 {
-	QString dev = ConfigManager::inst()->value( "audiosdl", "device" );
+	QString dev = IConfigManager::Instance()->value( "audiosdl", "device" );
 	m_device = new QLineEdit( dev, this );
 	m_device->setGeometry( 10, 20, 160, 20 );
 
@@ -25,7 +24,7 @@ AudioSdlSetupWidget::AudioSdlSetupWidget( QWidget * _parent ) :
 
 void AudioSdlSetupWidget::saveSettings()
 {
-	ConfigManager::inst()->setValue( "audiosdl", "device",
+	IConfigManager::Instance()->setValue( "audiosdl", "device",
 							m_device->text() );
 }
 

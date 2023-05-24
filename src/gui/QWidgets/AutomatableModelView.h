@@ -26,7 +26,7 @@
 #ifndef LMMS_GUI_AUTOMATABLE_MODEL_VIEW_H
 #define LMMS_GUI_AUTOMATABLE_MODEL_VIEW_H
 
-#include "AutomatableModel.h"
+#include "IModels.h"
 
 class QMenu;
 class QMouseEvent;
@@ -34,28 +34,11 @@ class QMouseEvent;
 namespace lmms::gui
 {
 
-class LMMS_EXPORT AutomatableModelView
+class LMMS_EXPORT AutomatableModelViewBase
 {
 public:
-	AutomatableModelView( AutomatableModel* model, QWidget* _this );
-	virtual ~AutomatableModelView() = default;
-
-	// some basic functions for convenience
-	AutomatableModel* modelUntyped()
-	{
-		return m_model;
-	}
-
-	const AutomatableModel* modelUntyped() const
-	{
-		return m_model;
-	}
-
-	template<typename T>
-	inline T value() const
-	{
-		return modelUntyped() ? modelUntyped()->value<T>() : 0;
-	}
+	AutomatableModelViewBase( IAutomatableModelBase* _model, QWidget* _widget );
+	~AutomatableModelViewBase() = default;
 
 	inline void setDescription( const QString& desc )
 	{
@@ -67,30 +50,65 @@ public:
 		m_unit = unit;
 	}
 
+	IAutomatableModelBase* baseModel()
+	{
+		return m_model;
+	}
+
 	void addDefaultActions( QMenu* menu );
 
 	void setConversionFactor( float factor );
 	float getConversionFactor();
 
-
 protected:
+	template<class ModelType>
+	IAutomatableModel<ModelType>* castModel() {
+		return static_cast<IAutomatableModel<ModelType>*>(m_model);
+	}
+
+	template<class ModelType>
+	const IAutomatableModel<ModelType>* castModel() const {
+		return static_cast<const IAutomatableModel<ModelType>*>(m_model);
+	}
+
 	virtual void mousePressEvent( QMouseEvent* event );
 
-	AutomatableModel* m_model;
 	QWidget* m_widget;
 	QString m_description;
 	QString m_unit;
 	float m_conversionFactor; // Factor to be applied when the m_model->value is displayed
+	IAutomatableModelBase* m_model;
 } ;
 
 
+template <typename ModelType>
+class LMMS_EXPORT AutomatableModelView : public AutomatableModelViewBase
+{
+public:
+	AutomatableModelView( IAutomatableModel<ModelType>* model, QWidget* _this) :
+		AutomatableModelViewBase( model, _this )
+	{}
+
+	IAutomatableModel<ModelType>* model()
+	{
+		return castModel<ModelType>();
+	}
+	const IAutomatableModel<ModelType>* model() const
+	{
+		return castModel<ModelType>();
+	}
+};
+
+using FloatModelView = AutomatableModelView<float>;
+using IntModelView = AutomatableModelView<int>;
+using BoolModelView = AutomatableModelView<bool>;
 
 
 class AutomatableModelViewSlots : public QObject
 {
 	Q_OBJECT
 public:
-	AutomatableModelViewSlots( AutomatableModelView* amv, QObject* parent );
+	AutomatableModelViewSlots( AutomatableModelViewBase* amv, QObject* parent );
 
 public slots:
 	void execConnectionDialog();
@@ -106,32 +124,8 @@ private slots:
 	void pasteFromClipboard();
 
 protected:
-	AutomatableModelView* m_amv;
-
+	AutomatableModelViewBase* m_amv;
 } ;
-
-
-
-template <typename ModelType> class LMMS_EXPORT TypedModelView : public AutomatableModelView
-{
-public:
-	TypedModelView( AutomatableModel* model, QWidget* _this) :
-		AutomatableModelView( model, _this )
-	{}
-
-	ModelType* model()
-	{
-		return static_cast<ModelType*>(m_model);
-	}
-	const ModelType* model() const
-	{
-		return static_cast<const ModelType*>(m_model);
-	}
-};
-
-using FloatModelView = TypedModelView<FloatModel>;
-using IntModelView = TypedModelView<IntModel>;
-using BoolModelView = TypedModelView<BoolModel>;
 
 } // namespace lmms::gui
 

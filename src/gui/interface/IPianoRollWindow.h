@@ -6,7 +6,7 @@
 
 namespace lmms {
 
-class MidiClip;
+class IMidiClip;
 
 namespace gui {
 
@@ -15,7 +15,7 @@ public:
     virtual ~IPianoRollWindow()
     {}
     virtual int quantization() const = 0;
-    virtual const MidiClip* currentMidiClip() const = 0;
+    virtual const IMidiClip* currentMidiClip() const = 0;
     virtual void update() = 0;
 };
 

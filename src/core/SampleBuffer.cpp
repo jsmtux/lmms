@@ -63,6 +63,10 @@
 namespace lmms
 {
 
+std::unique_ptr<ISampleBuffer> createSampleBuffer() {
+	return std::make_unique<SampleBuffer>();
+}
+
 SampleBuffer::SampleBuffer() :
 	m_userAntiAliasWaveTable(nullptr),
 	m_audioFile(""),

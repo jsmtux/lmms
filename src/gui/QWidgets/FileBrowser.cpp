@@ -25,24 +25,27 @@
 
 #include "FileBrowser.h"
 
-#include "AudioEngine.h"
-#include "ConfigManager.h"
-#include "DataFile.h"
+#include "IAudioEngine.h"
+#include "IConfigManager.h"
+#include "IDataFile.h"
 #include "embed.h"
-#include "Engine.h"
-#include "GuiApplication.h"
+#include "IEngine.h"
+#include "IGuiApplication.h"
 #include "ImportFilter.h"
 #include "Instrument.h"
-#include "InstrumentTrack.h"
+#include "ITrack.h"
 #include "MainWindow.h"
-#include "PatternStore.h"
-#include "PluginFactory.h"
-#include "PresetPreviewPlayHandle.h"
-#include "SampleClip.h"
-#include "SamplePlayHandle.h"
-#include "SampleTrack.h"
-#include "Song.h"
+#include "IPlayHandle.h"
+#include "IPluginFactory.h"
+#include "IDataFile.h"
 #include "StringPairDrag.h"
+#include "GuiApplication.h"
+// #include "IPatternStore.h"
+// #include "PresetPreviewPlayHandle.h"
+// #include "SampleClip.h"
+// #include "SamplePlayHandle.h"
+// #include "SampleTrack.h"
+// #include "Song.h"
 
 #include "instrument/InstrumentTrackWindow.h"
 
@@ -600,7 +603,7 @@ void FileBrowserTreeWidget::previewFileItem(FileItem* file)
 	// If something is already playing, stop it before we continue
 	stopPreview();
 
-	PlayHandle* newPPH = nullptr;
+	IPlayHandle* newPPH = nullptr;
 	const QString fileName = file->fullName();
 	const QString ext = file->extension();
 
@@ -614,7 +617,7 @@ void FileBrowserTreeWidget::previewFileItem(FileItem* file)
 			embed::getIconPixmap("sample_file", 24, 24), 0);
 		// TODO: this can be removed once we do this outside the event thread
 		qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-		auto s = new SamplePlayHandle(fileName);
+		auto s = createSamplePlayHandle(fileName);
 		s->setDoneMayReturnTrue(false);
 		newPPH = s;
 		delete tf;
@@ -622,18 +625,18 @@ void FileBrowserTreeWidget::previewFileItem(FileItem* file)
 	else if (
 		(ext == "xiz" || ext == "sf2" || ext == "sf3" ||
 		 ext == "gig" || ext == "pat")
-		&& !getPluginFactory()->pluginSupportingExtension(ext).isNull())
+		&& !IPluginFactory::Instance()->pluginSupportingExtension(ext).isNull)
 	{
 		const bool isPlugin = file->handling() == FileItem::LoadByPlugin;
-		newPPH = new PresetPreviewPlayHandle(fileName, isPlugin);
+		newPPH = createPresetPreviewPlayHandle(fileName, isPlugin, nullptr);
 	}
 	else if (file->type() != FileItem::VstPluginFile && file->isTrack())
 	{
-		DataFile dataFile(fileName);
-		if (dataFile.validate(ext))
+		auto dataFile = createDataFile(fileName);
+		if (dataFile->validate(ext))
 		{
 			const bool isPlugin = file->handling() == FileItem::LoadByPlugin;
-			newPPH = new PresetPreviewPlayHandle(fileName, isPlugin, &dataFile);
+			newPPH = createPresetPreviewPlayHandle(fileName, isPlugin, dataFile.get());
 		}
 		else
 		{
@@ -646,7 +649,7 @@ void FileBrowserTreeWidget::previewFileItem(FileItem* file)
 
 	if (newPPH != nullptr)
 	{
-		if (Engine::audioEngine()->addPlayHandle(newPPH))
+		if (IEngine::Instance()->getAudioEngineInterface()->addPlayHandle(newPPH))
 		{
 			m_previewPlayHandle = newPPH;
 		}
@@ -662,7 +665,7 @@ void FileBrowserTreeWidget::stopPreview()
 	QMutexLocker previewLocker(&m_pphMutex);
 	if (m_previewPlayHandle != nullptr)
 	{
-		Engine::audioEngine()->removePlayHandle(m_previewPlayHandle);
+		IEngine::Instance()->getAudioEngineInterface()->removePlayHandle(m_previewPlayHandle);
 		m_previewPlayHandle = nullptr;
 	}
 }
@@ -735,9 +738,9 @@ void FileBrowserTreeWidget::mouseReleaseEvent(QMouseEvent * me )
 	if (m_previewPlayHandle == nullptr) { return; }
 
 	// Only sample previews may continue after mouse up. Is this a sample preview?
-	bool isSample = m_previewPlayHandle->type() == PlayHandle::TypeSamplePlayHandle;
+	bool isSample = m_previewPlayHandle->getType() == PlayHandleType::TypeSamplePlayHandle;
 	// Even sample previews should only continue if the user wants them to. Do they?
-	bool shouldContinue = ConfigManager::inst()->value("ui", "letpreviewsfinish").toInt();
+	bool shouldContinue = IConfigManager::Instance()->value("ui", "letpreviewsfinish").toInt();
 	// If both are true the preview may continue, otherwise we stop it
 	if (!(isSample && shouldContinue)) { stopPreview(); }
 }
@@ -745,40 +748,40 @@ void FileBrowserTreeWidget::mouseReleaseEvent(QMouseEvent * me )
 
 
 
-void FileBrowserTreeWidget::handleFile(FileItem * f, InstrumentTrack * it)
+void FileBrowserTreeWidget::handleFile(FileItem * f, IInstrumentTrack * it)
 {
-	Engine::audioEngine()->requestChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->requestChangeInModel();
 	switch( f->handling() )
 	{
 		case FileItem::LoadAsProject:
 			if( getGUI()->mainWindow()->mayChangeProject(true) )
 			{
-				Engine::getSong()->loadProject( f->fullName() );
+				IEngine::Instance()->getSongInterface()->loadProject( f->fullName() );
 			}
 			break;
 
 		case FileItem::LoadByPlugin:
 		{
 			const QString e = f->extension();
-			Instrument * i = it->instrument();
+			auto * i = it->instrument();
 			if( i == nullptr ||
 				!i->descriptor()->supportsFileType( e ) )
 			{
-				PluginFactory::PluginInfoAndKey piakn =
-					getPluginFactory()->pluginSupportingExtension(e);
-				i = it->loadInstrument(piakn.info.name(), &piakn.key);
+				auto piakn =
+					IPluginFactory::Instance()->pluginSupportingExtension(e);
+				i = it->loadInstrument(piakn.name, &piakn.key);
 			}
 			i->loadFile( f->fullName() );
 			break;
 		}
 
 		case FileItem::LoadAsPreset: {
-			DataFile dataFile(f->fullName());
-			it->replaceInstrument(dataFile);
+			auto dataFile = createDataFile(f->fullName());
+			it->replaceInstrument(*dataFile);
 			break;
 		}
 		case FileItem::ImportAsProject:
-			ImportFilter::import( f->fullName(), &Engine::getSong()->trackContainer() );
+			ImportFilter::import( f->fullName(), IEngine::Instance()->getSongInterface()->trackContainerInterface() );
 			break;
 
 		case FileItem::NotSupported:
@@ -786,7 +789,7 @@ void FileBrowserTreeWidget::handleFile(FileItem * f, InstrumentTrack * it)
 			break;
 
 	}
-	Engine::audioEngine()->doneChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 }
 
 
@@ -808,7 +811,7 @@ void FileBrowserTreeWidget::activateListItem(QTreeWidgetItem * item,
 	}
 	else if( f->handling() != FileItem::NotSupported )
 	{
-		auto it = dynamic_cast<InstrumentTrack*>(Track::create(Track::InstrumentTrack, &Engine::patternStore()->trackContainer()));
+		auto it = createInstrumentTrack(&IEngine::Instance()->getPatternStoreInterface()->trackContainer());
 		handleFile( f, it );
 	}
 }
@@ -816,11 +819,11 @@ void FileBrowserTreeWidget::activateListItem(QTreeWidgetItem * item,
 
 
 
-void FileBrowserTreeWidget::openInNewInstrumentTrack(TrackContainer* tc, FileItem* item)
+void FileBrowserTreeWidget::openInNewInstrumentTrack(ITrackContainer* tc, FileItem* item)
 {
 	if(item->isTrack())
 	{
-		auto it = dynamic_cast<InstrumentTrack*>(Track::create(Track::InstrumentTrack, tc));
+		auto it = createInstrumentTrack(tc);
 		handleFile(item, it);
 	}
 }
@@ -831,14 +834,14 @@ void FileBrowserTreeWidget::openInNewInstrumentTrack(TrackContainer* tc, FileIte
 void FileBrowserTreeWidget::openInNewInstrumentTrack(FileItem* item, bool songEditor)
 {
 	// Get the correct TrackContainer. Ternary doesn't compile here
-	TrackContainer* tc;
+	ITrackContainer* tc;
 	if (songEditor)
 	{
-		tc = &Engine::getSong()->trackContainer();
+		tc = &IEngine::Instance()->getSongInterface()->trackContainer();
 	}
 	else
 	{
-		tc = &Engine::patternStore()->trackContainer();
+		tc = &IEngine::Instance()->getPatternStoreInterface()->trackContainer();
 	}
 	openInNewInstrumentTrack(tc, item);
 }
@@ -852,13 +855,12 @@ bool FileBrowserTreeWidget::openInNewSampleTrack(FileItem* item)
 	if (item->type() != FileItem::SampleFile) { return false; }
 
 	// Create a new sample track for this sample
-	auto sampleTrack = static_cast<SampleTrack*>(Track::create(Track::SampleTrack, &Engine::getSong()->trackContainer()));
+	auto sampleTrack = createSampleTrack(&IEngine::Instance()->getSongInterface()->trackContainer());
 
 	// Add the sample clip to the track
-	Engine::audioEngine()->requestChangeInModel();
-	SampleClip* clip = static_cast<SampleClip*>(sampleTrack->createClip(0));
-	clip->setSampleFile(item->fullName());
-	Engine::audioEngine()->doneChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->requestChangeInModel();
+	sampleTrack->createSampleClip(0, item->fullName());
+	IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 	return true;
 }
 
@@ -987,7 +989,7 @@ void Directory::update()
 		for (const auto& directory : m_directories)
 		{
 			int filesBeforeAdd = childCount() - m_dirCount;
-			if(addItems(fullName(directory)) && directory.contains(ConfigManager::inst()->dataDir()))
+			if(addItems(fullName(directory)) && directory.contains(IConfigManager::Instance()->dataDir()))
 			{
 				// factory file directory is added
 				// note: those are always added last
@@ -1220,7 +1222,7 @@ void FileItem::determineFileType()
 		m_type = PresetFile;
 		m_handling = LoadAsPreset;
 	}
-	else if( ext == "xiz" && ! getPluginFactory()->pluginSupportingExtension(ext).isNull() )
+	else if( ext == "xiz" && ! IPluginFactory::Instance()->pluginSupportingExtension(ext).isNull )
 	{
 		m_type = PresetFile;
 		m_handling = LoadByPlugin;
@@ -1258,7 +1260,7 @@ void FileItem::determineFileType()
 	}
 
 	if( m_handling == NotSupported &&
-		!ext.isEmpty() && ! getPluginFactory()->pluginSupportingExtension(ext).isNull() )
+		!ext.isEmpty() && ! IPluginFactory::Instance()->pluginSupportingExtension(ext).isNull )
 	{
 		m_handling = LoadByPlugin;
 		// classify as sample if not classified by anything yet but can

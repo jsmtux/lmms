@@ -25,7 +25,7 @@
 #ifndef LMMS_GUI_MIDI_CC_RACK_VIEW_H
 #define LMMS_GUI_MIDI_CC_RACK_VIEW_H
 
-#include "Midi.h"
+#include "MidiConstants.h"
 #include "SerializingObject.h"
 
 #include <QWidget>
@@ -33,7 +33,7 @@
 namespace lmms
 {
 
-class InstrumentTrack;
+class IInstrumentTrack;
 
 namespace gui
 {
@@ -45,7 +45,7 @@ class MidiCCRackView : public QWidget, public SerializingObject
 {
 	Q_OBJECT
 public:
-	MidiCCRackView(InstrumentTrack * track);
+	MidiCCRackView(IInstrumentTrack * track);
 	~MidiCCRackView() override;
 
 	void saveSettings(QDomDocument & doc, QDomElement & parent) override;
@@ -60,7 +60,7 @@ private slots:
 	void renameWindow();
 
 private:
-	InstrumentTrack *m_track;
+	IInstrumentTrack *m_track;
 
 	GroupBox *m_midiCCGroupBox; // MIDI CC GroupBox (used to enable disable MIDI CC)
 

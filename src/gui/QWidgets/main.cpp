@@ -28,6 +28,7 @@
 #include "versioninfo.h"
 
 #include "denormals.h"
+#include "ICoreApplication.h"
 
 #include <QDebug>
 #include <QFileInfo>
@@ -58,19 +59,19 @@
 #include <csignal>
 
 #include "MainApplication.h"
-#include "ConfigManager.h"
-#include "DataFile.h"
-#include "NotePlayHandle.h"
+#include "IConfigManager.h"
+#include "IDataFile.h"
+#include "IPlayHandle.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "GuiApplication.h"
 #include "ImportFilter.h"
 #include "MainWindow.h"
-#include "MixHelpers.h"
+// #include "MixHelpers.h"
 #include "OutputSettings.h"
-#include "ProjectRenderer.h"
-#include "RenderManager.h"
-#include "Song.h"
+#include "IProjectRenderer.h"
+#include "IRenderManager.h"
+#include "ISong.h"
 
 #ifdef LMMS_DEBUG_FPE
 #include <fenv.h> // For feenableexcept
@@ -124,7 +125,7 @@ void consoleMessageHandler(QtMsgType type,
 
 
 inline void loadTranslation( const QString & tname,
-	const QString & dir = lmms::ConfigManager::inst()->localeDir() )
+	const QString & dir = lmms::IConfigManager::Instance()->localeDir() )
 {
 	auto t = new QTranslator(QCoreApplication::instance());
 	QString name = tname + ".qm";
@@ -293,9 +294,9 @@ int main( int argc, char * * argv )
 	// Make Qt's debug message handlers work
 	qInstallMessageHandler(consoleMessageHandler);
 #endif
-
-	// initialize memory managers
-	NotePlayHandleManager::init();
+	ICoreApplication* coreApplication = getCoreApplication();
+	coreApplication->init();
+	IConfigManager* configManager = coreApplication->getConfigManager();
 
 	// intialize RNG
 	srand( getpid() + time( 0 ) );
@@ -363,9 +364,9 @@ int main( int argc, char * * argv )
 			new QCoreApplication( argc, argv ) :
 					new gui::MainApplication(argc, argv);
 
-	AudioEngine::qualitySettings qs( AudioEngine::qualitySettings::Mode_HighQuality );
+	IAudioEngine::qualitySettings qs( IAudioEngine::qualitySettings::Mode_HighQuality );
 	OutputSettings os( 44100, OutputSettings::BitRateSettings(160, false), OutputSettings::Depth_16Bit, OutputSettings::StereoMode_JointStereo );
-	ProjectRenderer::ExportFileFormats eff = ProjectRenderer::WaveFile;
+	IProjectRenderer::ExportFileFormats eff = IProjectRenderer::WaveFile;
 
 	// second of two command-line parsing stages
 	for( int i = 1; i < argc; ++i )
@@ -392,16 +393,16 @@ int main( int argc, char * * argv )
 			}
 
 
-			DataFile dataFile( QString::fromLocal8Bit( argv[i] ) );
+			auto dataFile = createDataFile( QString::fromLocal8Bit( argv[i] ) );
 
 			if( argc > i+1 ) // output file specified
 			{
-				dataFile.writeFile( QString::fromLocal8Bit( argv[i+1] ) );
+				dataFile->writeFile( QString::fromLocal8Bit( argv[i+1] ) );
 			}
 			else // no output file specified; use stdout
 			{
 				QTextStream ts( stdout );
-				dataFile.write( ts );
+				dataFile->write( ts );
 				fflush( stdout );
 			}
 
@@ -416,12 +417,12 @@ int main( int argc, char * * argv )
 				return noInputFileError();
 			}
 
-			DataFile dataFile(QString::fromLocal8Bit(argv[i]));
+			auto dataFile = createDataFile(QString::fromLocal8Bit(argv[i]));
 
 			if (argc > i+1) // Project bundle file name given
 			{
 				printf("Making bundle\n");
-				dataFile.writeFile(QString::fromLocal8Bit(argv[i+1]), true);
+				dataFile->writeFile(QString::fromLocal8Bit(argv[i+1]), true);
 				return EXIT_SUCCESS;
 			}
 			else
@@ -517,23 +518,23 @@ int main( int argc, char * * argv )
 
 			if( ext == "wav" )
 			{
-				eff = ProjectRenderer::WaveFile;
+				eff = IProjectRenderer::WaveFile;
 			}
 #ifdef LMMS_HAVE_OGGVORBIS
 			else if( ext == "ogg" )
 			{
-				eff = ProjectRenderer::OggFile;
+				eff = IProjectRenderer::OggFile;
 			}
 #endif
 #ifdef LMMS_HAVE_MP3LAME
 			else if( ext == "mp3" )
 			{
-				eff = ProjectRenderer::MP3File;
+				eff = IProjectRenderer::MP3File;
 			}
 #endif
 			else if (ext == "flac")
 			{
-				eff = ProjectRenderer::FlacFile;
+				eff = IProjectRenderer::FlacFile;
 			}
 			else
 			{
@@ -629,19 +630,19 @@ int main( int argc, char * * argv )
 
 			if( ip == "linear" )
 			{
-		qs.interpolation = AudioEngine::qualitySettings::Interpolation_Linear;
+		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_Linear;
 			}
 			else if( ip == "sincfastest" )
 			{
-		qs.interpolation = AudioEngine::qualitySettings::Interpolation_SincFastest;
+		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_SincFastest;
 			}
 			else if( ip == "sincmedium" )
 			{
-		qs.interpolation = AudioEngine::qualitySettings::Interpolation_SincMedium;
+		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_SincMedium;
 			}
 			else if( ip == "sincbest" )
 			{
-		qs.interpolation = AudioEngine::qualitySettings::Interpolation_SincBest;
+		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_SincBest;
 			}
 			else
 			{
@@ -663,16 +664,16 @@ int main( int argc, char * * argv )
 			switch( o )
 			{
 				case 1:
-		qs.oversampling = AudioEngine::qualitySettings::Oversampling_None;
+		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_None;
 		break;
 				case 2:
-		qs.oversampling = AudioEngine::qualitySettings::Oversampling_2x;
+		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_2x;
 		break;
 				case 4:
-		qs.oversampling = AudioEngine::qualitySettings::Oversampling_4x;
+		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_4x;
 		break;
 				case 8:
-		qs.oversampling = AudioEngine::qualitySettings::Oversampling_8x;
+		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_8x;
 		break;
 				default:
 				return usageError( QString( "Invalid oversampling %1" ).arg( argv[i] ) );
@@ -739,14 +740,14 @@ int main( int argc, char * * argv )
 		fileCheck( fileToImport );
 	}
 
-	ConfigManager::inst()->loadConfigFile(configFile);
+	configManager->loadConfigFile(configFile);
 
 	// Hidden settings
-	MixHelpers::setNaNHandler( ConfigManager::inst()->value( "app",
+	coreApplication->setNaNHandler( configManager->value( "app",
 						"nanhandler", "1" ).toInt() );
 
 	// set language
-	QString pos = ConfigManager::inst()->value( "app", "language" );
+	QString pos = IConfigManager::Instance()->value( "app", "language" );
 	if( pos.isEmpty() )
 	{
 		pos = QLocale::system().name().left( 2 );
@@ -761,7 +762,7 @@ int main( int argc, char * * argv )
 	loadTranslation(QString("qt_") + pos, QT_TRANSLATIONS_DIR);
 #endif
 	// override it with bundled/custom one, if exists
-	loadTranslation(QString("qt_") + pos, ConfigManager::inst()->localeDir());
+	loadTranslation(QString("qt_") + pos, IConfigManager::Instance()->localeDir());
 
 
 	// try to set realtime priority
@@ -802,75 +803,77 @@ int main( int argc, char * * argv )
 
 	bool destroyEngine = false;
 
+	IRenderManager* renderManager = nullptr;
+	auto engine = coreApplication->createEngine(true);
+
 	// if we have an output file for rendering, just render the song
 	// without starting the GUI
 	if( !renderOut.isEmpty() )
 	{
-		Engine::init( true );
 		destroyEngine = true;
 
 		printf( "Loading project...\n" );
-		Engine::getSong()->loadProject( fileToLoad );
-		if( Engine::getSong()->trackContainer().isEmpty() )
+		engine->getSongInterface()->loadProject( fileToLoad );
+		if( engine->getSongInterface()->trackContainer().isEmpty() )
 		{
 			printf("The project %s is empty, aborting!\n", fileToLoad.toUtf8().constData() );
 			exit( EXIT_FAILURE );
 		}
 		printf( "Done\n" );
 
-		Engine::getSong()->setExportLoop( renderLoop );
+		engine->getSongInterface()->setExportLoop( renderLoop );
 
 		// when rendering multiple tracks, renderOut is a directory
 		// otherwise, it is a file, so we need to append the file extension
 		if ( !renderTracks )
 		{
 			renderOut = baseName( renderOut ) +
-				ProjectRenderer::getFileExtensionFromFormat(eff);
+				IProjectRenderer::getFileExtensionFromFormat(eff);
 		}
 
 		// create renderer
-		auto r = new RenderManager(qs, os, eff, renderOut);
-		QCoreApplication::instance()->connect( r,
+		renderManager = coreApplication->createRenderManager(qs, os, eff, renderOut);
+		QCoreApplication::instance()->connect( renderManager,
 				SIGNAL(finished()), SLOT(quit()));
 
 		// timer for progress-updates
-		auto t = new QTimer(r);
-		r->connect( t, SIGNAL(timeout()),
+		auto t = new QTimer(renderManager);
+		renderManager->connect( t, SIGNAL(timeout()),
 				SLOT(updateConsoleProgress()));
 		t->start( 200 );
 
 		if( profilerOutputFile.isEmpty() == false )
 		{
-			Engine::audioEngine()->profiler().setOutputFile( profilerOutputFile );
+			engine->getAudioEngineInterface()->setProfilerOutputFile( profilerOutputFile );
 		}
 
 		// start now!
 		if ( renderTracks )
 		{
-			r->renderTracks();
+			renderManager->renderTracks();
 		}
 		else
 		{
-			r->renderProject();
+			renderManager->renderProject();
 		}
 	}
 	else // otherwise, start the GUI
 	{
 		using namespace lmms::gui;
 
-		new GuiApplication();
+		new GuiApplication(renderManager->getProjectRenderer());
 
 		// re-intialize RNG - shared libraries might have srand() or
 		// srandom() calls in their init procedure
 		srand( getpid() + time( 0 ) );
 
 		// recover a file?
-		QString recoveryFile = ConfigManager::inst()->recoveryFile();
+		QString recoveryFile = IConfigManager::Instance()->recoveryFile();
 
 		bool recoveryFilePresent = QFileInfo( recoveryFile ).exists() &&
 				QFileInfo( recoveryFile ).isFile();
 		bool autoSaveEnabled =
-			ConfigManager::inst()->value( "ui", "enableautosave" ).toInt();
+			IConfigManager::Instance()->value( "ui", "enableautosave" ).toInt();
 		if( recoveryFilePresent )
 		{
 			QMessageBox mb;
@@ -964,16 +967,16 @@ int main( int argc, char * * argv )
 		{
 			if( fileToLoad == recoveryFile )
 			{
-				Engine::getSong()->createNewProjectFromTemplate( fileToLoad );
+				engine->getSongInterface()->createNewProjectFromTemplate( fileToLoad );
 			}
 			else
 			{
-				Engine::getSong()->loadProject( fileToLoad );
+				engine->getSongInterface()->loadProject( fileToLoad );
 			}
 		}
 		else if( !fileToImport.isEmpty() )
 		{
-			ImportFilter::import( fileToImport, &Engine::getSong()->trackContainer() );
+			importFilterImport( fileToImport, engine->getSongInterface()->trackContainerInterface() );
 			if( exitAfterImport )
 			{
 				return EXIT_SUCCESS;
@@ -981,29 +984,29 @@ int main( int argc, char * * argv )
 		}
 		// If enabled, open last project if there is one. Else, create
 		// a new one.
-		else if( ConfigManager::inst()->
+		else if( IConfigManager::Instance()->
 				value( "app", "openlastproject" ).toInt() &&
-			!ConfigManager::inst()->
+			!IConfigManager::Instance()->
 				recentlyOpenedProjects().isEmpty() &&
 				!recoveryFilePresent )
 		{
-			QString f = ConfigManager::inst()->
+			QString f = IConfigManager::Instance()->
 					recentlyOpenedProjects().first();
 			QFileInfo recentFile( f );
 
 			if ( recentFile.exists() &&
 				recentFile.suffix().toLower() != "mpt" )
 			{
-				Engine::getSong()->loadProject( f );
+				engine->getSongInterface()->loadProject( f );
 			}
 			else
 			{
-				Engine::getSong()->createNewProject();
+				engine->getSongInterface()->createNewProject();
 			}
 		}
 		else
 		{
-			Engine::getSong()->createNewProject();
+			engine->getSongInterface()->createNewProject();
 		}
 
 		// Finally we start the auto save timer and also trigger the
@@ -1020,10 +1023,10 @@ int main( int argc, char * * argv )
 
 	if( destroyEngine )
 	{
-		Engine::destroy();
+		DestroyEngine();
 	}
 
-	// ProjectRenderer::updateConsoleProgress() doesn't return line after render
+	// IProjectRenderer::updateConsoleProgress() doesn't return line after render
 	if( coreOnly )
 	{
 		printf( "\n" );
@@ -1040,7 +1043,7 @@ int main( int argc, char * * argv )
 #endif
 
 
-	NotePlayHandleManager::free();
+	coreApplication->free();
 
 	return ret;
 }

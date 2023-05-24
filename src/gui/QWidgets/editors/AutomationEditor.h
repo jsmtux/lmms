@@ -31,8 +31,9 @@
 #include "lmms_basics.h"
 #include "JournallingObject.h"
 #include "TimePos.h"
-#include "AutomationClip.h"
-#include "ComboBoxModel.h"
+#include "IClip.h"
+#include "IModels.h"
+#include "AutomationNode.h"
 #include "IAutomationEditor.h"
 
 #include <QWidget>
@@ -68,9 +69,9 @@ class AutomationEditor : public QWidget, public JournallingObject
 	Q_PROPERTY(QColor crossColor MEMBER m_crossColor)
 	Q_PROPERTY(QColor backgroundShade MEMBER m_backgroundShade)
 public:
-	void setCurrentClip(AutomationClip * new_clip);
+	void setCurrentClip(IAutomationClip * new_clip);
 
-	inline const AutomationClip * currentClip() const
+	inline const IAutomationClip * currentClip() const
 	{
 		return m_clip;
 	}
@@ -100,8 +101,6 @@ public slots:
 
 
 protected:
-	using timeMap = AutomationClip::timeMap;
-
 	void keyPressEvent(QKeyEvent * ke) override;
 	void leaveEvent(QEvent * e) override;
 	void mousePressEvent(QMouseEvent * mouseEvent) override;
@@ -117,10 +116,10 @@ protected:
 	float yCoordOfLevel( float level );
 	inline void drawLevelTick(QPainter & p, int tick, float value);
 
-	timeMap::iterator getNodeAt(int x, int y, bool outValue = false, int r = 5);
+	AutomationTimeMap::iterator getNodeAt(int x, int y, bool outValue = false, int r = 5);
 
 	void drawLine( int x0, float y0, int x1, float y1 );
-	bool fineTuneValue(timeMap::iterator node, bool editingOutValue);
+	bool fineTuneValue(AutomationTimeMap::iterator* node, bool editingOutValue);
 
 protected slots:
 	void play();
@@ -132,7 +131,7 @@ protected slots:
 	void setEditMode(AutomationEditor::EditModes mode);
 	void setEditMode(int mode);
 
-	void setProgressionType(AutomationClip::ProgressionTypes type);
+	void setProgressionType(IAutomationClip::ProgressionTypes type);
 	void setProgressionType(int type);
 	void setTension();
 
@@ -177,15 +176,15 @@ private:
 	static QPixmap * s_toolYFlip;
 	static QPixmap * s_toolXFlip;
 
-	ComboBoxModel m_zoomingXModel;
-	ComboBoxModel m_zoomingYModel;
-	ComboBoxModel m_quantizeModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_zoomingXModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_zoomingYModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_quantizeModel;
 
 	static const QVector<float> m_zoomXLevels;
 
-	FloatModel * m_tensionModel;
+	IFloatAutomatableModel * m_tensionModel;
 
-	AutomationClip * m_clip;
+	IAutomationClip * m_clip;
 	float m_minLevel;
 	float m_maxLevel;
 	float m_step;
@@ -224,7 +223,7 @@ private:
 	bool m_scrollBack;
 
 	void drawCross(QPainter & p );
-	void drawAutomationPoint( QPainter & p, timeMap::iterator it );
+	void drawAutomationPoint( QPainter & p, AutomationTimeMap::iterator it );
 	bool inPatternEditor();
 
 	QColor m_barLineColor;
@@ -258,13 +257,13 @@ public:
 	AutomationEditorWindow();
 	~AutomationEditorWindow() override = default;
 
-	void setCurrentClip(AutomationClip* clip);
-	const AutomationClip* currentClip();
+	void setCurrentClip(IAutomationClip* clip);
+	const IAutomationClip* currentClip();
 
 	void dropEvent( QDropEvent * _de ) override;
 	void dragEnterEvent( QDragEnterEvent * _dee ) override;
 
-	void open(AutomationClip* clip);
+	void open(IAutomationClip* clip);
 
 
 

@@ -28,7 +28,7 @@
 
 #include "lmms_basics.h"
 #include "panning_constants.h"
-#include "Midi.h"
+#include "MidiConstants.h"
 #include "volume.h"
 
 namespace lmms

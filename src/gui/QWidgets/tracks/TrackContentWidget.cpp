@@ -24,13 +24,13 @@
 
 #include "TrackContentWidget.h"
 
-#include "AutomationClip.h"
+#include "IClip.h"
 #include "Clipboard.h"
-#include "DataFile.h"
-#include "Engine.h"
+#include "IDataFile.h"
+#include "IEngine.h"
 #include "GuiApplication.h"
-#include "PatternStore.h"
-#include "Song.h"
+#include "IPatternStore.h"
+#include "ISong.h"
 #include "StringPairDrag.h"
 #include "TrackView.h"
 
@@ -138,7 +138,7 @@ void TrackContentWidget::updateBackground()
  */
 void TrackContentWidget::addClipView( ClipView * clipv )
 {
-	Clip * clip = clipv->getClip();
+	auto * clip = clipv->getClip();
 
 	m_clipViews.push_back( clipv );
 
@@ -164,7 +164,7 @@ void TrackContentWidget::removeClipView( ClipView * clipv )
 	if( it != m_clipViews.end() )
 	{
 		m_clipViews.erase( it );
-		Engine::getSong()->setModified();
+		IEngine::Instance()->getSongInterface()->setModified();
 	}
 }
 
@@ -197,7 +197,7 @@ void TrackContentWidget::changePosition( const TimePos & newPos )
 {
 	if (m_trackView->trackContainerView() == getGUI()->patternEditor()->m_editor)
 	{
-		const int curPattern = Engine::patternStore()->currentPattern();
+		const int curPattern = IEngine::Instance()->getPatternStoreInterface()->currentPattern();
 		setUpdatesEnabled( false );
 
 		// first show clip for current pattern...
@@ -233,7 +233,7 @@ void TrackContentWidget::changePosition( const TimePos & newPos )
 	setUpdatesEnabled( false );
 	for (const auto& clipView : m_clipViews)
 	{
-		Clip* clip = clipView->getClip();
+		IClip* clip = clipView->getClip();
 
 		clip->changeLength( clip->length() );
 
@@ -322,7 +322,7 @@ bool TrackContentWidget::canPasteSelection( TimePos clipPos, const QMimeData* md
 	// For decodeKey() and decodeValue()
 	using namespace Clipboard;
 
-	Track * t = getTrack();
+	ITrack * t = getTrack();
 	QString type = decodeKey( md );
 	QString value = decodeValue( md );
 
@@ -334,10 +334,10 @@ bool TrackContentWidget::canPasteSelection( TimePos clipPos, const QMimeData* md
 	}
 
 	// value contains XML needed to reconstruct Clips and place them
-	DataFile dataFile( value.toUtf8() );
+	auto dataFile = createDataFile( value.toUtf8() );
 
 	// Extract the metadata and which Clip was grabbed
-	QDomElement metadata = dataFile.content().firstChildElement( "copyMetadata" );
+	QDomElement metadata = dataFile->content().firstChildElement( "copyMetadata" );
 	QDomAttr clipPosAttr = metadata.attributeNode( "grabbedClipPos" );
 	TimePos grabbedClipPos = clipPosAttr.value().toInt();
 	TimePos grabbedClipBar = TimePos( grabbedClipPos.getBar(), 0 );
@@ -347,19 +347,19 @@ bool TrackContentWidget::canPasteSelection( TimePos clipPos, const QMimeData* md
 	const int initialTrackIndex = tiAttr.value().toInt();
 
 	// Get the current track's index
-	const TrackList tracks = t->trackContainer()->tracks();
+	const TrackList tracks = t->trackInterfaceContainer()->tracks();
 	const int currentTrackIndex = tracks.indexOf( t );
 
 	// Don't paste if we're on the same bar and allowSameBar is false
 	auto sourceTrackContainerId = metadata.attributeNode( "trackContainerId" ).value().toUInt();
-	if( !allowSameBar && sourceTrackContainerId == t->trackContainer()->id() &&
+	if( !allowSameBar && sourceTrackContainerId == t->trackInterfaceContainer()->id() &&
 			clipPos == grabbedClipBar && currentTrackIndex == initialTrackIndex )
 	{
 		return false;
 	}
 
 	// Extract the clip data
-	QDomElement clipParent = dataFile.content().firstChildElement("clips");
+	QDomElement clipParent = dataFile->content().firstChildElement("clips");
 	QDomNodeList clipNodes = clipParent.childNodes();
 
 	// Determine if all the Clips will land on a valid track
@@ -369,15 +369,15 @@ bool TrackContentWidget::canPasteSelection( TimePos clipPos, const QMimeData* md
 		int trackIndex = clipElement.attributeNode( "trackIndex" ).value().toInt();
 		int finalTrackIndex = trackIndex + currentTrackIndex - initialTrackIndex;
 
-		// Track must be in TrackContainer's tracks
+		// ITrack must be in TrackContainer's tracks
 		if( finalTrackIndex < 0 || finalTrackIndex >= tracks.size() )
 		{
 			return false;
 		}
 
-		// Track must be of the same type
+		// ITrack must be of the same type
 		auto startTrackType = clipElement.attributeNode("trackType").value().toInt();
-		Track * endTrack = tracks.at( finalTrackIndex );
+		ITrack * endTrack = tracks.at( finalTrackIndex );
 		if( startTrackType != endTrack->type() )
 		{
 			return false;
@@ -423,21 +423,21 @@ bool TrackContentWidget::pasteSelection( TimePos clipPos, const QMimeData * md, 
 	getTrack()->addJournalCheckPoint();
 
 	// value contains XML needed to reconstruct Clips and place them
-	DataFile dataFile( value.toUtf8() );
+	auto dataFile = createDataFile( value.toUtf8() );
 
 	// Extract the clip data
-	QDomElement clipParent = dataFile.content().firstChildElement("clips");
+	QDomElement clipParent = dataFile->content().firstChildElement("clips");
 	QDomNodeList clipNodes = clipParent.childNodes();
 
 	// Extract the track index that was originally clicked
-	QDomElement metadata = dataFile.content().firstChildElement( "copyMetadata" );
+	QDomElement metadata = dataFile->content().firstChildElement( "copyMetadata" );
 	QDomAttr tiAttr = metadata.attributeNode( "initialTrackIndex" );
 	int initialTrackIndex = tiAttr.value().toInt();
 	QDomAttr clipPosAttr = metadata.attributeNode( "grabbedClipPos" );
 	TimePos grabbedClipPos = clipPosAttr.value().toInt();
 
 	// Snap the mouse position to the beginning of the dropped bar, in ticks
-	const TrackList tracks = getTrack()->trackContainer()->tracks();
+	const TrackList tracks = getTrack()->trackInterfaceContainer()->tracks();
 	const int currentTrackIndex = tracks.indexOf( getTrack() );
 
 	bool wasSelection = m_trackView->trackContainerView()->rubberBand()->selectedObjects().count();
@@ -483,7 +483,7 @@ bool TrackContentWidget::pasteSelection( TimePos clipPos, const QMimeData * md, 
 
 		int trackIndex = outerClipElement.attributeNode( "trackIndex" ).value().toInt();
 		int finalTrackIndex = trackIndex + ( currentTrackIndex - initialTrackIndex );
-		Track * t = tracks.at( finalTrackIndex );
+		ITrack * t = tracks.at( finalTrackIndex );
 
 		// The new position is the old position plus the offset.
 		TimePos pos = clipElement.attributeNode( "pos" ).value().toInt() + offset;
@@ -491,7 +491,7 @@ bool TrackContentWidget::pasteSelection( TimePos clipPos, const QMimeData * md, 
 		TimePos shift = TimePos::ticksPerBar() * getGUI()->songEditor()->m_editor->getSnapSize();
 		if (offset == 0 && initialTrackIndex == currentTrackIndex) { pos += shift; }
 
-		Clip * clip = t->createClip( pos );
+		auto * clip = t->createClip( pos );
 		clip->restoreState( clipElement );
 		clip->movePosition(pos); // Because we restored the state, we need to move the Clip again.
 		if( wasSelection )
@@ -500,7 +500,7 @@ bool TrackContentWidget::pasteSelection( TimePos clipPos, const QMimeData * md, 
 		}
 	}
 
-	AutomationClip::resolveAllIDs();
+	IAutomationClip::resolveAllIDs();
 
 	return true;
 }
@@ -610,7 +610,7 @@ void TrackContentWidget::resizeEvent( QResizeEvent * resizeEvent )
 /*! \brief Return the track shown by the trackContentWidget
  *
  */
-Track * TrackContentWidget::getTrack()
+ITrack * TrackContentWidget::getTrack()
 {
 	return m_trackView->getTrack();
 }

@@ -72,7 +72,7 @@ Plugin::Descriptor PLUGIN_EXPORT lv2instrument_plugin_descriptor =
 
 
 Lv2Instrument::Lv2Instrument(InstrumentTrack *instrumentTrackArg,
-	Descriptor::SubPluginFeatures::Key *key) :
+	PluginDescriptor::Key *key) :
 	Instrument(instrumentTrackArg, &lv2instrument_plugin_descriptor, key),
 	Lv2ControlBase(this, key->attributes["uri"])
 {
@@ -313,7 +313,7 @@ extern "C"
 // necessary for getting instance out of shared lib
 PLUGIN_EXPORT Plugin *lmms_plugin_main(Model *_parent, void *_data)
 {
-	using KeyType = Plugin::Descriptor::SubPluginFeatures::Key;
+	using KeyType = Plugin::PluginDescriptor::Key;
 	auto ins = new Lv2Instrument(static_cast<InstrumentTrack*>(_parent), static_cast<KeyType*>(_data));
 	if (!ins->isValid()) { delete ins; ins = nullptr; }
 	return ins;

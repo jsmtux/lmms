@@ -45,10 +45,10 @@ public:
 		NumColors
 	} ;
 
-	LedCheckBox( const QString & _txt, BoolModel* _model, QWidget * _parent,
+	LedCheckBox( const QString & _txt, IBoolAutomatableModel* _model, QWidget * _parent,
 				const QString & _name = QString(),
 						LedColors _color = Yellow );
-	LedCheckBox( BoolModel* _model, QWidget * _parent,
+	LedCheckBox( IBoolAutomatableModel* _model, QWidget * _parent,
 				const QString & _name = QString(),
 						LedColors _color = Yellow );
 

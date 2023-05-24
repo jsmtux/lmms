@@ -25,11 +25,11 @@
  
 #include "AutomationTrackView.h"
 
-#include "AutomationClip.h"
-#include "AutomationTrack.h"
+#include "IClip.h"
+#include "ITrack.h"
 #include "embed.h"
-#include "Engine.h"
-#include "ProjectJournal.h"
+#include "IEngine.h"
+#include "IProjectJournal.h"
 #include "StringPairDrag.h"
 #include "TrackLabelButton.h"
 
@@ -38,16 +38,16 @@
 namespace lmms::gui
 {
 
-AutomationTrackView::AutomationTrackView( AutomationTrack * _at, TrackContainerView* tcv ) :
-	TrackView( _at, tcv )
+AutomationTrackView::AutomationTrackView( IAutomationTrack * _at, TrackContainerView* tcv ) :
+	TrackView( _at->baseTrack(), tcv )
 {
         setFixedHeight( 32 );
 		auto tlb = new TrackLabelButton(this, getTrackSettingsWidget());
 		tlb->setIcon(embed::getIconPixmap("automation_track"));
 		tlb->move(3, 1);
 		tlb->show();
-		QObject::connect( _at, SIGNAL(dataChanged()), this, SLOT(update()));
-		QObject::connect( _at, SIGNAL(propertiesChanged()), this, SLOT(update()));
+		QObject::connect( _at->baseTrack(), SIGNAL(dataChanged()), this, SLOT(update()));
+		QObject::connect( _at->baseTrack(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 }
 
 void AutomationTrackView::dragEnterEvent( QDragEnterEvent * _dee )
@@ -64,7 +64,7 @@ void AutomationTrackView::dropEvent( QDropEvent * _de )
 	QString val = StringPairDrag::decodeValue( _de );
 	if( type == "automatable_model" )
 	{
-		auto mod = dynamic_cast<AutomatableModel*>(Engine::projectJournal()->journallingObject(val.toInt()));
+		auto mod = getAutomatableModelFromJournallingObject(IEngine::Instance()->getProjectJournalInterface()->journallingObject(val.toInt()));
 		if( mod != nullptr )
 		{
 			TimePos pos = TimePos( trackContainerView()->
@@ -80,9 +80,8 @@ void AutomationTrackView::dropEvent( QDropEvent * _de )
 				pos.setTicks( 0 );
 			}
 
-			Clip * clip = getTrack()->createClip( pos );
-			auto autoClip = dynamic_cast<AutomationClip*>(clip);
-			autoClip->addObject( mod );
+			auto * clip = m_at->createAutomationClip( pos );
+			clip->addObject( mod );
 		}
 	}
 

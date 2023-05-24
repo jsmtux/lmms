@@ -2,7 +2,8 @@
 
 #include <QLabel>
 
-#include "ConfigManager.h"
+#include "IConfigManager.h"
+#include "widgets/LcdSpinBox.h"
 
 #include "gui_templates.h"
 
@@ -11,7 +12,7 @@ namespace lmms {
 AudioJackSetupWidget::AudioJackSetupWidget( QWidget * _parent ) :
 	AudioDeviceSetupWidget( AudioJackSetupWidget::name(), _parent )
 {
-	QString cn = ConfigManager::inst()->value( "audiojack", "clientname" );
+	QString cn = IConfigManager::Instance()->value( "audiojack", "clientname" );
 	if( cn.isEmpty() )
 	{
 		cn = "lmms";
@@ -23,10 +24,8 @@ AudioJackSetupWidget::AudioJackSetupWidget( QWidget * _parent ) :
 	cn_lbl->setFont( pointSize<7>( cn_lbl->font() ) );
 	cn_lbl->setGeometry( 10, 40, 160, 10 );
 
-	auto m = new gui::LcdSpinBoxModel(/* this */);
-	m->setRange( DEFAULT_CHANNELS, SURROUND_CHANNELS );
-	m->setStep( 2 );
-	m->setValue( ConfigManager::inst()->value( "audiojack",
+	auto m = MFact::createIntModel(DEFAULT_CHANNELS, SURROUND_CHANNELS, 2, nullptr, "");
+	m->setValue( IConfigManager::Instance()->value( "audiojack",
 							"channels" ).toInt() );
 
 	m_channels = new gui::LcdSpinBox( 1, m, this );
@@ -42,10 +41,10 @@ AudioJackSetupWidget::~AudioJackSetupWidget()
 
 void AudioJackSetupWidget::saveSettings()
 {
-	ConfigManager::inst()->setValue( "audiojack", "clientname",
+	IConfigManager::Instance()->setValue( "audiojack", "clientname",
 							m_clientName->text() );
-	ConfigManager::inst()->setValue( "audiojack", "channels",
-				QString::number( m_channels->value<int>() ) );
+	IConfigManager::Instance()->setValue( "audiojack", "channels",
+				QString::number( m_channels->model()->value() ) );
 }
 
 }

@@ -53,7 +53,7 @@ Plugin::Descriptor PLUGIN_EXPORT eq_plugin_descriptor =
 }
 
 
-EqEffect::EqEffect( Model *parent, const Plugin::Descriptor::SubPluginFeatures::Key *key) :
+EqEffect::EqEffect( Model *parent, const Plugin::PluginDescriptor::Key *key) :
 	Effect( &eq_plugin_descriptor, parent, key ),
 	m_eqControls( this ),
 	m_inGain( 1.0 ),
@@ -356,7 +356,7 @@ extern "C"
 //needed for getting plugin out of shared lib
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model* parent, void* data )
 {
-	return new EqEffect( parent , static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>( data ) );
+	return new EqEffect( parent , static_cast<const Plugin::PluginDescriptor::Key *>( data ) );
 }
 
 }

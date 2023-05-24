@@ -26,8 +26,8 @@
 #define LMMS_GUI_CONTROLS_H
 
 // headers only required for covariance
-#include "AutomatableModel.h"
-#include "ComboBoxModel.h"
+#include "IModels.h"
+#include "AutomatableModelView.h"
 
 
 class QString;
@@ -37,15 +37,18 @@ class QLabel;
 namespace lmms
 {
 
-class AutomatableModel;
-
 namespace gui
 {
 
-class AutomatableModelView;
 class Knob;
 class ComboBox;
 class LedCheckBox;
+
+class IControl {
+public:
+	virtual QWidget* topWidget() = 0;
+	virtual void setText(const QString& text) = 0;
+};
 
 /**
 	These classes provide
@@ -54,20 +57,17 @@ class LedCheckBox;
 		(justification: setting the wrong typed model to a widget will cause
 		hard-to-find runtime errors)
 */
-class Control
+template <typename ModelType>
+class Control : public IControl
 {
 public:
-	virtual QWidget* topWidget() = 0;
-	virtual void setText(const QString& text) = 0;
-
-	virtual AutomatableModel* model() = 0;
-	virtual AutomatableModelView* modelView() = 0;
+	virtual AutomatableModelView<ModelType>* modelView() = 0;
 
 	virtual ~Control() = default;
 };
 
 
-class KnobControl : public Control
+class KnobControl : public Control<float>
 {
 	Knob* m_knob;
 
@@ -75,15 +75,14 @@ public:
 	void setText(const QString& text) override;
 	QWidget* topWidget() override;
 
-	FloatModel* model() override;
-	AutomatableModelView* modelView() override;
+	FloatModelView* modelView() override;
 
-	KnobControl(FloatModel* _model, QWidget* parent = nullptr);
+	KnobControl(IFloatAutomatableModel* _model, QWidget* parent = nullptr);
 	~KnobControl() override = default;
 };
 
 
-class ComboControl : public Control
+class ComboControl : public Control<int>
 {
 	QWidget* m_widget;
 	ComboBox* m_combo;
@@ -93,15 +92,14 @@ public:
 	void setText(const QString& text) override;
 	QWidget* topWidget() override { return m_widget; }
 
-	ComboBoxModel* model() override;
-	AutomatableModelView* modelView() override;
+	IntModelView* modelView() override;
 
-	ComboControl(ComboBoxModel* _model, QWidget* parent = nullptr);
+	ComboControl(IComboBoxModelWrapper* _model, QWidget* parent = nullptr);
 	~ComboControl() override = default;
 };
 
 
-class LcdControl : public Control
+class LcdControl : public Control<int>
 {
 	class LcdSpinBox* m_lcd;
 
@@ -109,16 +107,14 @@ public:
 	void setText(const QString& text) override;
 	QWidget* topWidget() override;
 
-	// void setModel(AutomatableModel* model) override;
-	IntModel* model() override;
-	AutomatableModelView* modelView() override;
+	IntModelView* modelView() override;
 
-	LcdControl(int numDigits, IntModel* _model, QWidget* parent = nullptr);
+	LcdControl(int numDigits, IIntAutomatableModel* _model, QWidget* parent = nullptr);
 	~LcdControl() override = default;
 };
 
 
-class CheckControl : public Control
+class CheckControl : public Control<bool>
 {
 	QWidget* m_widget;
 	LedCheckBox* m_checkBox;
@@ -128,11 +124,9 @@ public:
 	void setText(const QString& text) override;
 	QWidget* topWidget() override;
 
-	// void setModel(AutomatableModel* model) override;
-	BoolModel* model() override;
-	AutomatableModelView* modelView() override;
+	BoolModelView* modelView() override;
 
-	CheckControl(BoolModel* _model, QWidget* parent = nullptr);
+	CheckControl(IBoolAutomatableModel* _model, QWidget* parent = nullptr);
 	~CheckControl() override = default;
 };
 

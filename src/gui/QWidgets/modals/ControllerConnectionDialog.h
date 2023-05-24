@@ -26,8 +26,9 @@
 #ifndef LMMS_GUI_CONTROLLER_CONNECTION_DIALOG_H
 #define LMMS_GUI_CONTROLLER_CONNECTION_DIALOG_H
 
-#include "Controller.h"
-#include "AutomatableModel.h"
+#include "IController.h"
+#include "IModels.h"
+#include "IMidiController.h"
 
 #include <QDialog>
 #include <QSortFilterProxyModel>
@@ -40,7 +41,7 @@ class QScrollArea;
 namespace lmms
 {
 
-class AutoDetectMidiController;
+class IAutoDetectMidiController;
 
 namespace gui
 {
@@ -58,10 +59,10 @@ class ControllerConnectionDialog : public QDialog
 	Q_OBJECT
 public:
 	ControllerConnectionDialog( QWidget * _parent,
-			const AutomatableModel * _target_model );
+			const IAutomatableModelBase* _target_model );
 	~ControllerConnectionDialog() override;
 
-	Controller * chosenController()
+	IController * chosenController()
 	{
 		return m_controller;
 	}
@@ -81,16 +82,13 @@ protected slots:
 
 
 private:
-	BoolModel m_midiGroupBoxEnabled;
-	BoolModel m_userGroupBoxEnabled;
-	IntModel m_userControllerIndex;
 	// Midi
 	GroupBox * m_midiGroupBox;
 	LcdSpinBox * m_midiChannelSpinBox;
 	LcdSpinBox * m_midiControllerSpinBox;
 	LedCheckBox * m_midiAutoDetectCheckBox;
 	MidiPortMenu * m_readablePorts;
-	BoolModel m_midiAutoDetect;
+	std::unique_ptr<IBoolAutomatableModel> m_midiAutoDetect;
 
 	// User
 	GroupBox * m_userGroupBox;
@@ -100,11 +98,11 @@ private:
 	TabWidget * m_mappingBox;
 	QLineEdit * m_mappingFunction;
 
-	Controller * m_controller;
-	const AutomatableModel * m_targetModel;
+	IController * m_controller;
+	const IAutomatableModelBase* m_targetModel;
 
 	// Temporary midiController
-	AutoDetectMidiController * m_midiController;
+	std::unique_ptr<IMidiController> m_midiController;
 } ;
 
 

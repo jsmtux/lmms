@@ -28,7 +28,7 @@
 #include "AudioEngine.h"
 #include "embed.h"
 #include "Engine.h"
-#include "InstrumentTrack.h"
+#include "tracks/InstrumentTrack.h"
 #include "PresetPreviewPlayHandle.h"
 
 namespace lmms
@@ -144,66 +144,6 @@ std::array<InstrumentFunctionNoteStacking::ChordTable::Init, InstrumentFunctionN
 
 
 
-
-InstrumentFunctionNoteStacking::Chord::Chord( const char * n, const ChordSemiTones & semi_tones ) :
-	m_name( InstrumentFunctionNoteStacking::tr( n ) )
-{
-	for( m_size = 0; m_size < MAX_CHORD_POLYPHONY; m_size++ )
-	{
-		if( semi_tones[m_size] == -1 )
-		{
-			break;
-		}
-
-		m_semiTones[m_size] = semi_tones[m_size];
-	}
-}
-
-
-
-
-bool InstrumentFunctionNoteStacking::Chord::hasSemiTone( int8_t semi_tone ) const
-{
-	for( int i = 0; i < size(); ++i )
-	{
-		if( semi_tone == m_semiTones[i] )
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-
-
-
-InstrumentFunctionNoteStacking::ChordTable::ChordTable() :
-	QVector<Chord>()
-{
-	for (const auto& chord : s_initTable)
-	{
-		push_back(Chord(chord.m_name, chord.m_semiTones));
-	}
-}
-
-
-
-
-const InstrumentFunctionNoteStacking::Chord & InstrumentFunctionNoteStacking::ChordTable::getByName( const QString & name, bool is_scale ) const
-{
-	for( int i = 0; i < size(); i++ )
-	{
-		if( at( i ).getName() == name && is_scale == at( i ).isScale() )
-			return at( i );
-	}
-
-	static Chord empty;
-	return empty;
-}
-
-
-
-
 InstrumentFunctionNoteStacking::InstrumentFunctionNoteStacking( QObject * _parent ) :
 	Model( _parent, tr( "Chords" ) ),
 	m_chordsEnabledModel( false, this ),
@@ -274,7 +214,7 @@ void InstrumentFunctionNoteStacking::processNote( NotePlayHandle * _n )
 void InstrumentFunctionNoteStacking::saveSettings( QDomDocument & _doc, QDomElement & _this )
 {
 	m_chordsEnabledModel.saveSettings( _doc, _this, "chord-enabled" );
-	m_chordsModel.saveSettings( _doc, _this, "chord" );
+	m_chordsModel.model()->saveSettings( _doc, _this, "chord" );
 	m_chordRangeModel.saveSettings( _doc, _this, "chordrange" );
 }
 
@@ -284,7 +224,7 @@ void InstrumentFunctionNoteStacking::saveSettings( QDomDocument & _doc, QDomElem
 void InstrumentFunctionNoteStacking::loadSettings( const QDomElement & _this )
 {
 	m_chordsEnabledModel.loadSettings( _this, "chord-enabled" );
-	m_chordsModel.loadSettings( _this, "chord" );
+	m_chordsModel.model()->loadSettings( _this, "chord" );
 	m_chordRangeModel.loadSettings( _this, "chordrange" );
 }
 
@@ -319,7 +259,7 @@ InstrumentFunctionArpeggio::InstrumentFunctionArpeggio( QObject * _parent ) :
 	m_arpDirectionModel.addItem( tr( "Up and down" ), std::make_unique<PixmapLoader>( "arp_up_and_down" ) );
 	m_arpDirectionModel.addItem( tr( "Down and up" ), std::make_unique<PixmapLoader>( "arp_up_and_down" ) );
 	m_arpDirectionModel.addItem( tr( "Random" ), std::make_unique<PixmapLoader>( "arp_random" ) );
-	m_arpDirectionModel.setInitValue( ArpDirUp );
+	m_arpDirectionModel.model()->setInitValue( ArpDirUp );
 
 	m_arpModeModel.addItem( tr( "Free" ), std::make_unique<PixmapLoader>( "arp_free" ) );
 	m_arpModeModel.addItem( tr( "Sort" ), std::make_unique<PixmapLoader>( "arp_sort" ) );
@@ -367,7 +307,7 @@ void InstrumentFunctionArpeggio::processNote( NotePlayHandle * _n )
 	const int total_range = range * cnphv.size();
 
 	// number of frames that every note should be played
-	const auto arp_frames = (f_cnt_t)(m_arpTimeModel.value() / 1000.0f * Engine::audioEngine()->processingSampleRate());
+	const auto arp_frames = (f_cnt_t)(m_arpTimeModel.wrappedModel()->value() / 1000.0f * Engine::audioEngine()->processingSampleRate());
 	const auto gated_frames = (f_cnt_t)(m_arpGateModel.value() * arp_frames / 100.0f);
 
 	// used for calculating remaining frames for arp-note, we have to add
@@ -520,7 +460,7 @@ void InstrumentFunctionArpeggio::processNote( NotePlayHandle * _n )
 void InstrumentFunctionArpeggio::saveSettings( QDomDocument & _doc, QDomElement & _this )
 {
 	m_arpEnabledModel.saveSettings( _doc, _this, "arp-enabled" );
-	m_arpModel.saveSettings( _doc, _this, "arp" );
+	m_arpModel.model()->saveSettings( _doc, _this, "arp" );
 	m_arpRangeModel.saveSettings( _doc, _this, "arprange" );
 	m_arpRepeatsModel.saveSettings( _doc, _this, "arprepeats" );
 	m_arpCycleModel.saveSettings( _doc, _this, "arpcycle" );
@@ -528,8 +468,8 @@ void InstrumentFunctionArpeggio::saveSettings( QDomDocument & _doc, QDomElement 
 	m_arpMissModel.saveSettings( _doc, _this, "arpmiss" );
 	m_arpTimeModel.saveSettings( _doc, _this, "arptime" );
 	m_arpGateModel.saveSettings( _doc, _this, "arpgate" );
-	m_arpDirectionModel.saveSettings( _doc, _this, "arpdir" );
-	m_arpModeModel.saveSettings( _doc, _this, "arpmode" );
+	m_arpDirectionModel.model()->saveSettings( _doc, _this, "arpdir" );
+	m_arpModeModel.model()->saveSettings( _doc, _this, "arpmode" );
 }
 
 
@@ -538,7 +478,7 @@ void InstrumentFunctionArpeggio::saveSettings( QDomDocument & _doc, QDomElement 
 void InstrumentFunctionArpeggio::loadSettings( const QDomElement & _this )
 {
 	m_arpEnabledModel.loadSettings( _this, "arp-enabled" );
-	m_arpModel.loadSettings( _this, "arp" );
+	m_arpModel.model()->loadSettings( _this, "arp" );
 	m_arpRangeModel.loadSettings( _this, "arprange" );
 	m_arpRepeatsModel.loadSettings( _this, "arprepeats" );
 	m_arpCycleModel.loadSettings( _this, "arpcycle" );
@@ -546,8 +486,8 @@ void InstrumentFunctionArpeggio::loadSettings( const QDomElement & _this )
 	m_arpMissModel.loadSettings( _this, "arpmiss" );
 	m_arpTimeModel.loadSettings( _this, "arptime" );
 	m_arpGateModel.loadSettings( _this, "arpgate" );
-	m_arpDirectionModel.loadSettings( _this, "arpdir" );
-	m_arpModeModel.loadSettings( _this, "arpmode" );
+	m_arpDirectionModel.model()->loadSettings( _this, "arpdir" );
+	m_arpModeModel.model()->loadSettings( _this, "arpmode" );
 }
 
 

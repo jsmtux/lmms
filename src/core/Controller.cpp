@@ -31,7 +31,7 @@
 #include "AudioEngine.h"
 #include "ControllerConnection.h"
 #include "LfoController.h"
-#include "MidiController.h"
+#include "midi/MidiController.h"
 #include "PeakController.h"
 
 namespace lmms
@@ -41,12 +41,15 @@ namespace lmms
 long Controller::s_periods = 0;
 QVector<Controller *> Controller::s_controllers;
 
+void TriggerControllerFrameCounter() {
+	Controller::triggerFrameCounter();
+}
 
 
 Controller::Controller( ControllerTypes _type, QObject * _parent,
 					const QString & _display_name ) :
-	Model( _parent, _display_name ),
-	JournallingObject(),
+	// Model( _parent, _display_name ),
+	m_model( _parent, _display_name ),
 	m_valueBuffer( Engine::audioEngine()->framesPerPeriod() ),
 	m_bufferLastUpdated( -1 ),
 	m_connectionCount( 0 ),
@@ -253,8 +256,8 @@ bool Controller::hasModel( const Model * m ) const
 				return true;
 			}
 
-			ControllerConnection * cc = am->controllerConnection();
-			if( cc != nullptr && cc->getController()->hasModel( m ) )
+			auto * cc = am->controllerConnection();
+			if( cc != nullptr && static_cast<Controller*>(cc->getController())->hasModel( m ) )
 			{
 				return true;
 			}
@@ -293,7 +296,7 @@ QString Controller::nodeName() const
 
 
 
-void Controller::addConnection( ControllerConnection * )
+void Controller::addConnection( IControllerConnection * )
 {
 	m_connectionCount++;
 }
@@ -301,7 +304,7 @@ void Controller::addConnection( ControllerConnection * )
 
 
 
-void Controller::removeConnection( ControllerConnection * )
+void Controller::removeConnection( IControllerConnection * )
 {
 	m_connectionCount--;
 	Q_ASSERT( m_connectionCount >= 0 );

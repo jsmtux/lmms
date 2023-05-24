@@ -24,14 +24,14 @@
  
 #include "SampleTrackView.h"
 
-#include "ConfigManager.h"
+#include "IConfigManager.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "FadeButton.h"
 #include "GuiApplication.h"
-#include "Mixer.h"
+#include "IMixer.h"
 #include "MixerView.h"
-#include "SampleClip.h"
+#include "IClip.h"
 #include "SampleTrackWindow.h"
 #include "StringPairDrag.h"
 #include "TrackLabelButton.h"
@@ -47,8 +47,8 @@ namespace lmms::gui
 {
 
 
-SampleTrackView::SampleTrackView( SampleTrack * _t, TrackContainerView* tcv ) :
-	TrackView( _t, tcv ),
+SampleTrackView::SampleTrackView( ISampleTrack * _t, TrackContainerView* tcv ) :
+	TrackView( _t->baseTrack(), tcv ),
 	m_sampleTrack(_t)
 {
 	setFixedHeight( 32 );
@@ -61,12 +61,12 @@ SampleTrackView::SampleTrackView( SampleTrack * _t, TrackContainerView* tcv ) :
 	m_tlb->move(3, 1);
 	m_tlb->show();
 
-	m_volumeKnob = new Knob( knobSmall_17, &_t->m_volumeModel, getTrackSettingsWidget(),
+	m_volumeKnob = new Knob( knobSmall_17, _t->volumeModel(), getTrackSettingsWidget(),
 						    tr( "Track volume" ) );
 	m_volumeKnob->setVolumeKnob( true );
 	m_volumeKnob->setHintText( tr( "Channel volume:" ), "%" );
 
-	int settingsWidgetWidth = ConfigManager::inst()->
+	int settingsWidgetWidth = IConfigManager::Instance()->
 					value( "ui", "compacttrackbuttons" ).toInt()
 				? DEFAULT_SETTINGS_WIDGET_WIDTH_COMPACT
 				: DEFAULT_SETTINGS_WIDGET_WIDTH;
@@ -74,7 +74,7 @@ SampleTrackView::SampleTrackView( SampleTrack * _t, TrackContainerView* tcv ) :
 	m_volumeKnob->setLabel( tr( "VOL" ) );
 	m_volumeKnob->show();
 
-	m_panningKnob = new Knob( knobSmall_17, &_t->m_panningModel, getTrackSettingsWidget(),
+	m_panningKnob = new Knob( knobSmall_17, _t->panningModel(), getTrackSettingsWidget(),
 							tr( "Panning" ) );
 	m_panningKnob->setHintText( tr( "Panning:" ), "%" );
 	m_panningKnob->move( settingsWidgetWidth - 24, 2 );
@@ -89,10 +89,10 @@ SampleTrackView::SampleTrackView( SampleTrack * _t, TrackContainerView* tcv ) :
 	);
 	m_activityIndicator->setGeometry(settingsWidgetWidth - 2 * 24 - 11, 2, 8, 28);
 	m_activityIndicator->show();
-	connect(_t, SIGNAL(playingChanged()), this, SLOT(updateIndicator()));
+	connect(_t->sampleTrackSignals(), SIGNAL(playingChanged()), this, SLOT(updateIndicator()));
 
-	QObject::connect( m_sampleTrack, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_sampleTrack, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_sampleTrack->baseTrack()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_sampleTrack->baseTrack()->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 
 	m_window = new SampleTrackWindow(this);
 	m_window->toggleVisibility(false);
@@ -127,12 +127,12 @@ QMenu * SampleTrackView::createMixerMenu(QString title, QString newMixerLabel)
 {
 	int channelIndex = model()->mixerChannelModel()->value();
 
-	MixerChannel *mixerChannel = Engine::mixer()->mixerChannel(channelIndex);
+	IMixerChannel *mixerChannel = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface(channelIndex);
 
 	// If title allows interpolation, pass channel index and name
 	if (title.contains("%2"))
 	{
-		title = title.arg(channelIndex).arg(mixerChannel->m_name);
+		title = title.arg(channelIndex).arg(mixerChannel->getName());
 	}
 
 	auto mixerMenu = new QMenu(title);
@@ -140,14 +140,14 @@ QMenu * SampleTrackView::createMixerMenu(QString title, QString newMixerLabel)
 	mixerMenu->addAction(newMixerLabel, this, SLOT(createMixerLine()));
 	mixerMenu->addSeparator();
 
-	for (int i = 0; i < Engine::mixer()->numChannels(); ++i)
+	for (int i = 0; i < IEngine::Instance()->getMixerInterface()->numChannels(); ++i)
 	{
-		MixerChannel * currentChannel = Engine::mixer()->mixerChannel(i);
+		IMixerChannel * currentChannel = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface(i);
 
 		if (currentChannel != mixerChannel)
 		{
-			const auto index = currentChannel->m_channelIndex;
-			QString label = tr("%1: %2").arg(currentChannel->m_channelIndex).arg(currentChannel->m_name);
+			const auto index = currentChannel->channelIndex();
+			QString label = tr("%1: %2").arg(currentChannel->channelIndex()).arg(currentChannel->getName());
 			mixerMenu->addAction(label, [this, index](){
 				assignMixerLine(index);
 			});
@@ -182,7 +182,7 @@ void SampleTrackView::dropEvent(QDropEvent *de)
 
 	if (type == "samplefile")
 	{
-		int trackHeadWidth = ConfigManager::inst()->value("ui", "compacttrackbuttons").toInt()==1
+		int trackHeadWidth = IConfigManager::Instance()->value("ui", "compacttrackbuttons").toInt()==1
 				? DEFAULT_SETTINGS_WIDGET_WIDTH_COMPACT + TRACK_OP_WIDTH_COMPACT
 				: DEFAULT_SETTINGS_WIDGET_WIDTH + TRACK_OP_WIDTH;
 
@@ -196,7 +196,7 @@ void SampleTrackView::dropEvent(QDropEvent *de)
 							* TimePos::ticksPerBar()) + trackContainerView()->currentPosition()
 						).quantize(1.0);
 
-		auto sClip = static_cast<SampleClip*>(getTrack()->createClip(clipPos));
+		auto sClip = m_sampleTrack->createSampleClip(clipPos);
 		if (sClip) { sClip->setSampleFile(value); }
 	}
 }
@@ -208,9 +208,9 @@ void SampleTrackView::dropEvent(QDropEvent *de)
 void SampleTrackView::createMixerLine()
 {
 	int channelIndex = getGUI()->mixerView()->addNewChannel();
-	auto channel = Engine::mixer()->mixerChannel(channelIndex);
+	auto channel = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface(channelIndex);
 
-	channel->m_name = getTrack()->name();
+	channel->setName( getTrack()->name() );
 	if (getTrack()->useColor()) { channel->setColor (getTrack()->color()); }
 
 	assignMixerLine(channelIndex);

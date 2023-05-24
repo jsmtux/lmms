@@ -50,7 +50,7 @@ Plugin::Descriptor PLUGIN_EXPORT reverbsc_plugin_descriptor =
 
 }
 
-ReverbSCEffect::ReverbSCEffect( Model* parent, const Descriptor::SubPluginFeatures::Key* key ) :
+ReverbSCEffect::ReverbSCEffect( Model* parent, const PluginDescriptor::Key* key ) :
 	Effect( &reverbsc_plugin_descriptor, parent, key ),
 	m_reverbSCControls( this )
 {
@@ -158,7 +158,7 @@ PLUGIN_EXPORT Plugin * lmms_plugin_main( Model* parent, void* data )
 {
 	return new ReverbSCEffect(
 		parent,
-		static_cast<const Plugin::Descriptor::SubPluginFeatures::Key*>(data)
+		static_cast<const Plugin::PluginDescriptor::Key*>(data)
 	);
 }
 

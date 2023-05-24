@@ -25,8 +25,9 @@
 #ifndef LMMS_GUI_MICROTUNER_CONFIG_H
 #define LMMS_GUI_MICROTUNER_CONFIG_H
 
-#include "AutomatableModel.h"
-#include "ComboBoxModel.h"
+// #include "AutomatableModel.h"
+// #include "ComboBoxModel.h"
+#include "IModels.h"
 #include "SerializingObject.h"
 
 #include <QWidget>
@@ -75,8 +76,8 @@ private:
 	bool applyScale();
 	bool applyKeymap();
 
-	ComboBoxModel m_scaleComboModel;        //!< ID of scale currently selected for editing
-	ComboBoxModel m_keymapComboModel;       //!< ID of keymap currently selected for editing
+	std::unique_ptr<IComboBoxModelWrapper> m_scaleComboModel;        //!< ID of scale currently selected for editing
+	std::unique_ptr<IComboBoxModelWrapper> m_keymapComboModel;       //!< ID of keymap currently selected for editing
 
 	QLineEdit *m_scaleNameEdit;             //!< edit field for the scale name or description
 	QLineEdit *m_keymapNameEdit;            //!< edit field for the keymap name or description
@@ -84,12 +85,12 @@ private:
 	QPlainTextEdit *m_scaleTextEdit;        //!< text editor field for interval definitions
 	QPlainTextEdit *m_keymapTextEdit;       //!< text editor field for key mappings
 
-	IntModel m_firstKeyModel;               //!< model for spinbox of currently edited first key
-	IntModel m_lastKeyModel;                //!< model for spinbox of currently edited last key
-	IntModel m_middleKeyModel;              //!< model for spinbox of currently edited middle key
+	std::unique_ptr<IIntAutomatableModel> m_firstKeyModel;               //!< model for spinbox of currently edited first key
+	std::unique_ptr<IIntAutomatableModel> m_lastKeyModel;                //!< model for spinbox of currently edited last key
+	std::unique_ptr<IIntAutomatableModel> m_middleKeyModel;              //!< model for spinbox of currently edited middle key
 
-	IntModel m_baseKeyModel;                //!< model for spinbox of currently edited base key
-	FloatModel m_baseFreqModel;             //!< model for spinbox of currently edited base note frequency
+	std::unique_ptr<IIntAutomatableModel> m_baseKeyModel;                //!< model for spinbox of currently edited base key
+	std::unique_ptr<IFloatAutomatableModel> m_baseFreqModel;             //!< model for spinbox of currently edited base note frequency
 };
 
 

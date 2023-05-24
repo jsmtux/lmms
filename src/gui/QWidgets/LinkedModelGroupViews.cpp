@@ -22,10 +22,14 @@
  *
  */
 
+
+#ifdef LMMS_HAVE_LV2
+
 #include "LinkedModelGroupViews.h"
 
 #include "Controls.h"
 #include "ControlLayout.h"
+#include "embed.h"
 #include "LinkedModelGroups.h"
 
 #include <QPushButton>
@@ -54,7 +58,7 @@ LinkedModelGroupView::LinkedModelGroupView(QWidget* parent,
 }
 
 
-void LinkedModelGroupView::addControl(Control* ctrl, const std::string& id,
+void LinkedModelGroupView::addControl(IControl* ctrl, const std::string& id,
 	const std::string &display, bool removable)
 {
 	if (ctrl)
@@ -69,7 +73,7 @@ void LinkedModelGroupView::addControl(Control* ctrl, const std::string& id,
 			removeBtn->setIcon( embed::getIconPixmap( "discard" ) );
 			QObject::connect(removeBtn, &QPushButton::clicked,
 				this, [this,ctrl](bool){
-					AutomatableModel* controlModel = ctrl->model();
+					auto* controlModel = ctrl->model();
 					// remove control out of model group
 					// (will also remove it from the UI)
 					m_model->removeControl(controlModel);
@@ -85,7 +89,7 @@ void LinkedModelGroupView::addControl(Control* ctrl, const std::string& id,
 		m_layout->addWidget(box);
 
 		// take ownership of control and add it
-		m_widgets.emplace(id, std::unique_ptr<Control>(ctrl));
+		m_widgets.emplace(id, std::unique_ptr<IControl>(ctrl));
 	}
 
 	if (isHidden()) { setHidden(false); }
@@ -125,3 +129,5 @@ void LinkedModelGroupView::removeFocusFromSearchBar()
 
 
 } // namespace lmms::gui
+
+#endif

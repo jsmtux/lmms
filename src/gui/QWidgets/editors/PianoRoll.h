@@ -28,14 +28,14 @@
 #define LMMS_GUI_PIANO_ROLL_H
 
 #include "Editor.h"
-#include "ComboBoxModel.h"
 #include "IPianoRollWindow.h"
 #include "IPianoRoll.h"
 #include "lmms_basics.h"
-#include "Note.h"
 #include "SerializingObject.h"
-#include "Song.h"
-#include "StepRecorder.h"
+#include "IStepRecorder.h"
+#include "ISong.h"
+#include "Note.h"
+#include "IModels.h"
 
 #include "editors/StepRecorderWidget.h"
 
@@ -55,7 +55,7 @@ namespace lmms
 
 
 class NotePlayHandle;
-class MidiClip;
+class IMidiClip;
 
 
 namespace gui
@@ -123,8 +123,8 @@ public:
 	void showVolTextFloat(volume_t vol, const QPoint &pos, int timeout=-1);
 	void showPanTextFloat(panning_t pan, const QPoint &pos, int timeout=-1);
 
-	void setCurrentMidiClip( MidiClip* newMidiClip );
-	void setGhostMidiClip( MidiClip* newMidiClip );
+	void setCurrentMidiClip( IMidiClip* newMidiClip );
+	void setGhostMidiClip( IMidiClip* newMidiClip );
 	void loadGhostNotes( const QDomElement & de );
 	void loadMarkedSemiTones(const QDomElement & de);
 
@@ -140,10 +140,10 @@ public:
 
 	inline bool isStepRecording() const
 	{
-		return m_stepRecorder.isRecording();
+		return m_stepRecorder->isRecording();
 	}
 
-	const MidiClip* currentMidiClip() const
+	const IMidiClip* currentMidiClip() const
 	{
 		return m_midiClip;
 	}
@@ -155,7 +155,7 @@ public:
 	
 	int trackOctaveSize() const;
 
-	Song::PlayModes desiredPlayModeForAccompany() const;
+	ISong::PlayModes desiredPlayModeForAccompany() const;
 
 	int quantization() const override;
 
@@ -235,7 +235,7 @@ protected slots:
 	void changeNoteEditMode( int i );
 	void markSemiTone(int i, bool fromMenu = true);
 
-	void hideMidiClip( lmms::MidiClip* clip );
+	void hideMidiClip( lmms::IMidiClip* clip );
 
 	void selectRegionFromPixels( int xStart, int xEnd );
 
@@ -357,19 +357,19 @@ private:
 
 	static SimpleTextFloat * s_textFloat;
 
-	ComboBoxModel m_zoomingModel;
-	ComboBoxModel m_zoomingYModel;
-	ComboBoxModel m_quantizeModel;
-	ComboBoxModel m_noteLenModel;
-	ComboBoxModel m_keyModel;
-	ComboBoxModel m_scaleModel;
-	ComboBoxModel m_chordModel;
-	ComboBoxModel m_snapModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_zoomingModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_zoomingYModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_quantizeModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_noteLenModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_keyModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_scaleModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_chordModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_snapModel;
 
 	static const QVector<float> m_zoomLevels;
 	static const QVector<float> m_zoomYLevels;
 
-	MidiClip* m_midiClip;
+	IMidiClip* m_midiClip;
 	NoteVector m_ghostNotes;
 
 	inline const NoteVector & ghostNotes() const
@@ -465,7 +465,7 @@ private:
 	friend class PianoRollWindow;
 
 	StepRecorderWidget m_stepRecorderWidget;
-	StepRecorder m_stepRecorder;
+	std::unique_ptr<IStepRecorder> m_stepRecorder;
 
 	// qproperty fields
 	QColor m_barLineColor;
@@ -516,9 +516,9 @@ class PianoRollWindow : public Editor, public IPianoRollWindow, SerializingObjec
 public:
 	PianoRollWindow();
 
-	const MidiClip* currentMidiClip() const override;
-	void setCurrentMidiClip( MidiClip* clip );
-	void setGhostMidiClip( MidiClip* clip );
+	const IMidiClip* currentMidiClip() const override;
+	void setCurrentMidiClip( IMidiClip* clip );
+	void setGhostMidiClip( IMidiClip* clip );
 
 	int quantization() const override;
 

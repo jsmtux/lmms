@@ -22,10 +22,10 @@
  *
  */
 
-#include "Engine.h"
+#include "IEngine.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
-#include "Song.h"
+#include "ISong.h"
 #include "TimeDisplayWidget.h"
 
 #include <QMouseEvent>
@@ -86,7 +86,7 @@ void TimeDisplayWidget::setDisplayMode( DisplayMode displayMode )
 
 void TimeDisplayWidget::updateTime()
 {
-	Song* s = Engine::getSong();
+	auto* s = IEngine::Instance()->getSongInterface();
 
 	switch( m_displayMode )
 	{
@@ -103,9 +103,9 @@ void TimeDisplayWidget::updateTime()
 			tick = s->getPlayPos().getTicks();
 			m_majorLCD.setValue((int)(tick / s->ticksPerBar()) + 1);
 			m_minorLCD.setValue((tick % s->ticksPerBar()) /
-						 (s->ticksPerBar() / s->getTimeSigModel().getNumerator() ) +1);
+						 (s->ticksPerBar() / s->getTimeSigModelInterface().getNumeratorModel().value() ) +1);
 			m_milliSecondsLCD.setValue((tick % s->ticksPerBar()) %
-							(s->ticksPerBar() / s->getTimeSigModel().getNumerator()));
+							(s->ticksPerBar() / s->getTimeSigModelInterface().getNumeratorModel().value()));
 			break;
 
 		default: break;

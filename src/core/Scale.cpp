@@ -30,6 +30,15 @@
 namespace lmms
 {
 
+IScale* createScale(QString description, std::vector<IInterval*>&& intervals) {
+	return new Scale(description, intervals);
+}
+IInterval* createInterval(uint32_t numerator, uint32_t denominator) {
+	return new Interval(numerator, denominator);
+}
+IInterval* createInterval(float cents) {
+	return new Interval(cents);
+}
 
 Interval::Interval(float cents) :
 	m_numerator(0),
@@ -75,13 +84,15 @@ void Interval::loadSettings(const QDomElement &element)
 Scale::Scale() :
 	m_description(tr("empty"))
 {
-	m_intervals.emplace_back(1, 1);
+	m_intervals.emplace_back(createInterval(1, 1));
 }
 
-Scale::Scale(QString description, std::vector<Interval> intervals) :
-	m_description(description),
-	m_intervals(std::move(intervals))
+Scale::Scale(QString description, std::vector<IInterval*> intervals) :
+	m_description(description)
 {
+	for(auto* interval: intervals) {
+		m_intervals.push_back(std::unique_ptr<IInterval>(interval));
+	}
 }
 
 
@@ -103,7 +114,7 @@ void Scale::saveSettings(QDomDocument &document, QDomElement &element)
 
 	for (auto& interval : m_intervals)
 	{
-		interval.saveState(document, element);
+		static_cast<Interval*>(interval.get())->saveState(document, element);
 	}
 
 }

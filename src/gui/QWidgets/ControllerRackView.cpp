@@ -27,9 +27,8 @@
 #include "ControllerView.h"
 #include "embed.h"
 #include "GuiApplication.h"
-#include "LfoController.h"
 #include "MainWindow.h"
-#include "Song.h"
+#include "ISong.h"
 #include "SubWindow.h"
 
 #include <QApplication>
@@ -67,9 +66,9 @@ ControllerRackView::ControllerRackView() :
 	connect( m_addButton, SIGNAL(clicked()),
 			this, SLOT(addController()));
 
-	Song * song = Engine::getSong();
-	connect( song, &Song::controllerAdded, this, &ControllerRackView::onControllerAdded);
-	connect( song, &Song::controllerRemoved, this, &ControllerRackView::onControllerRemoved);
+	auto * song = IEngine::Instance()->getSongInterface();
+	connect( song, &ISong::controllerAdded, this, &ControllerRackView::onControllerAdded);
+	connect( song, &ISong::controllerRemoved, this, &ControllerRackView::onControllerRemoved);
 
 	auto layout = new QVBoxLayout();
 	layout->addWidget( m_scrollArea );
@@ -112,7 +111,7 @@ void ControllerRackView::loadSettings( const QDomElement & _this )
 
 void ControllerRackView::deleteController( ControllerView * _view )
 {
-	Controller * c = _view->getController();
+	IController * c = _view->getController();
 
 	if( c->connectionCount() > 0 )
 	{
@@ -128,14 +127,14 @@ void ControllerRackView::deleteController( ControllerView * _view )
 		}
 	}
 
-	Song * song = Engine::getSong();
+	auto * song = IEngine::Instance()->getSongInterface();
 	song->removeController( c );
 }
 
 
 
 
-void ControllerRackView::onControllerAdded( Controller * controller )
+void ControllerRackView::onControllerAdded( IController * controller )
 {
 	QWidget * scrollAreaWidget = m_scrollArea->widget();
 
@@ -153,7 +152,7 @@ void ControllerRackView::onControllerAdded( Controller * controller )
 
 
 
-void ControllerRackView::onControllerRemoved( Controller * removedController )
+void ControllerRackView::onControllerRemoved( IController * removedController )
 {
 	ControllerView * viewOfRemovedController = 0;
 
@@ -185,7 +184,8 @@ void ControllerRackView::addController()
 {
 	// TODO: Eventually let the user pick from available controller types
 
-	Engine::getSong()->addController( new LfoController( Engine::getSong() ) );
+	auto* song = IEngine::Instance()->getSongInterface();
+	song->addController( createLfoController( song ) );
 
 	// fix bug which always made ControllerRackView loose focus when adding
 	// new controller

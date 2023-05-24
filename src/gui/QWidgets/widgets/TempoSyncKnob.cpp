@@ -28,11 +28,11 @@
 
 #include "CaptionMenu.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
 #include "MeterDialog.h"
-#include "Song.h"
+#include "ISong.h"
 #include "SubWindow.h"
 
 #include <QMdiArea>
@@ -42,18 +42,18 @@ namespace lmms::gui
 
 
 
-TempoSyncKnob::TempoSyncKnob( knobTypes _knob_num, TempoSyncKnobModel* _model, QWidget * _parent,
+TempoSyncKnob::TempoSyncKnob( knobTypes _knob_num, ITempoSyncKnobModelWrapper* _model, QWidget * _parent,
 						const QString & _name ) :
-	Knob( _knob_num, _model, _parent, _name ),
+	Knob( _knob_num, _model->wrappedModel(), _parent, _name ),
 	m_tempoSyncIcon( embed::getIconPixmap( "tempo_sync" ) ),
 	m_tempoSyncDescription( tr( "Tempo Sync" ) ),
 	m_custom( nullptr ),
 	m_tempoSyncKnobModel(_model)
 {
-	connect( model(), SIGNAL(syncModeChanged(lmms::TempoSyncKnobModel::TempoSyncMode)),
+	connect( model()->modelSignals(), SIGNAL(syncModeChanged(lmms::ITempoSyncKnobModelWrapper::TempoSyncMode)),
 			this, SLOT(updateDescAndIcon()));
 	connect( this, SIGNAL(sliderMoved(float)),
-			model(), SLOT(disableSync()));
+			model()->modelSignals(), SLOT(disableSync()));
 	updateDescAndIcon();
 }
 
@@ -74,66 +74,66 @@ void TempoSyncKnob::contextMenuEvent( QContextMenuEvent * )
 {
 	mouseReleaseEvent( nullptr );
 
-	CaptionMenu contextMenu( model()->displayName(), this );
+	CaptionMenu contextMenu( model()->wrappedModel()->model()->displayName(), this );
 	addDefaultActions( &contextMenu );
 	contextMenu.addSeparator();
 
-	float limit = 60000.0f / ( Engine::getSong()->getTempo() *
-							model()->m_scale );
+	float limit = 60000.0f / ( IEngine::Instance()->getSongInterface()->getTempo() *
+							model()->scale() );
 
 	QMenu * syncMenu = contextMenu.addMenu( m_tempoSyncIcon,
 						m_tempoSyncDescription );
-	if( limit / 8.0f <= model()->maxValue() )
+	if( limit / 8.0f <= model()->wrappedModel()->maxValue() )
 	{
 
 	connect( syncMenu, SIGNAL(triggered(QAction*)),
-			model(), SLOT(setTempoSync(QAction*)));
+			model()->modelSignals(), SLOT(setTempoSync(QAction*)));
 	syncMenu->addAction( embed::getIconPixmap( "note_none" ),
-		tr( "No Sync" ) )->setData( (int) TempoSyncKnobModel::SyncNone );
-	if( limit / 0.125f <= model()->maxValue() )
+		tr( "No Sync" ) )->setData( (int) ITempoSyncKnobModelWrapper::SyncNone );
+	if( limit / 0.125f <= model()->wrappedModel()->maxValue() )
 	{
 		syncMenu->addAction( embed::getIconPixmap( "note_double_whole" ),
 				tr( "Eight beats" ) )->setData(
-				(int) TempoSyncKnobModel::SyncDoubleWholeNote );
+				(int) ITempoSyncKnobModelWrapper::SyncDoubleWholeNote );
 	}
-	if( limit / 0.25f <= model()->maxValue() )
+	if( limit / 0.25f <= model()->wrappedModel()->maxValue() )
 	{
 		syncMenu->addAction( embed::getIconPixmap( "note_whole" ),
 					tr( "Whole note" ) )->setData(
-					(int) TempoSyncKnobModel::SyncWholeNote );
+					(int) ITempoSyncKnobModelWrapper::SyncWholeNote );
 	}
-	if( limit / 0.5f <= model()->maxValue() )
+	if( limit / 0.5f <= model()->wrappedModel()->maxValue() )
 	{
 		syncMenu->addAction( embed::getIconPixmap( "note_half" ),
 					tr( "Half note" ) )->setData(
-					(int) TempoSyncKnobModel::SyncHalfNote );
+					(int) ITempoSyncKnobModelWrapper::SyncHalfNote );
 	}
-	if( limit <= model()->maxValue() )
+	if( limit <= model()->wrappedModel()->maxValue() )
 	{
 		syncMenu->addAction( embed::getIconPixmap( "note_quarter" ),
 					tr( "Quarter note" ) )->setData(
-				(int) TempoSyncKnobModel::SyncQuarterNote );
+				(int) ITempoSyncKnobModelWrapper::SyncQuarterNote );
 	}
-	if( limit / 2.0f <= model()->maxValue() )
+	if( limit / 2.0f <= model()->wrappedModel()->maxValue() )
 	{
 		syncMenu->addAction( embed::getIconPixmap( "note_eighth" ),
 					tr( "8th note" ) )->setData(
-				(int) TempoSyncKnobModel::SyncEighthNote );
+				(int) ITempoSyncKnobModelWrapper::SyncEighthNote );
 	}
-	if( limit / 4.0f <= model()->maxValue() )
+	if( limit / 4.0f <= model()->wrappedModel()->maxValue() )
 	{
 		syncMenu->addAction( embed::getIconPixmap( "note_sixteenth" ),
 					tr( "16th note" ) )->setData(
-				(int) TempoSyncKnobModel::SyncSixteenthNote );
+				(int) ITempoSyncKnobModelWrapper::SyncSixteenthNote );
 	}
 	syncMenu->addAction( embed::getIconPixmap( "note_thirtysecond" ),
 					tr( "32nd note" ) )->setData(
-				(int) TempoSyncKnobModel::SyncThirtysecondNote );
+				(int) ITempoSyncKnobModelWrapper::SyncThirtysecondNote );
 	syncMenu->addAction( embed::getIconPixmap( "dont_know" ),
 				tr( "Custom..." ),
 				this, SLOT(showCustom())
 						)->setData(
-					(int) TempoSyncKnobModel::SyncCustom );
+					(int) ITempoSyncKnobModelWrapper::SyncCustom );
 	contextMenu.addSeparator();
 
 	}
@@ -147,43 +147,43 @@ void TempoSyncKnob::contextMenuEvent( QContextMenuEvent * )
 
 void TempoSyncKnob::updateDescAndIcon()
 {
-	if( model()->m_tempoSyncMode )
+	if( model()->tempoSyncMode() )
 	{
-		switch( model()->m_tempoSyncMode )
+		switch( model()->tempoSyncMode() )
 		{
-			case TempoSyncKnobModel::SyncCustom:
+			case ITempoSyncKnobModelWrapper::SyncCustom:
 				m_tempoSyncDescription = tr( "Custom " ) +
 						"(" +
-			QString::number( model()->m_custom.numeratorModel().value() ) +
+			QString::number( model()->custom()->getNumeratorModel().value() ) +
 						"/" +
-			QString::number( model()->m_custom.denominatorModel().value() ) +
+			QString::number( model()->custom()->getDenominatorModel().value() ) +
 						")";
 				break;
-			case TempoSyncKnobModel::SyncDoubleWholeNote:
+			case ITempoSyncKnobModelWrapper::SyncDoubleWholeNote:
 				m_tempoSyncDescription = tr(
 						"Synced to Eight Beats" );
 				break;
-			case TempoSyncKnobModel::SyncWholeNote:
+			case ITempoSyncKnobModelWrapper::SyncWholeNote:
 				m_tempoSyncDescription = tr(
 						"Synced to Whole Note" );
 				break;
-			case TempoSyncKnobModel::SyncHalfNote:
+			case ITempoSyncKnobModelWrapper::SyncHalfNote:
 				m_tempoSyncDescription = tr(
 							"Synced to Half Note" );
 				break;
-			case TempoSyncKnobModel::SyncQuarterNote:
+			case ITempoSyncKnobModelWrapper::SyncQuarterNote:
 				m_tempoSyncDescription = tr(
 						"Synced to Quarter Note" );
 				break;
-			case TempoSyncKnobModel::SyncEighthNote:
+			case ITempoSyncKnobModelWrapper::SyncEighthNote:
 				m_tempoSyncDescription = tr(
 							"Synced to 8th Note" );
 				break;
-			case TempoSyncKnobModel::SyncSixteenthNote:
+			case ITempoSyncKnobModelWrapper::SyncSixteenthNote:
 				m_tempoSyncDescription = tr(
 							"Synced to 16th Note" );
 				break;
-			case TempoSyncKnobModel::SyncThirtysecondNote:
+			case ITempoSyncKnobModelWrapper::SyncThirtysecondNote:
 				m_tempoSyncDescription = tr(
 							"Synced to 32nd Note" );
 				break;
@@ -195,38 +195,38 @@ void TempoSyncKnob::updateDescAndIcon()
 		m_tempoSyncDescription = tr( "Tempo Sync" );
 	}
 	if( m_custom != nullptr &&
-		model()->m_tempoSyncMode != TempoSyncKnobModel::SyncCustom )
+		model()->tempoSyncMode() != ITempoSyncKnobModelWrapper::SyncCustom )
 	{
 		m_custom->parentWidget()->hide();
 	}
 
-	switch( model()->m_tempoSyncMode )
+	switch( model()->tempoSyncMode() )
 	{
-		case TempoSyncKnobModel::SyncNone:
+		case ITempoSyncKnobModelWrapper::SyncNone:
 			m_tempoSyncIcon = embed::getIconPixmap( "tempo_sync" );
 			break;
-		case TempoSyncKnobModel::SyncCustom:
+		case ITempoSyncKnobModelWrapper::SyncCustom:
 			m_tempoSyncIcon = embed::getIconPixmap( "dont_know" );
 			break;
-		case TempoSyncKnobModel::SyncDoubleWholeNote:
+		case ITempoSyncKnobModelWrapper::SyncDoubleWholeNote:
 			m_tempoSyncIcon = embed::getIconPixmap( "note_double_whole" );
 			break;
-		case TempoSyncKnobModel::SyncWholeNote:
+		case ITempoSyncKnobModelWrapper::SyncWholeNote:
 			m_tempoSyncIcon = embed::getIconPixmap( "note_whole" );
 			break;
-		case TempoSyncKnobModel::SyncHalfNote:
+		case ITempoSyncKnobModelWrapper::SyncHalfNote:
 			m_tempoSyncIcon = embed::getIconPixmap( "note_half" );
 			break;
-		case TempoSyncKnobModel::SyncQuarterNote:
+		case ITempoSyncKnobModelWrapper::SyncQuarterNote:
 			m_tempoSyncIcon = embed::getIconPixmap( "note_quarter" );
 			break;
-		case TempoSyncKnobModel::SyncEighthNote:
+		case ITempoSyncKnobModelWrapper::SyncEighthNote:
 			m_tempoSyncIcon = embed::getIconPixmap( "note_eighth" );
 			break;
-		case TempoSyncKnobModel::SyncSixteenthNote:
+		case ITempoSyncKnobModelWrapper::SyncSixteenthNote:
 			m_tempoSyncIcon = embed::getIconPixmap( "note_sixteenth" );
 			break;
-		case TempoSyncKnobModel::SyncThirtysecondNote:
+		case ITempoSyncKnobModelWrapper::SyncThirtysecondNote:
 			m_tempoSyncIcon = embed::getIconPixmap( "note_thirtysecond" );
 			break;
 		default:
@@ -280,7 +280,7 @@ void TempoSyncKnob::showCustom()
 {
 	if( m_custom == nullptr )
 	{
-		m_custom = new MeterDialog( &model()->m_custom, getGUI()->mainWindow()->workspace() );
+		m_custom = new MeterDialog( model()->custom(), getGUI()->mainWindow()->workspace() );
 		QMdiSubWindow * subWindow = getGUI()->mainWindow()->addWindowedWidget( m_custom );
 		Qt::WindowFlags flags = subWindow->windowFlags();
 		flags &= ~Qt::WindowMaximizeButtonHint;
@@ -289,7 +289,7 @@ void TempoSyncKnob::showCustom()
 		m_custom->setWindowTitle( "Meter" );
 	}
 	m_custom->parentWidget()->show();
-	model()->setTempoSync( TempoSyncKnobModel::SyncCustom );
+	model()->setTempoSync( ITempoSyncKnobModelWrapper::SyncCustom );
 }
 
 

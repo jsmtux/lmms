@@ -27,7 +27,7 @@
 #ifdef LMMS_HAVE_JACK
 
 #include "AudioEngine.h"
-#include "AudioJack.h"
+#include "audio/AudioJack.h"
 #include "ConfigManager.h"
 #include "Engine.h"
 #include "IGuiApplication.h"
@@ -159,16 +159,6 @@ jack_client_t* MidiJack::jackClient()
 		return m_jackClient;
 
 	return m_jackAudio->jackClient();
-}
-
-QString MidiJack::probeDevice()
-{
-	QString jid = ConfigManager::inst()->value( "midijack", "lmms" );
-	if( jid.isEmpty() )
-	{
-		return "lmms";
-	}
-	return jid;
 }
 
 // we read data from jack

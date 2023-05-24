@@ -27,7 +27,7 @@
 #define LMMS_GUI_TEMPO_SYNC_KNOB_H
 
 #include "Knob.h"
-#include "TempoSyncKnobModel.h"
+#include "IModels.h"
 
 #include <QPixmap>
 #include <QPointer>
@@ -41,7 +41,7 @@ class LMMS_EXPORT TempoSyncKnob : public Knob
 {
 	Q_OBJECT
 public:
-	TempoSyncKnob( knobTypes knobNum, TempoSyncKnobModel* _model, QWidget* parent = nullptr, const QString& name = QString() );
+	TempoSyncKnob( knobTypes knobNum, ITempoSyncKnobModelWrapper* _model, QWidget* parent = nullptr, const QString& name = QString() );
 	~TempoSyncKnob() override;
 
 	const QString & syncDescription();
@@ -50,7 +50,7 @@ public:
 	const QPixmap & syncIcon();
 	void setSyncIcon( const QPixmap & _new_pix );
 
-	TempoSyncKnobModel * model()
+	ITempoSyncKnobModelWrapper * model()
 	{
 		return m_tempoSyncKnobModel;
 	}
@@ -74,7 +74,7 @@ private:
 	QString m_tempoSyncDescription;
 
 	QPointer<MeterDialog> m_custom;
-	TempoSyncKnobModel* m_tempoSyncKnobModel;
+	ITempoSyncKnobModelWrapper* m_tempoSyncKnobModel;
 
 } ;
 

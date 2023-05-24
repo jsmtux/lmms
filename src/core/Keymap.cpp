@@ -27,10 +27,23 @@
 #include <QDomElement>
 
 #include "Note.h"
+#include "lmms_constants.h"
 
 
 namespace lmms
 {
+
+IKeymap* createKeyMap(
+		QString description,
+		std::vector<int> newMap,
+		int newFirst,
+		int newLast,
+		int newMiddle,
+		int newBaseKey,
+		float newBaseFreq)
+{
+	return new Keymap(description, std::move(newMap), newFirst, newLast, newMiddle, newBaseKey, newBaseFreq);
+}
 
 
 Keymap::Keymap() :

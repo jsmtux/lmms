@@ -31,11 +31,13 @@
 #include <QMenu>
 #include <QPainter>
 
-#include "ConfigManager.h"
+#include "lmms_constants.h"
+
+#include "IConfigManager.h"
 #include "DeprecationHelper.h"
 #include "GuiApplication.h"
-#include "MidiClip.h"
-#include "InstrumentTrack.h"
+#include "IClip.h"
+#include "ITrack.h"
 #include "editors/PianoRoll.h"
 #include "modals/RenameDialog.h"
 #include "tracks/TrackView.h"
@@ -48,8 +50,8 @@ QPixmap * MidiClipView::s_stepBtnOn200 = nullptr;
 QPixmap * MidiClipView::s_stepBtnOff = nullptr;
 QPixmap * MidiClipView::s_stepBtnOffLight = nullptr;
 
-MidiClipView::MidiClipView( MidiClip* clip, TrackView* parent ) :
-	ClipView( clip, parent ),
+MidiClipView::MidiClipView( IMidiClip* clip, TrackView* parent ) :
+	ClipView( clip->baseClip(), parent ),
 	m_clip( clip ),
 	m_paintPixmap(),
 	m_noteFillColor(255, 255, 255, 220),
@@ -57,7 +59,7 @@ MidiClipView::MidiClipView( MidiClip* clip, TrackView* parent ) :
 	m_mutedNoteFillColor(100, 100, 100, 220),
 	m_mutedNoteBorderColor(100, 100, 100, 220),
 	// TODO if this option is ever added to the GUI, rename it to legacysepattern
-	m_legacySEPattern(ConfigManager::inst()->value("ui", "legacysebb", "0").toInt())
+	m_legacySEPattern(IConfigManager::Instance()->value("ui", "legacysebb", "0").toInt())
 {
 	connect( getGUI()->pianoRoll(), SIGNAL(currentMidiClipChanged()),
 			this, SLOT(update()));
@@ -94,7 +96,7 @@ MidiClipView::MidiClipView( MidiClip* clip, TrackView* parent ) :
 
 
 
-MidiClip* MidiClipView::getMidiClip()
+IMidiClip* MidiClipView::getMidiClip()
 {
 	return m_clip;
 }
@@ -104,7 +106,7 @@ MidiClip* MidiClipView::getMidiClip()
 
 void MidiClipView::update()
 {
-	setToolTip(m_clip->name());
+	setToolTip(m_clip->baseClip()->name());
 
 	ClipView::update();
 }
@@ -135,17 +137,17 @@ void MidiClipView::setGhostInPianoRoll()
 
 
 
-void MidiClipView::resetName() { m_clip->setName(""); }
+void MidiClipView::resetName() { m_clip->baseClip()->setName(""); }
 
 
 
 
 void MidiClipView::changeName()
 {
-	QString s = m_clip->name();
+	QString s = m_clip->baseClip()->name();
 	RenameDialog rename_dlg( s );
 	rename_dlg.exec();
-	m_clip->setName( s );
+	m_clip->baseClip()->setName( s );
 }
 
 
@@ -176,9 +178,9 @@ void MidiClipView::transposeSelection()
 	if (semitones == 0) { return; }
 
 	// TODO make this not crash
-	// Engine::getSong()->addJournalCheckPoint();
+	// IEngine::Instance()->getSongInterface()->addJournalCheckPoint();
 
-	QSet<Track*> m_changedTracks;
+	QSet<ITrack*> m_changedTracks;
 	for (ClipView* clipview: selection)
 	{
 		auto mcv = qobject_cast<MidiClipView*>(clipview);
@@ -198,10 +200,10 @@ void MidiClipView::transposeSelection()
 		{
 			note->setKey(note->key() + semitones);
 		}
-		emit clip->model().dataChanged();
+		emit clip->baseClip()->model()->dataChanged();
 	}
 	// At least one clip must have notes to show the transpose dialog, so something *has* changed
-	Engine::getSong()->setModified();
+	IEngine::Instance()->getSongInterface()->setModified();
 }
 
 
@@ -209,7 +211,7 @@ void MidiClipView::transposeSelection()
 
 void MidiClipView::constructContextMenu( QMenu * _cm )
 {
-	bool isBeat = m_clip->type() == MidiClip::BeatClip;
+	bool isBeat = m_clip->type() == IMidiClip::BeatClip;
 
 	auto a = new QAction(embed::getIconPixmap("piano"), tr("Open in piano-roll"), _cm);
 	_cm->insertAction( _cm->actions()[0], a );
@@ -225,7 +227,7 @@ void MidiClipView::constructContextMenu( QMenu * _cm )
 	_cm->addSeparator();
 
 	_cm->addAction( embed::getIconPixmap( "edit_erase" ),
-			tr( "Clear all notes" ), m_clip, SLOT(clear()));
+			tr( "Clear all notes" ), this, [this](){m_clip->clear();});
 	if (!isBeat)
 	{
 		_cm->addAction(embed::getIconPixmap("scale"), tr("Transpose"), this, &MidiClipView::transposeSelection);
@@ -243,11 +245,11 @@ void MidiClipView::constructContextMenu( QMenu * _cm )
 		_cm->addSeparator();
 
 		_cm->addAction( embed::getIconPixmap( "step_btn_add" ),
-			tr( "Add steps" ), m_clip, SLOT(addSteps()));
+			tr( "Add steps" ), this, [this](){m_clip->addSteps();});
 		_cm->addAction( embed::getIconPixmap( "step_btn_remove" ),
-			tr( "Remove steps" ), m_clip, SLOT(removeSteps()));
+			tr( "Remove steps" ), this, [this](){m_clip->removeSteps();});
 		_cm->addAction( embed::getIconPixmap( "step_btn_duplicate" ),
-			tr( "Clone Steps" ), m_clip, SLOT(cloneSteps()));
+			tr( "Clone Steps" ), this, [this](){m_clip->cloneSteps();});
 	}
 }
 
@@ -258,7 +260,7 @@ void MidiClipView::mousePressEvent( QMouseEvent * _me )
 {
 	bool displayPattern = fixedClips() || (pixelsPerBar() >= 96 && m_legacySEPattern);
 	if( _me->button() == Qt::LeftButton &&
-		m_clip->m_clipType == MidiClip::BeatClip &&
+		m_clip->type() == IMidiClip::BeatClip &&
 		displayPattern && _me->y() > height() - s_stepBtnOff->height() )
 
 	// when mouse button is pressed in pattern mode
@@ -267,14 +269,14 @@ void MidiClipView::mousePressEvent( QMouseEvent * _me )
 //	get the step number that was clicked on and
 //	do calculations in floats to prevent rounding errors...
 		float tmp = ( ( float(_me->x()) - BORDER_WIDTH ) *
-				float( m_clip -> m_steps ) ) / float(width() - BORDER_WIDTH*2);
+				float( m_clip->steps() ) ) / float(width() - BORDER_WIDTH*2);
 
 		int step = int( tmp );
 
 //	debugging to ensure we get the correct step...
 //		qDebug( "Step (%f) %d", tmp, step );
 
-		if( step >= m_clip->m_steps )
+		if( step >= m_clip->steps() )
 		{
 			qDebug( "Something went wrong in clip.cpp: step %d doesn't exist in clip!", step );
 			return;
@@ -288,11 +290,11 @@ void MidiClipView::mousePressEvent( QMouseEvent * _me )
 		}
 		else // note at step found
 		{
-			m_clip->addJournalCheckPoint();
+			m_clip->baseClip()->addJournalCheckPoint();
 			m_clip->setStep( step, false );
 		}
 
-		Engine::getSong()->setModified();
+		IEngine::Instance()->getSongInterface()->setModified();
 		update();
 
 		if( getGUI()->pianoRoll()->currentMidiClip() == m_clip )
@@ -316,7 +318,7 @@ void MidiClipView::mouseDoubleClickEvent(QMouseEvent *_me)
 		_me->ignore();
 		return;
 	}
-	if( m_clip->m_clipType == MidiClip::MelodyClip || !fixedClips() )
+	if( m_clip->type() == IMidiClip::MelodyClip || !fixedClips() )
 	{
 		openInPianoRoll();
 	}
@@ -327,18 +329,18 @@ void MidiClipView::mouseDoubleClickEvent(QMouseEvent *_me)
 
 void MidiClipView::wheelEvent(QWheelEvent * we)
 {
-	if(m_clip->m_clipType == MidiClip::BeatClip &&
+	if(m_clip->type() == IMidiClip::BeatClip &&
 				(fixedClips() || pixelsPerBar() >= 96) &&
 				position(we).y() > height() - s_stepBtnOff->height())
 	{
 //	get the step number that was wheeled on and
 //	do calculations in floats to prevent rounding errors...
 		float tmp = ((float(position(we).x()) - BORDER_WIDTH) *
-				float(m_clip -> m_steps)) / float(width() - BORDER_WIDTH*2);
+				float(m_clip->steps())) / float(width() - BORDER_WIDTH*2);
 
 		int step = int( tmp );
 
-		if( step >= m_clip->m_steps )
+		if( step >= m_clip->steps() )
 		{
 			return;
 		}
@@ -362,7 +364,7 @@ void MidiClipView::wheelEvent(QWheelEvent * we)
 				n->setVolume( qMax( 0, vol - 5 ) );
 			}
 
-			Engine::getSong()->setModified();
+			IEngine::Instance()->getSongInterface()->setModified();
 			update();
 			if( getGUI()->pianoRoll()->currentMidiClip() == m_clip )
 			{
@@ -403,9 +405,9 @@ void MidiClipView::paintEvent( QPaintEvent * )
 	QPainter p( &m_paintPixmap );
 
 	QColor c;
-	bool const muted = m_clip->getTrack()->isMuted() || m_clip->isMuted();
+	bool const muted = m_clip->baseClip()->getITrack()->isMuted() || m_clip->baseClip()->isMuted();
 	bool current = getGUI()->pianoRoll()->currentMidiClip() == m_clip;
-	bool beatClip = m_clip->m_clipType == MidiClip::BeatClip;
+	bool beatClip = m_clip->type() == IMidiClip::BeatClip;
 
 	if( beatClip )
 	{
@@ -436,7 +438,7 @@ void MidiClipView::paintEvent( QPaintEvent * )
 
 	// Check whether we will paint a text box and compute its potential height
 	// This is needed so we can paint the notes underneath it.
-	bool const drawName = !m_clip->name().isEmpty();
+	bool const drawName = !m_clip->baseClip()->name().isEmpty();
 	bool const drawTextBox = !beatClip && drawName;
 
 	// TODO Warning! This might cause problems if ClipView::paintTextLabel changes
@@ -454,18 +456,18 @@ void MidiClipView::paintEvent( QPaintEvent * )
 	// Compute pixels per bar
 	const int baseWidth = fixedClips() ? parentWidget()->width() - 2 * BORDER_WIDTH
 						: width() - BORDER_WIDTH;
-	const float pixelsPerBar = baseWidth / (float) m_clip->length().getBar();
+	const float pixelsPerBar = baseWidth / (float) m_clip->baseClip()->length().getBar();
 
 	// Length of one bar/beat in the [0,1] x [0,1] coordinate system
-	const float barLength = 1. / m_clip->length().getBar();
+	const float barLength = 1. / m_clip->baseClip()->length().getBar();
 	const float tickLength = barLength / TimePos::ticksPerBar();
 
 	const int x_base = BORDER_WIDTH;
 
 	bool displayPattern = fixedClips() || (pixelsPerBar >= 96 && m_legacySEPattern);
 	// melody clip paint event
-	NoteVector const & noteCollection = m_clip->m_notes;
-	if( m_clip->m_clipType == MidiClip::MelodyClip && !noteCollection.empty() )
+	NoteVector const & noteCollection = m_clip->notes();
+	if( m_clip->type() == IMidiClip::MelodyClip && !noteCollection.empty() )
 	{
 		// Compute the minimum and maximum key in the clip
 		// so that we know how much there is to draw.
@@ -530,7 +532,7 @@ void MidiClipView::paintEvent( QPaintEvent * )
 		// set colour based on mute status
 		QColor noteFillColor = muted ? getMutedNoteFillColor() : getNoteFillColor();
 		QColor noteBorderColor = muted ? getMutedNoteBorderColor()
-									   : ( m_clip->hasColor() ? c.lighter( 200 ) : getNoteBorderColor() );
+									   : ( m_clip->baseClip()->hasColor() ? c.lighter( 200 ) : getNoteBorderColor() );
 
 		bool const drawAsLines = height() < 64;
 		if (drawAsLines)
@@ -586,7 +588,7 @@ void MidiClipView::paintEvent( QPaintEvent * )
 		QPixmap stepoff;
 		QPixmap stepoffl;
 		const int steps = qMax( 1,
-					m_clip->m_steps );
+					m_clip->steps() );
 		const int w = width() - 2 * BORDER_WIDTH;
 
 		// scale step graphics to fit the beat clip length
@@ -647,7 +649,7 @@ void MidiClipView::paintEvent( QPaintEvent * )
 	const int lineSize = 3;
 	p.setPen( c.darker( 200 ) );
 
-	for( bar_t t = 1; t < m_clip->length().getBar(); ++t )
+	for( bar_t t = 1; t < m_clip->baseClip()->length().getBar(); ++t )
 	{
 		p.drawLine( x_base + static_cast<int>( pixelsPerBar * t ) - 1,
 				BORDER_WIDTH, x_base + static_cast<int>(
@@ -661,7 +663,7 @@ void MidiClipView::paintEvent( QPaintEvent * )
 	// clip name
 	if (drawTextBox)
 	{
-		paintTextLabel(m_clip->name(), p);
+		paintTextLabel(m_clip->baseClip()->name(), p);
 	}
 
 	if( !( fixedClips() && beatClip ) )
@@ -677,7 +679,7 @@ void MidiClipView::paintEvent( QPaintEvent * )
 	}
 
 	// draw the 'muted' pixmap only if the clip was manually muted
-	if( m_clip->isMuted() )
+	if( m_clip->baseClip()->isMuted() )
 	{
 		const int spacing = BORDER_WIDTH;
 		const int size = 14;

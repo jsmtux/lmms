@@ -34,11 +34,20 @@ namespace lmms
 {
 
 
-TempoSyncKnobModel::TempoSyncKnobModel( const float _val, const float _min,
+ITempoSyncKnobModelWrapper* MFact::create(
+	float val, float min, float max, float step, float scale,
+	QObject * parent,
+	const QString& displayName)
+{
+	return new TempoSyncKnobModelWrapper(
+		val, min, max, step, scale, parent, displayName);
+}
+
+TempoSyncKnobModelWrapper::TempoSyncKnobModelWrapper( const float _val, const float _min,
 				const float _max, const float _step,
 				const float _scale, QObject * _parent,
 				const QString & _display_name ) :
-	FloatModel( _val, _min, _max, _step, _parent, _display_name ),
+	m_model( _val, _min, _max, _step, _parent, _display_name ),
 	m_tempoSyncMode( SyncNone ),
 	m_tempoLastSyncMode( SyncNone ),
 	m_scale( _scale ),
@@ -51,7 +60,7 @@ TempoSyncKnobModel::TempoSyncKnobModel( const float _val, const float _min,
 
 
 
-void TempoSyncKnobModel::setTempoSync( int _note_type )
+void TempoSyncKnobModelWrapper::setTempoSync( int _note_type )
 {
 	setSyncMode( ( TempoSyncMode ) _note_type );
 	Engine::getSong()->setModified();
@@ -60,7 +69,7 @@ void TempoSyncKnobModel::setTempoSync( int _note_type )
 
 
 
-void TempoSyncKnobModel::calculateTempoSyncTime( bpm_t _bpm )
+void TempoSyncKnobModelWrapper::calculateTempoSyncTime( bpm_t _bpm )
 {
 	float conversionFactor = 1.0;
 	
@@ -96,15 +105,15 @@ void TempoSyncKnobModel::calculateTempoSyncTime( bpm_t _bpm )
 				break;
 			default: ;
 		}
-		bool journalling = testAndSetJournalling( false );
+		bool journalling = m_model.testAndSetJournalling( false );
 		float oneUnit = 60000.0 / ( _bpm * conversionFactor * m_scale );
-		setValue( oneUnit * maxValue() );
-		setJournalling( journalling );
+		m_model.setValue( oneUnit * m_model.maxValue() );
+		m_model.setJournalling( journalling );
 	}
 
 	if( m_tempoSyncMode != m_tempoLastSyncMode )
 	{
-		emit syncModeChanged( m_tempoSyncMode );
+		emit m_signals.syncModeChanged( );
 		m_tempoLastSyncMode = m_tempoSyncMode;
 	}
 }
@@ -112,21 +121,21 @@ void TempoSyncKnobModel::calculateTempoSyncTime( bpm_t _bpm )
 
 
 
-void TempoSyncKnobModel::saveSettings( QDomDocument & _doc, QDomElement & _this,
+void TempoSyncKnobModelWrapper::saveSettings( QDomDocument & _doc, QDomElement & _this,
 							const QString & _name )
 {
 	_this.setAttribute( _name + "_syncmode", (int) syncMode() );
 	m_custom.saveSettings( _doc, _this, _name );
-	FloatModel::saveSettings( _doc, _this, _name );
+	m_model.saveSettings( _doc, _this, _name );
 }
 
 
 
 
-void TempoSyncKnobModel::loadSettings( const QDomElement & _this,
+void TempoSyncKnobModelWrapper::loadSettings( const QDomElement & _this,
 							const QString & _name )
 {
-	FloatModel::loadSettings( _this, _name );
+	m_model.loadSettings( _this, _name );
 	m_custom.loadSettings( _this, _name );
 	setSyncMode( ( TempoSyncMode ) _this.attribute( _name + "_syncmode" ).toInt() );
 }
@@ -134,7 +143,7 @@ void TempoSyncKnobModel::loadSettings( const QDomElement & _this,
 
 
 
-void TempoSyncKnobModel::setSyncMode( TempoSyncMode _new_mode )
+void TempoSyncKnobModelWrapper::setSyncMode( TempoSyncMode _new_mode )
 {
 	if( m_tempoSyncMode != _new_mode )
 	{
@@ -152,17 +161,17 @@ void TempoSyncKnobModel::setSyncMode( TempoSyncMode _new_mode )
 
 
 
-void TempoSyncKnobModel::setScale( float _new_scale )
+void TempoSyncKnobModelWrapper::setScale( float _new_scale )
 {
 	m_scale = _new_scale;
 	calculateTempoSyncTime( Engine::getSong()->getTempo() );
-	emit scaleChanged( _new_scale );
+	emit m_signals.scaleChanged( _new_scale );
 }
 
 
 
 
-void TempoSyncKnobModel::updateCustom()
+void TempoSyncKnobModelWrapper::updateCustom()
 {
 	setSyncMode( SyncCustom );
 }

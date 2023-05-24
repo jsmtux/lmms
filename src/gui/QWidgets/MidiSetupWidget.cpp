@@ -24,7 +24,7 @@
 
 #include "MidiSetupWidget.h"
 
-#include "ConfigManager.h"
+#include "IConfigManager.h"
 #include "gui_templates.h"
 
 #include <QLabel>
@@ -58,7 +58,7 @@ void MidiSetupWidget::saveSettings()
 {
 	if (!m_configSection.isEmpty() && m_device)
 	{
-		ConfigManager::inst()->setValue(m_configSection, "device",
+		IConfigManager::Instance()->setValue(m_configSection, "device",
 				m_device->text());
 	}
 }

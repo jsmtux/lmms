@@ -38,7 +38,7 @@ class MeterDialog : public QWidget
 {
 	Q_OBJECT
 public:
-	MeterDialog( MeterModel* mm, QWidget * _parent, bool _simple = false );
+	MeterDialog( IMeterModel* mm, QWidget * _parent, bool _simple = false );
 	~MeterDialog() override = default;
 
 

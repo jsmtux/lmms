@@ -60,7 +60,7 @@ Plugin::Descriptor PLUGIN_EXPORT vsteffect_plugin_descriptor =
 
 
 VstEffect::VstEffect( Model * _parent,
-			const Descriptor::SubPluginFeatures::Key * _key ) :
+			const PluginDescriptor::Key * _key ) :
 	Effect( &vsteffect_plugin_descriptor, _parent, _key ),
 	m_pluginMutex(),
 	m_key( *_key ),
@@ -158,7 +158,7 @@ extern "C"
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model * _parent, void * _data )
 {
 	return new VstEffect( _parent,
-		static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>(
+		static_cast<const Plugin::PluginDescriptor::Key *>(
 								_data ) );
 }
 

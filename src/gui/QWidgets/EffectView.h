@@ -26,7 +26,7 @@
 #ifndef LMMS_GUI_EFFECT_VIEW_H
 #define LMMS_GUI_EFFECT_VIEW_H
 
-#include "AutomatableModel.h"
+// #include "AutomatableModel.h"
 #include "Effect.h"
 #include "PluginView.h"
 
@@ -49,14 +49,14 @@ class EffectView : public QWidget
 {
 	Q_OBJECT
 public:
-	EffectView( Effect * _effect, QWidget * _parent );
+	EffectView( IEffect * _effect, QWidget * _parent );
 	~EffectView() override;
 
-	inline Effect * effect()
+	inline IEffect * effect()
 	{
 		return m_effect;
 	}
-	inline const Effect * effect() const
+	inline const IEffect * effect() const
 	{
 		return m_effect;
 	}
@@ -89,7 +89,7 @@ protected:
 
 
 private:
-	Effect* m_effect;
+	IEffect* m_effect;
 	QPixmap m_bg;
 	LedCheckBox * m_bypass;
 	Knob * m_wetDry;

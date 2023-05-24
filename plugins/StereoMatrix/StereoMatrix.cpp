@@ -55,7 +55,7 @@ Plugin::Descriptor PLUGIN_EXPORT stereomatrix_plugin_descriptor =
 
 StereoMatrixEffect::StereoMatrixEffect(
 			Model * _parent,
-			const Descriptor::SubPluginFeatures::Key * _key ) :
+			const PluginDescriptor::Key * _key ) :
 	Effect( &stereomatrix_plugin_descriptor, _parent, _key ),
 	m_smControls( this )
 {
@@ -114,7 +114,7 @@ extern "C"
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model * _parent, void * _data )
 {
 	return( new StereoMatrixEffect( _parent,
-		static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>(
+		static_cast<const Plugin::PluginDescriptor::Key *>(
 								_data ) ) );
 }
 

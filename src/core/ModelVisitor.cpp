@@ -26,7 +26,7 @@
 
 #include "AutomatableModel.h"
 #include "ComboBoxModel.h"
-#include "TempoSyncKnobModel.h"
+#include "IModels.h"
 
 namespace lmms
 {
@@ -35,13 +35,13 @@ namespace lmms
 void ModelVisitor::visit(BoolModel &m) { up(m); }
 void ModelVisitor::visit(IntModel &m) { up(m); }
 void ModelVisitor::visit(FloatModel &m) { up(m); }
-void ModelVisitor::visit(ComboBoxModel &m) { up<IntModel>(m); }
-void ModelVisitor::visit(TempoSyncKnobModel &m) { up<FloatModel>(m); }
+void ModelVisitor::visit(ComboBoxModelWrapper &m) { up<IntModel>(*m.model()); }
+void ModelVisitor::visit(ITempoSyncKnobModelWrapper &m) { up<FloatModel>(*m.wrappedModel()); }
 
 void ConstModelVisitor::visit(const BoolModel &m) { up(m); }
 void ConstModelVisitor::visit(const IntModel &m) { up(m); }
 void ConstModelVisitor::visit(const FloatModel &m) { up(m); }
-void ConstModelVisitor::visit(const ComboBoxModel &m) { up<IntModel>(m); }
-void ConstModelVisitor::visit(const TempoSyncKnobModel &m) { up<FloatModel>(m); }
+void ConstModelVisitor::visit(const ComboBoxModelWrapper &m) { up<IntModel>(*m.model()); }
+void ConstModelVisitor::visit(const ITempoSyncKnobModelWrapper &m) { up<FloatModel>(*m.wrappedModel()); }
 
 } // namespace lmms

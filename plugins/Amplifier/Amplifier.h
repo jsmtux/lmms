@@ -36,7 +36,7 @@ namespace lmms
 class AmplifierEffect : public Effect
 {
 public:
-	AmplifierEffect( Model* parent, const Descriptor::SubPluginFeatures::Key* key );
+	AmplifierEffect( Model* parent, const PluginDescriptor::Key* key );
 	~AmplifierEffect() override = default;
 	bool processAudioBuffer( sampleFrame* buf, const fpp_t frames ) override;
 

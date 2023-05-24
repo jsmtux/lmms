@@ -25,7 +25,7 @@
 #ifndef LMMS_GUI_EFFECT_SELECT_DIALOG_H
 #define LMMS_GUI_EFFECT_SELECT_DIALOG_H
 
-#include "Effect.h"
+#include "IPlugin.h"
 
 #include <QDialog>
 #include <QSortFilterProxyModel>
@@ -45,7 +45,7 @@ public:
 	EffectSelectDialog( QWidget * _parent );
 	~EffectSelectDialog() override;
 
-	Effect * instantiateSelectedPlugin( EffectChain * _parent );
+	IEffect * instantiateSelectedPlugin( IEffectChain * _parent );
 
 
 protected slots:
@@ -58,8 +58,8 @@ protected slots:
 private:
 	Ui::EffectSelectDialog * ui;
 
-	EffectKeyList m_effectKeys;
-	EffectKey m_currentSelection;
+	PluginDescriptor::SubPluginFeatures::KeyList m_effectKeys;
+	PluginDescriptor::Key m_currentSelection;
 
 	QStandardItemModel m_sourceModel;
 	QSortFilterProxyModel m_model;

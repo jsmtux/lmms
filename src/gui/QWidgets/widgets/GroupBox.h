@@ -39,7 +39,7 @@ class GroupBox : public QWidget, public BoolModelView
 {
 	Q_OBJECT
 public:
-	GroupBox( const QString & _caption, BoolModel* model, QWidget * _parent = nullptr );
+	GroupBox( const QString & _caption, IBoolAutomatableModel* model, QWidget * _parent = nullptr );
 	~GroupBox() override;
 
 	PixmapButton * ledButton()

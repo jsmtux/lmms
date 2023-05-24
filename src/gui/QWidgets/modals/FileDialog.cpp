@@ -24,7 +24,7 @@
 
 #include "FileDialog.h"
 
-#include "ConfigManager.h"
+#include "IConfigManager.h"
 
 #include <QList>
 #include <QListView>
@@ -57,7 +57,7 @@ FileDialog::FileDialog( QWidget *parent, const QString &caption,
 		urls << QUrl::fromLocalFile( downloadDir.absolutePath() );
 
 	urls << QUrl::fromLocalFile( QStandardPaths::writableLocation( QStandardPaths::MusicLocation ) );
-	urls << QUrl::fromLocalFile( ConfigManager::inst()->workingDir() );
+	urls << QUrl::fromLocalFile( IConfigManager::Instance()->workingDir() );
 
 	// Add `/Volumes` directory on OS X systems, this allows the user to browse
 	// external disk drives.

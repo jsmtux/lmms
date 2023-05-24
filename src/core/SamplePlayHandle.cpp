@@ -24,19 +24,20 @@
 
 #include "SamplePlayHandle.h"
 #include "AudioEngine.h"
-#include "AudioPort.h"
+#include "audio/AudioPort.h"
 #include "Engine.h"
 #include "Note.h"
-#include "PatternTrack.h"
 #include "SampleClip.h"
-#include "SampleTrack.h"
+
+#include "tracks/PatternTrack.h"
+#include "tracks/SampleTrack.h"
 
 namespace lmms
 {
 
 
 SamplePlayHandle::SamplePlayHandle( SampleBuffer* sampleBuffer , bool ownAudioPort ) :
-	PlayHandle( TypeSamplePlayHandle ),
+	PlayHandle( PlayHandleType::TypeSamplePlayHandle ),
 	m_sampleBuffer( sharedObject::ref( sampleBuffer ) ),
 	m_doneMayReturnTrue( true ),
 	m_frame( 0 ),
@@ -135,7 +136,7 @@ bool SamplePlayHandle::isFinished() const
 
 
 
-bool SamplePlayHandle::isFromTrack( const Track * _track ) const
+bool SamplePlayHandle::isFromTrack( const ITrack * _track ) const
 {
 	return m_track == _track || m_patternTrack == _track;
 }
@@ -147,6 +148,11 @@ f_cnt_t SamplePlayHandle::totalFrames() const
 {
 	return ( m_sampleBuffer->endFrame() - m_sampleBuffer->startFrame() ) *
 			( Engine::audioEngine()->processingSampleRate() / m_sampleBuffer->sampleRate() );
+}
+
+ISamplePlayHandle* createSamplePlayHandle(const QString& sampleFile)
+{
+	return new SamplePlayHandle(sampleFile);
 }
 
 

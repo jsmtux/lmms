@@ -27,7 +27,7 @@
 
 #include "embed.h"
 #include "GuiApplication.h"
-#include "InstrumentTrack.h"
+#include "ITrack.h"
 #include "MainWindow.h"
 #include "SubWindow.h"
 
@@ -43,12 +43,12 @@ namespace lmms::gui
 {
 
 
-MidiCCRackView::MidiCCRackView(InstrumentTrack * track) :
+MidiCCRackView::MidiCCRackView(IInstrumentTrack * track) :
 	QWidget(),
 	m_track(track)
 {
 	setWindowIcon(embed::getIconPixmap("midi_cc_rack"));
-	setWindowTitle(tr("MIDI CC Rack - %1").arg(m_track->name()));
+	setWindowTitle(tr("MIDI CC Rack - %1").arg(m_track->baseTrack()->name()));
 
 	QMdiSubWindow * subWin = getGUI()->mainWindow()->addWindowedWidget(this);
 
@@ -69,7 +69,7 @@ MidiCCRackView::MidiCCRackView(InstrumentTrack * track) :
 
 	// Knobs GroupBox - Here we have the MIDI CC controller knobs for the selected track
 	// Set the LED button to enable/disable the track midi cc
-	m_midiCCGroupBox = new GroupBox(tr("MIDI CC Knobs:"), m_track->m_midiCCEnable.get());
+	m_midiCCGroupBox = new GroupBox(tr("MIDI CC Knobs:"), m_track->midiCCEnabledModel());
 
 	// Layout to keep scrollable area under the GroupBox header
 	auto knobsGroupBoxLayout = new QVBoxLayout();
@@ -91,14 +91,14 @@ MidiCCRackView::MidiCCRackView(InstrumentTrack * track) :
 	// Adds the controller knobs
 	for (int i = 0; i < MidiControllerCount; ++i)
 	{
-		m_controllerKnob[i] = new Knob(knobBright_26, m_track->m_midiCCModel[i].get());
+		m_controllerKnob[i] = new Knob(knobBright_26, m_track->midiCCModel(i));
 		m_controllerKnob[i]->setLabel(tr("CC %1").arg(i));
 		knobsAreaLayout->addWidget(m_controllerKnob[i], i/4, i%4);
 	}
 
 	// Connection to update the name of the track on the label
-	connect(m_track, SIGNAL(nameChanged()),
-		this, SLOT(renameWindow()));
+	connect(m_track->instrumentTrackModel(), &InstrumentTrackModel::nameChanged,
+		this, &MidiCCRackView::renameWindow);
 
 	// Adding everything to the main layout
 	mainLayout->addWidget(m_midiCCGroupBox);
@@ -115,7 +115,7 @@ MidiCCRackView::~MidiCCRackView()
 
 void MidiCCRackView::renameWindow()
 {
-	setWindowTitle(tr("MIDI CC Rack - %1").arg(m_track->name()));
+	setWindowTitle(tr("MIDI CC Rack - %1").arg(m_track->baseTrack()->name()));
 }
 
 void MidiCCRackView::saveSettings(QDomDocument & doc, QDomElement & parent)

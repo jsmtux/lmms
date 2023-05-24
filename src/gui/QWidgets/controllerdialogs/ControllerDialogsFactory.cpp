@@ -5,14 +5,14 @@
 
 namespace lmms::gui {
 
-ControllerDialog* ControllerDialogsFactory::createControllerDialog(Controller * _controller, QWidget * _parent ) {
+ControllerDialog* ControllerDialogsFactory::createControllerDialog(IController * _controller, QWidget * _parent ) {
     ControllerDialog* ret = nullptr;
 
     switch(_controller->type()) {
-        case Controller::LfoController:
-            ret = new LfoControllerDialog(dynamic_cast<LfoController*>(_controller), _parent);
+        case IController::LfoController:
+            ret = new LfoControllerDialog(_controller, _parent);
             break;
-        case Controller::PeakController:
+        case IController::PeakController:
             ret = new PeakControllerDialog(_controller, _parent);
             break;
         default:

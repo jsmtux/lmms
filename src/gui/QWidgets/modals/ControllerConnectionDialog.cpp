@@ -25,12 +25,14 @@
 
 #include "ControllerConnectionDialog.h"
 
-#include "AudioEngine.h"
-#include "ControllerConnection.h"
+#include "IAudioEngine.h"
+#include "IControllerConnection.h"
 #include "embed.h"
-#include "MidiController.h"
-#include "MidiClient.h"
-#include "Song.h"
+// #include "MidiController.h"
+#include "IMidiClient.h"
+#include "ISong.h"
+#include "IEngine.h"
+#include "IMidiController.h"
 
 #include "menus/MidiPortMenu.h"
 
@@ -50,123 +52,46 @@
 namespace lmms
 {
 
-class AutoDetectMidiController : public MidiController
-{
-public:
-	AutoDetectMidiController( QObject* parent ) :
-		MidiController( parent ),
-		m_detectedMidiChannel( 0 ),
-		m_detectedMidiController( 0 )
-	{
-		updateName();
-	}
-
-
-	~AutoDetectMidiController() override = default;
-
-
-	void processInEvent( const MidiEvent& event, const TimePos& time, f_cnt_t offset = 0 ) override
-	{
-		if( event.type() == MidiControlChange &&
-			( m_midiPort.inputChannel() == 0 || m_midiPort.inputChannel() == event.channel() + 1 ) )
-		{
-			m_detectedMidiChannel = event.channel() + 1;
-			m_detectedMidiController = event.controllerNumber() + 1;
-			m_detectedMidiPort = Engine::audioEngine()->midiClient()->sourcePortName( event );
-
-			emit valueChanged();
-		}
-	}
-
-
-	// Would be a nice copy ctor, but too hard to add copy ctor because
-	// model has none.
-	MidiController* copyToMidiController( Model* parent )
-	{
-		auto c = new MidiController(parent);
-		c->m_midiPort.setInputChannel( m_midiPort.inputChannel() );
-		c->m_midiPort.setInputController( m_midiPort.inputController() );
-		c->subscribeReadablePorts( m_midiPort.readablePorts() );
-		c->updateName();
-
-		return c;
-	}
-
-
-	void useDetected()
-	{
-		m_midiPort.setInputChannel( m_detectedMidiChannel );
-		m_midiPort.setInputController( m_detectedMidiController );
-
-		const MidiPort::Map& map = m_midiPort.readablePorts();
-		for( MidiPort::Map::ConstIterator it = map.begin(); it != map.end(); ++it )
-		{
-			m_midiPort.subscribeReadablePort( it.key(),
-									m_detectedMidiPort.isEmpty() || ( it.key() == m_detectedMidiPort ) );
-		}
-	}
-
-
-public slots:
-	void reset()
-	{
-		m_midiPort.setInputChannel( 0 );
-		m_midiPort.setInputController( 0 );
-	}
-
-
-private:
-	int m_detectedMidiChannel;
-	int m_detectedMidiController;
-	QString m_detectedMidiPort;
-
-} ;
-
-
-
 namespace gui
 {
 
 ControllerConnectionDialog::ControllerConnectionDialog( QWidget * _parent, 
-		const AutomatableModel * _target_model ) :
+		const IAutomatableModelBase * _target_model ) :
 	QDialog( _parent ),
 	m_readablePorts( nullptr ),
-	m_midiAutoDetect( false ),
+	m_midiAutoDetect( MFact::create(false) ),
 	m_controller( nullptr ),
 	m_targetModel( _target_model ),
-	m_midiController( nullptr )
+	m_midiController( createAutoDetectMidiController( IEngine::Instance()->getSongInterface() ) )
 {
 	setWindowIcon( embed::getIconPixmap( "setup_audio" ) );
 	setWindowTitle( tr( "Connection Settings" ) );
 	setModal( true );
 
 	// Midi stuff
-
-	m_midiController = new AutoDetectMidiController( Engine::getSong() );
-
-	MidiPort::Map map = m_midiController->m_midiPort.readablePorts();
-	for( MidiPort::Map::Iterator it = map.begin(); it != map.end(); ++it )
+	IMidiPort::Map map = m_midiController->midiPortInterface()->readablePorts();
+	for( IMidiPort::Map::Iterator it = map.begin(); it != map.end(); ++it )
 	{
 		it.value() = true;
 	}
 	m_midiController->subscribeReadablePorts( map );
 
 
-	connect( m_midiController, SIGNAL(valueChanged()), this, SLOT(midiValueChanged()));
+	connect( m_midiController->controllerInterface(), &IController::valueChanged, this, &ControllerConnectionDialog::midiValueChanged);
 
-	m_midiGroupBox = new GroupBox( tr( "MIDI CONTROLLER" ), &m_midiGroupBoxEnabled, this );
+	m_midiGroupBox = new GroupBox( tr( "MIDI CONTROLLER" ), MFact::create(false, this), this );
 	m_midiGroupBox->setGeometry( 8, 10, 240, 80 );
-	connect( m_midiGroupBox->model(), SIGNAL(dataChanged()),
-			this, SLOT(midiToggled()));
+	connect( m_midiGroupBox->model()->model(), &Model::dataChanged,
+			this, &ControllerConnectionDialog::midiToggled);
 	
 	m_midiChannelSpinBox = new LcdSpinBox( 2,
-			&m_midiController->m_midiPort.m_inputChannelModel,
+			m_midiController->midiPortInterface()->inputChannelModel(),
 			m_midiGroupBox, tr( "Input channel" ) );
 	m_midiChannelSpinBox->addTextForValue( 0, "--" );
 	m_midiChannelSpinBox->setLabel( tr( "CHANNEL" ) );
 	m_midiChannelSpinBox->move( 8, 24 );
 
-	m_midiControllerSpinBox = new LcdSpinBox( 3,  &m_midiController->m_midiPort.m_inputControllerModel,
+	m_midiControllerSpinBox = new LcdSpinBox( 3,  m_midiController->midiPortInterface()->inputControllerModel(),
 			m_midiGroupBox,	tr( "Input controller" ) );
 	m_midiControllerSpinBox->addTextForValue( 0, "---" );
 	m_midiControllerSpinBox->setLabel( tr( "CONTROLLER" ) );
@@ -175,16 +100,16 @@ ControllerConnectionDialog::ControllerConnectionDialog( QWidget * _parent,
 
 	m_midiAutoDetectCheckBox =
 			new LedCheckBox( tr("Auto Detect"),
-			&m_midiAutoDetect, m_midiGroupBox, tr("Auto Detect") );
+			m_midiAutoDetect.get(), m_midiGroupBox, tr("Auto Detect") );
 	m_midiAutoDetectCheckBox->move( 8, 60 );
-	connect( &m_midiAutoDetect, SIGNAL(dataChanged()),
-			this, SLOT(autoDetectToggled()));
+	connect( m_midiAutoDetect->model(), &Model::dataChanged,
+			this, &ControllerConnectionDialog::autoDetectToggled);
 
 	// when using with non-raw-clients we can provide buttons showing
 	// our port-menus when being clicked
-	if( !Engine::audioEngine()->midiClient()->isRaw() )
+	if( !IEngine::Instance()->getAudioEngineInterface()->midiClientInterface()->isRaw() )
 	{
-		m_readablePorts = new MidiPortMenu( MidiPort::Input, &m_midiController->m_midiPort );
+		m_readablePorts = new MidiPortMenu( IMidiPort::Input, m_midiController->midiPortInterface());
 		connect( m_readablePorts, SIGNAL(triggered(QAction*)),
 				this, SLOT(enableAutoDetect(QAction*)));
 		auto rp_btn = new ToolButton(m_midiGroupBox);
@@ -198,21 +123,21 @@ ControllerConnectionDialog::ControllerConnectionDialog( QWidget * _parent,
 
 
 	// User stuff
-	m_userGroupBox = new GroupBox( tr( "USER CONTROLLER" ), &m_userGroupBoxEnabled, this );
+	m_userGroupBox = new GroupBox( tr( "USER CONTROLLER" ), MFact::create(false, this), this );
 	m_userGroupBox->setGeometry( 8, 100, 240, 60 );
-	connect( m_userGroupBox->model(), SIGNAL(dataChanged()),
+	connect( m_userGroupBox->model()->model(), SIGNAL(dataChanged()),
 			this, SLOT(userToggled()));
 
-	m_userController = new ComboBox( &m_userControllerIndex, m_userGroupBox, "Controller" );
+	m_userController = new ComboBox( MFact::createComboBox(this), m_userGroupBox, "Controller" );
 	m_userController->setGeometry( 10, 24, 200, ComboBox::DEFAULT_HEIGHT );
-	for (Controller * c : Engine::getSong()->controllers())
+	for (auto * c : IEngine::Instance()->getSongInterface()->controllers())
 	{
-		m_userController->model()->addItem( c->name() );
+		m_userController->comboboxModel()->addItem( c->name() );
 	}
-	connect( m_userController->model(), SIGNAL(dataUnchanged()),
-			this, SLOT(userSelected()));
-	connect( m_userController->model(), SIGNAL(dataChanged()),
-			this, SLOT(userSelected()));
+	connect( m_userController->model()->model(), &Model::dataUnchanged,
+			this, &ControllerConnectionDialog::userSelected);
+	connect( m_userController->model()->model(), &Model::dataChanged,
+			this, &ControllerConnectionDialog::userSelected);
 
 
 	// Mapping functions
@@ -252,28 +177,28 @@ ControllerConnectionDialog::ControllerConnectionDialog( QWidget * _parent,
 	// Crazy MIDI View stuff
 	
 	// TODO, handle by making this a model for the Dialog "view"
-	ControllerConnection * cc = nullptr;
+	IControllerConnection * cc = nullptr;
 	if( m_targetModel )
 	{
 		cc = m_targetModel->controllerConnection();
 
-		if( cc && cc->getController()->type() != Controller::DummyController && Engine::getSong() )
+		if( cc && cc->getController()->type() != IController::DummyController && IEngine::Instance()->getSongInterface() )
 		{
-			if ( cc->getController()->type() == Controller::MidiController )
+			if ( cc->getController()->type() == IController::MidiController )
 			{
 				m_midiGroupBox->model()->setValue( true );
 				// ensure controller is created
 				midiToggled();
 
-				auto cont = (MidiController*)(cc->getController());
-				m_midiChannelSpinBox->model()->setValue( cont->m_midiPort.inputChannel() );
-				m_midiControllerSpinBox->model()->setValue( cont->m_midiPort.inputController() );
+				auto cont = getMidiControllerFromBaseController(cc->getController());
+				m_midiChannelSpinBox->model()->setValue( cont->midiPortInterface()->inputChannelModel()->value() );
+				m_midiControllerSpinBox->model()->setValue( cont->midiPortInterface()->inputControllerModel()->value() );
 
-				m_midiController->subscribeReadablePorts( static_cast<MidiController*>( cc->getController() )->m_midiPort.readablePorts() );
+				m_midiController->subscribeReadablePorts( getMidiControllerFromBaseController( cc->getController() )->midiPortInterface()->readablePorts() );
 			}
 			else
 			{
-				int idx = Engine::getSong()->controllers().indexOf( cc->getController() );
+				int idx = IEngine::Instance()->getSongInterface()->controllers().indexOf( cc->getController() );
 
 				if( idx >= 0 )
 				{
@@ -298,8 +223,6 @@ ControllerConnectionDialog::ControllerConnectionDialog( QWidget * _parent,
 ControllerConnectionDialog::~ControllerConnectionDialog()
 {
 	delete m_readablePorts;
-
-	delete m_midiController;
 }
 
 
@@ -312,37 +235,37 @@ void ControllerConnectionDialog::selectController()
 	{
 		if( m_midiControllerSpinBox->model()->value() > 0 )
 		{
-			MidiController * mc;
-			mc = m_midiController->copyToMidiController( &Engine::getSong()->trackContainer() );
+			IMidiController * mc;
+			mc = m_midiController->copyToMidiController( &IEngine::Instance()->getSongInterface()->trackContainer() );
 	
 			/*
 			if( m_targetModel->getTrack() && 
 					!m_targetModel->getTrack()->displayName().isEmpty() )
 			{
-				mc->m_midiPort.setName( QString( "%1 (%2)" ).
+				mc->midiPortInterface()->setName( QString( "%1 (%2)" ).
 						arg( m_targetModel->getTrack()->displayName() ).
 						arg( m_targetModel->displayName() ) );
 			}
 			else
 			{
-				mc->m_midiPort.setName( m_targetModel->displayName() );
+				mc->midiPortInterface()->setName( m_targetModel->displayName() );
 			}
 			*/
-			mc->m_midiPort.setName( m_targetModel->fullDisplayName() );
-			m_controller = mc;
+			mc->midiPortInterface()->setName( m_targetModel->model()->fullDisplayName() );
+			m_controller = mc->baseController();
 		}
 	}
 	// User
 	else 
 	{
 		if( m_userGroupBox->model()->value() > 0 && 
-				Engine::getSong()->controllers().size() )
+				IEngine::Instance()->getSongInterface()->controllers().size() )
 		{
-			m_controller = Engine::getSong()->controllers().at( 
+			m_controller = IEngine::Instance()->getSongInterface()->controllers().at( 
 					m_userController->model()->value() );
 		}
 
-		if( m_controller && m_controller->hasModel( m_targetModel ) )
+		if( m_controller && m_controller->hasModel( m_targetModel->model() ) )
 		{
 			QMessageBox::warning(this, tr("LMMS"), tr("Cycle Detected."));
 			return;
@@ -371,7 +294,7 @@ void ControllerConnectionDialog::midiToggled()
 			qWarning("Before refactor, midi controller was queried here\n");
 		}
 	}
-	m_midiAutoDetect.setValue( enabled );
+	m_midiAutoDetect->setValue( enabled );
 
 	if (m_midiChannelSpinBox) {
 		m_midiChannelSpinBox->setEnabled( enabled );
@@ -406,9 +329,9 @@ void ControllerConnectionDialog::userSelected()
 
 void ControllerConnectionDialog::autoDetectToggled()
 {
-	if( m_midiAutoDetect.value() )
+	if( m_midiAutoDetect->value() )
 	{
-		m_midiController->reset();
+		m_midiController->getAutodetectIfExists()->reset();
 	}
 }
 
@@ -417,9 +340,9 @@ void ControllerConnectionDialog::autoDetectToggled()
 
 void ControllerConnectionDialog::midiValueChanged()
 {
-	if( m_midiAutoDetect.value() )
+	if( m_midiAutoDetect->value() )
 	{
-		m_midiController->useDetected();
+		m_midiController->getAutodetectIfExists()->useDetected();
 		if( m_readablePorts )
 		{
 			m_readablePorts->updateMenu();

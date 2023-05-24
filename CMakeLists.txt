@@ -173,6 +173,7 @@ SET(QT_LIBRARIES
 	Qt5::Core
 	Qt5::Gui
 	Qt5::Xml
+	Qt5::Test
 )
 
 IF(LMMS_BUILD_LINUX AND WANT_VST)

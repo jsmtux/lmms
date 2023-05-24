@@ -1,11 +1,11 @@
 #include "TemplatesMenu.h"
 
-#include "ConfigManager.h"
+#include "IConfigManager.h"
 #include "embed.h"
 #include "GuiApplication.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "MainWindow.h"
-#include "Song.h"
+#include "ISong.h"
 
 namespace lmms::gui
 {
@@ -29,7 +29,7 @@ void TemplatesMenu::createNewProjectFromTemplate(QAction * _action)
 	if( getGUI()->mainWindow()->mayChangeProject(true) )
 	{
 		const QString& templateFilePath = _action->data().toString();
-		Engine::getSong()->createNewProjectFromTemplate(templateFilePath);
+		IEngine::Instance()->getSongInterface()->createNewProjectFromTemplate(templateFilePath);
 	}
 }
 
@@ -41,8 +41,8 @@ void TemplatesMenu::fillTemplatesMenu()
 {
 	clear();
 
-	addTemplatesFromDir(ConfigManager::inst()->userTemplateDir());
-	addTemplatesFromDir(ConfigManager::inst()->factoryProjectsDir() + "templates");
+	addTemplatesFromDir(IConfigManager::Instance()->userTemplateDir());
+	addTemplatesFromDir(IConfigManager::Instance()->factoryProjectsDir() + "templates");
 }
 
 

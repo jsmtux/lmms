@@ -24,9 +24,9 @@
 
 #include "EffectSelectDialog.h"
 
-#include "EffectChain.h"
+#include "IEffectChain.h"
 #include "embed.h"
-#include "PluginFactory.h"
+#include "IPluginFactory.h"
 
 #include "gui/QWidgets/ui_EffectSelectDialog.h"
 
@@ -52,9 +52,9 @@ EffectSelectDialog::EffectSelectDialog( QWidget * _parent ) :
 
 	// query effects
 
-	EffectKeyList subPluginEffectKeys;
+	PluginDescriptor::SubPluginFeatures::KeyList subPluginEffectKeys;
 
-	for (const Plugin::Descriptor* desc: getPluginFactory()->descriptors(Plugin::Effect))
+	for (const PluginDescriptor* desc: IPluginFactory::Instance()->descriptors(PluginTypes::Effect))
 	{
 		if( desc->subPluginFeatures )
 		{
@@ -64,7 +64,7 @@ EffectSelectDialog::EffectSelectDialog( QWidget * _parent ) :
 		}
 		else
 		{
-			m_effectKeys << EffectKey( desc, desc->name );
+			m_effectKeys << PluginDescriptor::Key( desc, desc->name );
 
 		}
 	}
@@ -75,7 +75,7 @@ EffectSelectDialog::EffectSelectDialog( QWidget * _parent ) :
 	m_sourceModel.setHorizontalHeaderItem( 0, new QStandardItem( tr( "Name" ) ) );
 	m_sourceModel.setHorizontalHeaderItem( 1, new QStandardItem( tr( "Type" ) ) );
 	int row = 0;
-	for( EffectKeyList::ConstIterator it = m_effectKeys.begin();
+	for( PluginDescriptor::SubPluginFeatures::KeyList::ConstIterator it = m_effectKeys.begin();
 						it != m_effectKeys.end(); ++it )
 	{
 		QString name;
@@ -146,17 +146,17 @@ EffectSelectDialog::~EffectSelectDialog()
 
 
 
-Effect * EffectSelectDialog::instantiateSelectedPlugin( EffectChain * _parent )
+IEffect * EffectSelectDialog::instantiateSelectedPlugin( IEffectChain * _parent )
 {
-	Effect* result = nullptr;
+	IEffect* result = nullptr;
 	if(!m_currentSelection.name.isEmpty() && m_currentSelection.desc)
 	{
-		result = Effect::instantiate(m_currentSelection.desc->name,
+		result = InstantiateEffect(m_currentSelection.desc->name,
 										_parent, &m_currentSelection);
 	}
 	if(!result)
 	{
-		result = new DummyEffect(_parent, QDomElement());
+		result = InstantiateDummyEffect(_parent, QDomElement());
 	}
 	return result;
 }
@@ -184,7 +184,7 @@ void EffectSelectDialog::rowChanged( const QModelIndex & _idx,
 	if( m_model.mapToSource( _idx ).row() < 0 )
 	{
 		// invalidate current selection
-		m_currentSelection = Plugin::Descriptor::SubPluginFeatures::Key();
+		m_currentSelection = PluginDescriptor::Key();
 	}
 	else
 	{
@@ -196,7 +196,7 @@ void EffectSelectDialog::rowChanged( const QModelIndex & _idx,
 
 		auto hbox = new QHBoxLayout(m_descriptionWidget);
 
-		Plugin::Descriptor const & descriptor = *( m_currentSelection.desc );
+		PluginDescriptor const & descriptor = *( m_currentSelection.desc );
 
 		const PixmapLoader* pixLoa = m_currentSelection.logo();
 		if (pixLoa)

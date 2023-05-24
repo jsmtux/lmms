@@ -27,6 +27,7 @@
 #define LMMS_GUI_LADSPA_CONTROL_VIEW_H
 
 #include <QWidget>
+#include "lmms_export.h"
 
 namespace lmms
 {

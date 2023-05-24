@@ -30,7 +30,7 @@
 namespace lmms
 {
 
-class PatternTrack;
+class IPatternTrack;
 
 namespace gui
 {
@@ -42,12 +42,12 @@ class PatternTrackView : public TrackView
 {
 	Q_OBJECT
 public:
-	PatternTrackView(PatternTrack* pt, TrackContainerView* tcv);
+	PatternTrackView(IPatternTrack* pt, TrackContainerView* tcv);
 	~PatternTrackView() override;
 
 	bool close() override;
 
-	const PatternTrack* getPatternTrack() const
+	const IPatternTrack* getPatternTrack() const
 	{
 		return (m_patternTrack);
 	}
@@ -58,7 +58,7 @@ public slots:
 
 
 private:
-	PatternTrack* m_patternTrack;
+	IPatternTrack* m_patternTrack;
 	TrackLabelButton * m_trackLabel;
 } ;
 

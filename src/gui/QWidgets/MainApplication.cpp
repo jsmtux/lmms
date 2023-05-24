@@ -23,10 +23,10 @@
  */
 #include "MainApplication.h"
 
-#include "Engine.h"
+#include "IEngine.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
-#include "Song.h"
+#include "ISong.h"
 
 #include <QDebug>
 #include <QFileOpenEvent>
@@ -66,12 +66,12 @@ bool MainApplication::event(QEvent* event)
 			auto fileEvent = static_cast<QFileOpenEvent*>(event);
 			// Handle the project file
 			m_queuedFile = fileEvent->file();
-			if(Engine::getSong())
+			if(IEngine::Instance()->getSongInterface())
 			{
 				if(getGUI()->mainWindow()->mayChangeProject(true))
 				{
 					qDebug() << "Loading file " << m_queuedFile;
-					Engine::getSong()->loadProject(m_queuedFile);
+					IEngine::Instance()->getSongInterface()->loadProject(m_queuedFile);
 				}
 			}
 			else

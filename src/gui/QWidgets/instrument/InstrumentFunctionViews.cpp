@@ -24,7 +24,7 @@
 
 #include "InstrumentFunctionViews.h"
 
-#include "InstrumentFunctions.h"
+#include "IInstrumentFunctions.h"
 #include "gui_templates.h"
 
 #include "widgets/ComboBox.h"
@@ -39,12 +39,12 @@
 namespace lmms::gui
 {
 
-InstrumentFunctionNoteStackingView::InstrumentFunctionNoteStackingView( InstrumentFunctionNoteStacking* cc, QWidget* parent ) :
+InstrumentFunctionNoteStackingView::InstrumentFunctionNoteStackingView( IInstrumentFunctionNoteStacking* cc, QWidget* parent ) :
 	QWidget( parent ),
 	m_cc( cc ),
-	m_chordsGroupBox( new GroupBox( tr( "STACKING" ), &m_cc->m_chordsEnabledModel ) ),
-	m_chordsComboBox( new ComboBox(&m_cc->m_chordsModel) ),
-	m_chordRangeKnob( new Knob( knobBright_26, &m_cc->m_chordRangeModel ) )
+	m_chordsGroupBox( new GroupBox( tr( "STACKING" ), m_cc->chordsEnabledModel() ) ),
+	m_chordsComboBox( new ComboBox(m_cc->chordsModel()) ),
+	m_chordRangeKnob( new Knob( knobBright_26, m_cc->chordRangeModel() ) )
 {
 	auto topLayout = new QHBoxLayout(this);
 	topLayout->setContentsMargins(0, 0, 0, 0);
@@ -66,8 +66,8 @@ InstrumentFunctionNoteStackingView::InstrumentFunctionNoteStackingView( Instrume
 	mainLayout->addWidget( m_chordsComboBox, 1, 0 );
 	mainLayout->addWidget( m_chordRangeKnob, 0, 1, 2, 1, Qt::AlignHCenter );
 
-	QObject::connect( m_cc, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_cc, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_cc->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_cc->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 
 	update();
 }
@@ -83,20 +83,20 @@ InstrumentFunctionNoteStackingView::~InstrumentFunctionNoteStackingView()
 
 
 
-InstrumentFunctionArpeggioView::InstrumentFunctionArpeggioView( InstrumentFunctionArpeggio* arp, QWidget* parent ) :
+InstrumentFunctionArpeggioView::InstrumentFunctionArpeggioView( IInstrumentFunctionArpeggio* arp, QWidget* parent ) :
 	QWidget( parent ),
 	m_a( arp ),
-	m_arpGroupBox( new GroupBox( tr( "ARPEGGIO" ), &m_a->m_arpEnabledModel ) ),
-	m_arpComboBox( new ComboBox(&m_a->m_arpModel) ),
-	m_arpRangeKnob( new Knob( knobBright_26, &m_a->m_arpRangeModel ) ),
-	m_arpRepeatsKnob( new Knob( knobBright_26, &m_a->m_arpRepeatsModel ) ),
-	m_arpCycleKnob( new Knob( knobBright_26, &m_a->m_arpCycleModel ) ),
-	m_arpSkipKnob( new Knob( knobBright_26, &m_a->m_arpSkipModel ) ),
-	m_arpMissKnob( new Knob( knobBright_26, &m_a->m_arpMissModel ) ),
-	m_arpTimeKnob( new TempoSyncKnob( knobBright_26, &m_a->m_arpTimeModel ) ),
-	m_arpGateKnob( new Knob( knobBright_26, &m_a->m_arpGateModel ) ),
-	m_arpDirectionComboBox( new ComboBox(&m_a->m_arpDirectionModel) ),
-	m_arpModeComboBox( new ComboBox(&m_a->m_arpModeModel) )
+	m_arpGroupBox( new GroupBox( tr( "ARPEGGIO" ), m_a->arpEnabledModel() ) ),
+	m_arpComboBox( new ComboBox(m_a->arpModel()) ),
+	m_arpRangeKnob( new Knob( knobBright_26, m_a->arpRangeModel() ) ),
+	m_arpRepeatsKnob( new Knob( knobBright_26, m_a->arpRepeatsModel() ) ),
+	m_arpCycleKnob( new Knob( knobBright_26, m_a->arpCycleModel() ) ),
+	m_arpSkipKnob( new Knob( knobBright_26, m_a->arpSkipModel() ) ),
+	m_arpMissKnob( new Knob( knobBright_26, m_a->arpMissModel() ) ),
+	m_arpTimeKnob( new TempoSyncKnob( knobBright_26, m_a->arpTimeModel() ) ),
+	m_arpGateKnob( new Knob( knobBright_26, m_a->arpGateModel() ) ),
+	m_arpDirectionComboBox( new ComboBox(m_a->arpDirectionModel()) ),
+	m_arpModeComboBox( new ComboBox(m_a->arpModeModel()) )
 {
 	auto topLayout = new QHBoxLayout(this);
 	topLayout->setContentsMargins(0, 0, 0, 0);
@@ -162,8 +162,8 @@ InstrumentFunctionArpeggioView::InstrumentFunctionArpeggioView( InstrumentFuncti
 	mainLayout->setRowMinimumHeight( 2, 10 );
 	mainLayout->setRowMinimumHeight( 5, 10 );
 
-	QObject::connect( m_a, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_a, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_a->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_a->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 	update();
 }
 

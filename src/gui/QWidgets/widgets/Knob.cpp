@@ -29,8 +29,8 @@
 #endif
 
 #include "CaptionMenu.h"
-#include "ConfigManager.h"
-#include "ControllerConnection.h"
+#include "IConfigManager.h"
+#include "IControllerConnection.h"
 #include "DeprecationHelper.h"
 #include "embed.h"
 #include "gui_templates.h"
@@ -38,7 +38,7 @@
 #include "lmms_math.h"
 #include "LocaleHelper.h"
 #include "MainWindow.h"
-#include "ProjectJournal.h"
+#include "IProjectJournal.h"
 #include "SimpleTextFloat.h"
 #include "StringPairDrag.h"
 
@@ -59,14 +59,14 @@ SimpleTextFloat * Knob::s_textFloat = nullptr;
 
 //default impl for model would be
 // new FloatModel( 0, 0, 0, 1, nullptr, _name, true )
-Knob::Knob( knobTypes _knob_num, FloatModel* _model, QWidget * _parent, const QString & _name ) :
+Knob::Knob( knobTypes _knob_num, IFloatAutomatableModel* _model, QWidget * _parent, const QString & _name ) :
 	QWidget( _parent ),
 	FloatModelView( _model, this ),
 	m_label( "" ),
 	m_isHtmlLabel(false),
 	m_tdRenderer(nullptr),
-	m_volumeKnob( false ),
-	m_volumeRatio( 100.0, 0.0, 1000000.0 ),
+	m_volumeKnob( MFact::create(false) ),
+	m_volumeRatio( MFact::create<float>(100.0, 0.0, 1000000.0) ),
 	m_buttonPressed( false ),
 	m_angle( -10 ),
 	m_lineWidth( 0 ),
@@ -76,7 +76,7 @@ Knob::Knob( knobTypes _knob_num, FloatModel* _model, QWidget * _parent, const QS
 	initUi( _name );
 }
 
-Knob::Knob( FloatModel* _model, QWidget * _parent, const QString & _name ) :
+Knob::Knob( IFloatAutomatableModel* _model, QWidget * _parent, const QString & _name ) :
 	Knob( knobBright_26, _model, _parent, _name )
 {
 }
@@ -126,10 +126,10 @@ void Knob::initUi( const QString & _name )
 		break;
 	}
 
-	QObject::connect( model(), SIGNAL(dataChanged()),
+	QObject::connect( model()->model(), SIGNAL(dataChanged()),
 				this, SLOT(friendlyUpdate()));
 
-	QObject::connect( model(), SIGNAL(propertiesChanged()),
+	QObject::connect( model()->model(), SIGNAL(propertiesChanged()),
 					this, SLOT(update()));
 }
 
@@ -517,7 +517,7 @@ void Knob::contextMenuEvent( QContextMenuEvent * )
 	// an QApplication::restoreOverrideCursor()-call...
 	mouseReleaseEvent( nullptr );
 
-	CaptionMenu contextMenu( model()->displayName(), this );
+	CaptionMenu contextMenu( model()->model()->displayName(), this );
 	addDefaultActions( &contextMenu );
 	contextMenu.addAction( QPixmap(),
 		model()->isScaleLogarithmic() ? tr( "Set linear" ) : tr( "Set logarithmic" ),
@@ -555,11 +555,11 @@ void Knob::dropEvent( QDropEvent * _de )
 	}
 	else if( type == "automatable_model" )
 	{
-		auto mod = dynamic_cast<AutomatableModel*>(Engine::projectJournal()->journallingObject(val.toInt()));
+		auto mod = getAutomatableModelFromJournallingObject(IEngine::Instance()->getProjectJournalInterface()->journallingObject(val.toInt()));
 		if( mod != nullptr )
 		{
-			AutomatableModel::linkModels( model(), mod );
-			mod->setValue( model()->value() );
+			IAutomatableModelBase::linkModelInterfaces( model(), mod );
+			mod->setValueAsFloat( model()->value() );
 		}
 	}
 }
@@ -573,7 +573,7 @@ void Knob::mousePressEvent( QMouseEvent * _me )
 			! ( _me->modifiers() & Qt::ControlModifier ) &&
 			! ( _me->modifiers() & Qt::ShiftModifier ) )
 	{
-		AutomatableModel *thisModel = model();
+		auto *thisModel = model();
 		if( thisModel )
 		{
 			thisModel->addJournalCheckPoint();
@@ -628,7 +628,7 @@ void Knob::mouseReleaseEvent( QMouseEvent* event )
 {
 	if( event && event->button() == Qt::LeftButton )
 	{
-		AutomatableModel *thisModel = model();
+		auto *thisModel = model();
 		if( thisModel )
 		{
 			thisModel->restoreJournallingState();
@@ -695,7 +695,7 @@ void Knob::paintEvent( QPaintEvent * _me )
 void Knob::wheelEvent(QWheelEvent * we)
 {
 	we->accept();
-	const float stepMult = model()->range() / 2000 / model()->step<float>();
+	const float stepMult = model()->range() / 2000 / model()->step();
 	const int inc = ((we->angleDelta().y() > 0 ) ? 1 : -1) * ((stepMult < 1 ) ? 1 : stepMult);
 	model()->incValue( inc );
 
@@ -713,7 +713,7 @@ void Knob::wheelEvent(QWheelEvent * we)
 void Knob::setPosition( const QPoint & _p )
 {
 	const float value = getValue( _p ) + m_leftOver;
-	const auto step = model()->step<float>();
+	const auto step = model()->step();
 	const float oldValue = model()->value();
 
 
@@ -761,7 +761,7 @@ void Knob::enterValue()
 	float new_val;
 
 	if( isVolumeKnob() &&
-		ConfigManager::inst()->value( "app", "displaydbfs" ).toInt() )
+		IConfigManager::Instance()->value( "app", "displaydbfs" ).toInt() )
 	{
 		new_val = QInputDialog::getDouble(
 			this, tr( "Set value" ),
@@ -804,7 +804,7 @@ void Knob::friendlyUpdate()
 {
 	if (model() && (model()->controllerConnection() == nullptr ||
 		model()->controllerConnection()->getController()->frequentUpdates() == false ||
-				Controller::runningFrames() % (256*4) == 0))
+				model()->controllerConnection()->getController()->getRunningFrames() % (256*4) == 0))
 	{
 		update();
 	}
@@ -816,7 +816,7 @@ void Knob::friendlyUpdate()
 QString Knob::displayValue() const
 {
 	if( isVolumeKnob() &&
-		ConfigManager::inst()->value( "app", "displaydbfs" ).toInt() )
+		IConfigManager::Instance()->value( "app", "displaydbfs" ).toInt() )
 	{
 		return m_description.trimmed() + QString( " %1 dBFS" ).
 				arg( ampToDbfs( model()->getRoundedValue() / volumeRatio() ),

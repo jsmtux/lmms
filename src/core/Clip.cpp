@@ -130,7 +130,7 @@ void Clip::changeLength( const TimePos & length )
 
 
 
-bool Clip::comparePosition(const Clip *a, const Clip *b)
+bool Clip::comparePosition(const IClip *a, const IClip *b)
 {
 	return a->startPosition() < b->startPosition();
 }
@@ -142,7 +142,7 @@ bool Clip::comparePosition(const Clip *a, const Clip *b)
  *
  *  This method copies the state of a Clip to another Clip
  */
-void Clip::copyStateTo( Clip *src, Clip *dst )
+void Clip::copyStateTo( IClip *src, IClip *dst )
 {
 	// If the node names match we copy the state
 	if( src->nodeName() == dst->nodeName() ){

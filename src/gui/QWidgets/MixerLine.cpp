@@ -28,10 +28,11 @@
 #include "embed.h"
 #include "gui_templates.h"
 #include "GuiApplication.h"
-#include "Mixer.h"
+// #include "Mixer.h"
+#include "Model.h"
 #include "MixerView.h"
 #include "SendButtonIndicator.h"
-#include "Song.h"
+#include "ISong.h"
 
 #include "modals/ColorChooser.h"
 
@@ -43,6 +44,7 @@
 #include <QGraphicsView>
 #include <QLineEdit>
 #include <QPainter>
+#include <QPointer>
 
 #include <cstdlib>
 
@@ -108,7 +110,7 @@ MixerLine::MixerLine( QWidget * _parent, MixerView * _mv, int _channelIndex ) :
 	m_lcd->move( 4, 58 );
 	m_lcd->setMarginWidth( 1 );
 	
-	QString name = Engine::mixer()->mixerChannel( m_channelIndex )->m_name;
+	QString name = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( m_channelIndex )->getName();
 	setToolTip( name );
 
 	m_renameLineEdit = new QLineEdit();
@@ -132,8 +134,9 @@ MixerLine::MixerLine( QWidget * _parent, MixerView * _mv, int _channelIndex ) :
 	proxyWidget->setRotation( -90 );
 	proxyWidget->setPos( 8, 145 );
 
-	connect( m_renameLineEdit, SIGNAL(editingFinished()), this, SLOT(renameFinished()));
-	connect( &Engine::mixer()->mixerChannel( m_channelIndex )->m_muteModel, SIGNAL(dataChanged()), this, SLOT(update()));
+	connect( m_renameLineEdit, &QLineEdit::editingFinished, this, &MixerLine::renameFinished);
+	connect( IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( m_channelIndex )->getMutedModel()->model(),
+		&Model::dataChanged, this, [this](){update();});
 }
 
 
@@ -156,7 +159,7 @@ void MixerLine::setChannelIndex( int index )
 	m_lcd->update();
 }
 
-void MixerLine::setSendModel(FloatModel* model)
+void MixerLine::setSendModel(IFloatAutomatableModel* model)
 {
 	if (model == nullptr) {
 		delete m_sendKnob;
@@ -171,9 +174,9 @@ void MixerLine::setSendModel(FloatModel* model)
 
 void MixerLine::drawMixerLine( QPainter* p, const MixerLine *mixerLine, bool isActive, bool sendToThis, bool receiveFromThis )
 {
-	auto channel = Engine::mixer()->mixerChannel( m_channelIndex );
-	bool muted = channel->m_muteModel.value();
-	QString name = channel->m_name;
+	auto channel = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( m_channelIndex );
+	bool muted = channel->getMutedModel()->value();
+	QString name = channel->getName();
 	QString elidedName = elideName( name );
 	if( !m_inRename && m_renameLineEdit->text() != elidedName )
 	{
@@ -183,9 +186,9 @@ void MixerLine::drawMixerLine( QPainter* p, const MixerLine *mixerLine, bool isA
 	int width = mixerLine->rect().width();
 	int height = mixerLine->rect().height();
 	
-	if( channel->m_hasColor && !muted )
+	if( channel->hasColor() && !muted )
 	{
-		p->fillRect( mixerLine->rect(), channel->m_color.darker( isActive ? 120 : 150 ) );
+		p->fillRect( mixerLine->rect(), channel->getColor().darker( isActive ? 120 : 150 ) );
 	}
 	else
 	{
@@ -228,8 +231,8 @@ QString MixerLine::elideName( const QString & name )
 
 void MixerLine::paintEvent( QPaintEvent * )
 {
-	bool sendToThis = Engine::mixer()->channelSendModel( m_mv->currentMixerLine()->m_channelIndex, m_channelIndex ) != nullptr;
-	bool receiveFromThis = Engine::mixer()->channelSendModel( m_channelIndex, m_mv->currentMixerLine()->m_channelIndex ) != nullptr;
+	bool sendToThis = IEngine::Instance()->getMixerInterface()->channelSendModel( m_mv->currentMixerLine()->m_channelIndex, m_channelIndex ) != nullptr;
+	bool receiveFromThis = IEngine::Instance()->getMixerInterface()->channelSendModel( m_channelIndex, m_mv->currentMixerLine()->m_channelIndex ) != nullptr;
 	QPainter painter;
 	painter.begin( this );
 	drawMixerLine( &painter, this, m_mv->currentMixerLine() == this, sendToThis, receiveFromThis );
@@ -257,7 +260,7 @@ void MixerLine::mouseDoubleClickEvent( QMouseEvent * )
 
 void MixerLine::contextMenuEvent( QContextMenuEvent * )
 {
-	QPointer<CaptionMenu> contextMenu = new CaptionMenu( Engine::mixer()->mixerChannel( m_channelIndex )->m_name, this );
+	QPointer<CaptionMenu> contextMenu = new CaptionMenu( IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( m_channelIndex )->getName(), this );
 	if( m_channelIndex != 0 ) // no move-options in master
 	{
 		contextMenu->addAction( tr( "Move &left" ),	this, SLOT(moveChannelLeft()));
@@ -295,7 +298,7 @@ void MixerLine::renameChannel()
 	m_renameLineEdit->setReadOnly( false );
 	m_lcd->hide();
 	m_renameLineEdit->setFixedWidth( 135 );
-	m_renameLineEdit->setText( Engine::mixer()->mixerChannel( m_channelIndex )->m_name );
+	m_renameLineEdit->setText( IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( m_channelIndex )->getName() );
 	m_view->setFocus();
 	m_renameLineEdit->selectAll();
 	m_renameLineEdit->setFocus();
@@ -313,13 +316,13 @@ void MixerLine::renameFinished()
 	m_lcd->show();
 	QString newName = m_renameLineEdit->text();
 	setFocus();
-	if( !newName.isEmpty() && Engine::mixer()->mixerChannel( m_channelIndex )->m_name != newName )
+	if( !newName.isEmpty() && IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( m_channelIndex )->getName() != newName )
 	{
-		Engine::mixer()->mixerChannel( m_channelIndex )->m_name = newName;
+		IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( m_channelIndex )->setName(newName);
 		m_renameLineEdit->setText( elideName( newName ) );
-		Engine::getSong()->setModified();
+		IEngine::Instance()->getSongInterface()->setModified();
 	}
-	QString name = Engine::mixer()->mixerChannel( m_channelIndex )->m_name;
+	QString name = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( m_channelIndex )->getName();
 	setToolTip( name );
 }
 
@@ -443,11 +446,11 @@ void MixerLine::setStrokeInnerInactive( const QColor & c )
 // Ask user for a color, and set it as the mixer line color
 void MixerLine::selectColor()
 {
-	auto channel = Engine::mixer()->mixerChannel( m_channelIndex );
-	auto new_color = ColorChooser(this).withPalette(ColorChooser::Palette::Mixer)->getColor(channel->m_color);
+	auto channel = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( m_channelIndex );
+	auto new_color = ColorChooser(this).withPalette(ColorChooser::Palette::Mixer)->getColor(channel->getColor());
 	if(!new_color.isValid()) { return; }
 	channel->setColor (new_color);
-	Engine::getSong()->setModified();
+	IEngine::Instance()->getSongInterface()->setModified();
 	update();
 }
 
@@ -455,8 +458,8 @@ void MixerLine::selectColor()
 // Disable the usage of color on this mixer line
 void MixerLine::resetColor()
 {
-	Engine::mixer()->mixerChannel( m_channelIndex )->m_hasColor = false;
-	Engine::getSong()->setModified();
+	IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( m_channelIndex )->removeColor();
+	IEngine::Instance()->getSongInterface()->setModified();
 	update();
 }
 
@@ -464,9 +467,9 @@ void MixerLine::resetColor()
 // Pick a random color from the mixer palette and set it as our color
 void MixerLine::randomizeColor()
 {
-	auto channel = Engine::mixer()->mixerChannel( m_channelIndex );
+	auto channel = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( m_channelIndex );
 	channel->setColor (ColorChooser::getPalette(ColorChooser::Palette::Mixer)[rand() % 48]);
-	Engine::getSong()->setModified();
+	IEngine::Instance()->getSongInterface()->setModified();
 	update();
 }
 

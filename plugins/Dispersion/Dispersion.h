@@ -39,7 +39,7 @@ constexpr inline int MAX_DISPERSION_FILTERS = 999;
 class DispersionEffect : public Effect
 {
 public:
-	DispersionEffect(Model* parent, const Descriptor::SubPluginFeatures::Key* key);
+	DispersionEffect(Model* parent, const PluginDescriptor::Key* key);
 	~DispersionEffect() override = default;
 	bool processAudioBuffer(sampleFrame* buf, const fpp_t frames) override;
 

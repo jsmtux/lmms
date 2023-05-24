@@ -262,7 +262,7 @@ void MidiPort::loadSettings( const QDomElement& thisElement )
 				subscribeReadablePort( it.key() );
 			}
 		}
-		emit readablePortsChanged();
+		emit m_midiPortModel.readablePortsChanged();
 	}
 
 	if( isOutputEnabled() )
@@ -275,7 +275,7 @@ void MidiPort::loadSettings( const QDomElement& thisElement )
 				subscribeWritablePort( it.key() );
 			}
 		}
-		emit writablePortsChanged();
+		emit m_midiPortModel.writablePortsChanged();
 	}
 
 	if( thisElement.hasAttribute( "basevelocity" ) == false )
@@ -357,9 +357,9 @@ void MidiPort::updateMidiPortMode()
 		}
 	}
 
-	emit readablePortsChanged();
-	emit writablePortsChanged();
-	emit modeChanged();
+	emit m_midiPortModel.readablePortsChanged();
+	emit m_midiPortModel.writablePortsChanged();
+	emit m_midiPortModel.modeChanged();
 
 	if( Engine::getSong() )
 	{
@@ -390,7 +390,7 @@ void MidiPort::updateReadablePorts()
 		m_readablePorts[port] = (selectedPorts.indexOf(port) != -1);
 	}
 
-	emit readablePortsChanged();
+	emit m_midiPortModel.readablePortsChanged();
 }
 
 
@@ -416,7 +416,7 @@ void MidiPort::updateWritablePorts()
 		m_writablePorts[port] = (selectedPorts.indexOf(port) != -1);
 	}
 
-	emit writablePortsChanged();
+	emit m_midiPortModel.writablePortsChanged();
 }
 
 

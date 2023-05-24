@@ -25,10 +25,10 @@
 #ifndef LMMS_GUI_SETUP_DIALOG_H
 #define LMMS_GUI_SETUP_DIALOG_H
 
-#include "AudioDevice.h"
+// #include "AudioDevice.h"
 #include "AudioDeviceSetupWidget.h"
 #include "lmmsconfig.h"
-#include "MidiClient.h"
+// #include "MidiClient.h"
 #include "MidiSetupWidget.h"
 
 #include "widgets/LedCheckBox.h"
@@ -156,20 +156,16 @@ private:
 	bool m_enableRunningAutoSave;
 	QSlider * m_saveIntervalSlider;
 	QLabel * m_saveIntervalLbl;
-	BoolModel m_autoSaveModel;
 	LedCheckBox * m_autoSave;
-	BoolModel m_runningAutoSaveModel;
 	LedCheckBox * m_runningAutoSave;
 	bool m_smoothScroll;
 	bool m_animateAFP;
 	QLabel * m_vstEmbedLbl;
 	QComboBox* m_vstEmbedComboBox;
 	QString m_vstEmbedMethod;
-	BoolModel m_vstAlwaysOnTopCheckBoxModel;
 	LedCheckBox * m_vstAlwaysOnTopCheckBox;
 	bool m_vstAlwaysOnTop;
 	bool m_disableAutoQuit;
-	BoolModel hqaudioModel;
 
 	using AswMap = QMap<QString, AudioDeviceSetupWidget*>;
 	using MswMap = QMap<QString, MidiSetupWidget*>;

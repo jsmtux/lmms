@@ -100,6 +100,8 @@ constexpr int ARANGE_LOUD_END = 0;
 constexpr int ARANGE_SILENT_START = -60;
 constexpr int ARANGE_SILENT_END = -10;
 
+//! Number of physical keys, limited to MIDI range (valid for both MIDI 1.0 and 2.0)
+const int NumKeys = 128;
 
 } // namespace lmms
 

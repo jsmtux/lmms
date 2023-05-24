@@ -35,7 +35,7 @@ namespace lmms
 class EqEffect : public Effect
 {
 public:
-	EqEffect( Model * parent , const Descriptor::SubPluginFeatures::Key * key );
+	EqEffect( Model * parent , const PluginDescriptor::Key * key );
 	~EqEffect() override = default;
 	bool processAudioBuffer( sampleFrame * buf, const fpp_t frames ) override;
 	EffectControls * controls() override

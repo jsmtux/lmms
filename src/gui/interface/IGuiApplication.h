@@ -7,15 +7,18 @@
 #include "IAutomationEditor.h"
 #include "IFileDialog.h"
 
+#include "lmms_export.h"
+
 #include <QDomNode>
 
 namespace lmms
 {
-class DataFile;
-class Instrument;
-class InstrumentTrack;
-class Plugin;
-class Effect;
+class IDataFile;
+class IInstrument;
+class ITrack;
+class ITool;
+class IEffect;
+class Model;
 
 namespace gui
 {
@@ -31,11 +34,8 @@ public:
 
 	virtual void clear() = 0;
 	virtual void restoreState(QDomNode& node) = 0;
-	virtual void saveState(DataFile& dataFile) = 0;
+	virtual void saveState(IDataFile& dataFile) = 0;
 
-	virtual Instrument* createDummyInstrument(InstrumentTrack *_instrument_track) = 0;
-	virtual Plugin* createDummyPlugin() = 0;
-	virtual Effect* createDummyEffect( Model * _parent, const QDomElement& originalPluginData ) = 0;
 	virtual std::unique_ptr<IFileDialog> createFileDialog(QString title) = 0;
 };
 

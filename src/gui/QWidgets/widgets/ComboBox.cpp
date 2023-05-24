@@ -46,9 +46,9 @@ QPixmap * ComboBox::s_arrowSelected = nullptr;
 const int CB_ARROW_BTN_WIDTH = 18;
 
 
-ComboBox::ComboBox( IntModel* _model, QWidget * _parent, const QString & _name ) :
+ComboBox::ComboBox( IComboBoxModelWrapper* _model, QWidget * _parent, const QString & _name ) :
 	QWidget( _parent ),
-	IntModelView( new ComboBoxModel( _model, QString() ), this ),
+	IntModelView( _model->wrappedModel(), this ),
 	m_menu( this ),
 	m_pressed( false )
 {
@@ -76,8 +76,8 @@ ComboBox::ComboBox( IntModel* _model, QWidget * _parent, const QString & _name )
 				this, SLOT(setItem(QAction*)));
 
 	setWindowTitle( _name );
-	QObject::connect( _model, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( _model, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( _model->wrappedModel()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( _model->wrappedModel()->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 }
 
 
@@ -108,7 +108,7 @@ void ComboBox::contextMenuEvent( QContextMenuEvent * event )
 		return;
 	}
 
-	CaptionMenu contextMenu( model()->displayName() );
+	CaptionMenu contextMenu( model()->model()->displayName() );
 	addDefaultActions( &contextMenu );
 	contextMenu.exec( QCursor::pos() );
 }
@@ -131,10 +131,10 @@ void ComboBox::mousePressEvent( QMouseEvent* event )
 			update();
 
 			m_menu.clear();
-			for( int i = 0; i < model()->size(); ++i )
+			for( int i = 0; i < m_comboboxModel->size(); ++i )
 			{
-				QAction * a = m_menu.addAction( model()->itemPixmap( i ) ? model()->itemPixmap( i )->pixmap() : QPixmap(),
-													model()->itemText( i ) );
+				QAction * a = m_menu.addAction( m_comboboxModel->itemPixmap( i ) ? m_comboboxModel->itemPixmap( i )->pixmap() : QPixmap(),
+													m_comboboxModel->itemText( i ) );
 				a->setData( i );
 			}
 
@@ -200,11 +200,11 @@ void ComboBox::paintEvent( QPaintEvent * _pe )
 
 	p.drawPixmap( width() - CB_ARROW_BTN_WIDTH + 3, 4, *arrow );
 
-	if( model() && model()->size() > 0 )
+	if( model() && m_comboboxModel->size() > 0 )
 	{
 		p.setFont( font() );
 		p.setClipRect( QRect( 4, 2, width() - CB_ARROW_BTN_WIDTH - 8, height() - 2 ) );
-		QPixmap pm = model()->currentData() ?  model()->currentData()->pixmap() : QPixmap();
+		QPixmap pm = m_comboboxModel->currentData() ?  m_comboboxModel->currentData()->pixmap() : QPixmap();
 		int tx = 5;
 		if( !pm.isNull() )
 		{
@@ -217,9 +217,9 @@ void ComboBox::paintEvent( QPaintEvent * _pe )
 		}
 		const int y = ( height()+p.fontMetrics().height() ) /2;
 		p.setPen( QColor( 64, 64, 64 ) );
-		p.drawText( tx+1, y-3, model()->currentText() );
+		p.drawText( tx+1, y-3, m_comboboxModel->currentText() );
 		p.setPen( QColor( 224, 224, 224 ) );
-		p.drawText( tx, y-4, model()->currentText() );
+		p.drawText( tx, y-4, m_comboboxModel->currentText() );
 	}
 }
 

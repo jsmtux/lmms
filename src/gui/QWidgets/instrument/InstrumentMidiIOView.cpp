@@ -24,11 +24,12 @@
 
 #include "InstrumentMidiIOView.h"
 
-#include "AudioEngine.h"
-#include "Engine.h"
+#include "IAudioEngine.h"
+#include "IEngine.h"
 #include "embed.h"
 #include "gui_templates.h"
-#include "MidiClient.h"
+// #include "MidiClient.h"
+#include "IMidiPort.h"
 
 #include "menus/MidiPortMenu.h"
 
@@ -44,7 +45,7 @@ namespace lmms::gui
 {
 
 
-InstrumentMidiIOView::InstrumentMidiIOView( MidiPort* mp, QWidget* parent ) :
+InstrumentMidiIOView::InstrumentMidiIOView( IMidiPort* mp, QWidget* parent ) :
 	QWidget( parent ),
 	m_model(mp),
 	m_rpBtn( nullptr ),
@@ -52,14 +53,14 @@ InstrumentMidiIOView::InstrumentMidiIOView( MidiPort* mp, QWidget* parent ) :
 {
 	auto layout = new QVBoxLayout(this);
 	layout->setContentsMargins(5, 5, 5, 5);
-	m_midiInputGroupBox = new GroupBox( tr( "ENABLE MIDI INPUT" ), &mp->m_readableModel );
+	m_midiInputGroupBox = new GroupBox( tr( "ENABLE MIDI INPUT" ), mp->readableModel() );
 	layout->addWidget( m_midiInputGroupBox );
 
 	auto midiInputLayout = new QHBoxLayout(m_midiInputGroupBox);
 	midiInputLayout->setContentsMargins( 8, 18, 8, 8 );
 	midiInputLayout->setSpacing( 4 );
 
-	m_inputChannelSpinBox = new LcdSpinBox( 2, &mp->m_inputChannelModel, m_midiInputGroupBox );
+	m_inputChannelSpinBox = new LcdSpinBox( 2, mp->inputChannelModel(), m_midiInputGroupBox );
 	m_inputChannelSpinBox->addTextForValue( 0, "--" );
 	/*: This string must be be short, its width must be less than
 	 *  width of LCD spin-box of two digits */
@@ -67,7 +68,7 @@ InstrumentMidiIOView::InstrumentMidiIOView( MidiPort* mp, QWidget* parent ) :
 	m_inputChannelSpinBox->setEnabled( false );
 	midiInputLayout->addWidget( m_inputChannelSpinBox );
 
-	m_fixedInputVelocitySpinBox = new LcdSpinBox( 3, &mp->m_fixedInputVelocityModel, m_midiInputGroupBox );
+	m_fixedInputVelocitySpinBox = new LcdSpinBox( 3, mp->fixedInputVelocityModel(), m_midiInputGroupBox );
 	m_fixedInputVelocitySpinBox->addTextForValue( -1, "---" );
 	/*: This string must be be short, its width must be less than
 	 *  width of LCD spin-box of three digits */
@@ -83,21 +84,21 @@ InstrumentMidiIOView::InstrumentMidiIOView( MidiPort* mp, QWidget* parent ) :
 
 
 
-	m_midiOutputGroupBox = new GroupBox( tr( "ENABLE MIDI OUTPUT" ), &mp->m_writableModel );
+	m_midiOutputGroupBox = new GroupBox( tr( "ENABLE MIDI OUTPUT" ), mp->writableModel() );
 	layout->addWidget( m_midiOutputGroupBox );
 
 	auto midiOutputLayout = new QHBoxLayout(m_midiOutputGroupBox);
 	midiOutputLayout->setContentsMargins( 8, 18, 8, 8 );
 	midiOutputLayout->setSpacing( 4 );
 
-	m_outputChannelSpinBox = new LcdSpinBox( 2, &mp->m_outputChannelModel, m_midiOutputGroupBox );
+	m_outputChannelSpinBox = new LcdSpinBox( 2, mp->outputChannelModel(), m_midiOutputGroupBox );
 	m_outputChannelSpinBox->addTextForValue( 0, "--" );
 	/*: This string must be be short, its width must be less than
 	 *  width of LCD spin-box of two digits */
 	m_outputChannelSpinBox->setLabel( tr( "CHAN" ) );
 	midiOutputLayout->addWidget( m_outputChannelSpinBox );
 
-	m_fixedOutputVelocitySpinBox = new LcdSpinBox( 3, &mp->m_fixedOutputVelocityModel, m_midiOutputGroupBox );
+	m_fixedOutputVelocitySpinBox = new LcdSpinBox( 3, mp->fixedOutputVelocityModel(), m_midiOutputGroupBox );
 	m_fixedOutputVelocitySpinBox->addTextForValue( -1, "---" );
 	/*: This string must be be short, its width must be less than
 	 *  width of LCD spin-box of three digits */
@@ -105,14 +106,14 @@ InstrumentMidiIOView::InstrumentMidiIOView( MidiPort* mp, QWidget* parent ) :
 	m_fixedOutputVelocitySpinBox->setEnabled( false );
 	midiOutputLayout->addWidget( m_fixedOutputVelocitySpinBox );
 
-	m_outputProgramSpinBox = new LcdSpinBox( 3, &mp->m_outputProgramModel, m_midiOutputGroupBox );
+	m_outputProgramSpinBox = new LcdSpinBox( 3, mp->outputProgramModel(), m_midiOutputGroupBox );
 	/*: This string must be be short, its width must be less than the
 	 *  width of LCD spin-box of three digits */
 	m_outputProgramSpinBox->setLabel( tr( "PROG" ) );
 	m_outputProgramSpinBox->setEnabled( false );
 	midiOutputLayout->addWidget( m_outputProgramSpinBox );
 
-	m_fixedOutputNoteSpinBox = new LcdSpinBox( 3, &mp->m_fixedOutputNoteModel, m_midiOutputGroupBox );
+	m_fixedOutputNoteSpinBox = new LcdSpinBox( 3, mp->fixedOutputNoteModel(), m_midiOutputGroupBox );
 	m_fixedOutputNoteSpinBox->addTextForValue( -1, "---" );
 	/*: This string must be be short, its width must be less than
 	 *  width of LCD spin-box of three digits */
@@ -128,7 +129,7 @@ InstrumentMidiIOView::InstrumentMidiIOView( MidiPort* mp, QWidget* parent ) :
 	connect( m_midiOutputGroupBox->ledButton(), SIGNAL(toggled(bool)),
 		m_fixedOutputNoteSpinBox, SLOT(setEnabled(bool)));
 
-	if( !Engine::audioEngine()->midiClient()->isRaw() )
+	if( !IEngine::Instance()->getAudioEngineInterface()->midiClientInterface()->isRaw() )
 	{
 		m_rpBtn = new QToolButton;
 		m_rpBtn->setMinimumSize( 32, 32 );
@@ -147,7 +148,7 @@ InstrumentMidiIOView::InstrumentMidiIOView( MidiPort* mp, QWidget* parent ) :
 		midiOutputLayout->insertWidget( 0, m_wpBtn );
 	}
 
-	BoolModel* baseVelocityGroupBoxModel = new BoolModel(false, this);
+	auto* baseVelocityGroupBoxModel = MFact::create(false, this);
 	auto baseVelocityGroupBox = new GroupBox(tr("CUSTOM BASE VELOCITY"), baseVelocityGroupBoxModel);
 	layout->addWidget( baseVelocityGroupBox );
 
@@ -162,7 +163,7 @@ InstrumentMidiIOView::InstrumentMidiIOView( MidiPort* mp, QWidget* parent ) :
 
 	baseVelocityLayout->addWidget( baseVelocityHelp );
 
-	m_baseVelocitySpinBox = new LcdSpinBox( 3, &mp->m_baseVelocityModel, baseVelocityGroupBox );
+	m_baseVelocitySpinBox = new LcdSpinBox( 3, mp->baseVelocityModel(), baseVelocityGroupBox );
 	m_baseVelocitySpinBox->setLabel( tr( "BASE VELOCITY" ) );
 	m_baseVelocitySpinBox->setEnabled( false );
 	baseVelocityLayout->addWidget( m_baseVelocitySpinBox );
@@ -172,16 +173,16 @@ InstrumentMidiIOView::InstrumentMidiIOView( MidiPort* mp, QWidget* parent ) :
 
 	layout->addStretch();
 
-	QObject::connect( m_model, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_model, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_model->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_model->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 
 	if( m_rpBtn )
 	{
-		m_rpBtn->setMenu( mp->m_readablePortsMenu );
+		m_rpBtn->setMenu( mp->readablePortsMenu() );
 	}
 	if( m_wpBtn )
 	{
-		m_wpBtn->setMenu( mp->m_writablePortsMenu );
+		m_wpBtn->setMenu( mp->writablePortsMenu() );
 	}
 
 	update();

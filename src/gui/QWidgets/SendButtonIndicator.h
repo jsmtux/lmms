@@ -27,11 +27,11 @@
 
 #include <QLabel>
 
+#include "IModels.h"
+
 
 namespace lmms
 {
-
-class FloatModel;
 
 namespace gui
 {
@@ -56,7 +56,7 @@ private:
 	static QPixmap * s_qpmOn;
 	static QPixmap * s_qpmOff;
 
-	FloatModel * getSendModel();
+	IFloatAutomatableModel * getSendModel();
 };
 
 

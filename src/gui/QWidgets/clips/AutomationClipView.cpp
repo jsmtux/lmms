@@ -22,7 +22,7 @@
  *
  */
 #include "AutomationClipView.h"
-#include "AutomationTrack.h"
+#include "ITrack.h"
 
 #include <QApplication>
 #include <QMouseEvent>
@@ -32,15 +32,14 @@
 
 #include "embed.h"
 #include "GuiApplication.h"
-#include "ProjectJournal.h"
+#include "IProjectJournal.h"
 #include "StringPairDrag.h"
-#include "Track.h"
 
 #include "editors/AutomationEditor.h"
 #include "modals/RenameDialog.h"
 #include "widgets/TextFloat.h"
 
-#include "Engine.h"
+#include "IEngine.h"
 
 
 namespace lmms::gui
@@ -48,20 +47,20 @@ namespace lmms::gui
 
 QPixmap * AutomationClipView::s_clip_rec = nullptr;
 
-AutomationClipView::AutomationClipView( AutomationClip * _clip,
+AutomationClipView::AutomationClipView( IAutomationClip * _clip,
 						TrackView * _parent ) :
-	ClipView( _clip, _parent ),
+	ClipView( _clip->baseClip(), _parent ),
 	m_clip( _clip ),
 	m_paintPixmap()
 {
-	connect( &m_clip->model(), &Model::dataChanged,
+	connect( m_clip->baseClip()->model(), &Model::dataChanged,
 			this, &AutomationClipView::update);
 	connect( getGUI()->automationEditor(), &AutomationEditorWindow::currentClipChanged,
 			this, &AutomationClipView::update);
 
 	setAttribute( Qt::WA_OpaquePaintEvent, true );
 
-	setToolTip(m_clip->name());
+	setToolTip(m_clip->baseClip()->name());
 	setStyle( QApplication::style() );
 
 	if( s_clip_rec == nullptr ) { s_clip_rec = new QPixmap( embed::getIconPixmap(
@@ -82,7 +81,7 @@ void AutomationClipView::openInAutomationEditor()
 
 void AutomationClipView::update()
 {
-	setToolTip(m_clip->name());
+	setToolTip(m_clip->baseClip()->name());
 
 	ClipView::update();
 }
@@ -91,7 +90,7 @@ void AutomationClipView::update()
 
 void AutomationClipView::resetName()
 {
-	m_clip->setName( QString() );
+	m_clip->baseClip()->setName( QString() );
 }
 
 
@@ -99,10 +98,10 @@ void AutomationClipView::resetName()
 
 void AutomationClipView::changeName()
 {
-	QString s = m_clip->name();
+	QString s = m_clip->baseClip()->name();
 	RenameDialog rename_dlg( s );
 	rename_dlg.exec();
-	m_clip->setName( s );
+	m_clip->baseClip()->setName( s );
 	update();
 }
 
@@ -111,16 +110,16 @@ void AutomationClipView::changeName()
 
 void AutomationClipView::disconnectObject( QAction * _a )
 {
-	JournallingObject * j = Engine::projectJournal()->
+	JournallingObject * j = IEngine::Instance()->getProjectJournalInterface()->
 				journallingObject( _a->data().toInt() );
-	if( j && dynamic_cast<AutomatableModel *>( j ) )
+	if( j && dynamic_cast<IAutomatableModelBase *>( j ) )
 	{
-		float oldMin = m_clip->getMin();
-		float oldMax = m_clip->getMax();
+		float oldMin = m_clip->firstObject()->minValueAsFloat();
+		float oldMax = m_clip->firstObject()->maxValueAsFloat();
 
 		m_clip->getObjects().erase( std::find( m_clip->getObjects().begin(),
 					m_clip->getObjects().end(),
-				dynamic_cast<AutomatableModel *>( j ) ) );
+				dynamic_cast<IAutomatableModelBase *>( j ) ) );
 		update();
 
 		//If automation editor is opened, update its display after disconnection
@@ -150,7 +149,9 @@ void AutomationClipView::toggleRecording()
 
 void AutomationClipView::flipY()
 {
-	m_clip->flipY( m_clip->getMin(), m_clip->getMax() );
+	m_clip->flipY(
+		m_clip->firstObject()->minValueAsFloat(),
+		m_clip->firstObject()->maxValueAsFloat() );
 	update();
 }
 
@@ -159,7 +160,7 @@ void AutomationClipView::flipY()
 
 void AutomationClipView::flipX()
 {
-	m_clip->flipX( m_clip->length() );
+	m_clip->flipX( m_clip->baseClip()->length() );
 	update();
 }
 
@@ -176,7 +177,7 @@ void AutomationClipView::constructContextMenu( QMenu * _cm )
 	_cm->addSeparator();
 
 	_cm->addAction( embed::getIconPixmap( "edit_erase" ),
-			tr( "Clear" ), m_clip, SLOT(clear()));
+			tr( "Clear" ), this, [this](){ m_clip->clear(); });
 	_cm->addSeparator();
 
 	_cm->addAction( embed::getIconPixmap( "reload" ), tr( "Reset name" ),
@@ -201,7 +202,7 @@ void AutomationClipView::constructContextMenu( QMenu * _cm )
 		{
 			if (object)
 			{
-				a = new QAction(tr("Disconnect \"%1\"").arg(object->fullDisplayName()), m);
+				a = new QAction(tr("Disconnect \"%1\"").arg(object->model()->fullDisplayName()), m);
 				a->setData(object->id());
 				m->addAction( a );
 			}
@@ -249,7 +250,7 @@ void AutomationClipView::paintEvent( QPaintEvent * )
 
 	QLinearGradient lingrad( 0, 0, 0, height() );
 	QColor c = getColorForDisplay( painter.background().color() );
-	bool muted = m_clip->getTrack()->isMuted() || m_clip->isMuted();
+	bool muted = m_clip->baseClip()->getITrack()->isMuted() || m_clip->baseClip()->isMuted();
 	bool current = getGUI()->automationEditor()->currentClip() == m_clip;
 
 	lingrad.setColorAt( 1, c.darker( 300 ) );
@@ -273,8 +274,8 @@ void AutomationClipView::paintEvent( QPaintEvent * )
 				/ (float) m_clip->timeMapLength().getBar() :
 								pixelsPerBar();
 
-	const auto min = m_clip->firstObject()->minValue<float>();
-	const auto max = m_clip->firstObject()->maxValue<float>();
+	const auto min = m_clip->firstObject()->minValueAsFloat();
+	const auto max = m_clip->firstObject()->maxValueAsFloat();
 
 	const float y_scale = max - min;
 	const float h = ( height() - 2 * BORDER_WIDTH ) / y_scale;
@@ -293,7 +294,7 @@ void AutomationClipView::paintEvent( QPaintEvent * )
 	lin2grad.setColorAt( 0, col.darker( 150 ) );
 
 	p.setRenderHints( QPainter::Antialiasing, true );
-	for( AutomationClip::timeMap::const_iterator it =
+	for( auto it =
 						m_clip->getTimeMap().begin();
 					it != m_clip->getTimeMap().end(); ++it )
 	{
@@ -323,7 +324,7 @@ void AutomationClipView::paintEvent( QPaintEvent * )
 		// the value of the end of the shape between the two nodes will be the inValue of
 		// the next node.
 		float nextValue;
-		if( m_clip->progressionType() == AutomationClip::DiscreteProgression )
+		if( m_clip->progressionType() == IAutomationClip::DiscreteProgression )
 		{
 			nextValue = OUTVAL(it);
 		}
@@ -385,7 +386,7 @@ void AutomationClipView::paintEvent( QPaintEvent * )
 	}
 
 	// clip name
-	paintTextLabel(m_clip->name(), p);
+	paintTextLabel(m_clip->baseClip()->name(), p);
 
 	// inner border
 	p.setPen( c.lighter( current ? 160 : 130 ) );
@@ -397,7 +398,7 @@ void AutomationClipView::paintEvent( QPaintEvent * )
 	p.drawRect( 0, 0, rect().right(), rect().bottom() );
 
 	// draw the 'muted' pixmap only if the clip was manualy muted
-	if( m_clip->isMuted() )
+	if( m_clip->baseClip()->isMuted() )
 	{
 		const int spacing = BORDER_WIDTH;
 		const int size = 14;
@@ -431,13 +432,14 @@ void AutomationClipView::dropEvent( QDropEvent * _de )
 	QString val = StringPairDrag::decodeValue( _de );
 	if( type == "automatable_model" )
 	{
-		auto mod = dynamic_cast<AutomatableModel*>(Engine::projectJournal()->journallingObject(val.toInt()));
+		auto mod = dynamic_cast<IAutomatableModelBase*>(
+			IEngine::Instance()->getProjectJournalInterface()->journallingObject(val.toInt()));
 		if( mod != nullptr )
 		{
 			bool added = m_clip->addObject( mod );
 			if ( !added )
 			{
-				TextFloat::displayMessage( mod->displayName(),
+				TextFloat::displayMessage( mod->model()->displayName(),
 							   tr( "Model is already connected "
 							   "to this clip." ),
 							   embed::getIconPixmap( "automation" ),
@@ -466,8 +468,8 @@ void AutomationClipView::dropEvent( QDropEvent * _de )
  */
 void AutomationClipView::scaleTimemapToFit( float oldMin, float oldMax )
 {
-	float newMin = m_clip->getMin();
-	float newMax = m_clip->getMax();
+	float newMin = m_clip->firstObject()->minValueAsFloat();
+	float newMax = m_clip->firstObject()->maxValueAsFloat();
 
 	if( oldMin == newMin && oldMax == newMax )
 	{
@@ -478,7 +480,7 @@ void AutomationClipView::scaleTimemapToFit( float oldMin, float oldMax )
 	// only the inValue is being considered and the outValue is being reset to the inValue (so discrete jumps
 	// are discarded). Possibly later we will want discrete jumps to be maintained so we will need to upgrade
 	// the logic to account for them.
-	for( AutomationClip::timeMap::iterator it = m_clip->getTimeMap().begin();
+	for( AutomationTimeMap::iterator it = m_clip->getTimeMap().begin();
 		it != m_clip->getTimeMap().end(); ++it )
 	{
 		// If the values are out of the previous range, fix them so they are

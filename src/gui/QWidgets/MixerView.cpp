@@ -24,19 +24,18 @@
 
 #include "MixerView.h"
 
-#include "AudioEngine.h"
+#include "IAudioEngine.h"
 #include "GuiApplication.h"
-#include "InstrumentTrack.h"
+#include "ITrack.h"
 #include "lmms_math.h"
 #include "MainWindow.h"
-#include "Mixer.h"
+#include "IMixer.h"
 #include "MixerLine.h"
-#include "PatternStore.h"
-#include "SampleTrack.h"
+#include "IPatternStore.h"
 #include "SendButtonIndicator.h"
-#include "Song.h"
+#include "ISong.h"
 #include "SubWindow.h"
-#include "TrackContainer.h" // For TrackList typedef
+#include "ITrackContainer.h" // For TrackList typedef
 
 #include "widgets/Knob.h"
 
@@ -56,8 +55,8 @@ MixerView::MixerView() :
 	QWidget(),
 	SerializingObjectHook()
 {
-	Mixer * m = Engine::mixer();
-	m->setHook( this );
+	auto* mixerInterface = IEngine::Instance()->getMixerInterface();
+	mixerInterface->setHook( this );
 
 	//QPalette pal = palette();
 	//pal.setColor( QPalette::Window, QColor( 72, 76, 88 ) );
@@ -90,7 +89,7 @@ MixerView::MixerView() :
 	m_racksWidget->setLayout( m_racksLayout );
 
 	// add master channel
-	m_mixerChannelViews.resize( m->numChannels() );
+	m_mixerChannelViews.resize( mixerInterface->numChannels() );
 	m_mixerChannelViews[0] = new MixerChannelView( this, this, 0 );
 
 	m_racksLayout->addWidget( m_mixerChannelViews[0]->m_rackView );
@@ -177,7 +176,7 @@ MixerView::~MixerView()
 int MixerView::addNewChannel()
 {
 	// add new mixer channel and redraw the form.
-	Mixer * mix = Engine::mixer();
+	auto* mix = IEngine::Instance()->getMixerInterface();
 
 	int newChannelIndex = mix->createChannel();
 	m_mixerChannelViews.push_back(new MixerChannelView(m_channelAreaWidget, this,
@@ -210,7 +209,7 @@ void MixerView::refreshDisplay()
 	m_channelAreaWidget->adjustSize();
 
 	// re-add the views
-	m_mixerChannelViews.resize(Engine::mixer()->numChannels());
+	m_mixerChannelViews.resize(IEngine::Instance()->getMixerInterface()->numChannels());
 	for( int i = 1; i < m_mixerChannelViews.size(); ++i )
 	{
 		m_mixerChannelViews[i] = new MixerChannelView(m_channelAreaWidget, this, i);
@@ -234,17 +233,17 @@ void MixerView::refreshDisplay()
 // update the and max. channel number for every instrument
 void MixerView::updateMaxChannelSelector()
 {
-	for (const auto& track : Engine::getTracks())
+	for (const auto& track : IEngine::Instance()->getITracks())
 	{
-		if (track->type() == Track::InstrumentTrack)
+		if (track->type() == ITrack::InstrumentTrack)
 		{
-			auto inst = (InstrumentTrack*)track;
+			auto inst = static_cast<IInstrumentTrack*>(track->getTrackTypeSpecificInterface());
 			inst->mixerChannelModel()->setRange(0,
 				m_mixerChannelViews.size()-1,1);
 		}
-		else if (track->type() == Track::SampleTrack)
+		else if (track->type() == ITrack::SampleTrack)
 		{
-			auto strk = (SampleTrack*)track;
+			auto strk = static_cast<ISampleTrack*>(track->getTrackTypeSpecificInterface());
 			strk->mixerChannelModel()->setRange(0,
 				m_mixerChannelViews.size()-1,1);
 		}
@@ -271,9 +270,9 @@ MixerView::MixerChannelView::MixerChannelView(QWidget * _parent, MixerView * _mv
 {
 	m_mixerLine = new MixerLine(_parent, _mv, channelIndex);
 
-	MixerChannel *mixerChannel = Engine::mixer()->mixerChannel(channelIndex);
+	auto* mixerChannel = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface(channelIndex);
 
-	m_fader = new Fader( &mixerChannel->m_volumeModel,
+	m_fader = new Fader( mixerChannel->volumeModel(),
 					tr( "Fader %1" ).arg( channelIndex ), m_mixerLine );
 	m_fader->setLevelsDisplayedInDBFS();
 	m_fader->setMinPeak(dbfsToAmp(-42));
@@ -283,7 +282,7 @@ MixerView::MixerChannelView::MixerChannelView(QWidget * _parent, MixerView * _mv
 					m_mixerLine->height()-
 					m_fader->height()-5 );
 
-	m_muteBtn = new PixmapButton( m_mixerLine, &mixerChannel->m_muteModel, tr( "Mute" ) );
+	m_muteBtn = new PixmapButton( m_mixerLine, mixerChannel->muteModel(), tr( "Mute" ) );
 	m_muteBtn->setActiveGraphic(
 				embed::getIconPixmap( "led_off" ) );
 	m_muteBtn->setInactiveGraphic(
@@ -292,26 +291,27 @@ MixerView::MixerChannelView::MixerChannelView(QWidget * _parent, MixerView * _mv
 	m_muteBtn->move( 9,  m_fader->y()-11);
 	m_muteBtn->setToolTip(tr("Mute this channel"));
 
-	m_soloBtn = new PixmapButton( m_mixerLine, &mixerChannel->m_soloModel, tr( "Solo" ) );
+	m_soloBtn = new PixmapButton( m_mixerLine, mixerChannel->soloModel(), tr( "Solo" ) );
 	m_soloBtn->setActiveGraphic(
 				embed::getIconPixmap( "led_red" ) );
 	m_soloBtn->setInactiveGraphic(
 				embed::getIconPixmap( "led_off" ) );
 	m_soloBtn->setCheckable( true );
 	m_soloBtn->move( 9,  m_fader->y()-21);
-	connect(&mixerChannel->m_soloModel, SIGNAL(dataChanged()),
-			_mv, SLOT ( toggledSolo() ), Qt::DirectConnection );
+	connect(mixerChannel->soloModel()->model(), &Model::dataChanged,
+			_mv, &MixerView::toggledSolo, Qt::DirectConnection );
 	m_soloBtn->setToolTip(tr("Solo this channel"));
 
 	// Create EffectRack for the channel
-	m_rackView = new EffectRackView( &mixerChannel->m_fxChain, _mv->m_racksWidget );
+	m_rackView = new EffectRackView( mixerChannel->fxChain(), _mv->m_racksWidget );
 	m_rackView->setFixedSize( EffectRackView::DEFAULT_WIDTH, MixerLine::MixerLineHeight );
 }
 
 
+/// TODO: fix and use proper model!
 void MixerView::MixerChannelView::setChannelIndex( int index )
 {
-	MixerChannel* mixerChannel = Engine::mixer()->mixerChannel( index );
+	// IMixerChannel* mixerChannel = IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( index );
 
 	// m_fader->setModel( &mixerChannel->m_volumeModel );
 	// m_muteBtn->setModel( &mixerChannel->m_muteModel );
@@ -322,7 +322,7 @@ void MixerView::MixerChannelView::setChannelIndex( int index )
 
 void MixerView::toggledSolo()
 {
-	Engine::mixer()->toggledSolo();
+	IEngine::Instance()->getMixerInterface()->toggledSolo();
 }
 
 
@@ -343,14 +343,14 @@ void MixerView::setCurrentMixerLine( MixerLine * _line )
 
 void MixerView::updateMixerLine(int index)
 {
-	Mixer * mix = Engine::mixer();
+	auto* mix = IEngine::Instance()->getMixerInterface();
 
 	// does current channel send to this channel?
 	int selIndex = m_currentMixerLine->channelIndex();
 	MixerLine * thisLine = m_mixerChannelViews[index]->m_mixerLine;
-	thisLine->setToolTip( Engine::mixer()->mixerChannel( index )->m_name );
+	thisLine->setToolTip( IEngine::Instance()->getMixerInterface()->getMixerChannelInterface( index )->getName() );
 
-	FloatModel * sendModel = mix->channelSendModel(selIndex, index);
+	auto* sendModel = mix->channelSendModel(selIndex, index);
 	thisLine->setSendModel(sendModel);
 
 	// disable the send button if it would cause an infinite loop
@@ -376,10 +376,10 @@ void MixerView::deleteChannel(int index)
 
 	// in case the deleted channel is soloed or the remaining
 	// channels will be left in a muted state
-	Engine::mixer()->clearChannel(index);
+	IEngine::Instance()->getMixerInterface()->clearChannel(index);
 
 	// delete the real channel
-	Engine::mixer()->deleteChannel(index);
+	IEngine::Instance()->getMixerInterface()->deleteChannel(index);
 
 	// delete the view
 	chLayout->removeWidget(m_mixerChannelViews[index]->m_mixerLine);
@@ -414,10 +414,10 @@ void MixerView::deleteChannel(int index)
 bool MixerView::confirmRemoval(int index)
 {
 	// if config variable is set to false, there is no need for user confirmation
-	bool needConfirm = ConfigManager::inst()->value("ui", "mixerchanneldeletionwarning", "1").toInt();
+	bool needConfirm = IConfigManager::Instance()->value("ui", "mixerchanneldeletionwarning", "1").toInt();
 	if (!needConfirm) { return true; }
 
-	Mixer* mix = Engine::mixer();
+	auto* mix = IEngine::Instance()->getMixerInterface();
 
 	if (!mix->isChannelInUse(index))
 	{
@@ -434,7 +434,7 @@ bool MixerView::confirmRemoval(int index)
 	auto askAgainCheckBox = new QCheckBox(askAgainText, nullptr);
 	connect(askAgainCheckBox, &QCheckBox::stateChanged, [](int state) {
 		// Invert button state, if it's checked we *shouldn't* ask again
-		ConfigManager::inst()->setValue("ui", "mixerchanneldeletionwarning", state ? "0" : "1");
+		IConfigManager::Instance()->setValue("ui", "mixerchanneldeletionwarning", state ? "0" : "1");
 	});
 
 	QMessageBox mb(this);
@@ -454,7 +454,7 @@ bool MixerView::confirmRemoval(int index)
 
 void MixerView::deleteUnusedChannels()
 {
-	Mixer* mix = Engine::mixer();
+	auto* mix = IEngine::Instance()->getMixerInterface();
 
 	// Check all channels except master, delete those with no incoming sends
 	for (int i = m_mixerChannelViews.size() - 1; i > 0; --i)
@@ -473,10 +473,10 @@ void MixerView::moveChannelLeft(int index, int focusIndex)
 	// can't move master or first channel left or last channel right
 	if( index <= 1 || index >= m_mixerChannelViews.size() ) return;
 
-	Mixer *m = Engine::mixer();
+	auto*mixerInterface = IEngine::Instance()->getMixerInterface();
 
 	// Move instruments channels
-	m->moveChannelLeft( index );
+	mixerInterface->moveChannelLeft( index );
 
 	// Update widgets models
 	m_mixerChannelViews[index]->setChannelIndex( index );
@@ -580,7 +580,7 @@ void MixerView::setCurrentMixerLine( int _line )
 
 void MixerView::clear()
 {
-	Engine::mixer()->clear();
+	IEngine::Instance()->getMixerInterface()->clear();
 
 	refreshDisplay();
 }
@@ -590,35 +590,38 @@ void MixerView::clear()
 
 void MixerView::updateFaders()
 {
-	Mixer * m = Engine::mixer();
+	auto* mixerInterface = IEngine::Instance()->getMixerInterface();
 
 	// apply master gain
-	m->mixerChannel(0)->m_peakLeft *= Engine::audioEngine()->masterGain();
-	m->mixerChannel(0)->m_peakRight *= Engine::audioEngine()->masterGain();
+	float masterGain = IEngine::Instance()->getAudioEngineInterface()->masterGain();
+	float peakLeft = mixerInterface->getMixerChannelInterface(0)->peakLeft();
+	mixerInterface->getMixerChannelInterface(0)->setPeakLeft(masterGain * peakLeft);
+	float peakRight = mixerInterface->getMixerChannelInterface(0)->peakRight();
+	mixerInterface->getMixerChannelInterface(0)->setPeakRight(masterGain * peakRight);
 
 	for( int i = 0; i < m_mixerChannelViews.size(); ++i )
 	{
 		const float opl = m_mixerChannelViews[i]->m_fader->getPeak_L();
 		const float opr = m_mixerChannelViews[i]->m_fader->getPeak_R();
 		const float fallOff = 1.25;
-		if( m->mixerChannel(i)->m_peakLeft >= opl/fallOff )
+		if( mixerInterface->getMixerChannelInterface(i)->peakLeft() >= opl/fallOff )
 		{
-			m_mixerChannelViews[i]->m_fader->setPeak_L( m->mixerChannel(i)->m_peakLeft );
+			m_mixerChannelViews[i]->m_fader->setPeak_L( mixerInterface->getMixerChannelInterface(i)->peakLeft() );
 			// Set to -1 so later we'll know if this value has been refreshed yet.
-			m->mixerChannel(i)->m_peakLeft = -1;
+			mixerInterface->getMixerChannelInterface(i)->setPeakLeft(-1);
 		}
-		else if( m->mixerChannel(i)->m_peakLeft != -1 )
+		else if( mixerInterface->getMixerChannelInterface(i)->peakLeft() != -1 )
 		{
 			m_mixerChannelViews[i]->m_fader->setPeak_L( opl/fallOff );
 		}
 
-		if( m->mixerChannel(i)->m_peakRight >= opr/fallOff )
+		if( mixerInterface->getMixerChannelInterface(i)->peakRight() >= opr/fallOff )
 		{
-			m_mixerChannelViews[i]->m_fader->setPeak_R( m->mixerChannel(i)->m_peakRight );
+			m_mixerChannelViews[i]->m_fader->setPeak_R( mixerInterface->getMixerChannelInterface(i)->peakRight() );
 			// Set to -1 so later we'll know if this value has been refreshed yet.
-			m->mixerChannel(i)->m_peakRight = -1;
+			mixerInterface->getMixerChannelInterface(i)->setPeakRight(-1);
 		}
-		else if( m->mixerChannel(i)->m_peakRight != -1 )
+		else if( mixerInterface->getMixerChannelInterface(i)->peakRight() != -1 )
 		{
 			m_mixerChannelViews[i]->m_fader->setPeak_R( opr/fallOff );
 		}

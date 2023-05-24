@@ -33,14 +33,14 @@
 namespace lmms::gui
 {
 
-AutomatableButton::AutomatableButton( QWidget * _parent, BoolModel* _model, const QString & _name ):
+AutomatableButton::AutomatableButton( QWidget * _parent, IBoolAutomatableModel* _model, const QString & _name ):
 	QPushButton( _parent ),
 	BoolModelView( _model, this ),
 	m_group( nullptr )
 {
 	setWindowTitle( _name );
-	QObject::connect( _model, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( _model, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( _model->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( _model->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 	setFocusPolicy( Qt::NoFocus );
 	if( QPushButton::isChecked() != model()->value() )
 	{
@@ -51,7 +51,7 @@ AutomatableButton::AutomatableButton( QWidget * _parent, BoolModel* _model, cons
 
 // AutomatableButton::AutomatableButton( QWidget * _parent,
 // 						const QString & _name ) :
-// 	AutomatableButton(_parent, new BoolModel( false, nullptr, _name, true ), _name )
+// 	AutomatableButton(_parent, new IBoolAutomatableModel( false, nullptr, _name, true ), _name )
 // {}
 
 
@@ -87,13 +87,13 @@ void AutomatableButton::contextMenuEvent( QContextMenuEvent * _me )
 
 	if ( m_group != nullptr )
 	{
-		CaptionMenu contextMenu( m_group->model()->displayName() );
+		CaptionMenu contextMenu( m_group->model()->model()->displayName() );
 		m_group->addDefaultActions( &contextMenu );
 		contextMenu.exec( QCursor::pos() );
 	}
 	else
 	{
-		CaptionMenu contextMenu( model()->displayName() );
+		CaptionMenu contextMenu( model()->model()->displayName() );
 		addDefaultActions( &contextMenu );
 		contextMenu.exec( QCursor::pos() );
 	}
@@ -123,7 +123,7 @@ void AutomatableButton::mousePressEvent( QMouseEvent * _me )
 			// A group, we must get process it instead
 			auto groupView = (AutomatableModelView*)m_group;
 			new StringPairDrag( "automatable_model",
-					QString::number( groupView->modelUntyped()->id() ),
+					QString::number( groupView->model()->id() ),
 					QPixmap(), this );
 			// TODO: ^^ Maybe use a predefined icon instead of the button they happened to select
 			_me->accept();
@@ -173,15 +173,14 @@ void AutomatableButton::toggle()
 
 
 
-automatableButtonGroup::automatableButtonGroup( IntModel* _model, QWidget * _parent,
+automatableButtonGroup::automatableButtonGroup( IIntAutomatableModel* _model, QWidget * _parent,
 						const QString & _name ) :
 	QWidget( _parent ),
 	IntModelView( _model, this )
 {
 	hide();
 	setWindowTitle( _name );
-
-	connect( _model, &Model::dataChanged,
+	connect( _model->model(), &Model::dataChanged,
 			this, &automatableButtonGroup::updateButtons);
 }
 

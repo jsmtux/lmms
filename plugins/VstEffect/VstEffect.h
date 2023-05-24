@@ -42,7 +42,7 @@ class VstEffect : public Effect
 {
 public:
 	VstEffect( Model * _parent,
-			const Descriptor::SubPluginFeatures::Key * _key );
+			const PluginDescriptor::Key * _key );
 	~VstEffect() override = default;
 
 	bool processAudioBuffer( sampleFrame * _buf,

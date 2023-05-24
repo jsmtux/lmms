@@ -25,8 +25,7 @@
 #ifndef LMMS_GUI_CONTROLLER_VIEW_H
 #define LMMS_GUI_CONTROLLER_VIEW_H
 
-#include "AutomatableModel.h"
-#include "Controller.h"
+#include "IController.h"
 
 #include <QFrame>
 
@@ -38,6 +37,7 @@ class QMdiSubWindow;
 namespace lmms::gui
 {
 
+class ControllerDialog;
 
 class LedCheckBox;
 
@@ -46,15 +46,15 @@ class ControllerView : public QFrame
 {
 	Q_OBJECT
 public:
-	ControllerView( Controller * _controller, QWidget * _parent );
+	ControllerView( IController * _controller, QWidget * _parent );
 	~ControllerView() override;
 
-	inline Controller * getController()
+	inline IController * getController()
 	{
 		return m_controller;
 	}
 
-	inline const Controller * getController() const
+	inline const IController * getController() const
 	{
 		return m_controller;
 	}
@@ -76,7 +76,7 @@ protected:
 
 
 private:
-	Controller* m_controller;
+	IController* m_controller;
 	QMdiSubWindow * m_subWindow;
 	ControllerDialog * m_controllerDlg;
 	QLabel * m_nameLabel;

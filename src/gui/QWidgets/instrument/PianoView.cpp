@@ -39,12 +39,16 @@
 
 #include "AutomatableModelView.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "gui_templates.h"
-#include "InstrumentTrack.h"
-#include "Piano.h"
-#include "Song.h"
+#include "ITrack.h"
+#include "IPiano.h"
+#include "ISong.h"
 #include "StringPairDrag.h"
+#include "lmms_constants.h"
+#include "IMicrotuner.h"
+#include "IMidiPort.h"
+#include "IMidiEvent.h"
 
 #include "widgets/CaptionMenu.h"
 
@@ -92,7 +96,7 @@ const int LABEL_TEXT_SIZE = 7;      /*!< The height of the key label text */
  *  \param _parent the parent instrument plugin window
  *  \todo are the descriptions of the m_startkey and m_lastkey properties correct?
  */
-PianoView::PianoView(Piano* piano, QWidget *parent) :
+PianoView::PianoView(IPiano* piano, QWidget *parent) :
 	QWidget(parent),                 /*!< Our parent */
 	m_piano(piano),                /*!< Our piano Model */
 	m_startKey(Key_C + Octave_3*KeysPerOctave), /*!< The first key displayed? */
@@ -131,14 +135,14 @@ PianoView::PianoView(Piano* piano, QWidget *parent) :
 	// contribute to the total width. Half of a black key is added in case the last
 	// octave is incomplete and ends with a black key. Drawing always starts at
 	// a white key, so no similar modification is needed at the beginning.
-	setMaximumWidth(Piano::NumWhiteKeys * PW_WHITE_KEY_WIDTH +
-		(Piano::isBlackKey(NumKeys-1) ? PW_BLACK_KEY_WIDTH / 2 : 0));
+	setMaximumWidth(IPiano::NumWhiteKeys * PW_WHITE_KEY_WIDTH +
+		(IPiano::isBlackKey(NumKeys-1) ? PW_BLACK_KEY_WIDTH / 2 : 0));
 
 	// create scrollbar at the bottom
 	m_pianoScroll = new QScrollBar( Qt::Horizontal, this );
 	m_pianoScroll->setSingleStep( 1 );
 	m_pianoScroll->setPageStep( 20 );
-	m_pianoScroll->setValue(Octave_3 * Piano::WhiteKeysPerOctave);
+	m_pianoScroll->setValue(Octave_3 * IPiano::WhiteKeysPerOctave);
 
 	// and connect it to this widget
 	connect( m_pianoScroll, SIGNAL(valueChanged(int)),
@@ -152,15 +156,15 @@ PianoView::PianoView(Piano* piano, QWidget *parent) :
 	layout->addWidget( m_pianoScroll );
 
 	// trigger a redraw if keymap definitions change (different keys may become disabled)
-	connect(Engine::getSong(), SIGNAL(keymapListChanged(int)), this, SLOT(update()));
+	connect(IEngine::Instance()->getSongInterface(), SIGNAL(keymapListChanged(int)), this, SLOT(update()));
 	if (m_piano != nullptr)
 	{
-		connect(m_piano->instrumentTrack()->baseNoteModel(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->firstKeyModel(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->lastKeyModel(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->microtuner()->enabledModel(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->microtuner()->keymapModel(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->microtuner()->keyRangeImportModel(), SIGNAL(dataChanged()),
+		connect(m_piano->instrumentTrack()->baseNoteModel()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+		connect(m_piano->instrumentTrack()->firstKeyModel()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+		connect(m_piano->instrumentTrack()->lastKeyModel()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+		connect(m_piano->instrumentTrack()->microtuner()->enabledModel()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+		connect(m_piano->instrumentTrack()->microtuner()->keymapModel()->wrappedModel()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+		connect(m_piano->instrumentTrack()->microtuner()->keyRangeImportModel()->model(), SIGNAL(dataChanged()),
 				this, SLOT(update()));
 	}
 }
@@ -337,14 +341,14 @@ int PianoView::getKeyFromMouse( const QPoint & _p ) const
 
 	for( int i = 0; i <= key_num; ++i )
 	{
-		if ( Piano::isBlackKey( m_startKey+i ) )
+		if ( IPiano::isBlackKey( m_startKey+i ) )
 		{
 			++key_num;
 		}
 	}
 	for( int i = 0; i >= key_num; --i )
 	{
-		if ( Piano::isBlackKey( m_startKey+i ) )
+		if ( IPiano::isBlackKey( m_startKey+i ) )
 		{
 			--key_num;
 		}
@@ -357,13 +361,13 @@ int PianoView::getKeyFromMouse( const QPoint & _p ) const
 	{
 		// then do extra checking whether the mouse-cursor is over
 		// a black key
-		if( key_num > 0 && Piano::isBlackKey( key_num-1 ) &&
+		if( key_num > 0 && IPiano::isBlackKey( key_num-1 ) &&
 			offset <= ( PW_WHITE_KEY_WIDTH / 2 ) -
 					( PW_BLACK_KEY_WIDTH / 2 ) )
 		{
 			--key_num;
 		}
-		if( key_num < NumKeys - 1 && Piano::isBlackKey( key_num+1 ) &&
+		if( key_num < NumKeys - 1 && IPiano::isBlackKey( key_num+1 ) &&
 			offset >= ( PW_WHITE_KEY_WIDTH -
 					PW_BLACK_KEY_WIDTH / 2 ) )
 		{
@@ -387,8 +391,8 @@ int PianoView::getKeyFromMouse( const QPoint & _p ) const
  */
 void PianoView::pianoScrolled(int new_pos)
 {
-	m_startKey = WhiteKeys[new_pos % Piano::WhiteKeysPerOctave] +
-		(new_pos / Piano::WhiteKeysPerOctave) * KeysPerOctave;
+	m_startKey = WhiteKeys[new_pos % IPiano::WhiteKeysPerOctave] +
+		(new_pos / IPiano::WhiteKeysPerOctave) * KeysPerOctave;
 
 	update();
 }
@@ -412,7 +416,7 @@ void PianoView::contextMenuEvent(QContextMenuEvent *me)
 
 	// check which control element is closest to the mouse and open the appropriate menu
 	QString title;
-	IntModel *noteModel = getNearestMarker(getKeyFromMouse(me->pos()), &title);
+	auto *noteModel = getNearestMarker(getKeyFromMouse(me->pos()), &title);
 
 	CaptionMenu contextMenu(title);
 	AutomatableModelView amv(noteModel, &contextMenu);
@@ -452,17 +456,17 @@ void PianoView::mousePressEvent(QMouseEvent *me)
 			int y_diff = me->pos().y() - PIANO_BASE;
 			int velocity = static_cast<int>(
 				static_cast<float>(y_diff) / getKeyHeight(key_num) *
-				m_piano->instrumentTrack()->midiPort()->baseVelocity());
+				m_piano->instrumentTrack()->midiPortInterface()->baseVelocity());
 			if (y_diff < 0)
 			{
 				velocity = 0;
 			}
 			else if (y_diff > getKeyHeight(key_num))
 			{
-				velocity = m_piano->instrumentTrack()->midiPort()->baseVelocity();
+				velocity = m_piano->instrumentTrack()->midiPortInterface()->baseVelocity();
 			}
 			// set note on
-			m_piano->midiEventProcessor()->processInEvent(MidiEvent(MidiNoteOn, -1, key_num, velocity));
+			m_piano->processInEvent(createMidiEvent(MidiNoteOn, -1, key_num, velocity).get());
 			m_piano->setKeyState(key_num, true);
 			m_lastKey = key_num;
 
@@ -511,7 +515,7 @@ void PianoView::mouseReleaseEvent( QMouseEvent * )
 	{
 		if( m_piano != nullptr )
 		{
-			m_piano->midiEventProcessor()->processInEvent( MidiEvent( MidiNoteOff, -1, m_lastKey, 0 ) );
+			m_piano->processInEvent( createMidiEvent( MidiNoteOff, -1, m_lastKey, 0 ).get());
 			m_piano->setKeyState( m_lastKey, false );
 		}
 
@@ -550,9 +554,9 @@ void PianoView::mouseMoveEvent( QMouseEvent * _me )
 	int key_num = getKeyFromMouse( _me->pos() );
 	int y_diff = _me->pos().y() - PIANO_BASE;
 	int velocity = (int)( (float) y_diff /
-		( Piano::isWhiteKey( key_num ) ?
+		( IPiano::isWhiteKey( key_num ) ?
 			PW_WHITE_KEY_HEIGHT : PW_BLACK_KEY_HEIGHT ) *
-						(float) m_piano->instrumentTrack()->midiPort()->baseVelocity() );
+						(float) m_piano->instrumentTrack()->midiPortInterface()->baseVelocity() );
 	// maybe the user moved the mouse-cursor above or under the
 	// piano-widget while holding left button so check that and
 	// correct volume if necessary
@@ -561,10 +565,10 @@ void PianoView::mouseMoveEvent( QMouseEvent * _me )
 		velocity = 0;
 	}
 	else if( y_diff >
-		( Piano::isWhiteKey( key_num ) ?
+		( IPiano::isWhiteKey( key_num ) ?
 				PW_WHITE_KEY_HEIGHT : PW_BLACK_KEY_HEIGHT ) )
 	{
-		velocity = m_piano->instrumentTrack()->midiPort()->baseVelocity();
+		velocity = m_piano->instrumentTrack()->midiPortInterface()->baseVelocity();
 	}
 
 	// is the calculated key different from current key? (could be the
@@ -573,7 +577,7 @@ void PianoView::mouseMoveEvent( QMouseEvent * _me )
 	{
 		if( m_lastKey != -1 )
 		{
-			m_piano->midiEventProcessor()->processInEvent( MidiEvent( MidiNoteOff, -1, m_lastKey, 0 ) );
+			m_piano->processInEvent( createMidiEvent( MidiNoteOff, -1, m_lastKey, 0 ).get());
 			m_piano->setKeyState( m_lastKey, false );
 			m_lastKey = -1;
 		}
@@ -581,7 +585,7 @@ void PianoView::mouseMoveEvent( QMouseEvent * _me )
 		{
 			if( _me->pos().y() > PIANO_BASE )
 			{
-				m_piano->midiEventProcessor()->processInEvent( MidiEvent( MidiNoteOn, -1, key_num, velocity ) );
+				m_piano->processInEvent( createMidiEvent( MidiNoteOn, -1, key_num, velocity ).get());
 				m_piano->setKeyState( key_num, true );
 				m_lastKey = key_num;
 			}
@@ -596,7 +600,7 @@ void PianoView::mouseMoveEvent( QMouseEvent * _me )
 	}
 	else if( m_piano->isKeyPressed( key_num ) )
 	{
-		m_piano->midiEventProcessor()->processInEvent( MidiEvent( MidiKeyPressure, -1, key_num, velocity ) );
+		m_piano->processInEvent( createMidiEvent( MidiKeyPressure, -1, key_num, velocity ).get());
 	}
 
 }
@@ -695,7 +699,7 @@ void PianoView::focusOutEvent( QFocusEvent * )
 	// hang otherwise
 	for( int i = 0; i < NumKeys; ++i )
 	{
-		m_piano->midiEventProcessor()->processInEvent( MidiEvent( MidiNoteOff, -1, i, 0 ) );
+		m_piano->processInEvent( createMidiEvent( MidiNoteOff, -1, i, 0 ).get());
 		m_piano->setKeyState( i, false );
 	}
 
@@ -721,7 +725,7 @@ void PianoView::focusInEvent( QFocusEvent * )
 void PianoView::resizeEvent(QResizeEvent* event)
 {
 	QWidget::resizeEvent(event);
-	m_pianoScroll->setRange(0, Piano::NumWhiteKeys -
+	m_pianoScroll->setRange(0, IPiano::NumWhiteKeys -
 		static_cast<int>(floor(static_cast<float>(width()) / PW_WHITE_KEY_WIDTH)));
 }
 
@@ -755,7 +759,7 @@ int PianoView::getKeyX( int _key_num ) const
 
 	while( k <= _key_num )
 	{
-		if( Piano::isWhiteKey( k ) )
+		if( IPiano::isWhiteKey( k ) )
 		{
 			++white_cnt;
 			if( white_cnt > 1 )
@@ -786,20 +790,20 @@ int PianoView::getKeyX( int _key_num ) const
  */
 int PianoView::getKeyWidth(int key_num) const
 {
-	return Piano::isWhiteKey(key_num) ? PW_WHITE_KEY_WIDTH : PW_BLACK_KEY_WIDTH;
+	return IPiano::isWhiteKey(key_num) ? PW_WHITE_KEY_WIDTH : PW_BLACK_KEY_WIDTH;
 }
 
 /*! \brief Return the height of a given key
  */
 int PianoView::getKeyHeight(int key_num) const
 {
-	return Piano::isWhiteKey(key_num) ? PW_WHITE_KEY_HEIGHT : PW_BLACK_KEY_HEIGHT;
+	return IPiano::isWhiteKey(key_num) ? PW_WHITE_KEY_HEIGHT : PW_BLACK_KEY_HEIGHT;
 }
 
 
 /*! \brief Return model and title of the marker closest to the given key
  */
-IntModel* PianoView::getNearestMarker(int key, QString* title)
+IIntAutomatableModel* PianoView::getNearestMarker(int key, QString* title)
 {
 	const int base = m_piano->instrumentTrack()->baseNote();
 	const int first = m_piano->instrumentTrack()->firstKey();
@@ -878,7 +882,7 @@ void PianoView::paintEvent( QPaintEvent * )
 	// draw all white keys...
 	for (int x = 0; x < width();)
 	{
-		while (Piano::isBlackKey(cur_key))
+		while (IPiano::isBlackKey(cur_key))
 		{
 			++cur_key;
 		}
@@ -916,7 +920,7 @@ void PianoView::paintEvent( QPaintEvent * )
 	int white_cnt = 0;
 
 	int startKey = m_startKey;
-	if (startKey > 0 && Piano::isBlackKey(static_cast<Keys>(--startKey)))
+	if (startKey > 0 && IPiano::isBlackKey(static_cast<Keys>(--startKey)))
 	{
 		if (m_piano && m_piano->instrumentTrack()->isKeyMapped(startKey))
 		{
@@ -938,7 +942,7 @@ void PianoView::paintEvent( QPaintEvent * )
 	// now draw all black keys...
 	for (int x = 0; x < width();)
 	{
-		if (Piano::isBlackKey(cur_key))
+		if (IPiano::isBlackKey(cur_key))
 		{
 			// draw normal, pressed or disabled key, depending on state and position of current key
 			if (m_piano && m_piano->instrumentTrack()->isKeyMapped(cur_key))

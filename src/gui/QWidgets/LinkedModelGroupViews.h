@@ -25,6 +25,8 @@
 #ifndef LMMS_GUI_LINKED_MODEL_GROUP_VIEWS_H
 #define LMMS_GUI_LINKED_MODEL_GROUP_VIEWS_H
 
+
+#ifdef LMMS_HAVE_LV2
 #include <cstddef>
 #include <memory>
 #include <QWidget>
@@ -40,7 +42,7 @@ class LinkedModelGroups;
 namespace gui
 {
 
-class Control;
+class IControl;
 
 /**
 	@file LinkedModelGroupViews.h
@@ -73,7 +75,7 @@ public:
 protected:
 	//! Add a control to this widget
 	//! @warning This widget will own this control, do not free it
-	void addControl(Control* ctrl, const std::string &id,
+	void addControl(IControl* ctrl, const std::string &id,
 					const std::string& display, bool removable);
 
 	void removeControl(const QString &key);
@@ -86,7 +88,7 @@ private:
 	//! column number in surrounding grid in LinkedModelGroupsView
 	std::size_t m_colNum;
 	class ControlLayout* m_layout;
-	std::map<std::string, std::unique_ptr<class Control>> m_widgets;
+	std::map<std::string, std::unique_ptr<class IControl>> m_widgets;
 };
 
 
@@ -112,4 +114,5 @@ private:
 
 } // namespace lmms
 
+#endif
 #endif // LMMS_GUI_LINKED_MODEL_GROUP_VIEWS_H

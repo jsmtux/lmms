@@ -40,7 +40,7 @@ class QuadratureLfo;
 class FlangerEffect : public Effect
 {
 public:
-	FlangerEffect( Model* parent , const Descriptor::SubPluginFeatures::Key* key );
+	FlangerEffect( Model* parent , const PluginDescriptor::Key* key );
 	~FlangerEffect() override;
 	bool processAudioBuffer( sampleFrame *buf, const fpp_t frames ) override;
 	EffectControls* controls() override

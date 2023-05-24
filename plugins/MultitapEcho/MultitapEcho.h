@@ -38,7 +38,7 @@ namespace lmms
 class MultitapEchoEffect : public Effect
 {
 public:
-	MultitapEchoEffect( Model* parent, const Descriptor::SubPluginFeatures::Key* key );
+	MultitapEchoEffect( Model* parent, const PluginDescriptor::Key* key );
 	~MultitapEchoEffect() override;
 	bool processAudioBuffer( sampleFrame* buf, const fpp_t frames ) override;
 

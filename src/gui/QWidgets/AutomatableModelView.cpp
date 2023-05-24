@@ -24,14 +24,12 @@
 
 #include "AutomatableModelView.h"
 
-#include "AutomationClip.h"
-#include "AutomationTrack.h"
-#include "Clipboard.h"
-#include "ControllerConnection.h"
 #include "embed.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
 #include "StringPairDrag.h"
+#include "Clipboard.h"
+#include "IControllerConnection.h"
 
 #include "editors/AutomationEditor.h"
 #include "modals/ControllerConnectionDialog.h"
@@ -45,46 +43,44 @@ namespace lmms::gui
 
 static float floatFromClipboard(bool* ok=nullptr);
 
-AutomatableModelView::AutomatableModelView( AutomatableModel* model, QWidget* _this ) :
-	m_model( model ),
-	m_widget(_this),
-	m_conversionFactor( 1.0 )
+AutomatableModelViewBase::AutomatableModelViewBase( IAutomatableModelBase* _model, QWidget* _widget ) :
+	m_widget( _widget ),
+	m_conversionFactor( 1.0 ),
+	m_model( _model )
 {
-	m_widget->setAcceptDrops( true );
-	m_widget->setCursor( QCursor( embed::getIconPixmap( "hand" ), 3, 3 ) );
+	_widget->setAcceptDrops( true );
+	_widget->setCursor( QCursor( embed::getIconPixmap( "hand" ), 3, 3 ) );
 
 	// QObject::connect( m_model, &Model::dataChanged, m_widget, &QWidget::update);
 	// QObject::connect( m_model, &Model::propertiesChanged, m_widget, &QWidget::update);
 
-	m_widget->update();
+	_widget->update();
 }
 
-void AutomatableModelView::addDefaultActions( QMenu* menu )
+void AutomatableModelViewBase::addDefaultActions( QMenu* menu )
 {
-	AutomatableModel* model = modelUntyped();
-
 	auto amvSlots = new AutomatableModelViewSlots(this, menu);
 
 	menu->addAction( embed::getIconPixmap( "reload" ),
-						AutomatableModel::tr( "&Reset (%1%2)" ).
-							arg( model->initValue<float>() * m_conversionFactor ).
+						QObject::tr( "&Reset (%1%2)" ).
+							arg( m_model->initValueAsFloat() * m_conversionFactor ).
 							arg( m_unit ),
-						model, SLOT(reset()));
+						m_model->model(), SLOT(reset()));
 
 	menu->addSeparator();
 	menu->addAction( embed::getIconPixmap( "edit_copy" ),
-						AutomatableModel::tr( "&Copy value (%1%2)" ).
-							arg( model->value<float>() * m_conversionFactor ).
+						QObject::tr( "&Copy value (%1%2)" ).
+							arg( m_model->valueAsFloat() * m_conversionFactor ).
 							arg( m_unit ),
 						amvSlots, SLOT(copyToClipboard()));
 
 	bool canPaste = true;
 	const float valueToPaste = floatFromClipboard(&canPaste);
 	const QString pasteDesc = canPaste ?
-					AutomatableModel::tr( "&Paste value (%1%2)").
+					QObject::tr( "&Paste value (%1%2)").
 						arg( valueToPaste ).
 						arg( m_unit )
-					: AutomatableModel::tr( "&Paste value");
+					: QObject::tr( "&Paste value");
 	QAction* pasteAction = menu->addAction( embed::getIconPixmap( "edit_paste" ),
 						pasteDesc, amvSlots, SLOT(pasteFromClipboard()));
 	pasteAction->setEnabled(canPaste);
@@ -92,71 +88,71 @@ void AutomatableModelView::addDefaultActions( QMenu* menu )
 	menu->addSeparator();
 
 	menu->addAction( embed::getIconPixmap( "automation" ),
-						AutomatableModel::tr( "Edit song-global automation" ),
+						QObject::tr( "Edit song-global automation" ),
 							amvSlots,
 							SLOT(editSongGlobalAutomation()));
 
 	menu->addAction( QPixmap(),
-						AutomatableModel::tr( "Remove song-global automation" ),
+						QObject::tr( "Remove song-global automation" ),
 						amvSlots,
 						SLOT(removeSongGlobalAutomation()));
 
 	menu->addSeparator();
 
-	if( model->hasLinkedModels() )
+	if( m_model->hasLinkedModels() )
 	{
 		menu->addAction( embed::getIconPixmap( "edit-delete" ),
-							AutomatableModel::tr( "Remove all linked controls" ),
+							QObject::tr( "Remove all linked controls" ),
 							amvSlots, SLOT(unlinkAllModels()));
 		menu->addSeparator();
 	}
 
 	QString controllerTxt;
-	if( model->controllerConnection() )
+	if( m_model->controllerConnection() )
 	{
-		Controller* cont = model->controllerConnection()->getController();
+		IController* cont = m_model->controllerConnection()->getController();
 		if( cont )
 		{
-			controllerTxt = AutomatableModel::tr( "Connected to %1" ).arg( cont->name() );
+			controllerTxt = QObject::tr( "Connected to %1" ).arg( cont->name() );
 		}
 		else
 		{
-			controllerTxt = AutomatableModel::tr( "Connected to controller" );
+			controllerTxt = QObject::tr( "Connected to controller" );
 		}
 
 		QMenu* contMenu = menu->addMenu( embed::getIconPixmap( "controller" ), controllerTxt );
 
 		contMenu->addAction( embed::getIconPixmap( "controller" ),
-								AutomatableModel::tr("Edit connection..."),
+								QObject::tr("Edit connection..."),
 								amvSlots, SLOT(execConnectionDialog()));
 		contMenu->addAction( embed::getIconPixmap( "cancel" ),
-								AutomatableModel::tr("Remove connection"),
+								QObject::tr("Remove connection"),
 								amvSlots, SLOT(removeConnection()));
 	}
 	else
 	{
 		menu->addAction( embed::getIconPixmap( "controller" ),
-							AutomatableModel::tr("Connect to controller..."),
+							QObject::tr("Connect to controller..."),
 							amvSlots, SLOT(execConnectionDialog()));
 	}
 }
 
 
-void AutomatableModelView::mousePressEvent( QMouseEvent* event )
+void AutomatableModelViewBase::mousePressEvent( QMouseEvent* event )
 {
 	if( event->button() == Qt::LeftButton && event->modifiers() & Qt::ControlModifier )
 	{
-		new gui::StringPairDrag( "automatable_model", QString::number( modelUntyped()->id() ), QPixmap(), m_widget );
+		new gui::StringPairDrag( "automatable_model", QString::number( m_model->id() ), QPixmap(), m_widget );
 		event->accept();
 	}
 	else if( event->button() == Qt::MiddleButton )
 	{
-		modelUntyped()->reset();
+		m_model->reset();
 	}
 }
 
 
-void AutomatableModelView::setConversionFactor( float factor )
+void AutomatableModelViewBase::setConversionFactor( float factor )
 {
 	if( factor != 0.0 )
 	{
@@ -165,13 +161,13 @@ void AutomatableModelView::setConversionFactor( float factor )
 }
 
 
-float AutomatableModelView::getConversionFactor()
+float AutomatableModelViewBase::getConversionFactor()
 {
 	return m_conversionFactor;
 }
 
 
-AutomatableModelViewSlots::AutomatableModelViewSlots( AutomatableModelView* amv, QObject* parent ) :
+AutomatableModelViewSlots::AutomatableModelViewSlots( AutomatableModelViewBase* amv, QObject* parent ) :
 	QObject(),
 	m_amv( amv )
 {
@@ -185,9 +181,9 @@ void AutomatableModelViewSlots::execConnectionDialog()
 {
 	// TODO[pg]: Display a dialog with list of controllers currently in the song
 	// in addition to any system MIDI controllers
-	AutomatableModel* m = m_amv->modelUntyped();
+	auto* m = m_amv->baseModel();
 
-	m->displayName();
+	m->model()->displayName();
 	gui::ControllerConnectionDialog d( getGUI()->mainWindow(), m );
 
 	if( d.exec() == 1 )
@@ -203,8 +199,7 @@ void AutomatableModelViewSlots::execConnectionDialog()
 			// New
 			else
 			{
-				auto cc = new ControllerConnection(d.chosenController());
-				m->setControllerConnection( cc );
+				m->setControllerConnection( createControllerconnection(d.chosenController()) );
 				//cc->setTargetName( m->displayName() );
 			}
 		}
@@ -221,11 +216,10 @@ void AutomatableModelViewSlots::execConnectionDialog()
 
 void AutomatableModelViewSlots::removeConnection()
 {
-	AutomatableModel* m = m_amv->modelUntyped();
+	auto* m = m_amv->baseModel();
 
 	if( m->controllerConnection() )
 	{
-		delete m->controllerConnection();
 		m->setControllerConnection( nullptr );
 	}
 }
@@ -236,7 +230,7 @@ void AutomatableModelViewSlots::removeConnection()
 void AutomatableModelViewSlots::editSongGlobalAutomation()
 {
 	getGUI()->automationEditor()->open(
-				AutomationClip::globalAutomationClip(m_amv->modelUntyped())
+				SetGlobalAutomationClip(m_amv->baseModel())
 	);
 }
 
@@ -244,13 +238,13 @@ void AutomatableModelViewSlots::editSongGlobalAutomation()
 
 void AutomatableModelViewSlots::removeSongGlobalAutomation()
 {
-	delete AutomationClip::globalAutomationClip( m_amv->modelUntyped() );
+	delete SetGlobalAutomationClip( m_amv->baseModel() );
 }
 
 
 void AutomatableModelViewSlots::unlinkAllModels()
 {
-	m_amv->modelUntyped()->unlinkAllModels();
+	m_amv->baseModel()->unlinkAllModels();
 }
 
 void AutomatableModelViewSlots::copyToClipboard()
@@ -258,7 +252,7 @@ void AutomatableModelViewSlots::copyToClipboard()
 	// For copyString() and MimeType enum class
 	using namespace Clipboard;
 
-	copyString( QString::number( m_amv->value<float>() * m_amv->getConversionFactor() ), MimeType::Default );
+	copyString( QString::number( m_amv->baseModel()->valueAsFloat() * m_amv->getConversionFactor() ), MimeType::Default );
 }
 
 void AutomatableModelViewSlots::pasteFromClipboard()
@@ -266,7 +260,7 @@ void AutomatableModelViewSlots::pasteFromClipboard()
 	bool isNumber = false;
 	const float number = floatFromClipboard(&isNumber);
 	if (isNumber) {
-		m_amv->modelUntyped()->setValue(number / m_amv->getConversionFactor());
+		m_amv->baseModel()->setValueAsFloat(number / m_amv->getConversionFactor());
 	}
 }
 

@@ -29,7 +29,7 @@
 #include "lmmsconfig.h"
 
 #include "AudioEngineWorkerThread.h"
-#include "AudioPort.h"
+#include "audio/AudioPort.h"
 #include "Mixer.h"
 #include "Song.h"
 #include "EnvelopeAndLfoParameters.h"
@@ -39,25 +39,25 @@
 #include "MemoryHelper.h"
 
 // platform-specific audio-interface-classes
-#include "AudioAlsa.h"
-#include "AudioJack.h"
-#include "AudioOss.h"
-#include "AudioSndio.h"
-#include "AudioPortAudio.h"
-#include "AudioSoundIo.h"
-#include "AudioPulseAudio.h"
-#include "AudioSdl.h"
-#include "AudioDummy.h"
+#include "audio/AudioAlsa.h"
+#include "audio/AudioJack.h"
+#include "audio/AudioOss.h"
+#include "audio/AudioSndio.h"
+#include "audio/AudioPortAudio.h"
+#include "audio/AudioSoundIo.h"
+#include "audio/AudioPulseAudio.h"
+#include "audio/AudioSdl.h"
+#include "audio/AudioDummy.h"
 
 // platform-specific midi-interface-classes
-#include "MidiAlsaRaw.h"
-#include "MidiAlsaSeq.h"
-#include "MidiJack.h"
-#include "MidiOss.h"
-#include "MidiSndio.h"
-#include "MidiWinMM.h"
-#include "MidiApple.h"
-#include "MidiDummy.h"
+#include "midi/MidiAlsaRaw.h"
+#include "midi/MidiAlsaSeq.h"
+#include "midi/MidiJack.h"
+#include "midi/MidiOss.h"
+#include "midi/MidiSndio.h"
+#include "midi/MidiWinMM.h"
+#include "midi/MidiApple.h"
+#include "midi/MidiDummy.h"
 
 #include "BufferManager.h"
 
@@ -81,7 +81,7 @@ AudioEngine::AudioEngine( bool renderOnly ) :
 	m_workers(),
 	m_numWorkers( QThread::idealThreadCount()-1 ),
 	m_newPlayHandles( PlayHandle::MaxNumber ),
-	m_qualitySettings( qualitySettings::Mode_Draft ),
+	m_qualitySettings( IAudioEngine::qualitySettings::Mode_Draft ),
 	m_masterGain( 1.0f ),
 	m_isProcessing( false ),
 	m_audioDev( nullptr ),
@@ -356,10 +356,11 @@ const surroundSampleFrame * AudioEngine::renderNextBuffer()
 
 		if( it != m_playHandles.end() )
 		{
-			( *it )->audioPort()->removePlayHandle( ( *it ) );
-			if( ( *it )->type() == PlayHandle::TypeNotePlayHandle )
+			PlayHandle* playHandle = dynamic_cast<PlayHandle*>(*it);
+			playHandle->audioPort()->removePlayHandle( *it );
+			if( playHandle->getType() == PlayHandleType::TypeNotePlayHandle )
 			{
-				NotePlayHandleManager::release( (NotePlayHandle*) *it );
+				NotePlayHandleManager::release( dynamic_cast<INotePlayHandle*>(*it) );
 			}
 			else delete *it;
 			m_playHandles.erase( it );
@@ -396,18 +397,19 @@ const surroundSampleFrame * AudioEngine::renderNextBuffer()
 	for( PlayHandleList::Iterator it = m_playHandles.begin();
 						it != m_playHandles.end(); )
 	{
-		if( ( *it )->affinityMatters() &&
-			( *it )->affinity() != QThread::currentThread() )
+		PlayHandle* playHandle = dynamic_cast<PlayHandle*>(*it);
+		if( playHandle->affinityMatters() &&
+			playHandle->affinity() != QThread::currentThread() )
 		{
 			++it;
 			continue;
 		}
-		if( ( *it )->isFinished() )
+		if( playHandle->isFinished() )
 		{
-			( *it )->audioPort()->removePlayHandle( ( *it ) );
-			if( ( *it )->type() == PlayHandle::TypeNotePlayHandle )
+			playHandle->audioPort()->removePlayHandle( playHandle );
+			if( playHandle->getType() == PlayHandleType::TypeNotePlayHandle )
 			{
-				NotePlayHandleManager::release( (NotePlayHandle*) *it );
+				NotePlayHandleManager::release( dynamic_cast<INotePlayHandle*>(*it) );
 			}
 			else delete *it;
 			it = m_playHandles.erase( it );
@@ -433,7 +435,7 @@ const surroundSampleFrame * AudioEngine::renderNextBuffer()
 
 	// and trigger LFOs
 	EnvelopeAndLfoParameters::instances()->trigger();
-	Controller::triggerFrameCounter();
+	TriggerControllerFrameCounter();
 	AutomatableModel::incrementPeriodCounter();
 
 	s_renderingThread = false;
@@ -493,11 +495,11 @@ void AudioEngine::handleMetronome()
 
 	if (ticks % (ticksPerBar / 1) == 0)
 	{
-		addPlayHandle(new SamplePlayHandle("misc/metronome02.ogg"));
+		addPlayHandle(createSamplePlayHandle("misc/metronome02.ogg"));
 	}
 	else if (ticks % (ticksPerBar / numerator) == 0)
 	{
-		addPlayHandle(new SamplePlayHandle("misc/metronome01.ogg"));
+		addPlayHandle(createSamplePlayHandle("misc/metronome01.ogg"));
 	}
 
 	lastMetroTicks = ticks;
@@ -534,7 +536,8 @@ void AudioEngine::clearInternal()
 	// TODO: m_midiClient->noteOffAll();
 	for (auto ph : m_playHandles)
 	{
-		if (ph->type() != PlayHandle::TypeInstrumentPlayHandle)
+		auto* playHandle = dynamic_cast<PlayHandle*>(ph);
+		if (playHandle->getType() != PlayHandleType::TypeInstrumentPlayHandle)
 		{
 			m_playHandlesToRemove.push_back(ph);
 		}
@@ -570,7 +573,7 @@ AudioEngine::StereoSample AudioEngine::getPeakValues(sampleFrame * ab, const f_c
 
 
 
-void AudioEngine::changeQuality(const struct qualitySettings & qs)
+void AudioEngine::changeQuality(const struct IAudioEngine::qualitySettings & qs)
 {
 	// don't delete the audio-device
 	stopProcessing();
@@ -611,7 +614,7 @@ void AudioEngine::doSetAudioDevice( AudioDevice * _dev )
 
 
 void AudioEngine::setAudioDevice(AudioDevice * _dev,
-				const struct qualitySettings & _qs,
+				const struct IAudioEngine::qualitySettings & _qs,
 				bool _needs_fifo,
 				bool startNow)
 {
@@ -671,19 +674,24 @@ void AudioEngine::removeAudioPort(AudioPort * port)
 	doneChangeInModel();
 }
 
+IMidiClient* AudioEngine::midiClientInterface()
+{
+	return m_midiClient;
+}
 
-bool AudioEngine::addPlayHandle( PlayHandle* handle )
+bool AudioEngine::addPlayHandle( IPlayHandle* handle )
 {
 	if( criticalXRuns() == false )
 	{
-		m_newPlayHandles.push( handle );
-		handle->audioPort()->addPlayHandle( handle );
+		auto* playHandle = dynamic_cast<PlayHandle*>(handle);
+		m_newPlayHandles.push( playHandle );
+		playHandle->audioPort()->addPlayHandle( playHandle );
 		return true;
 	}
 
-	if( handle->type() == PlayHandle::TypeNotePlayHandle )
+	if( handle->getType() == PlayHandleType::TypeNotePlayHandle )
 	{
-		NotePlayHandleManager::release( (NotePlayHandle*)handle );
+		NotePlayHandleManager::release( dynamic_cast<INotePlayHandle*>(handle) );
 	}
 	else delete handle;
 
@@ -691,14 +699,15 @@ bool AudioEngine::addPlayHandle( PlayHandle* handle )
 }
 
 
-void AudioEngine::removePlayHandle(PlayHandle * ph)
+void AudioEngine::removePlayHandle(IPlayHandle * ph)
 {
 	requestChangeInModel();
 	// check thread affinity as we must not delete play-handles
 	// which were created in a thread different than the audio engine thread
-	if (ph->affinityMatters() && ph->affinity() == QThread::currentThread())
+	auto playHandle = dynamic_cast<PlayHandle *>(ph);
+	if (playHandle->affinityMatters() && playHandle->affinity() == QThread::currentThread())
 	{
-		ph->audioPort()->removePlayHandle(ph);
+		playHandle->audioPort()->removePlayHandle(playHandle);
 		bool removedFromList = false;
 		// Check m_newPlayHandles first because doing it the other way around
 		// creates a race condition
@@ -732,7 +741,7 @@ void AudioEngine::removePlayHandle(PlayHandle * ph)
 		// (See tobydox's 2008 commit 4583e48)
 		if ( removedFromList )
 		{
-			if (ph->type() == PlayHandle::TypeNotePlayHandle)
+			if (playHandle->getType() == PlayHandleType::TypeNotePlayHandle)
 			{
 				NotePlayHandleManager::release(dynamic_cast<NotePlayHandle*>(ph));
 			}
@@ -741,26 +750,25 @@ void AudioEngine::removePlayHandle(PlayHandle * ph)
 	}
 	else
 	{
-		m_playHandlesToRemove.push_back(ph);
+		m_playHandlesToRemove.push_back(playHandle);
 	}
 	doneChangeInModel();
 }
 
 
-
-
-void AudioEngine::removePlayHandlesOfTypes(Track * track, const quint8 types)
+void AudioEngine::removePlayHandlesOfTypes(Track * track, const std::set<PlayHandleType>& types)
 {
 	requestChangeInModel();
 	PlayHandleList::Iterator it = m_playHandles.begin();
 	while( it != m_playHandles.end() )
 	{
-		if ((*it)->isFromTrack(track) && ((*it)->type() & types))
+		auto* playHandle = dynamic_cast<PlayHandle*>(*it);
+		if (playHandle->isFromTrack(track) && (types.find(playHandle->getType())) != types.end())
 		{
-			( *it )->audioPort()->removePlayHandle( ( *it ) );
-			if( ( *it )->type() == PlayHandle::TypeNotePlayHandle )
+			playHandle->audioPort()->removePlayHandle( playHandle );
+			if( playHandle->getType() == PlayHandleType::TypeNotePlayHandle )
 			{
-				NotePlayHandleManager::release( (NotePlayHandle*) *it );
+				NotePlayHandleManager::release( dynamic_cast<INotePlayHandle*>(playHandle) );
 			}
 			else delete *it;
 			it = m_playHandles.erase( it );
@@ -940,7 +948,7 @@ bool AudioEngine::isMidiDevNameValid(QString name)
 #endif
 
 #ifdef LMMS_BUILD_APPLE
-    if (name == MidiApple::name())
+    if (name == IMidiApple::name())
     {
 		return true;
     }
@@ -1188,10 +1196,10 @@ MidiClient * AudioEngine::tryMidiClients()
 
 #ifdef LMMS_BUILD_APPLE
     printf( "trying midi apple...\n" );
-    if( client_name == MidiApple::name() || client_name == "" )
+    if( client_name == IMidiApple::name() || client_name == "" )
     {
         MidiApple * mapple = new MidiApple;
-        m_midiClientName = MidiApple::name();
+        m_midiClientName = IMidiApple::name();
         printf( "Returning midi apple\n" );
         return mapple;
     }

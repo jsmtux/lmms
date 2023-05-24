@@ -31,7 +31,7 @@
 namespace lmms
 {
 
-class AutomationTrack;
+class IAutomationTrack;
 
 namespace gui
 {
@@ -40,11 +40,13 @@ namespace gui
 class AutomationTrackView : public TrackView
 {
 public:
-	AutomationTrackView( AutomationTrack* at, TrackContainerView* tcv );
+	AutomationTrackView( IAutomationTrack* at, TrackContainerView* tcv );
 	~AutomationTrackView() override = default;
 
 	void dragEnterEvent( QDragEnterEvent * _dee ) override;
 	void dropEvent( QDropEvent * _de ) override;
+private:
+	IAutomationTrack* m_at;
 } ;
 
 

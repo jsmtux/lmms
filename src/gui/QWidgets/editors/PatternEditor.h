@@ -31,7 +31,7 @@
 namespace lmms
 {
 
-class PatternStore;
+class IPatternStore;
 
 namespace gui
 {
@@ -43,7 +43,7 @@ class PatternEditor : public TrackContainerView
 {
 	Q_OBJECT
 public:
-	PatternEditor(PatternStore* ps);
+	PatternEditor(IPatternStore* ps);
 
 	bool fixedClips() const override
 	{
@@ -62,13 +62,13 @@ public slots:
 	void addSampleTrack();
 	void addAutomationTrack();
 	void cloneClip();
+	void updatePosition();
 
 protected slots:
 	void dropEvent(QDropEvent * de ) override;
-	void updatePosition();
 
 private:
-	PatternStore* m_ps;
+	IPatternStore* m_ps;
 	void makeSteps( bool clone );
 };
 
@@ -77,7 +77,7 @@ class PatternEditorWindow : public Editor
 {
 Q_OBJECT
 public:
-	PatternEditorWindow(PatternStore* ps);
+	PatternEditorWindow(IPatternStore* ps);
 	~PatternEditorWindow() = default;
 
 	QSize sizeHint() const override;

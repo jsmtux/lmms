@@ -25,29 +25,29 @@
 #include "SetupDialog.h"
 
 #include "AudioDeviceSetupWidget.h"
-#include "AudioEngine.h"
+#include "IAudioEngine.h"
 #include "debug.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "FileDialog.h"
 #include "gui_templates.h"
 #include "MainWindow.h"
 #include "MidiSetupWidget.h"
-#include "ProjectJournal.h"
+#include "IProjectJournal.h"
 #include "TabButton.h"
 
 #include "widgets/TabBar.h"
 
 // Platform-specific audio-interface classes.
-#include "AudioAlsa.h"
-#include "AudioDummy.h"
-#include "AudioJack.h"
-#include "AudioOss.h"
-#include "AudioPortAudio.h"
-#include "AudioPulseAudio.h"
-#include "AudioSdl.h"
-#include "AudioSndio.h"
-#include "AudioSoundIo.h"
+// #include "AudioAlsa.h"
+// #include "AudioDummy.h"
+// #include "AudioJack.h"
+// #include "AudioOss.h"
+// #include "AudioPortAudio.h"
+// #include "AudioPulseAudio.h"
+// #include "AudioSdl.h"
+// #include "AudioSndio.h"
+// #include "AudioSoundIo.h"
 #include "audiosetupwidgets/AudioAlsaSetupWidget.h"
 #include "audiosetupwidgets/AudioDummySetupWidget.h"
 #include "audiosetupwidgets/AudioJackSetupWidget.h"
@@ -57,14 +57,14 @@
 #include "audiosetupwidgets/AudioOssSetupWidget.h"
 
 // Platform-specific midi-interface classes.
-#include "MidiAlsaRaw.h"
-#include "MidiAlsaSeq.h"
-#include "MidiApple.h"
-#include "MidiDummy.h"
-#include "MidiJack.h"
-#include "MidiOss.h"
-#include "MidiSndio.h"
-#include "MidiWinMM.h"
+// #include "MidiAlsaRaw.h"
+// #include "MidiAlsaSeq.h"
+// #include "MidiApple.h"
+// #include "MidiDummy.h"
+// #include "MidiJack.h"
+// #include "MidiOss.h"
+// #include "MidiSndio.h"
+// #include "MidiWinMM.h"
 
 #include <QComboBox>
 #include <QImageReader>
@@ -98,70 +98,70 @@ inline void labelWidget(QWidget * w, const QString & txt)
 
 
 SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
-	m_displaydBFS(ConfigManager::inst()->value(
+	m_displaydBFS(IConfigManager::Instance()->value(
 			"app", "displaydbfs").toInt()),
-	m_tooltips(!ConfigManager::inst()->value(
+	m_tooltips(!IConfigManager::Instance()->value(
 			"tooltips", "disabled").toInt()),
-	m_displayWaveform(ConfigManager::inst()->value(
+	m_displayWaveform(IConfigManager::Instance()->value(
 			"ui", "displaywaveform").toInt()),
-	m_printNoteLabels(ConfigManager::inst()->value(
+	m_printNoteLabels(IConfigManager::Instance()->value(
 			"ui", "printnotelabels").toInt()),
-	m_compactTrackButtons(ConfigManager::inst()->value(
+	m_compactTrackButtons(IConfigManager::Instance()->value(
 			"ui", "compacttrackbuttons").toInt()),
-	m_oneInstrumentTrackWindow(ConfigManager::inst()->value(
+	m_oneInstrumentTrackWindow(IConfigManager::Instance()->value(
 			"ui", "oneinstrumenttrackwindow").toInt()),
-	m_sideBarOnRight(ConfigManager::inst()->value(
+	m_sideBarOnRight(IConfigManager::Instance()->value(
 			"ui", "sidebaronright").toInt()),
-	m_letPreviewsFinish(ConfigManager::inst()->value(
+	m_letPreviewsFinish(IConfigManager::Instance()->value(
 			"ui", "letpreviewsfinish").toInt()),
-	m_soloLegacyBehavior(ConfigManager::inst()->value(
+	m_soloLegacyBehavior(IConfigManager::Instance()->value(
 			"app", "sololegacybehavior", "0").toInt()),
-	m_trackDeletionWarning(ConfigManager::inst()->value(
+	m_trackDeletionWarning(IConfigManager::Instance()->value(
 			"ui", "trackdeletionwarning", "1").toInt()),
-	m_mixerChannelDeletionWarning(ConfigManager::inst()->value(
+	m_mixerChannelDeletionWarning(IConfigManager::Instance()->value(
 			"ui", "mixerchanneldeletionwarning", "1").toInt()),
-	m_MMPZ(!ConfigManager::inst()->value(
+	m_MMPZ(!IConfigManager::Instance()->value(
 			"app", "nommpz").toInt()),
-	m_disableBackup(!ConfigManager::inst()->value(
+	m_disableBackup(!IConfigManager::Instance()->value(
 			"app", "disablebackup").toInt()),
-	m_openLastProject(ConfigManager::inst()->value(
+	m_openLastProject(IConfigManager::Instance()->value(
 			"app", "openlastproject").toInt()),
-	m_lang(ConfigManager::inst()->value(
+	m_lang(IConfigManager::Instance()->value(
 			"app", "language")),
-	m_saveInterval(	ConfigManager::inst()->value(
+	m_saveInterval(	IConfigManager::Instance()->value(
 			"ui", "saveinterval").toInt() < 1 ?
 			MainWindow::DEFAULT_SAVE_INTERVAL_MINUTES :
-			ConfigManager::inst()->value(
+			IConfigManager::Instance()->value(
 			"ui", "saveinterval").toInt()),
-	m_enableAutoSave(ConfigManager::inst()->value(
+	m_enableAutoSave(IConfigManager::Instance()->value(
 			"ui", "enableautosave", "1").toInt()),
-	m_enableRunningAutoSave(ConfigManager::inst()->value(
+	m_enableRunningAutoSave(IConfigManager::Instance()->value(
 			"ui", "enablerunningautosave", "0").toInt()),
-	m_smoothScroll(ConfigManager::inst()->value(
+	m_smoothScroll(IConfigManager::Instance()->value(
 			"ui", "smoothscroll").toInt()),
-	m_animateAFP(ConfigManager::inst()->value(
+	m_animateAFP(IConfigManager::Instance()->value(
 			"ui", "animateafp", "1").toInt()),
-	m_vstEmbedMethod(ConfigManager::inst()->vstEmbedMethod()),
-	m_vstAlwaysOnTop(ConfigManager::inst()->value(
+	m_vstEmbedMethod(IConfigManager::Instance()->vstEmbedMethod()),
+	m_vstAlwaysOnTop(IConfigManager::Instance()->value(
 			"ui", "vstalwaysontop").toInt()),
-	m_disableAutoQuit(ConfigManager::inst()->value(
+	m_disableAutoQuit(IConfigManager::Instance()->value(
 			"ui", "disableautoquit", "1").toInt()),
-	m_NaNHandler(ConfigManager::inst()->value(
+	m_NaNHandler(IConfigManager::Instance()->value(
 			"app", "nanhandler", "1").toInt()),
-	m_hqAudioDev(ConfigManager::inst()->value(
+	m_hqAudioDev(IConfigManager::Instance()->value(
 			"audioengine", "hqaudio").toInt()),
-	m_bufferSize(ConfigManager::inst()->value(
+	m_bufferSize(IConfigManager::Instance()->value(
 			"audioengine", "framesperaudiobuffer").toInt()),
-	m_workingDir(QDir::toNativeSeparators(ConfigManager::inst()->workingDir())),
-	m_vstDir(QDir::toNativeSeparators(ConfigManager::inst()->vstDir())),
-	m_ladspaDir(QDir::toNativeSeparators(ConfigManager::inst()->ladspaDir())),
-	m_gigDir(QDir::toNativeSeparators(ConfigManager::inst()->gigDir())),
-	m_sf2Dir(QDir::toNativeSeparators(ConfigManager::inst()->sf2Dir())),
+	m_workingDir(QDir::toNativeSeparators(IConfigManager::Instance()->workingDir())),
+	m_vstDir(QDir::toNativeSeparators(IConfigManager::Instance()->vstDir())),
+	m_ladspaDir(QDir::toNativeSeparators(IConfigManager::Instance()->ladspaDir())),
+	m_gigDir(QDir::toNativeSeparators(IConfigManager::Instance()->gigDir())),
+	m_sf2Dir(QDir::toNativeSeparators(IConfigManager::Instance()->sf2Dir())),
 #ifdef LMMS_HAVE_FLUIDSYNTH
-	m_sf2File(QDir::toNativeSeparators(ConfigManager::inst()->sf2File())),
+	m_sf2File(QDir::toNativeSeparators(IConfigManager::Instance()->sf2File())),
 #endif
-	m_themeDir(QDir::toNativeSeparators(ConfigManager::inst()->themeDir())),
-	m_backgroundPicFile(QDir::toNativeSeparators(ConfigManager::inst()->backgroundPicFile()))
+	m_themeDir(QDir::toNativeSeparators(IConfigManager::Instance()->themeDir())),
+	m_backgroundPicFile(QDir::toNativeSeparators(IConfigManager::Instance()->backgroundPicFile()))
 {
 	setWindowIcon(embed::getIconPixmap("setup_general"));
 	setWindowTitle(tr("Settings"));
@@ -170,7 +170,7 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 	setModal(true);
 	setFixedSize(454, 400);
 
-	Engine::projectJournal()->setJournalling(false);
+	IEngine::Instance()->getProjectJournalInterface()->setJournalling(false);
 
 
 	// Constants for positioning LED check boxes.
@@ -220,7 +220,7 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 
 	auto addLedCheckBox = [&XDelta, &YDelta, this](const QString& ledText, TabWidget* tw, int& counter,
 							  bool initialState, const char* toggledSlot, bool showRestartWarning) {
-		auto checkBoxModel = new BoolModel(false, this);
+		auto checkBoxModel = MFact::create(false, this);
 		auto checkBox = new LedCheckBox(ledText, checkBoxModel, tw);
 		counter++;
 		checkBox->move(XDelta, YDelta * counter);
@@ -290,7 +290,7 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 	auto changeLang = new QComboBox(lang_tw);
 	changeLang->move(XDelta, 20);
 
-	QDir dir(ConfigManager::inst()->localeDir());
+	QDir dir(IConfigManager::Instance()->localeDir());
 	QStringList fileNames = dir.entryList(QStringList("*.qm"));
 	for(int i = 0; i < fileNames.size(); ++i)
 	{
@@ -383,14 +383,14 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 	setAutoSaveInterval(m_saveIntervalSlider->value());
 
 	m_autoSave = new LedCheckBox(
-			tr("Enable autosave"), &m_autoSaveModel, auto_save_tw);
+			tr("Enable autosave"), MFact::create(false, this), auto_save_tw);
 	m_autoSave->move(10, 70);
 	m_autoSave->setChecked(m_enableAutoSave);
 	connect(m_autoSave, SIGNAL(toggled(bool)),
 			this, SLOT(toggleAutoSave(bool)));
 
 	m_runningAutoSave = new LedCheckBox(
-			tr("Allow autosave while playing"), &m_runningAutoSaveModel, auto_save_tw);
+			tr("Allow autosave while playing"), MFact::create(false, this), auto_save_tw);
 	m_runningAutoSave->move(20, 88);
 	m_runningAutoSave->setChecked(m_enableRunningAutoSave);
 	connect(m_runningAutoSave, SIGNAL(toggled(bool)),
@@ -430,7 +430,7 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 	m_vstEmbedComboBox = new QComboBox(plugins_tw);
 	m_vstEmbedComboBox->move(XDelta, YDelta * ++counter);
 
-	QStringList embedMethods = ConfigManager::availableVstEmbedMethods();
+	QStringList embedMethods = IConfigManager::Instance()->getAvailableVstEmbedMethods();
 	m_vstEmbedComboBox->addItem(tr("No embedding"), "none");
 	if(embedMethods.contains("qt"))
 	{
@@ -451,7 +451,7 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 	counter += 2;
 
 	m_vstAlwaysOnTopCheckBox = new LedCheckBox(
-			tr("Keep plugin windows on top when not embedded"), &m_vstAlwaysOnTopCheckBoxModel, plugins_tw);
+			tr("Keep plugin windows on top when not embedded"), MFact::create(false, this), plugins_tw);
 	m_vstAlwaysOnTopCheckBox->move(20, 66);
 	m_vstAlwaysOnTopCheckBox->setChecked(m_vstAlwaysOnTop);
 	m_vstAlwaysOnTopCheckBox->setVisible(m_vstEmbedMethod == "none");
@@ -512,7 +512,7 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 #endif
 
 #ifdef LMMS_HAVE_PORTAUDIO
-	m_audioIfaceSetupWidgets[AudioPortAudio::name()] =
+	m_audioIfaceSetupWidgets[PortAudioName()] =
 			new AudioPortAudioSetupWidget(as_w);
 #endif
 
@@ -556,11 +556,11 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 	}
 
 	// If no preferred audio device is saved, save the current one.
-	QString audioDevName = ConfigManager::inst()->value("audioengine", "audiodev");
+	QString audioDevName = IConfigManager::Instance()->value("audioengine", "audiodev");
 	if (m_audioInterfaces->findText(audioDevName) < 0)
 	{
-		audioDevName = Engine::audioEngine()->audioDevName();
-		ConfigManager::inst()->setValue("audioengine", "audiodev", audioDevName);
+		audioDevName = IEngine::Instance()->getAudioEngineInterface()->audioDevName();
+		IConfigManager::Instance()->setValue("audioengine", "audiodev", audioDevName);
 	}
 	m_audioInterfaces->
 		setCurrentIndex(m_audioInterfaces->findText(audioDevName));
@@ -577,7 +577,7 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 	// }
 
 	// HQ mode LED.
-	auto hqaudio = new LedCheckBox(tr("HQ mode for output audio device"), &hqaudioModel, audio_w);
+	auto hqaudio = new LedCheckBox(tr("HQ mode for output audio device"), MFact::create(false, this), audio_w);
 	hqaudio->move(10, 0);
 	hqaudio->setChecked(m_hqAudioDev);
 	connect(hqaudio, SIGNAL(toggled(bool)),
@@ -653,8 +653,8 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 #endif
 
 #ifdef LMMS_HAVE_JACK
-	m_midiIfaceSetupWidgets[MidiJack::name()] =
-			MidiSetupWidget::create<MidiJack>(ms_w);
+	m_midiIfaceSetupWidgets[MidiJackName()] =
+			MidiSetupWidget::create<IMidiJack>(ms_w);
 #endif
 
 #ifdef LMMS_HAVE_OSS
@@ -673,12 +673,12 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 #endif
 
 #ifdef LMMS_BUILD_APPLE
-    m_midiIfaceSetupWidgets[MidiApple::name()] =
-			MidiSetupWidget::create<MidiApple>(ms_w);
+    m_midiIfaceSetupWidgets[IMidiApple::name()] =
+			MidiSetupWidget::create<IMidiApple>(ms_w);
 #endif
 
-	m_midiIfaceSetupWidgets[MidiDummy::name()] =
-			MidiSetupWidget::create<MidiDummy>(ms_w);
+	m_midiIfaceSetupWidgets[IMidiDummy::name()] =
+			MidiSetupWidget::create<IMidiDummy>(ms_w);
 
 
 	for(MswMap::iterator it = m_midiIfaceSetupWidgets.begin();
@@ -696,11 +696,11 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 		m_midiInterfaces->addItem(it.key());
 	}
 
-	QString midiDevName = ConfigManager::inst()->value("audioengine", "mididev");
+	QString midiDevName = IConfigManager::Instance()->value("audioengine", "mididev");
 	if (m_midiInterfaces->findText(midiDevName) < 0)
 	{
-		midiDevName = Engine::audioEngine()->midiClientName();
-		ConfigManager::inst()->setValue("audioengine", "mididev", midiDevName);
+		midiDevName = IEngine::Instance()->getAudioEngineInterface()->midiClientName();
+		IConfigManager::Instance()->setValue("audioengine", "mididev", midiDevName);
 	}
 	m_midiInterfaces->setCurrentIndex(m_midiInterfaces->findText(midiDevName));
 	m_midiIfaceSetupWidgets[midiDevName]->show();
@@ -716,15 +716,15 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 	m_assignableMidiDevices = new QComboBox(midiAutoAssign_tw);
 	m_assignableMidiDevices->setGeometry(10, 20, 240, 28);
 	m_assignableMidiDevices->addItem("none");
-	if ( !Engine::audioEngine()->midiClient()->isRaw() )
+	if ( !IEngine::Instance()->getAudioEngineInterface()->midiClientInterface()->isRaw() )
 	{
-		m_assignableMidiDevices->addItems(Engine::audioEngine()->midiClient()->readablePorts());
+		m_assignableMidiDevices->addItems(IEngine::Instance()->getAudioEngineInterface()->midiClientInterface()->readablePorts());
 	}
 	else
 	{
 		m_assignableMidiDevices->addItem("all");
 	}
-	int current = m_assignableMidiDevices->findText(ConfigManager::inst()->value("midi", "midiautoassign"));
+	int current = m_assignableMidiDevices->findText(IConfigManager::Instance()->value("midi", "midiautoassign"));
 	if (current >= 0)
 	{
 		m_assignableMidiDevices->setCurrentIndex(current);
@@ -897,7 +897,7 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 
 SetupDialog::~SetupDialog()
 {
-	Engine::projectJournal()->setJournalling(true);
+	IEngine::Instance()->getProjectJournalInterface()->setJournalling(true);
 }
 
 
@@ -910,75 +910,75 @@ void SetupDialog::accept()
 	from taking mouse input, rendering the application unusable. */
 	QDialog::accept();
 
-	ConfigManager::inst()->setValue("app", "displaydbfs",
+	IConfigManager::Instance()->setValue("app", "displaydbfs",
 					QString::number(m_displaydBFS));
-	ConfigManager::inst()->setValue("tooltips", "disabled",
+	IConfigManager::Instance()->setValue("tooltips", "disabled",
 					QString::number(!m_tooltips));
-	ConfigManager::inst()->setValue("ui", "displaywaveform",
+	IConfigManager::Instance()->setValue("ui", "displaywaveform",
 					QString::number(m_displayWaveform));
-	ConfigManager::inst()->setValue("ui", "printnotelabels",
+	IConfigManager::Instance()->setValue("ui", "printnotelabels",
 					QString::number(m_printNoteLabels));
-	ConfigManager::inst()->setValue("ui", "compacttrackbuttons",
+	IConfigManager::Instance()->setValue("ui", "compacttrackbuttons",
 					QString::number(m_compactTrackButtons));
-	ConfigManager::inst()->setValue("ui", "oneinstrumenttrackwindow",
+	IConfigManager::Instance()->setValue("ui", "oneinstrumenttrackwindow",
 					QString::number(m_oneInstrumentTrackWindow));
-	ConfigManager::inst()->setValue("ui", "sidebaronright",
+	IConfigManager::Instance()->setValue("ui", "sidebaronright",
 					QString::number(m_sideBarOnRight));
-	ConfigManager::inst()->setValue("ui", "letpreviewsfinish",
+	IConfigManager::Instance()->setValue("ui", "letpreviewsfinish",
 					QString::number(m_letPreviewsFinish));
-	ConfigManager::inst()->setValue("app", "sololegacybehavior",
+	IConfigManager::Instance()->setValue("app", "sololegacybehavior",
 					QString::number(m_soloLegacyBehavior));
-	ConfigManager::inst()->setValue("ui", "trackdeletionwarning",
+	IConfigManager::Instance()->setValue("ui", "trackdeletionwarning",
 					QString::number(m_trackDeletionWarning));
-	ConfigManager::inst()->setValue("ui", "mixerchanneldeletionwarning",
+	IConfigManager::Instance()->setValue("ui", "mixerchanneldeletionwarning",
 					QString::number(m_mixerChannelDeletionWarning));
-	ConfigManager::inst()->setValue("app", "nommpz",
+	IConfigManager::Instance()->setValue("app", "nommpz",
 					QString::number(!m_MMPZ));
-	ConfigManager::inst()->setValue("app", "disablebackup",
+	IConfigManager::Instance()->setValue("app", "disablebackup",
 					QString::number(!m_disableBackup));
-	ConfigManager::inst()->setValue("app", "openlastproject",
+	IConfigManager::Instance()->setValue("app", "openlastproject",
 					QString::number(m_openLastProject));
-	ConfigManager::inst()->setValue("app", "language", m_lang);
-	ConfigManager::inst()->setValue("ui", "saveinterval",
+	IConfigManager::Instance()->setValue("app", "language", m_lang);
+	IConfigManager::Instance()->setValue("ui", "saveinterval",
 					QString::number(m_saveInterval));
-	ConfigManager::inst()->setValue("ui", "enableautosave",
+	IConfigManager::Instance()->setValue("ui", "enableautosave",
 					QString::number(m_enableAutoSave));
-	ConfigManager::inst()->setValue("ui", "enablerunningautosave",
+	IConfigManager::Instance()->setValue("ui", "enablerunningautosave",
 					QString::number(m_enableRunningAutoSave));
-	ConfigManager::inst()->setValue("ui", "smoothscroll",
+	IConfigManager::Instance()->setValue("ui", "smoothscroll",
 					QString::number(m_smoothScroll));
-	ConfigManager::inst()->setValue("ui", "animateafp",
+	IConfigManager::Instance()->setValue("ui", "animateafp",
 					QString::number(m_animateAFP));
-	ConfigManager::inst()->setValue("ui", "vstembedmethod",
+	IConfigManager::Instance()->setValue("ui", "vstembedmethod",
 					m_vstEmbedComboBox->currentData().toString());
-	ConfigManager::inst()->setValue("ui", "vstalwaysontop",
+	IConfigManager::Instance()->setValue("ui", "vstalwaysontop",
 					QString::number(m_vstAlwaysOnTop));
-	ConfigManager::inst()->setValue("ui", "disableautoquit",
+	IConfigManager::Instance()->setValue("ui", "disableautoquit",
 					QString::number(m_disableAutoQuit));
-	ConfigManager::inst()->setValue("audioengine", "audiodev",
+	IConfigManager::Instance()->setValue("audioengine", "audiodev",
 					m_audioIfaceNames[m_audioInterfaces->currentText()]);
-	ConfigManager::inst()->setValue("app", "nanhandler",
+	IConfigManager::Instance()->setValue("app", "nanhandler",
 					QString::number(m_NaNHandler));
-	ConfigManager::inst()->setValue("audioengine", "hqaudio",
+	IConfigManager::Instance()->setValue("audioengine", "hqaudio",
 					QString::number(m_hqAudioDev));
-	ConfigManager::inst()->setValue("audioengine", "framesperaudiobuffer",
+	IConfigManager::Instance()->setValue("audioengine", "framesperaudiobuffer",
 					QString::number(m_bufferSize));
-	ConfigManager::inst()->setValue("audioengine", "mididev",
+	IConfigManager::Instance()->setValue("audioengine", "mididev",
 					m_midiIfaceNames[m_midiInterfaces->currentText()]);
-	ConfigManager::inst()->setValue("midi", "midiautoassign",
+	IConfigManager::Instance()->setValue("midi", "midiautoassign",
 					m_assignableMidiDevices->currentText());
 
 
-	ConfigManager::inst()->setWorkingDir(QDir::fromNativeSeparators(m_workingDir));
-	ConfigManager::inst()->setVSTDir(QDir::fromNativeSeparators(m_vstDir));
-	ConfigManager::inst()->setLADSPADir(QDir::fromNativeSeparators(m_ladspaDir));
-	ConfigManager::inst()->setSF2Dir(QDir::fromNativeSeparators(m_sf2Dir));
+	IConfigManager::Instance()->setWorkingDir(QDir::fromNativeSeparators(m_workingDir));
+	IConfigManager::Instance()->setVSTDir(QDir::fromNativeSeparators(m_vstDir));
+	IConfigManager::Instance()->setLADSPADir(QDir::fromNativeSeparators(m_ladspaDir));
+	IConfigManager::Instance()->setSF2Dir(QDir::fromNativeSeparators(m_sf2Dir));
 #ifdef LMMS_HAVE_FLUIDSYNTH
-	ConfigManager::inst()->setSF2File(m_sf2File);
+	IConfigManager::Instance()->setSF2File(m_sf2File);
 #endif
-	ConfigManager::inst()->setGIGDir(QDir::fromNativeSeparators(m_gigDir));
-	ConfigManager::inst()->setThemeDir(QDir::fromNativeSeparators(m_themeDir));
-	ConfigManager::inst()->setBackgroundPicFile(m_backgroundPicFile);
+	IConfigManager::Instance()->setGIGDir(QDir::fromNativeSeparators(m_gigDir));
+	IConfigManager::Instance()->setThemeDir(QDir::fromNativeSeparators(m_themeDir));
+	IConfigManager::Instance()->setBackgroundPicFile(m_backgroundPicFile);
 
 	// Tell all audio-settings-widgets to save their settings.
 	for(AswMap::iterator it = m_audioIfaceSetupWidgets.begin();
@@ -992,7 +992,7 @@ void SetupDialog::accept()
 	{
 		it.value()->saveSettings();
 	}
-	ConfigManager::inst()->saveConfigFile();
+	IConfigManager::Instance()->saveConfigFile();
 }
 
 
@@ -1203,7 +1203,7 @@ void SetupDialog::setBufferSize(int value)
 
 	m_bufferSize = value * BUFFERSIZE_RESOLUTION;
 	m_bufferSizeLbl->setText(tr("Frames: %1\nLatency: %2 ms").arg(m_bufferSize).arg(
-		1000.0f * m_bufferSize / Engine::audioEngine()->processingSampleRate(), 0, 'f', 1));
+		1000.0f * m_bufferSize / IEngine::Instance()->getAudioEngineInterface()->processingSampleRate(), 0, 'f', 1));
 }
 
 

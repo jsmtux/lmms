@@ -38,7 +38,7 @@ class MixerLineLcdSpinBox : public LcdSpinBox
 {
 	Q_OBJECT
 public:
-	MixerLineLcdSpinBox(int numDigits, IntModel* _model, QWidget * parent, const QString& name, TrackView * tv = nullptr) :
+	MixerLineLcdSpinBox(int numDigits, IIntAutomatableModel* _model, QWidget * parent, const QString& name, TrackView * tv = nullptr) :
 		LcdSpinBox(numDigits, _model, parent, name), m_tv(tv)
 	{}
 	~MixerLineLcdSpinBox() override = default;

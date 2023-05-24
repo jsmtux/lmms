@@ -8,7 +8,7 @@ namespace lmms::gui {
 
 class QWidgetToolPlugin: public ToolPlugin{
 public:
-	QWidgetToolPlugin( const Descriptor * _descriptor, Model * _parent ) :
+	QWidgetToolPlugin( const PluginDescriptor * _descriptor, Model * _parent ) :
 		ToolPlugin(_descriptor, _parent)
 	{}
 

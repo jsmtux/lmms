@@ -1,8 +1,6 @@
 #ifndef I_AUTOMATION_EDITOR_H_
 #define I_AUTOMATION_EDITOR_H_
 
-#include "AutomationClip.h"
-
 #include <QDomDocument>
 #include <QDomElement>
 

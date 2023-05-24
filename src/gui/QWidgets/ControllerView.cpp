@@ -41,14 +41,15 @@
 #include <QMdiArea>
 #include <QInputDialog>
 #include <QVBoxLayout>
+#include <QPointer>
 
 namespace lmms::gui
 {
 
 
-ControllerView::ControllerView( Controller * _model, QWidget * _parent ) :
+ControllerView::ControllerView( IController * _controller, QWidget * _parent ) :
 	QFrame( _parent ),
-	m_controller(_model),
+	m_controller(_controller),
 	m_subWindow( nullptr ),
 	m_controllerDlg( nullptr ),
 	m_show( true )
@@ -61,7 +62,7 @@ ControllerView::ControllerView( Controller * _model, QWidget * _parent ) :
 	auto hBox = new QHBoxLayout();
 	vBoxLayout->addLayout(hBox);
 
-	auto label = new QLabel("<b>" + _model->displayName() + "</b>", this);
+	auto label = new QLabel("<b>" + _controller->model()->displayName() + "</b>", this);
 	QSizePolicy sizePolicy = label->sizePolicy();
 	sizePolicy.setHorizontalStretch(1);
 	label->setSizePolicy(sizePolicy);
@@ -73,7 +74,7 @@ ControllerView::ControllerView( Controller * _model, QWidget * _parent ) :
 
 	hBox->addWidget(controlsButton);
 
-	m_nameLabel = new QLabel(_model->name(), this);
+	m_nameLabel = new QLabel(_controller->name(), this);
 	vBoxLayout->addWidget(m_nameLabel);
 
 
@@ -154,7 +155,7 @@ void ControllerView::renameController()
 	if( ok && !new_name.isEmpty() )
 	{
 		m_controller->setName( new_name );
-		if( getController()->type() == Controller::LfoController )
+		if( getController()->type() == IController::LfoController )
 		{
 			m_controllerDlg->setWindowTitle( tr( "LFO" ) + " (" + new_name + ")" );
 		}
@@ -171,7 +172,7 @@ void ControllerView::mouseDoubleClickEvent( QMouseEvent * event )
 
 void ControllerView::contextMenuEvent( QContextMenuEvent * )
 {
-	QPointer<CaptionMenu> contextMenu = new CaptionMenu( m_controller->displayName(), this );
+	QPointer<CaptionMenu> contextMenu = new CaptionMenu( m_controller->model()->displayName(), this );
 	contextMenu->addAction( embed::getIconPixmap( "cancel" ),
 						tr( "&Remove this controller" ),
 						this, SLOT(deleteController()));

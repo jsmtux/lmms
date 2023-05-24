@@ -32,7 +32,7 @@
 namespace lmms
 {
 
-class PatternClip;
+class IPatternClip;
 
 namespace gui
 {
@@ -41,7 +41,7 @@ class PatternClipView : public ClipView
 {
 	Q_OBJECT
 public:
-	PatternClipView(PatternClip* clip, TrackView* tv);
+	PatternClipView(IPatternClip* clip, TrackView* tv);
 	~PatternClipView() override = default;
 
 
@@ -61,7 +61,7 @@ protected:
 
 
 private:
-	PatternClip* m_patternClip;
+	IPatternClip* m_patternClip;
 	QPixmap m_paintPixmap;
 	
 	QStaticText m_staticTextName;

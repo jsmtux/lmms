@@ -1,34 +1,32 @@
 #include "ClipViewFactory.h"
 
 #include "AutomationClipView.h"
-#include "AutomationClip.h"
+#include "IClip.h"
 #include "PatternClipView.h"
-#include "PatternClip.h"
 #include "MidiClipView.h"
-#include "MidiClip.h"
 #include "SampleClipView.h"
-#include "SampleClip.h"
 
 namespace lmms
 {
 namespace gui
 {
 
-ClipView* ClipViewFactory::createClipView(TrackView* tv, Clip* clip) {
+ClipView* ClipViewFactory::createClipView(TrackView* tv, IClip* clip) {
     ClipView* ret = nullptr;
+    auto* clipTypeSpecific = clip->getClipTypeSpecificInterface();
     switch (clip->getType())
     {
     case ClipType::Automation:
-        ret = new AutomationClipView(static_cast<AutomationClip*>(clip), tv);
+        ret = new AutomationClipView(static_cast<IAutomationClip*>(clipTypeSpecific), tv);
         break;
     case ClipType::Pattern:
-        ret = new PatternClipView(static_cast<PatternClip*>(clip), tv);
+        ret = new PatternClipView(static_cast<IPatternClip*>(clipTypeSpecific), tv);
         break;    
     case ClipType::Midi:
-        ret = new MidiClipView(static_cast<MidiClip*>(clip), tv);
+        ret = new MidiClipView(static_cast<IMidiClip*>(clipTypeSpecific), tv);
         break;    
     case ClipType::Sample:
-        ret = new SampleClipView(static_cast<SampleClip*>(clip), tv);
+        ret = new SampleClipView(static_cast<ISampleClip*>(clipTypeSpecific), tv);
         break;
     }
     return ret;

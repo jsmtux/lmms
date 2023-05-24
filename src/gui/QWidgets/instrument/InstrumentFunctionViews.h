@@ -32,8 +32,8 @@ class QLabel;
 namespace lmms
 {
 
-class InstrumentFunctionArpeggio;
-class InstrumentFunctionNoteStacking;
+class IInstrumentFunctionArpeggio;
+class IInstrumentFunctionNoteStacking;
 
 namespace gui
 {
@@ -47,12 +47,12 @@ class InstrumentFunctionNoteStackingView : public QWidget
 {
 	Q_OBJECT
 public:
-	InstrumentFunctionNoteStackingView( InstrumentFunctionNoteStacking* cc, QWidget* parent = nullptr );
+	InstrumentFunctionNoteStackingView( IInstrumentFunctionNoteStacking* cc, QWidget* parent = nullptr );
 	~InstrumentFunctionNoteStackingView() override;
 
 
 private:
-	InstrumentFunctionNoteStacking * m_cc;
+	IInstrumentFunctionNoteStacking * m_cc;
 
 	GroupBox * m_chordsGroupBox;
 	ComboBox * m_chordsComboBox;
@@ -68,12 +68,12 @@ class InstrumentFunctionArpeggioView : public QWidget
 {
 	Q_OBJECT
 public:
-	InstrumentFunctionArpeggioView( InstrumentFunctionArpeggio* arp, QWidget* parent = nullptr );
+	InstrumentFunctionArpeggioView( IInstrumentFunctionArpeggio* arp, QWidget* parent = nullptr );
 	~InstrumentFunctionArpeggioView() override;
 
 
 private:
-	InstrumentFunctionArpeggio * m_a;
+	IInstrumentFunctionArpeggio * m_a;
 	GroupBox * m_arpGroupBox;
 	ComboBox * m_arpComboBox;
 	Knob * m_arpRangeKnob;

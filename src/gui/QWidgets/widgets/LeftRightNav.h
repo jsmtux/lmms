@@ -45,9 +45,7 @@ signals:
 	void onNavRight();
 private:
 	QHBoxLayout m_layout;
-	BoolModel m_leftBtnModel;
 	PixmapButton m_leftBtn;
-	BoolModel m_rightBtnModel;
 	PixmapButton m_rightBtn;
 };
 

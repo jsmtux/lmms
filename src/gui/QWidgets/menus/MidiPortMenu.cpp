@@ -31,27 +31,27 @@ namespace lmms::gui
 {
 
 
-MidiPortMenu::MidiPortMenu( MidiPort::Modes _mode, MidiPort* _midiPort ) :
-	m_midiPort(_midiPort),
-	m_mode( _mode )
+MidiPortMenu::MidiPortMenu( IMidiPort::Modes _mode, IMidiPort* _midiPort ) :
+	m_mode( _mode ),
+	m_midiPort(_midiPort)
 {
 	setFont( pointSize<9>( font() ) );
 	connect( this, SIGNAL(triggered(QAction*)),
 			this, SLOT(activatedPort(QAction*)));
-	if( m_mode == MidiPort::Input )
+	if( m_mode == IMidiPort::Input )
 	{
-		connect( m_midiPort, SIGNAL(readablePortsChanged()),
+		connect( m_midiPort->midiPortModel(), SIGNAL(readablePortsChanged()),
 				this, SLOT(updateMenu()));
 	}
-	else if( m_mode == MidiPort::Output )
+	else if( m_mode == IMidiPort::Output )
 	{
-		connect( m_midiPort, SIGNAL(writablePortsChanged()),
+		connect( m_midiPort->midiPortModel(), SIGNAL(writablePortsChanged()),
 				this, SLOT(updateMenu()));
 	}
 	updateMenu();
 	
-	QObject::connect( m_midiPort, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_midiPort, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_midiPort->model(), SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_midiPort->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
 	update();
 }
 
@@ -59,12 +59,12 @@ MidiPortMenu::MidiPortMenu( MidiPort::Modes _mode, MidiPort* _midiPort ) :
 
 void MidiPortMenu::activatedPort( QAction * _item )
 {
-	if( m_mode == MidiPort::Input )
+	if( m_mode == IMidiPort::Input )
 	{
 		m_midiPort->subscribeReadablePort( _item->text(),
 							_item->isChecked() );
 	}
-	else if( m_mode == MidiPort::Output )
+	else if( m_mode == IMidiPort::Output )
 	{
 		m_midiPort->subscribeWritablePort( _item->text(),
 							_item->isChecked() );
@@ -76,10 +76,10 @@ void MidiPortMenu::activatedPort( QAction * _item )
 
 void MidiPortMenu::updateMenu()
 {
-	const MidiPort::Map & map = ( m_mode == MidiPort::Input ) ?
+	const IMidiPort::Map & map = ( m_mode == IMidiPort::Input ) ?
 				m_midiPort->readablePorts() : m_midiPort->writablePorts();
 	clear();
-	for( MidiPort::Map::ConstIterator it = map.begin();
+	for( IMidiPort::Map::ConstIterator it = map.begin();
 							it != map.end(); ++it )
 	{
 		QAction * a = addAction( it.key() );

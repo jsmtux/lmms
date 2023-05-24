@@ -40,9 +40,9 @@ class QLineEdit;
 namespace lmms
 {
 
-class InstrumentTrack;
-class PlayHandle;
-class TrackContainer;
+class IInstrumentTrack;
+class IPlayHandle;
+class ITrackContainer;
 
 namespace gui
 {
@@ -131,15 +131,15 @@ private:
 	//! If a preview is playing, stop it.
 	void stopPreview();
 
-	void handleFile( FileItem * fi, InstrumentTrack * it );
-	void openInNewInstrumentTrack( TrackContainer* tc, FileItem* item );
+	void handleFile( FileItem * fi, IInstrumentTrack * it );
+	void openInNewInstrumentTrack( ITrackContainer* tc, FileItem* item );
 
 
 	bool m_mousePressed;
 	QPoint m_pressPos;
 
 	//! This should only be accessed or modified when m_pphMutex is held
-	PlayHandle* m_previewPlayHandle;
+	IPlayHandle* m_previewPlayHandle;
 	
 #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
 	QRecursiveMutex m_pphMutex;

@@ -27,7 +27,7 @@
 #include "GuiApplication.h"
 #include "MainWindow.h"
 #include "OutputSettings.h"
-#include "Song.h"
+#include "ISong.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -35,13 +35,14 @@
 namespace lmms::gui
 {
 
-ExportProjectDialog::ExportProjectDialog( const QString & _file_name,
-							QWidget * _parent, bool multi_export=false ) :
+ExportProjectDialog::ExportProjectDialog( const QString & _file_name, QWidget * _parent,
+						IProjectRenderer* _project_renderer, bool multi_export ) :
 	QDialog( _parent ),
 	Ui::ExportProjectDialog(),
 	m_fileName( _file_name ),
 	m_fileExtension(),
 	m_multiExport( multi_export ),
+	m_projectRenderer(_project_renderer),	
 	m_renderManager( nullptr )
 {
 	setupUi( this );
@@ -57,17 +58,17 @@ ExportProjectDialog::ExportProjectDialog( const QString & _file_name,
 	}
 
 	int cbIndex = 0;
-	for( int i = 0; i < ProjectRenderer::NumFileFormats; ++i )
+	for( int i = 0; i < IProjectRenderer::NumFileFormats; ++i )
 	{
-		if( ProjectRenderer::fileEncodeDevices[i].isAvailable() )
+		if( _project_renderer->getFileEncodeDeviceInterface(i)->isAvailable() )
 		{
 			// Get the extension of this format.
-			QString renderExt = ProjectRenderer::fileEncodeDevices[i].m_extension;
+			QString renderExt = _project_renderer->getFileEncodeDeviceInterface(i)->m_extension;
 
 			// Add to combo box.
-			fileFormatCB->addItem( ProjectRenderer::tr(
-				ProjectRenderer::fileEncodeDevices[i].m_description ),
-				QVariant( ProjectRenderer::fileEncodeDevices[i].m_fileFormat ) // Format tag; later used for identification.
+			fileFormatCB->addItem( QObject::tr(
+				_project_renderer->getFileEncodeDeviceInterface(i)->m_description ),
+				QVariant( _project_renderer->getFileEncodeDeviceInterface(i)->m_fileFormat ) // Format tag; later used for identification.
 			);
 
 			// If this is our extension, select it.
@@ -129,7 +130,7 @@ void ExportProjectDialog::accept()
 
 void ExportProjectDialog::closeEvent( QCloseEvent * _ce )
 {
-	Engine::getSong()->setLoopRenderCount(1);
+	IEngine::Instance()->getSongInterface()->setLoopRenderCount(1);
 	if( m_renderManager ) {
 		m_renderManager->abortProcessing();
 	}
@@ -155,10 +156,10 @@ OutputSettings::StereoMode mapToStereoMode(int index)
 
 void ExportProjectDialog::startExport()
 {
-	AudioEngine::qualitySettings qs =
-			AudioEngine::qualitySettings(
-					static_cast<AudioEngine::qualitySettings::Interpolation>(interpolationCB->currentIndex()),
-					static_cast<AudioEngine::qualitySettings::Oversampling>(oversamplingCB->currentIndex()) );
+	IAudioEngine::qualitySettings qs =
+			IAudioEngine::qualitySettings(
+					static_cast<IAudioEngine::qualitySettings::Interpolation>(interpolationCB->currentIndex()),
+					static_cast<IAudioEngine::qualitySettings::Oversampling>(oversamplingCB->currentIndex()) );
 
 	const auto samplerates = std::array{44100, 48000, 88200, 96000, 192000};
 	const auto bitrates = std::array{64, 128, 160, 192, 256, 320};
@@ -185,11 +186,11 @@ void ExportProjectDialog::startExport()
 	{
 		output_name+=m_fileExtension;
 	}
-	m_renderManager.reset(new RenderManager( qs, os, m_ft, output_name ));
+	m_renderManager = createRenderManager( qs, os, m_ft, output_name );
 
-	Engine::getSong()->setExportLoop( exportLoopCB->isChecked() );
-	Engine::getSong()->setRenderBetweenMarkers( renderMarkersCB->isChecked() );
-	Engine::getSong()->setLoopRenderCount(loopCountSB->value());
+	IEngine::Instance()->getSongInterface()->setExportLoop( exportLoopCB->isChecked() );
+	IEngine::Instance()->getSongInterface()->setRenderBetweenMarkers( renderMarkersCB->isChecked() );
+	IEngine::Instance()->getSongInterface()->setLoopRenderCount(loopCountSB->value());
 
 	connect( m_renderManager.get(), SIGNAL(progressChanged(int)),
 			progressBar, SLOT(setValue(int)));
@@ -217,27 +218,27 @@ void ExportProjectDialog::onFileFormatChanged(int index)
 	// and adjust the UI properly.
 	QVariant format_tag = fileFormatCB->itemData(index);
 	bool successful_conversion = false;
-	auto exportFormat = static_cast<ProjectRenderer::ExportFileFormats>(
+	auto exportFormat = static_cast<IProjectRenderer::ExportFileFormats>(
 		format_tag.toInt(&successful_conversion)
 	);
 	Q_ASSERT(successful_conversion);
 
-	bool stereoModeVisible = (exportFormat == ProjectRenderer::MP3File);
+	bool stereoModeVisible = (exportFormat == IProjectRenderer::MP3File);
 
-	bool sampleRateControlsVisible = (exportFormat != ProjectRenderer::MP3File);
+	bool sampleRateControlsVisible = (exportFormat != IProjectRenderer::MP3File);
 
 	bool bitRateControlsEnabled =
-			(exportFormat == ProjectRenderer::OggFile ||
-			 exportFormat == ProjectRenderer::MP3File);
+			(exportFormat == IProjectRenderer::OggFile ||
+			 exportFormat == IProjectRenderer::MP3File);
 
 	bool bitDepthControlEnabled =
-			(exportFormat == ProjectRenderer::WaveFile ||
-			 exportFormat == ProjectRenderer::FlacFile);
+			(exportFormat == IProjectRenderer::WaveFile ||
+			 exportFormat == IProjectRenderer::FlacFile);
 
-	bool variableBitrateVisible = !(exportFormat == ProjectRenderer::MP3File || exportFormat == ProjectRenderer::FlacFile);
+	bool variableBitrateVisible = !(exportFormat == IProjectRenderer::MP3File || exportFormat == IProjectRenderer::FlacFile);
 
 #ifdef LMMS_HAVE_SF_COMPLEVEL
-	bool compressionLevelVisible = (exportFormat == ProjectRenderer::FlacFile);
+	bool compressionLevelVisible = (exportFormat == IProjectRenderer::FlacFile);
 	compressionWidget->setVisible(compressionLevelVisible);
 #endif
 
@@ -252,12 +253,12 @@ void ExportProjectDialog::onFileFormatChanged(int index)
 
 void ExportProjectDialog::startBtnClicked()
 {
-	m_ft = ProjectRenderer::NumFileFormats;
+	m_ft = IProjectRenderer::NumFileFormats;
 
 	// Get file format from current menu selection.
 	bool successful_conversion = false;
 	QVariant tag = fileFormatCB->itemData(fileFormatCB->currentIndex());
-	m_ft = static_cast<ProjectRenderer::ExportFileFormats>(
+	m_ft = static_cast<IProjectRenderer::ExportFileFormats>(
 			tag.toInt(&successful_conversion)
 	);
 
@@ -272,11 +273,11 @@ void ExportProjectDialog::startBtnClicked()
 	}
 
 	// Find proper file extension.
-	for( int i = 0; i < ProjectRenderer::NumFileFormats; ++i )
+	for( int i = 0; i < IProjectRenderer::NumFileFormats; ++i )
 	{
-		if (m_ft == ProjectRenderer::fileEncodeDevices[i].m_fileFormat)
+		if (m_ft == m_projectRenderer->getFileEncodeDeviceInterface(i)->m_fileFormat)
 		{
-			m_fileExtension = QString( QLatin1String( ProjectRenderer::fileEncodeDevices[i].m_extension ) );
+			m_fileExtension = QString( QLatin1String( m_projectRenderer->getFileEncodeDeviceInterface(i)->m_extension ) );
 			break;
 		}
 	}

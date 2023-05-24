@@ -26,13 +26,14 @@
 
 #include <QAction>
 
-#include "DataFile.h"
+#include "IDataFile.h"
 #include "embed.h"
 #include "MainWindow.h"
-#include "MidiClip.h"
-#include "PatternStore.h"
-#include "PatternTrack.h"
-#include "Song.h"
+#include "IClip.h"
+#include "IPatternStore.h"
+#include "ITrack.h"
+#include "ISong.h"
+#include "IEngine.h"
 #include "StringPairDrag.h"
 
 #include "clips/ClipView.h"
@@ -44,7 +45,7 @@ namespace lmms::gui
 {
 
 
-PatternEditor::PatternEditor(PatternStore* ps) :
+PatternEditor::PatternEditor(IPatternStore* ps) :
 	TrackContainerView(&ps->trackContainer()),
 	m_ps(ps)
 {
@@ -72,9 +73,11 @@ void PatternEditor::removeSteps()
 
 	for (const auto& track : tl)
 	{
-		if (track->type() == Track::InstrumentTrack)
+		if (track->type() == ITrack::InstrumentTrack)
 		{
-			auto p = static_cast<MidiClip*>(track->getClip(m_ps->currentPattern()));
+			auto p = static_cast<IMidiClip*>(
+				track->getClip(m_ps->currentPattern())
+					->getClipTypeSpecificInterface());
 			p->removeSteps();
 		}
 	}
@@ -85,7 +88,7 @@ void PatternEditor::removeSteps()
 
 void PatternEditor::addSampleTrack()
 {
-	(void) Track::create( Track::SampleTrack, model() );
+	createSampleTrack( model() );
 }
 
 
@@ -93,7 +96,7 @@ void PatternEditor::addSampleTrack()
 
 void PatternEditor::addAutomationTrack()
 {
-	(void) Track::create( Track::AutomationTrack, model() );
+	createAutomationTrack( model() );
 }
 
 
@@ -129,12 +132,12 @@ void PatternEditor::dropEvent(QDropEvent* de)
 
 	if( type.left( 6 ) == "track_" )
 	{
-		DataFile dataFile( value.toUtf8() );
-		Track * t = Track::create( dataFile.content().firstChild().toElement(), model() );
+		auto dataFile = createDataFile( value.toUtf8() );
+		ITrack * t = createTrack( dataFile->content().firstChild().toElement(), model() );
 
 		// Ensure pattern clips exist
 		bool hasValidPatternClips = false;
-		if (t->getClips().size() == Engine::getSong()->numOfPatterns())
+		if (t->getClips().size() == IEngine::Instance()->getSongInterface()->numOfPatterns())
 		{
 			hasValidPatternClips = true;
 			for (int i = 0; i < t->getClips().size(); ++i)
@@ -149,9 +152,9 @@ void PatternEditor::dropEvent(QDropEvent* de)
 		if (!hasValidPatternClips)
 		{
 			t->deleteClips();
-			t->createClipsForPattern(Engine::getSong()->numOfPatterns() - 1);
+			t->createClipsForPattern(IEngine::Instance()->getSongInterface()->numOfPatterns() - 1);
 		}
-		Engine::getSong()->setUpPatternStoreTrack();
+		IEngine::Instance()->getSongInterface()->setUpPatternStoreTrack();
 
 		de->accept();
 	}
@@ -179,9 +182,9 @@ void PatternEditor::makeSteps( bool clone )
 
 	for (const auto& track : tl)
 	{
-		if (track->type() == Track::InstrumentTrack)
+		if (track->type() == ITrack::InstrumentTrack)
 		{
-			auto p = static_cast<MidiClip*>(track->getClip(m_ps->currentPattern()));
+			auto p = static_cast<IMidiClip*>(track->getClip(m_ps->currentPattern())->getClipTypeSpecificInterface());
 			if( clone )
 			{
 				p->cloneSteps();
@@ -197,16 +200,17 @@ void PatternEditor::makeSteps( bool clone )
 // TODO: Avoid repeated code from cloneTrack and clearTrack in TrackOperationsWidget somehow
 void PatternEditor::cloneClip()
 {
-	// Get the current PatternTrack id
+	// Get the current IPatternTrack id
 	const int currentPattern = m_ps->currentPattern();
 
-	PatternTrack* pt = PatternTrack::findPatternTrack(currentPattern);
+	IPatternTrack* pt = IPatternTrack::findPatternTrack(currentPattern);
 
 	if (pt)
 	{
 		// Clone the track
-		Track* newTrack = pt->clone();
-		m_ps->setCurrentPattern(static_cast<PatternTrack*>(newTrack)->patternIndex());
+		ITrack* newTrack = pt->baseTrack()->clone();
+		m_ps->setCurrentPattern(static_cast<IPatternTrack*>(
+			newTrack->getTrackTypeSpecificInterface())->patternIndex());
 
 		// Track still have the clips which is undesirable in this case, clear the track
 		newTrack->lock();
@@ -218,7 +222,7 @@ void PatternEditor::cloneClip()
 
 
 
-PatternEditorWindow::PatternEditorWindow(PatternStore* ps) :
+PatternEditorWindow::PatternEditorWindow(IPatternStore* ps) :
 	Editor(false),
 	m_editor(new PatternEditor(ps))
 {
@@ -232,7 +236,7 @@ PatternEditorWindow::PatternEditorWindow(PatternStore* ps) :
 	connect(m_toolBar, SIGNAL(dropped(QDropEvent*)), m_editor, SLOT(dropEvent(QDropEvent*)));
 
 	// TODO: Use style sheet
-	if (ConfigManager::inst()->value("ui", "compacttrackbuttons").toInt())
+	if (IConfigManager::Instance()->value("ui", "compacttrackbuttons").toInt())
 	{
 		setMinimumWidth(TRACK_OP_WIDTH_COMPACT + DEFAULT_SETTINGS_WIDGET_WIDTH_COMPACT + 2 * ClipView::BORDER_WIDTH + 384);
 	}
@@ -248,7 +252,7 @@ PatternEditorWindow::PatternEditorWindow(PatternStore* ps) :
 	// Pattern selector
 	DropToolBar* patternSelectionToolBar = addDropToolBarToTop(tr("Pattern selector"));
 
-	m_patternComboBox = new ComboBox(&ps->m_patternComboBoxModel, m_toolBar);
+	m_patternComboBox = new ComboBox(ps->patternComboboxModel(), m_toolBar);
 	m_patternComboBox->setFixedSize(200, ComboBox::DEFAULT_HEIGHT);
 
 	patternSelectionToolBar->addWidget(m_patternComboBox);
@@ -259,7 +263,7 @@ PatternEditorWindow::PatternEditorWindow(PatternStore* ps) :
 
 
 	trackAndStepActionsToolBar->addAction(embed::getIconPixmap("add_pattern_track"), tr("New pattern"),
-						Engine::getSong(), SLOT(addPatternTrack()));
+						IEngine::Instance()->getSongInterface(), SLOT(addPatternTrack()));
 	trackAndStepActionsToolBar->addAction(embed::getIconPixmap("clone_pattern_track_clip"), tr("Clone pattern"),
 						m_editor, SLOT(cloneClip()));
 	trackAndStepActionsToolBar->addAction(embed::getIconPixmap("add_sample_track"),	tr("Add sample-track"),
@@ -280,8 +284,8 @@ PatternEditorWindow::PatternEditorWindow(PatternStore* ps) :
 	trackAndStepActionsToolBar->addAction( embed::getIconPixmap("step_btn_duplicate"), tr("Clone Steps"),
 						m_editor, SLOT(cloneSteps()));
 
-	connect(&ps->m_patternComboBoxModel, SIGNAL(dataChanged()),
-			m_editor, SLOT(updatePosition()));
+	connect(ps->patternComboboxModel()->wrappedModel()->model(), &Model::dataChanged,
+			m_editor, &PatternEditor::updatePosition);
 
 	auto viewNext = new QAction(this);
 	connect(viewNext, SIGNAL(triggered()), m_patternComboBox, SLOT(selectNext()));
@@ -303,20 +307,20 @@ QSize PatternEditorWindow::sizeHint() const
 
 void PatternEditorWindow::play()
 {
-	if (Engine::getSong()->playMode() != Song::Mode_PlayPattern)
+	if (IEngine::Instance()->getSongInterface()->playMode() != ISong::Mode_PlayPattern)
 	{
-		Engine::getSong()->playPattern();
+		IEngine::Instance()->getSongInterface()->playPattern();
 	}
 	else
 	{
-		Engine::getSong()->togglePause();
+		IEngine::Instance()->getSongInterface()->togglePause();
 	}
 }
 
 
 void PatternEditorWindow::stop()
 {
-	Engine::getSong()->stop();
+	IEngine::Instance()->getSongInterface()->stop();
 }
 
 

@@ -25,7 +25,7 @@
 #ifndef LMMS_GUI_INSTRUMENT_TRACK_VIEW_H
 #define LMMS_GUI_INSTRUMENT_TRACK_VIEW_H
 
-#include "InstrumentTrack.h"
+#include "ITrack.h"
 #include "TrackView.h"
 
 namespace lmms::gui
@@ -43,17 +43,17 @@ class InstrumentTrackView : public TrackView
 {
 	Q_OBJECT
 public:
-	InstrumentTrackView( InstrumentTrack * _it, TrackContainerView* tc );
+	InstrumentTrackView( IInstrumentTrack * _it, TrackContainerView* tc );
 	~InstrumentTrackView() override;
 
 	InstrumentTrackWindow * getInstrumentTrackWindow();
 
-	InstrumentTrack * model()
+	IInstrumentTrack * model()
 	{
 		return m_instrumentTrack;
 	}
 
-	const InstrumentTrack * model() const
+	const IInstrumentTrack * model() const
 	{
 		return m_instrumentTrack;
 	}
@@ -91,7 +91,7 @@ private slots:
 
 
 private:
-	InstrumentTrack* m_instrumentTrack;
+	IInstrumentTrack* m_instrumentTrack;
 	InstrumentTrackWindow * m_window;
 
 	// widgets in track-settings-widget

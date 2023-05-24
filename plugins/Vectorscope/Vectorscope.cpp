@@ -47,7 +47,7 @@ extern "C" {
 }
 
 
-Vectorscope::Vectorscope(Model *parent, const Plugin::Descriptor::SubPluginFeatures::Key *key) :
+Vectorscope::Vectorscope(Model *parent, const Plugin::PluginDescriptor::Key *key) :
 	Effect(&vectorscope_plugin_descriptor, parent, key),
 	m_controls(this),
 	// Buffer is sized to cover 4* the current maximum LMMS audio buffer size,
@@ -77,7 +77,7 @@ extern "C" {
 	// needed for getting plugin out of shared lib
 	PLUGIN_EXPORT Plugin *lmms_plugin_main(Model *parent, void *data)
 	{
-		return new Vectorscope(parent, static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>(data));
+		return new Vectorscope(parent, static_cast<const Plugin::PluginDescriptor::Key *>(data));
 	}
 }
 

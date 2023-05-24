@@ -29,7 +29,7 @@
 #include <QVector>
 
 #include "editors/Rubberband.h"
-#include "Clip.h"
+#include "IClip.h"
 
 class QMenu;
 class QContextMenuEvent;
@@ -37,8 +37,7 @@ class QContextMenuEvent;
 namespace lmms
 {
 
-class DataFile;
-class Clip;
+class IDataFile;
 
 namespace gui
 {
@@ -68,12 +67,12 @@ class ClipView : public selectableObject
 public:
 	const static int BORDER_WIDTH = 2;
 
-	ClipView( Clip * clip, TrackView * tv );
+	ClipView( IClip * clip, TrackView * tv );
 	~ClipView() override;
 
 	bool fixedClips();
 
-	inline Clip * getClip()
+	inline IClip * getClip()
 	{
 		return m_clip;
 	}
@@ -178,7 +177,7 @@ protected:
 	float pixelsPerBar();
 
 
-	DataFile createClipDataFiles(const QVector<ClipView *> & clips) const;
+	std::unique_ptr<IDataFile> createClipDataFiles(const QVector<ClipView *> & clips) const;
 
 	virtual void paintTextLabel(QString const & text, QPainter & painter);
 
@@ -203,7 +202,7 @@ private:
 
 	static TextFloat * s_textFloat;
 
-	Clip * m_clip;
+	IClip * m_clip;
 	Actions m_action;
 	QPoint m_initialMousePos;
 	QPoint m_initialMouseGlobalPos;

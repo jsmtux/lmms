@@ -6,7 +6,6 @@
 #ifdef LMMS_HAVE_PORTAUDIO
 
 #include "AudioDeviceSetupWidget.h"
-#include "ComboBoxModel.h"
 #include "widgets/ComboBox.h"
 
 namespace lmms
@@ -21,8 +20,8 @@ public slots:
 	void updateChannels();
 
 public:
-	ComboBoxModel m_backendModel;
-	ComboBoxModel m_deviceModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_backendModel;
+	std::unique_ptr<IComboBoxModelWrapper> m_deviceModel;
 };
 
 namespace gui

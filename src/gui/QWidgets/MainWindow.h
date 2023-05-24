@@ -25,7 +25,7 @@
 #ifndef LMMS_GUI_MAIN_WINDOW_H
 #define LMMS_GUI_MAIN_WINDOW_H
 
-#include "ConfigManager.h"
+#include "IConfigManager.h"
 #include "IMainWindow.h"
 #include "ToolPluginView.h"
 
@@ -44,7 +44,7 @@ class QMdiArea;
 namespace lmms
 {
 
-class ConfigManager;
+class IProjectRenderer;
 
 namespace gui
 {
@@ -71,6 +71,8 @@ class MainWindow : public QMainWindow, public IMainWindow
 {
 	Q_OBJECT
 public:
+	MainWindow(IProjectRenderer* _renderer);
+
 	QMdiArea* workspace()
 	{
 		return m_workspace;
@@ -127,7 +129,7 @@ public:
 
 	static const int m_autoSaveShortTime = 10 * 1000; // 10s short loop
 
-	void autoSaveTimerReset( int msec = ConfigManager::inst()->
+	void autoSaveTimerReset( int msec = IConfigManager::Instance()->
 					value( "ui", "saveinterval" ).toInt()
 						* 60 * 1000 )
 	{
@@ -218,7 +220,6 @@ protected:
 
 
 private:
-	MainWindow();
 	MainWindow( const MainWindow & );
 	~MainWindow() override;
 
@@ -231,6 +232,8 @@ private:
 	void handleSaveResult(QString const & filename, bool songSavedSuccessfully);
 	bool guiSaveProject();
 	bool guiSaveProjectAs( const QString & filename );
+
+	IProjectRenderer* m_renderer;
 
 	QMdiArea * m_workspace;
 

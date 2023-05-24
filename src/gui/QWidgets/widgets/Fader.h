@@ -69,11 +69,11 @@ public:
 	Q_PROPERTY( QColor peakYellow READ peakYellow WRITE setPeakYellow )
 	Q_PROPERTY( bool levelsDisplayedInDBFS READ getLevelsDisplayedInDBFS WRITE setLevelsDisplayedInDBFS )
 
-	Fader( FloatModel * _model, const QString & _name, QWidget * _parent );
-	Fader( FloatModel * _model, const QString & _name, QWidget * _parent, QPixmap * back, QPixmap * leds, QPixmap * knob );
+	Fader( IFloatAutomatableModel * _model, const QString & _name, QWidget * _parent );
+	Fader( IFloatAutomatableModel * _model, const QString & _name, QWidget * _parent, QPixmap * back, QPixmap * leds, QPixmap * knob );
 	~Fader() override = default;
 
-	void init(FloatModel * model, QString const & name);
+	void init(IFloatAutomatableModel * model, QString const & name);
 
 	void setPeak_L( float fPeak );
 	float getPeak_L() {	return m_fPeakValue_L;	}

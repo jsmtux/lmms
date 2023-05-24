@@ -42,21 +42,17 @@ void KnobControl::setText(const QString &text) { m_knob->setLabel(text); }
 
 QWidget *KnobControl::topWidget() { return m_knob; }
 
-FloatModel *KnobControl::model() { return m_knob->model(); }
+FloatModelView* KnobControl::modelView() { return m_knob; }
 
-AutomatableModelView* KnobControl::modelView() { return m_knob; }
-
-KnobControl::KnobControl(FloatModel* _model, QWidget *parent) :
+KnobControl::KnobControl(IFloatAutomatableModel* _model, QWidget *parent) :
 	m_knob(new Knob(_model, parent)) {}
 
 
 void ComboControl::setText(const QString &text) { m_label->setText(text); }
 
-ComboBoxModel *ComboControl::model() { return m_combo->model(); }
+IntModelView* ComboControl::modelView() { return m_combo; }
 
-AutomatableModelView* ComboControl::modelView() { return m_combo; }
-
-ComboControl::ComboControl(ComboBoxModel* _model, QWidget *parent) :
+ComboControl::ComboControl(IComboBoxModelWrapper* _model, QWidget *parent) :
 	m_widget(new QWidget(parent)),
 	m_combo(new ComboBox(_model, parent)),
 	m_label(new QLabel(m_widget))
@@ -74,11 +70,9 @@ void CheckControl::setText(const QString &text) { m_label->setText(text); }
 
 QWidget *CheckControl::topWidget() { return m_widget; }
 
-BoolModel *CheckControl::model() { return m_checkBox->model(); }
+BoolModelView* CheckControl::modelView() { return m_checkBox; }
 
-AutomatableModelView* CheckControl::modelView() { return m_checkBox; }
-
-CheckControl::CheckControl(BoolModel* _model, QWidget *parent) :
+CheckControl::CheckControl(IBoolAutomatableModel* _model, QWidget *parent) :
 	m_widget(new QWidget(parent)),
 	m_checkBox(new LedCheckBox(_model, parent, QString(), LedCheckBox::Green)),
 	m_label(new QLabel(m_widget))
@@ -95,11 +89,9 @@ void LcdControl::setText(const QString &text) { m_lcd->setLabel(text); }
 
 QWidget *LcdControl::topWidget() { return m_lcd; }
 
-IntModel *LcdControl::model() { return m_lcd->model(); }
+IntModelView* LcdControl::modelView() { return m_lcd; }
 
-AutomatableModelView* LcdControl::modelView() { return m_lcd; }
-
-LcdControl::LcdControl(int numDigits, IntModel* _model, QWidget *parent) :
+LcdControl::LcdControl(int numDigits, IIntAutomatableModel* _model, QWidget *parent) :
 	m_lcd(new LcdSpinBox(numDigits, _model, parent))
 {
 }

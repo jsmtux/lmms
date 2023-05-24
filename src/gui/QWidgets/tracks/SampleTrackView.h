@@ -31,7 +31,7 @@
 namespace lmms
 {
 
-class SampleTrack;
+class ISampleTrack;
 
 
 namespace gui
@@ -46,7 +46,7 @@ class SampleTrackView : public TrackView
 {
 	Q_OBJECT
 public:
-	SampleTrackView( SampleTrack* Track, TrackContainerView* tcv );
+	SampleTrackView( ISampleTrack* Track, TrackContainerView* tcv );
 	~SampleTrackView() override;
 
 	SampleTrackWindow * getSampleTrackWindow()
@@ -54,12 +54,12 @@ public:
 		return m_window;
 	}
 
-	SampleTrack * model()
+	ISampleTrack * model()
 	{
 		return m_sampleTrack;
 	}
 
-	const SampleTrack * model() const
+	const ISampleTrack * model() const
 	{
 		return m_sampleTrack;
 	}
@@ -88,7 +88,7 @@ private slots:
 
 
 private:
-	SampleTrack* m_sampleTrack;
+	ISampleTrack* m_sampleTrack;
 	SampleTrackWindow * m_window;
 	Knob * m_volumeKnob;
 	Knob * m_panningKnob;

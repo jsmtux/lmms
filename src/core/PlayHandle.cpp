@@ -33,7 +33,7 @@
 namespace lmms
 {
 
-PlayHandle::PlayHandle(const Type type, f_cnt_t offset) :
+PlayHandle::PlayHandle(const PlayHandleType type, f_cnt_t offset) :
 		m_type(type),
 		m_offset(offset),
 		m_affinity(QThread::currentThread()),

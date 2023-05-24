@@ -29,16 +29,15 @@
 #include <QScrollBar>
 #include <QWheelEvent>
 
-#include "TrackContainer.h"
-#include "AudioEngine.h"
-#include "DataFile.h"
+#include "ITrackContainer.h"
+#include "IAudioEngine.h"
+#include "IDataFile.h"
 #include "MainWindow.h"
 #include "FileBrowser.h"
 #include "ImportFilter.h"
-#include "Instrument.h"
-#include "InstrumentTrack.h"
-#include "PatternTrack.h"
-#include "Song.h"
+#include "IPlugin.h"
+#include "ITrack.h"
+#include "ISong.h"
 #include "StringPairDrag.h"
 #include "GuiApplication.h"
 #include "PluginFactory.h"
@@ -52,7 +51,7 @@ namespace lmms
 using namespace std;
 
 
-InstrumentLoaderThread::InstrumentLoaderThread( QObject *parent, InstrumentTrack *it, QString name ) :
+InstrumentLoaderThread::InstrumentLoaderThread( QObject *parent, IInstrumentTrack *it, QString name ) :
 	QThread( parent ),
 	m_it( it ),
 	m_name( name )
@@ -65,18 +64,15 @@ InstrumentLoaderThread::InstrumentLoaderThread( QObject *parent, InstrumentTrack
 
 void InstrumentLoaderThread::run()
 {
-	Instrument *i = m_it->loadInstrument(m_name, nullptr,
+	IInstrument *i = m_it->loadInstrument(m_name, nullptr,
 										 true /*always DnD*/);
-	QObject *parent = i->parent();
-	i->setParent( 0 );
-	i->moveToThread( m_containerThread );
-	i->setParent( parent );
+	i->moveToThread(*m_containerThread);
 }
 
 namespace gui
 {
 
-TrackContainerView::TrackContainerView( TrackContainer * _tc ) :
+TrackContainerView::TrackContainerView( ITrackContainer * _tc ) :
 	QWidget(),
 	JournallingObject(),
 	SerializingObjectHook(),
@@ -109,10 +105,10 @@ TrackContainerView::TrackContainerView( TrackContainer * _tc ) :
 
 	setAcceptDrops( true );
 
-	connect( Engine::getSong(), SIGNAL(timeSignatureChanged(int,int)),
+	connect( IEngine::Instance()->getSongInterface(), SIGNAL(timeSignatureChanged(int,int)),
 						this, SLOT(realignTracks()));
-	connect( m_tc, SIGNAL(trackAdded(lmms::Track*)),
-			this, SLOT(createTrackView(lmms::Track*)),
+	connect( m_tc, SIGNAL(trackAdded(lmms::ITrack*)),
+			this, SLOT(createTrackView(lmms::ITrack*)),
 			Qt::QueuedConnection );
 }
 
@@ -173,9 +169,9 @@ void TrackContainerView::removeTrackView( TrackView * _tv )
 		m_scrollLayout->removeWidget( _tv );
 
 		realignTracks();
-		if( Engine::getSong() )
+		if( IEngine::Instance()->getSongInterface() )
 		{
-			Engine::getSong()->setModified();
+			IEngine::Instance()->getSongInterface()->setModified();
 		}
 	}
 }
@@ -192,16 +188,16 @@ void TrackContainerView::moveTrackView( TrackView * trackView, int indexTo )
 	int indexFrom = m_trackViews.indexOf( trackView );
 	if ( indexFrom == indexTo ) { return; }
 
-	PatternTrack::swapPatternTracks( trackView->getTrack(),
+	IPatternTrack::swapPatternTracks( trackView->getTrack(),
 			m_trackViews[indexTo]->getTrack() );
 
 	m_scrollLayout->removeWidget( trackView );
 	m_scrollLayout->insertWidget( indexTo, trackView );
 
-	Track * track = m_tc->m_tracks[indexFrom];
+	ITrack * track = m_tc->tracks()[indexFrom];
 
-	m_tc->m_tracks.remove( indexFrom );
-	m_tc->m_tracks.insert( indexTo, track );
+	m_tc->tracks().remove( indexFrom );
+	m_tc->tracks().insert( indexTo, track );
 	m_trackViews.move( indexFrom, indexTo );
 
 	realignTracks();
@@ -271,7 +267,7 @@ void TrackContainerView::realignTracks()
 
 
 
-TrackView * TrackContainerView::createTrackView( Track * _t )
+TrackView * TrackContainerView::createTrackView( ITrack * _t )
 {
 	//m_tc->addJournalCheckPoint();
 
@@ -292,13 +288,13 @@ void TrackContainerView::deleteTrackView( TrackView * _tv )
 {
 	//m_tc->addJournalCheckPoint();
 
-	Track * t = _tv->getTrack();
+	ITrack * t = _tv->getTrack();
 	removeTrackView( _tv );
 	delete _tv;
 
-	Engine::audioEngine()->requestChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->requestChangeInModel();
 	delete t;
-	Engine::audioEngine()->doneChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 }
 
 
@@ -359,7 +355,7 @@ void TrackContainerView::clearAllTracks()
 	while( !m_trackViews.empty() )
 	{
 		TrackView * tv = m_trackViews.takeLast();
-		Track * t = tv->getTrack();
+		ITrack * t = tv->getTrack();
 		delete tv;
 		delete t;
 	}
@@ -374,8 +370,8 @@ void TrackContainerView::dragEnterEvent( QDragEnterEvent * _dee )
 		QString( "presetfile,pluginpresetfile,samplefile,instrument,"
 				"importedproject,soundfontfile,patchfile,vstpluginfile,projectfile,"
 				"track_%1,track_%2" ).
-						arg( Track::InstrumentTrack ).
-						arg( Track::SampleTrack ) );
+						arg( ITrack::InstrumentTrack ).
+						arg( ITrack::SampleTrack ) );
 }
 
 
@@ -396,7 +392,7 @@ void TrackContainerView::dropEvent( QDropEvent * _de )
 	QString value = StringPairDrag::decodeValue( _de );
 	if( type == "instrument" )
 	{
-		auto it = dynamic_cast<InstrumentTrack*>(Track::create(Track::InstrumentTrack, m_tc));
+		auto it = createInstrumentTrack(m_tc);
 		auto ilt = new InstrumentLoaderThread(this, it, value);
 		ilt->start();
 		//it->toggledInstrumentTrackButton( true );
@@ -406,20 +402,20 @@ void TrackContainerView::dropEvent( QDropEvent * _de )
 		|| type == "soundfontfile" || type == "vstpluginfile"
 		|| type == "patchfile" )
 	{
-		auto it = dynamic_cast<InstrumentTrack*>(Track::create(Track::InstrumentTrack, m_tc));
-		PluginFactory::PluginInfoAndKey piakn =
+		auto it = createInstrumentTrack(m_tc);
+		PluginFactory::PluginNameAndKey piakn =
 			getPluginFactory()->pluginSupportingExtension(FileItem::extension(value));
-		Instrument * i = it->loadInstrument(piakn.info.name(), &piakn.key);
+		IInstrument * i = it->loadInstrument(piakn.name, &piakn.key);
 		i->loadFile( value );
 		//it->toggledInstrumentTrackButton( true );
 		_de->accept();
 	}
 	else if( type == "presetfile" )
 	{
-		DataFile dataFile( value );
-		auto it = dynamic_cast<InstrumentTrack*>(Track::create(Track::InstrumentTrack, m_tc));
-		it->setSimpleSerializing();
-		it->loadSettings( dataFile.content().toElement() );
+		auto dataFile = createDataFile( value );
+		auto it = createInstrumentTrack(m_tc);
+		it->baseTrack()->setSimpleSerializing();
+		it->loadSettings( dataFile->content().toElement() );
 		//it->toggledInstrumentTrackButton( true );
 		_de->accept();
 	}
@@ -433,15 +429,15 @@ void TrackContainerView::dropEvent( QDropEvent * _de )
 	{
 		if( getGUI()->mainWindow()->mayChangeProject(true) )
 		{
-			Engine::getSong()->loadProject( value );
+			IEngine::Instance()->getSongInterface()->loadProject( value );
 		}
 		_de->accept();
 	}
 
 	else if( type.left( 6 ) == "track_" )
 	{
-		DataFile dataFile( value.toUtf8() );
-		Track::create( dataFile.content().firstChild().toElement(), m_tc );
+		auto dataFile = createDataFile( value.toUtf8() );
+		createTrack( dataFile->content().firstChild().toElement(), m_tc );
 		_de->accept();
 	}
 }

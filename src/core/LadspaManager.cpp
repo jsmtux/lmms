@@ -33,7 +33,7 @@
 
 #include "ConfigManager.h"
 #include "LadspaManager.h"
-#include "PluginFactory.h"
+#include "IPluginFactory.h"
 
 
 namespace lmms
@@ -43,7 +43,7 @@ namespace lmms
 LadspaManager::LadspaManager()
 {
 	// Make sure plugin search paths are set up
-	PluginFactory::setupSearchPaths();
+	IPluginFactory::Instance()->setupSearchPaths();
 
 	QStringList ladspaDirectories = QString( getenv( "LADSPA_PATH" ) ).
 								split( LADSPA_PATH_SEPERATOR );
@@ -51,7 +51,7 @@ LadspaManager::LadspaManager()
 
 	ladspaDirectories.push_back( "plugins:ladspa" );
 #ifndef LMMS_BUILD_WIN32
-	ladspaDirectories.push_back( qApp->applicationDirPath() + '/' + LIB_DIR + "ladspa" );
+	// ladspaDirectories.push_back( qApp->applicationDirPath() + '/' + LIB_DIR + "ladspa" );
 	ladspaDirectories.push_back( "/usr/lib/ladspa" );
 	ladspaDirectories.push_back( "/usr/lib64/ladspa" );
 	ladspaDirectories.push_back( "/usr/local/lib/ladspa" );

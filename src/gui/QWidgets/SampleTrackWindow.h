@@ -25,8 +25,8 @@
 #ifndef LMMS_GUI_SAMPLE_TRACK_WINDOW_H
 #define LMMS_GUI_SAMPLE_TRACK_WINDOW_H
 
-#include "SampleTrack.h"
 #include "SerializingObject.h"
+#include "ITrack.h"
 
 #include <QWidget>
 
@@ -48,12 +48,12 @@ public:
 	SampleTrackWindow(SampleTrackView * tv);
 	~SampleTrackWindow() override = default;
 
-	SampleTrack * model()
+	ISampleTrack * model()
 	{
 		return m_track;
 	}
 
-	const SampleTrack * model() const
+	const ISampleTrack * model() const
 	{
 		return m_track;
 	}
@@ -80,7 +80,7 @@ protected:
 	void loadSettings(const QDomElement & element) override;
 
 private:
-	SampleTrack * m_track;
+	ISampleTrack * m_track;
 	SampleTrackView * m_stv;
 
 	// widgets on the top of an sample-track-window

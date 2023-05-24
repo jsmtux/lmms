@@ -28,7 +28,7 @@
 #define LMMS_GUI_VERSIONED_SAVE_DIALOG_H
 
 #include "FileDialog.h"
-#include "Song.h"
+#include "ISong.h"
 
 class QLineEdit;
 
@@ -39,7 +39,7 @@ class LedCheckBox;
 
 class SaveOptionsWidget : public QWidget {
 public:
-	SaveOptionsWidget(Song::SaveOptions &saveOptions);
+	SaveOptionsWidget(ISong::ISaveOptions &saveOptions);
 
 private:
 	LedCheckBox *m_discardMIDIConnectionsCheckbox;

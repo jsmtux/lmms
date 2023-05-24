@@ -39,8 +39,8 @@ class LMMS_EXPORT LcdFloatSpinBox : public QWidget, public FloatModelView
 {
 	Q_OBJECT
 public:
-	LcdFloatSpinBox(int numWhole, int numFrac, FloatModel* _model, const QString& name = QString(), QWidget* parent = nullptr);
-	LcdFloatSpinBox(int numWhole, int numFrac, const QString& style, const QString& name, FloatModel* _model, QWidget* parent = nullptr);
+	LcdFloatSpinBox(int numWhole, int numFrac, IFloatAutomatableModel* _model, const QString& name = QString(), QWidget* parent = nullptr);
+	LcdFloatSpinBox(int numWhole, int numFrac, const QString& style, const QString& name, IFloatAutomatableModel* _model, QWidget* parent = nullptr);
 
 	void setLabel(const QString &label) { m_label = label; }
 
@@ -74,7 +74,7 @@ signals:
 
 };
 
-using LcdFloatSpinBoxModel = FloatModel;
+// using LcdFloatSpinBoxModel = FloatModel;
 
 } // namespace lmms::gui
 

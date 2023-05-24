@@ -70,7 +70,7 @@ Plugin::Descriptor PLUGIN_EXPORT ladspaeffect_plugin_descriptor =
 
 
 LadspaEffect::LadspaEffect( Model * _parent,
-			const Descriptor::SubPluginFeatures::Key * _key ) :
+			const PluginDescriptor::Key * _key ) :
 	Effect( &ladspaeffect_plugin_descriptor, _parent, _key ),
 	m_controls( nullptr ),
 	m_maxSampleRate( 0 ),
@@ -601,7 +601,7 @@ extern "C"
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model * _parent, void * _data )
 {
 	return new LadspaEffect( _parent,
-		static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>(
+		static_cast<const Plugin::PluginDescriptor::Key *>(
 								_data ) );
 }
 

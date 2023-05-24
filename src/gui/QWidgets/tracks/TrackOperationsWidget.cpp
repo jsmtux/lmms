@@ -24,17 +24,17 @@
 
 #include "TrackOperationsWidget.h"
 
-#include "AutomationClip.h"
+#include "IClip.h"
 #include "AutomationTrackView.h"
-#include "ConfigManager.h"
-#include "DataFile.h"
+#include "IConfigManager.h"
+#include "IDataFile.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "gui_templates.h"
 #include "InstrumentTrackView.h"
-#include "Song.h"
+#include "ISong.h"
 #include "StringPairDrag.h"
-#include "Track.h"
+#include "ITrack.h"
 #include "TrackView.h"
 
 #include "editors/TrackContainerView.h"
@@ -59,7 +59,9 @@ namespace lmms::gui
  *
  * \param parent the trackView to contain this widget
  */
-TrackOperationsWidget::TrackOperationsWidget( TrackView * parent, BoolModel* muteModel, BoolModel* soloModel ) :
+TrackOperationsWidget::TrackOperationsWidget( TrackView * parent,
+											IBoolAutomatableModel* muteModel,
+											IBoolAutomatableModel* soloModel ) :
 	QWidget( parent ),             /*!< The parent widget */
 	m_trackView( parent )          /*!< The parent track view */
 {
@@ -91,7 +93,7 @@ TrackOperationsWidget::TrackOperationsWidget( TrackView * parent, BoolModel* mut
 	m_soloBtn->setInactiveGraphic( embed::getIconPixmap( "led_off" ) );
 	m_soloBtn->setCheckable( true );
 
-	if( ConfigManager::inst()->value( "ui",
+	if( IConfigManager::Instance()->value( "ui",
 					  "compacttrackbuttons" ).toInt() )
 	{
 		m_muteBtn->move( 46, 0 );
@@ -114,7 +116,7 @@ TrackOperationsWidget::TrackOperationsWidget( TrackView * parent, BoolModel* mut
 				SLOT(deleteTrackView(lmms::gui::TrackView*)),
 							Qt::QueuedConnection );
 
-	connect( m_trackView->getTrack()->getMutedModel(), SIGNAL(dataChanged()),
+	connect( m_trackView->getTrack()->getMutedModel()->model(), SIGNAL(dataChanged()),
 			this, SLOT(update()));
 
 	connect(m_trackView->getTrack(), SIGNAL(colorChanged()), this, SLOT(update()));
@@ -140,13 +142,13 @@ void TrackOperationsWidget::mousePressEvent( QMouseEvent * me )
 {
 	if( me->button() == Qt::LeftButton &&
 		me->modifiers() & Qt::ControlModifier &&
-			m_trackView->getTrack()->type() != Track::PatternTrack)
+			m_trackView->getTrack()->type() != ITrack::PatternTrack)
 	{
-		DataFile dataFile( DataFile::DragNDropData );
-		m_trackView->getTrack()->saveState( dataFile, dataFile.content() );
+		auto dataFile = createDataFile( IDataFile::DragNDropData );
+		m_trackView->getTrack()->saveState( *dataFile, dataFile->content() );
 		new StringPairDrag( QString( "track_%1" ).arg(
 					m_trackView->getTrack()->type() ),
-			dataFile.toString(), m_trackView->getTrackSettingsWidget()->grab(),
+			dataFile->toString(), m_trackView->getTrackSettingsWidget()->grab(),
 									this );
 	}
 	else if( me->button() == Qt::LeftButton )
@@ -190,7 +192,7 @@ void TrackOperationsWidget::paintEvent( QPaintEvent * pe )
 /*! \brief Show a message box warning the user that this track is about to be closed */
 bool TrackOperationsWidget::confirmRemoval()
 {
-	bool needConfirm = ConfigManager::inst()->value("ui", "trackdeletionwarning", "1").toInt();
+	bool needConfirm = IConfigManager::Instance()->value("ui", "trackdeletionwarning", "1").toInt();
 	if (!needConfirm){ return true; }
 	
 	QString messageRemoveTrack = tr("After removing a track, it can not "
@@ -199,9 +201,9 @@ bool TrackOperationsWidget::confirmRemoval()
 	QString messageTitleRemoveTrack = tr("Confirm removal");
 	QString askAgainText = tr("Don't ask again");
 	auto askAgainCheckBox = new QCheckBox(askAgainText, nullptr);
-	connect(askAgainCheckBox, &QCheckBox::stateChanged, [this](int state){
+	connect(askAgainCheckBox, &QCheckBox::stateChanged, [](int state){
 		// Invert button state, if it's checked we *shouldn't* ask again
-		ConfigManager::inst()->setValue("ui", "trackdeletionwarning", state ? "0" : "1");
+		IConfigManager::Instance()->setValue("ui", "trackdeletionwarning", state ? "0" : "1");
 	});
 
 	QMessageBox mb(this);
@@ -231,7 +233,7 @@ void TrackOperationsWidget::cloneTrack()
 {
 	TrackContainerView *tcView = m_trackView->trackContainerView();
 
-	Track *newTrack = m_trackView->getTrack()->clone();
+	ITrack *newTrack = m_trackView->getTrack()->clone();
 	TrackView *newTrackView = tcView->createTrackView( newTrack );
 
 	int index = tcView->trackViews().indexOf( m_trackView );
@@ -247,7 +249,7 @@ void TrackOperationsWidget::cloneTrack()
 /*! \brief Clear this track - clears all Clips from the track */
 void TrackOperationsWidget::clearTrack()
 {
-	Track * t = m_trackView->getTrack();
+	ITrack * t = m_trackView->getTrack();
 	t->addJournalCheckPoint();
 	t->lock();
 	t->deleteClips();
@@ -278,7 +280,7 @@ void TrackOperationsWidget::selectTrackColor()
 	auto track = m_trackView->getTrack();
 	track->addJournalCheckPoint();
 	track->setColor(new_color);
-	Engine::getSong()->setModified();
+	IEngine::Instance()->getSongInterface()->setModified();
 }
 
 void TrackOperationsWidget::resetTrackColor()
@@ -286,7 +288,7 @@ void TrackOperationsWidget::resetTrackColor()
 	auto track = m_trackView->getTrack();
 	track->addJournalCheckPoint();
 	track->resetColor();
-	Engine::getSong()->setModified();
+	IEngine::Instance()->getSongInterface()->setModified();
 }
 
 void TrackOperationsWidget::randomizeTrackColor()
@@ -295,7 +297,7 @@ void TrackOperationsWidget::randomizeTrackColor()
 	auto track = m_trackView->getTrack();
 	track->addJournalCheckPoint();
 	track->setColor(buffer);
-	Engine::getSong()->setModified();
+	IEngine::Instance()->getSongInterface()->setModified();
 }
 
 void TrackOperationsWidget::resetClipColors()
@@ -306,7 +308,7 @@ void TrackOperationsWidget::resetClipColors()
 	{
 		clip->useCustomClipColor(false);
 	}
-	Engine::getSong()->setModified();
+	IEngine::Instance()->getSongInterface()->setModified();
 }
 
 
@@ -368,9 +370,9 @@ void TrackOperationsWidget::toggleRecording( bool on )
 	auto atv = dynamic_cast<AutomationTrackView*>(m_trackView);
 	if( atv )
 	{
-		for( Clip * clip : atv->getTrack()->getClips() )
+		for( auto * clip : atv->getTrack()->getClips() )
 		{
-			auto ap = dynamic_cast<AutomationClip*>(clip);
+			auto ap = dynamic_cast<IAutomationClip*>(clip);
 			if( ap ) { ap->setRecording( on ); }
 		}
 		atv->update();

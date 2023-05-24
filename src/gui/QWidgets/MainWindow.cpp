@@ -26,7 +26,7 @@
 
 #include "ControllerRackView.h"
 #include "embed.h"
-#include "Engine.h"
+#include "IEngine.h"
 #include "FileBrowser.h"
 #include "MixerView.h"
 #include "GuiApplication.h"
@@ -36,10 +36,10 @@
 #include "PluginBrowser.h"
 #include "PluginFactory.h"
 #include "PluginView.h"
-#include "ProjectJournal.h"
+#include "IProjectJournal.h"
 #include "ProjectNotes.h"
-#include "ProjectRenderer.h"
-#include "RemotePlugin.h"
+#include "IProjectRenderer.h"
+// #include "RemotePlugin.h"
 #include "SideBar.h"
 #include "SubWindow.h"
 
@@ -112,7 +112,8 @@ void ProgressModal::updateDescription(QString description) {
 }
 
 
-MainWindow::MainWindow() :
+MainWindow::MainWindow(IProjectRenderer* _renderer) :
+	m_renderer(_renderer),
 	m_workspace( nullptr ),
 	m_toolsMenu( nullptr ),
 	m_autoSaveTimer( this ),
@@ -137,7 +138,7 @@ MainWindow::MainWindow() :
 	auto splitter = new QSplitter(Qt::Horizontal, w);
 	splitter->setChildrenCollapsible( false );
 
-	ConfigManager* confMgr = ConfigManager::inst();
+	auto* confMgr = IConfigManager::Instance();
 	bool sideBarOnRight = confMgr->value("ui", "sidebaronright").toInt();
 
 	emit initProgress(tr("Preparing plugin browser"));
@@ -203,7 +204,7 @@ MainWindow::MainWindow() :
 
 	// Load background
 	emit initProgress(tr("Loading background picture"));
-	QString backgroundPicFile = ConfigManager::inst()->backgroundPicFile();
+	QString backgroundPicFile = IConfigManager::Instance()->backgroundPicFile();
 	QImage backgroundPic;
 	if( !backgroundPicFile.isEmpty() )
 	{
@@ -249,14 +250,14 @@ MainWindow::MainWindow() :
 
 	m_updateTimer.start( 1000 / 60, this );  // 60 fps
 
-	if( ConfigManager::inst()->value( "ui", "enableautosave" ).toInt() )
+	if( IConfigManager::Instance()->value( "ui", "enableautosave" ).toInt() )
 	{
 		// connect auto save
 		connect(&m_autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
-		m_autoSaveInterval = ConfigManager::inst()->value(
+		m_autoSaveInterval = IConfigManager::Instance()->value(
 					"ui", "saveinterval" ).toInt() < 1 ?
 						DEFAULT_AUTO_SAVE_INTERVAL :
-				ConfigManager::inst()->value(
+				IConfigManager::Instance()->value(
 					"ui", "saveinterval" ).toInt();
 
 		// The auto save function mustn't run until there is a project
@@ -265,18 +266,18 @@ MainWindow::MainWindow() :
 		// See autoSaveTimerReset() in MainWindow.h
 	}
 
-	connect( Engine::getSong(), SIGNAL(playbackStateChanged()),
+	connect( IEngine::Instance()->getSongInterface(), SIGNAL(playbackStateChanged()),
 				this, SLOT(updatePlayPauseIcons()));
 
-	connect(Engine::getSong(), SIGNAL(stopped()), SLOT(onSongStopped()));
+	connect(IEngine::Instance()->getSongInterface(), SIGNAL(stopped()), SLOT(onSongStopped()));
 
-	connect(Engine::getSong(), SIGNAL(modified()), SLOT(onSongModified()));
-	connect(Engine::getSong(), SIGNAL(projectFileNameChanged()), SLOT(onProjectFileNameChanged()));
+	connect(IEngine::Instance()->getSongInterface(), SIGNAL(modified()), SLOT(onSongModified()));
+	connect(IEngine::Instance()->getSongInterface(), SIGNAL(projectFileNameChanged()), SLOT(onProjectFileNameChanged()));
 
 	maximized = isMaximized();
 	new QShortcut(QKeySequence(Qt::Key_F11), this, SLOT(toggleFullscreen()));
 
-	if (ConfigManager::inst()->value("tooltips", "disabled").toInt())
+	if (IConfigManager::Instance()->value("tooltips", "disabled").toInt())
 	{
 		qApp->installEventFilter(this);
 	}
@@ -299,7 +300,7 @@ MainWindow::~MainWindow()
 	delete getGUI()->pianoRoll();
 	delete getGUI()->songEditor();
 	// destroy engine which will do further cleanups etc.
-	Engine::destroy();
+	DestroyEngine();
 }
 
 void MainWindow::ShowInfoMessage(QString title, QString description)
@@ -471,7 +472,7 @@ void MainWindow::finalize()
 
 
 	m_toolsMenu = new QMenu( this );
-	for( const Plugin::Descriptor* desc : getPluginFactory()->descriptors(Plugin::Tool) )
+	for( const PluginDescriptor* desc : getPluginFactory()->descriptors(PluginTypes::Tool) )
 	{
 		m_toolsMenu->addAction( desc->logo->pixmap(), desc->displayName );
 		m_tools.push_back( static_cast<QWidgetToolPlugin*>(ToolPlugin::instantiate( desc->name, /*this*/nullptr ))
@@ -538,7 +539,7 @@ void MainWindow::finalize()
 				this, SLOT(onToggleMetronome()),
 							m_toolBar );
 	m_metronomeToggle->setCheckable(true);
-	m_metronomeToggle->setChecked(Engine::audioEngine()->isMetronomeActive());
+	m_metronomeToggle->setChecked(IEngine::Instance()->getAudioEngineInterface()->isMetronomeActive());
 
 	m_toolBarLayout->setColumnMinimumWidth( 0, 5 );
 	m_toolBarLayout->addWidget( project_new, 0, 1 );
@@ -594,9 +595,9 @@ void MainWindow::finalize()
 	m_toolBarLayout->setColumnStretch( 100, 1 );
 
 	// setup-dialog opened before?
-	if( !ConfigManager::inst()->value( "app", "configured" ).toInt() )
+	if( !IConfigManager::Instance()->value( "app", "configured" ).toInt() )
 	{
-		ConfigManager::inst()->setValue( "app", "configured", "1" );
+		IConfigManager::Instance()->setValue( "app", "configured", "1" );
 		// no, so show it that user can setup everything
 		SetupDialog sd;
 		sd.exec();
@@ -604,8 +605,9 @@ void MainWindow::finalize()
 	// look whether the audio engine failed to start the audio device selected by the
 	// user and is using AudioDummy as a fallback
 	// or the audio device is set to invalid one
-	else if( Engine::audioEngine()->audioDevStartFailed() || !AudioEngine::isAudioDevNameValid(
-		ConfigManager::inst()->value( "audioengine", "audiodev" ) ) )
+	else if( IEngine::Instance()->getAudioEngineInterface()->audioDevStartFailed() ||
+			!IEngine::Instance()->getAudioEngineInterface()->isAudioDevNameValid(
+				IConfigManager::Instance()->value( "audioengine", "audiodev" ) ) )
 	{
 		// if so, offer the audio settings section of the setup dialog
 		SetupDialog sd( SetupDialog::AudioSettings );
@@ -683,13 +685,13 @@ void MainWindow::resetWindowTitle()
 {
 	QString title(tr( "Untitled" ));
 
-	if( Engine::getSong()->projectFileName() != "" )
+	if( IEngine::Instance()->getSongInterface()->projectFileName() != "" )
 	{
-		title = QFileInfo( Engine::getSong()->projectFileName()
+		title = QFileInfo( IEngine::Instance()->getSongInterface()->projectFileName()
 							).completeBaseName();
 	}
 
-	if( Engine::getSong()->isModified() )
+	if( IEngine::Instance()->getSongInterface()->isModified() )
 	{
 		title += '*';
 	}
@@ -709,10 +711,10 @@ bool MainWindow::mayChangeProject(bool stopPlayback)
 {
 	if( stopPlayback )
 	{
-		Engine::getSong()->stop();
+		IEngine::Instance()->getSongInterface()->stop();
 	}
 
-	if( !Engine::getSong()->isModified() && getSession() != Recover )
+	if( !IEngine::Instance()->getSongInterface()->isModified() && getSession() != Recover )
 	{
 		return( true );
 	}
@@ -850,7 +852,7 @@ void MainWindow::createNewProject()
 {
 	if( mayChangeProject(true) )
 	{
-		Engine::getSong()->createNewProject();
+		IEngine::Instance()->getSongInterface()->createNewProject();
 	}
 }
 
@@ -863,12 +865,12 @@ void MainWindow::openProject()
 	{
 		FileDialog ofd( this, tr( "Open Project" ), "", tr( "LMMS (*.mmp *.mmpz)" ) );
 
-		ofd.setDirectory( ConfigManager::inst()->userProjectsDir() );
+		ofd.setDirectory( IConfigManager::Instance()->userProjectsDir() );
 		ofd.setFileMode( IFileDialog::ExistingFiles );
 		if( ofd.exec () == QDialog::Accepted &&
 						!ofd.selectedFiles().isEmpty() )
 		{
-			Song *song = Engine::getSong();
+			auto *song = IEngine::Instance()->getSongInterface();
 
 			song->stop();
 			setCursor( Qt::WaitCursor );
@@ -883,7 +885,7 @@ void MainWindow::openProject()
 
 bool MainWindow::saveProject()
 {
-	if( Engine::getSong()->projectFileName() == "" )
+	if( IEngine::Instance()->getSongInterface()->projectFileName() == "" )
 	{
 		return( saveProjectAs() );
 	}
@@ -903,11 +905,11 @@ bool MainWindow::saveProject()
 
 bool MainWindow::saveProjectAs()
 {
-	auto optionsWidget = new SaveOptionsWidget(Engine::getSong()->getSaveOptions());
+	auto optionsWidget = new SaveOptionsWidget(IEngine::Instance()->getSongInterface()->getSaveOptionsInterface());
 	VersionedSaveDialog sfd( this, optionsWidget, tr( "Save Project" ), "",
 			tr( "LMMS Project" ) + " (*.mmpz *.mmp);;" +
 				tr( "LMMS Project Template" ) + " (*.mpt)" );
-	QString f = Engine::getSong()->projectFileName();
+	QString f = IEngine::Instance()->getSongInterface()->projectFileName();
 	if( f != "" )
 	{
 		sfd.setDirectory( QFileInfo( f ).absolutePath() );
@@ -915,11 +917,11 @@ bool MainWindow::saveProjectAs()
 	}
 	else
 	{
-		sfd.setDirectory( ConfigManager::inst()->userProjectsDir() );
+		sfd.setDirectory( IConfigManager::Instance()->userProjectsDir() );
 	}
 
 	// Don't write over file with suffix if no suffix is provided.
-	QString suffix = ConfigManager::inst()->value( "app",
+	QString suffix = IConfigManager::Instance()->value( "app",
 							"nommpz" ).toInt() == 0
 						? "mmpz"
 						: "mmp" ;
@@ -959,7 +961,7 @@ bool MainWindow::saveProjectAs()
 
 bool MainWindow::saveProjectAsNewVersion()
 {
-	QString fileName = Engine::getSong()->projectFileName();
+	QString fileName = IEngine::Instance()->getSongInterface()->projectFileName();
 	if( fileName == "" )
 	{
 		return saveProjectAs();
@@ -978,7 +980,7 @@ bool MainWindow::saveProjectAsNewVersion()
 
 void MainWindow::saveProjectAsDefaultTemplate()
 {
-	QString defaultTemplate = ConfigManager::inst()->userTemplateDir() + "default.mpt";
+	QString defaultTemplate = IConfigManager::Instance()->userTemplateDir() + "default.mpt";
 
 	QFileInfo fileInfo(defaultTemplate);
 	if (fileInfo.exists())
@@ -993,7 +995,7 @@ void MainWindow::saveProjectAsDefaultTemplate()
 		}
 	}
 
-	Engine::getSong()->saveProjectFile( defaultTemplate );
+	IEngine::Instance()->getSongInterface()->saveProjectFile( defaultTemplate );
 }
 
 
@@ -1215,27 +1217,27 @@ void MainWindow::updateViewMenu()
 	qa = new QAction(tr( "Volume as dBFS" ), this);
 	qa->setData("displaydbfs");
 	qa->setCheckable( true );
-	qa->setChecked( ConfigManager::inst()->value( "app", "displaydbfs" ).toInt() );
+	qa->setChecked( IConfigManager::Instance()->value( "app", "displaydbfs" ).toInt() );
 	m_viewMenu->addAction(qa);
 
 	qa = new QAction(tr( "Smooth scroll" ), this);
 	qa->setData("smoothscroll");
 	qa->setCheckable( true );
-	qa->setChecked( ConfigManager::inst()->value( "ui", "smoothscroll" ).toInt() );
+	qa->setChecked( IConfigManager::Instance()->value( "ui", "smoothscroll" ).toInt() );
 	m_viewMenu->addAction(qa);
 
 	// Not yet.
 	/* qa = new QAction(tr( "One instrument track window" ), this);
 	qa->setData("oneinstrument");
 	qa->setCheckable( true );
-	qa->setChecked( ConfigManager::inst()->value( "ui", "oneinstrumenttrackwindow" ).toInt() );
+	qa->setChecked( IConfigManager::Instance()->value( "ui", "oneinstrumenttrackwindow" ).toInt() );
 	m_viewMenu->addAction(qa);
 	*/
 
 	qa = new QAction(tr( "Enable note labels in piano roll" ), this);
 	qa->setData("printnotelabels");
 	qa->setCheckable( true );
-	qa->setChecked( ConfigManager::inst()->value( "ui", "printnotelabels" ).toInt() );
+	qa->setChecked( IConfigManager::Instance()->value( "ui", "printnotelabels" ).toInt() );
 	m_viewMenu->addAction(qa);
 
 }
@@ -1250,12 +1252,12 @@ void MainWindow::updateConfig( QAction * _who )
 
 	if( tag == "displaydbfs" )
 	{
-		ConfigManager::inst()->setValue( "app", "displaydbfs",
+		IConfigManager::Instance()->setValue( "app", "displaydbfs",
 						 QString::number(checked) );
 	}
 	else if ( tag == "tooltips" )
 	{
-		ConfigManager::inst()->setValue( "tooltips", "disabled",
+		IConfigManager::Instance()->setValue( "tooltips", "disabled",
 						 QString::number(!checked) );
 
 		if (checked) { qApp->removeEventFilter(this); }
@@ -1264,17 +1266,17 @@ void MainWindow::updateConfig( QAction * _who )
 	}
 	else if ( tag == "smoothscroll" )
 	{
-		ConfigManager::inst()->setValue( "ui", "smoothscroll",
+		IConfigManager::Instance()->setValue( "ui", "smoothscroll",
 						 QString::number(checked) );
 	}
 	else if ( tag == "oneinstrument" )
 	{
-		ConfigManager::inst()->setValue( "ui", "oneinstrumenttrackwindow",
+		IConfigManager::Instance()->setValue( "ui", "oneinstrumenttrackwindow",
 						 QString::number(checked) );
 	}
 	else if ( tag == "printnotelabels" )
 	{
-		ConfigManager::inst()->setValue( "ui", "printnotelabels",
+		IConfigManager::Instance()->setValue( "ui", "printnotelabels",
 						 QString::number(checked) );
 	}
 }
@@ -1283,7 +1285,7 @@ void MainWindow::updateConfig( QAction * _who )
 
 void MainWindow::onToggleMetronome()
 {
-	Engine::audioEngine()->setMetronomeActive( m_metronomeToggle->isChecked() );
+	IEngine::Instance()->getAudioEngineInterface()->setMetronomeActive( m_metronomeToggle->isChecked() );
 }
 
 
@@ -1304,23 +1306,23 @@ void MainWindow::updatePlayPauseIcons()
 	getGUI()->patternEditor()->setPauseIcon( false );
 	getGUI()->pianoRoll()->setPauseIcon( false );
 
-	if( Engine::getSong()->isPlaying() )
+	if( IEngine::Instance()->getSongInterface()->isPlaying() )
 	{
-		switch( Engine::getSong()->playMode() )
+		switch( IEngine::Instance()->getSongInterface()->playMode() )
 		{
-			case Song::Mode_PlaySong:
+			case ISong::Mode_PlaySong:
 				getGUI()->songEditor()->setPauseIcon( true );
 				break;
 
-			case Song::Mode_PlayAutomationClip:
+			case ISong::Mode_PlayAutomationClip:
 				getGUI()->automationEditor()->setPauseIcon( true );
 				break;
 
-			case Song::Mode_PlayPattern:
+			case ISong::Mode_PlayPattern:
 				getGUI()->patternEditor()->setPauseIcon( true );
 				break;
 
-			case Song::Mode_PlayMidiClip:
+			case ISong::Mode_PlayMidiClip:
 				getGUI()->pianoRoll()->setPauseIcon( true );
 				break;
 
@@ -1335,15 +1337,15 @@ void MainWindow::updateUndoRedoButtons()
 {
 	// when the edit menu is shown, grey out the undo/redo buttons if there's nothing to undo/redo
 	// else, un-grey them
-	m_undoAction->setEnabled(Engine::projectJournal()->canUndo());
-	m_redoAction->setEnabled(Engine::projectJournal()->canRedo());
+	m_undoAction->setEnabled(IEngine::Instance()->getProjectJournalInterface()->canUndo());
+	m_redoAction->setEnabled(IEngine::Instance()->getProjectJournalInterface()->canRedo());
 }
 
 
 
 void MainWindow::undo()
 {
-	Engine::projectJournal()->undo();
+	IEngine::Instance()->getProjectJournalInterface()->undo();
 }
 
 
@@ -1351,7 +1353,7 @@ void MainWindow::undo()
 
 void MainWindow::redo()
 {
-	Engine::projectJournal()->redo();
+	IEngine::Instance()->getProjectJournalInterface()->redo();
 }
 
 
@@ -1362,7 +1364,7 @@ void MainWindow::closeEvent( QCloseEvent * _ce )
 	if( mayChangeProject(true) )
 	{
 		// delete recovery file
-		if( ConfigManager::inst()->
+		if( IConfigManager::Instance()->
 				value( "ui", "enableautosave" ).toInt() )
 		{
 			sessionCleanup();
@@ -1381,7 +1383,7 @@ void MainWindow::closeEvent( QCloseEvent * _ce )
 void MainWindow::sessionCleanup()
 {
 	// delete recover session files
-	QFile::remove( ConfigManager::inst()->recoveryFile() );
+	QFile::remove( IConfigManager::Instance()->recoveryFile() );
 	setSession( Normal );
 }
 
@@ -1494,15 +1496,15 @@ void MainWindow::browseHelp()
 
 void MainWindow::autoSave()
 {
-	if( !Engine::getSong()->isExporting() &&
-		!Engine::getSong()->isLoadingProject() &&
-		!RemotePluginBase::isMainThreadWaiting() &&
+	if( !IEngine::Instance()->getSongInterface()->isExporting() &&
+		!IEngine::Instance()->getSongInterface()->isLoadingProject() &&
+		!IsRemotePluginMainThreadWaiting() &&
 		!QApplication::mouseButtons() &&
-		( ConfigManager::inst()->value( "ui",
+		( IConfigManager::Instance()->value( "ui",
 				"enablerunningautosave" ).toInt() ||
-			! Engine::getSong()->isPlaying() ) )
+			! IEngine::Instance()->getSongInterface()->isPlaying() ) )
 	{
-		Engine::getSong()->saveProjectFile(ConfigManager::inst()->recoveryFile());
+		IEngine::Instance()->getSongInterface()->saveProjectFile(IConfigManager::Instance()->recoveryFile());
 		autoSaveTimerReset();  // Reset timer
 	}
 	else
@@ -1525,7 +1527,7 @@ void MainWindow::onExportProjectMidi()
 	types << tr("MIDI File (*.mid)");
 	efd.setNameFilters( types );
 	QString base_filename;
-	QString const & projectFileName = Engine::getSong()->projectFileName();
+	QString const & projectFileName = IEngine::Instance()->getSongInterface()->projectFileName();
 	if( !projectFileName.isEmpty() )
 	{
 		efd.setDirectory( QFileInfo( projectFileName ).absolutePath() );
@@ -1533,7 +1535,7 @@ void MainWindow::onExportProjectMidi()
 	}
 	else
 	{
-		efd.setDirectory( ConfigManager::inst()->userProjectsDir() );
+		efd.setDirectory( IConfigManager::Instance()->userProjectsDir() );
 		base_filename = tr( "untitled" );
 	}
 	efd.selectFile( base_filename + ".mid" );
@@ -1550,13 +1552,13 @@ void MainWindow::onExportProjectMidi()
 		QString export_filename = efd.selectedFiles()[0];
 		if (!export_filename.endsWith(suffix)) export_filename += suffix;
 
-		Engine::getSong()->exportProjectMidi(export_filename);
+		IEngine::Instance()->getSongInterface()->exportProjectMidi(export_filename);
 	}
 }
 
 void MainWindow::exportProject(bool multiExport)
 {
-	QString const & projectFileName = Engine::getSong()->projectFileName();
+	QString const & projectFileName = IEngine::Instance()->getSongInterface()->projectFileName();
 
 	FileDialog efd( getGUI()->mainWindow() );
 
@@ -1574,10 +1576,10 @@ void MainWindow::exportProject(bool multiExport)
 		efd.setFileMode( IFileDialog::AnyFile );
 		int idx = 0;
 		QStringList types;
-		while( ProjectRenderer::fileEncodeDevices[idx].m_fileFormat != ProjectRenderer::NumFileFormats)
+		while( m_renderer->getFileEncodeDeviceInterface(idx)->m_fileFormat != IProjectRenderer::NumFileFormats)
 		{
-			if(ProjectRenderer::fileEncodeDevices[idx].isAvailable()) {
-				types << tr(ProjectRenderer::fileEncodeDevices[idx].m_description);
+			if(m_renderer->getFileEncodeDeviceInterface(idx)->isAvailable()) {
+				types << tr(m_renderer->getFileEncodeDeviceInterface(idx)->m_description);
 			}
 			++idx;
 		}
@@ -1590,10 +1592,10 @@ void MainWindow::exportProject(bool multiExport)
 		}
 		else
 		{
-			efd.setDirectory( ConfigManager::inst()->userProjectsDir() );
+			efd.setDirectory( IConfigManager::Instance()->userProjectsDir() );
 			baseFilename = tr( "untitled" );
 		}
-		efd.selectFile( baseFilename + ProjectRenderer::fileEncodeDevices[0].m_extension );
+		efd.selectFile( baseFilename + m_renderer->getFileEncodeDeviceInterface(0)->m_extension );
 		efd.setWindowTitle( tr( "Select file for project-export..." ) );
 	}
 
@@ -1633,7 +1635,7 @@ void MainWindow::exportProject(bool multiExport)
 			}
 		}
 
-		ExportProjectDialog epd( exportFileName, getGUI()->mainWindow(), multiExport );
+		ExportProjectDialog epd( exportFileName, getGUI()->mainWindow(), m_renderer, multiExport );
 		epd.exec();
 	}
 }
@@ -1644,7 +1646,7 @@ void MainWindow::handleSaveResult(QString const & filename, bool songSavedSucces
 	{
 		TextFloat::displayMessage( tr( "Project saved" ), tr( "The project %1 is now saved.").arg( filename ),
 				embed::getIconPixmap( "project_save", 24, 24 ), 2000 );
-		ConfigManager::inst()->addRecentlyOpenedProject(filename);
+		IConfigManager::Instance()->addRecentlyOpenedProject(filename);
 		resetWindowTitle();
 	}
 	else
@@ -1656,7 +1658,7 @@ void MainWindow::handleSaveResult(QString const & filename, bool songSavedSucces
 
 bool MainWindow::guiSaveProject()
 {
-	Song * song = Engine::getSong();
+	auto* song = IEngine::Instance()->getSongInterface();
 	bool const songSaveResult = song->guiSaveProject();
 	handleSaveResult(song->projectFileName(), songSaveResult);
 
@@ -1665,7 +1667,7 @@ bool MainWindow::guiSaveProject()
 
 bool MainWindow::guiSaveProjectAs( const QString & filename )
 {
-	Song * song = Engine::getSong();
+	auto* song = IEngine::Instance()->getSongInterface();
 	bool const songSaveResult = song->guiSaveProjectAs(filename);
 	handleSaveResult(filename, songSaveResult);
 
@@ -1684,12 +1686,12 @@ void MainWindow::onExportProjectTracks()
 
 void MainWindow::onImportProject()
 {
-	Song * song = Engine::getSong();
+	auto* song = IEngine::Instance()->getSongInterface();
 
 	if (song)
 	{
 		FileDialog ofd( nullptr, tr( "Import file" ),
-				ConfigManager::inst()->userProjectsDir(),
+				IConfigManager::Instance()->userProjectsDir(),
 				tr("MIDI sequences") +
 				" (*.mid *.midi *.rmi);;" +
 				tr("Hydrogen projects") +
@@ -1709,8 +1711,8 @@ void MainWindow::onImportProject()
 
 void MainWindow::onSongStopped()
 {
-	Song * song = Engine::getSong();
-	Song::PlayPos const & playPos = song->getPlayPos();
+	auto* song = IEngine::Instance()->getSongInterface();
+	ISong::PlayPos const & playPos = song->getPlayPos();
 
 	ITimeLineWidget * tl = playPos.m_timeLine;
 
@@ -1748,7 +1750,7 @@ void MainWindow::onSongModified()
 	// Only update the window title if the code is executed from the GUI main thread.
 	// The assumption seems to be that the Song can also be set as modified from other
 	// threads. This is not a good design! Copied from the original implementation of
-	// Song::setModified.
+	// ISong::setModified.
 	if(QThread::currentThread() == this->thread())
 	{
 		this->resetWindowTitle();
