@@ -25,8 +25,9 @@
 #include "Engine.h"
 #include "IPianoRoll.h"
 #include "IStepRecorderWidget.h"
-#include "MidiClip.h"
 #include "Song.h"
+
+#include "tracks/MidiClip.h"
 
 namespace lmms
 {

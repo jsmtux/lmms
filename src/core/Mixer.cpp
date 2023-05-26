@@ -31,9 +31,9 @@
 #include "MixHelpers.h"
 #include "Song.h"
 
-#include "InstrumentTrack.h"
+#include "tracks/InstrumentTrack.h"
 #include "PatternStore.h"
-#include "SampleTrack.h"
+#include "tracks/SampleTrack.h"
 #include "TrackContainer.h" // For TrackContainer::TrackList typedef
 
 namespace lmms

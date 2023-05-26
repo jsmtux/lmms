@@ -34,7 +34,7 @@
 #include "Engine.h"
 #include "gui_templates.h"
 #include "IGuiApplication.h"
-#include "MidiJack.h"
+#include "midi/MidiJack.h"
 
 
 namespace lmms

@@ -28,10 +28,9 @@
 
 #include "Plugin.h"
 #include "Engine.h"
-#include "AudioEngine.h"
-#include "AutomatableModel.h"
-#include "TempoSyncKnobModel.h"
+#include "IModels.h"
 #include "MemoryManager.h"
+#include "samplerate.h"
 
 namespace lmms
 {
@@ -108,28 +107,24 @@ public:
 
 	inline bool isEnabled() const
 	{
-		return m_enabledModel.value();
+		return m_enabledModel->value();
 	}
 
-	inline f_cnt_t timeout() const
-	{
-		const float samples = Engine::audioEngine()->processingSampleRate() * m_autoQuitModel.value() / 1000.0f;
-		return 1 + ( static_cast<int>( samples ) / Engine::audioEngine()->framesPerPeriod() );
-	}
+	f_cnt_t timeout() const;
 
 	inline float wetLevel() const
 	{
-		return m_wetDryModel.value();
+		return m_wetDryModel->value();
 	}
 
 	inline float dryLevel() const
 	{
-		return 1.0f - m_wetDryModel.value();
+		return 1.0f - m_wetDryModel->value();
 	}
 
 	inline float gate() const
 	{
-		const float level = m_gateModel.value();
+		const float level = m_gateModel->value();
 		return level*level * m_processors;
 	}
 
@@ -187,25 +182,14 @@ protected:
 
 	// some effects might not be capable of higher sample-rates so they can
 	// sample it down before processing and back after processing
-	inline void sampleDown( const sampleFrame * _src_buf,
+	void sampleDown( const sampleFrame * _src_buf,
 							sampleFrame * _dst_buf,
-							sample_rate_t _dst_sr )
-	{
-		resample( 0, _src_buf,
-				Engine::audioEngine()->processingSampleRate(),
-					_dst_buf, _dst_sr,
-					Engine::audioEngine()->framesPerPeriod() );
-	}
+							sample_rate_t _dst_sr );
 
-	inline void sampleBack( const sampleFrame * _src_buf,
+	void sampleBack( const sampleFrame * _src_buf,
 							sampleFrame * _dst_buf,
-							sample_rate_t _src_sr )
-	{
-		resample( 1, _src_buf, _src_sr, _dst_buf,
-				Engine::audioEngine()->processingSampleRate(),
-			Engine::audioEngine()->framesPerPeriod() * _src_sr /
-				Engine::audioEngine()->processingSampleRate() );
-	}
+							sample_rate_t _src_sr );
+
 	void reinitSRC();
 
 
@@ -223,10 +207,10 @@ private:
 	bool m_running;
 	f_cnt_t m_bufferCount;
 
-	BoolModel m_enabledModel;
-	FloatModel m_wetDryModel;
-	FloatModel m_gateModel;
-	TempoSyncKnobModel m_autoQuitModel;
+	std::unique_ptr<IAutomatableModel<bool>> m_enabledModel;
+	std::unique_ptr<IAutomatableModel<float>> m_wetDryModel;
+	std::unique_ptr<IAutomatableModel<float>> m_gateModel;
+	std::unique_ptr<IAutomatableModel<float>> m_autoQuitModel;
 	
 	bool m_autoQuitDisabled;
 

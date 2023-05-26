@@ -31,7 +31,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "AutomationTrack.h"
+#include "AutomationClip.h"
 #include "ConfigManager.h"
 #include "ControllerConnection.h"
 #include "EnvelopeAndLfoParameters.h"
@@ -39,16 +39,19 @@
 #include "ExportFilter.h"
 #include "IAutomationEditor.h"
 #include "IGuiApplication.h"
-#include "InstrumentTrack.h"
 #include "ITimeLineWidget.h"
 #include "Keymap.h"
 #include "NotePlayHandle.h"
-#include "MidiClip.h"
 #include "PatternStore.h"
-#include "PatternTrack.h"
 #include "ProjectJournal.h"
 #include "Scale.h"
 #include "PeakController.h"
+
+
+#include "tracks/AutomationTrack.h"
+#include "tracks/InstrumentTrack.h"
+#include "tracks/MidiClip.h"
+#include "tracks/PatternTrack.h"
 
 
 namespace lmms

@@ -25,7 +25,7 @@
 #ifndef LMMS_REMOTE_PLUGIN_BASE_H
 #define LMMS_REMOTE_PLUGIN_BASE_H
 
-#include "MidiEvent.h"
+#include "midi/MidiEvent.h"
 
 #include <atomic>
 #include <vector>

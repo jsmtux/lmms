@@ -26,6 +26,7 @@ public:
     virtual std::unique_ptr<IDataFile> createDataFile(QString path) = 0;
     virtual void setNaNHandler( bool use ) = 0;
     virtual std::unique_ptr<IEngine> createEngine(bool renderOnly) = 0;
+    virtual IEngine* getEngineInteface() = 0;
 };
 
 ICoreApplication* getCoreApplication();

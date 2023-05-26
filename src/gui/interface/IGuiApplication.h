@@ -7,6 +7,8 @@
 #include "IAutomationEditor.h"
 #include "IFileDialog.h"
 
+#include "lmms_export.h"
+
 #include <QDomNode>
 
 namespace lmms
@@ -16,6 +18,7 @@ class Instrument;
 class InstrumentTrack;
 class Plugin;
 class Effect;
+class Model;
 
 namespace gui
 {

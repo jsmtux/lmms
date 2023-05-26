@@ -50,14 +50,14 @@
 #include "audio/AudioDummy.h"
 
 // platform-specific midi-interface-classes
-#include "MidiAlsaRaw.h"
-#include "MidiAlsaSeq.h"
-#include "MidiJack.h"
-#include "MidiOss.h"
-#include "MidiSndio.h"
-#include "MidiWinMM.h"
-#include "MidiApple.h"
-#include "MidiDummy.h"
+#include "midi/MidiAlsaRaw.h"
+#include "midi/MidiAlsaSeq.h"
+#include "midi/MidiJack.h"
+#include "midi/MidiOss.h"
+#include "midi/MidiSndio.h"
+#include "midi/MidiWinMM.h"
+#include "midi/MidiApple.h"
+#include "midi/MidiDummy.h"
 
 #include "BufferManager.h"
 

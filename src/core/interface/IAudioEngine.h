@@ -1,5 +1,7 @@
 #pragma once
 
+#include "lmms_basics.h"
+
 #include <QString>
 
 namespace lmms {
@@ -23,6 +25,8 @@ public:
     virtual ~IAudioEngine() = default;
 
     virtual void setProfilerOutputFile(QString path) = 0;
+
+	virtual fpp_t framesPerPeriod() const = 0;
 
 	struct qualitySettings
 	{

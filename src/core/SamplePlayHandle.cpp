@@ -27,9 +27,10 @@
 #include "audio/AudioPort.h"
 #include "Engine.h"
 #include "Note.h"
-#include "PatternTrack.h"
 #include "SampleClip.h"
-#include "SampleTrack.h"
+
+#include "tracks/PatternTrack.h"
+#include "tracks/SampleTrack.h"
 
 namespace lmms
 {

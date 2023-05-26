@@ -28,7 +28,7 @@
 #include "AudioEngine.h"
 #include "embed.h"
 #include "Engine.h"
-#include "InstrumentTrack.h"
+#include "tracks/InstrumentTrack.h"
 #include "PresetPreviewPlayHandle.h"
 
 namespace lmms

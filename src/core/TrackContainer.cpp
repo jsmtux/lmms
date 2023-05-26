@@ -33,11 +33,11 @@
 #include "TrackContainer.h"
 #include "PatternClip.h"
 #include "PatternStore.h"
-#include "PatternTrack.h"
 #include "Song.h"
 
 #include "IGuiApplication.h"
 
+#include "tracks/PatternTrack.h"
 
 namespace lmms
 {

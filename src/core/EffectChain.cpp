@@ -28,6 +28,7 @@
 
 #include "EffectChain.h"
 
+#include "AudioEngine.h"
 #include "Effect.h"
 #include "IGuiApplication.h"
 #include "MixHelpers.h"

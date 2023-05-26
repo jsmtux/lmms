@@ -29,7 +29,7 @@
 #include "AudioEngine.h"
 #include "Engine.h"
 #include "IGuiApplication.h"
-#include "InstrumentTrack.h"
+#include "tracks/InstrumentTrack.h"
 #include "lmms_constants.h"
 
 

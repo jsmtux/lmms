@@ -27,10 +27,10 @@
 
 #include "IGuiApplication.h"
 
-#include "AudioEngine.h"
-#include "Engine.h"
 #include "Effect.h"
+#include "ICoreApplication.h"
 #include "Instrument.h"
+
 
 namespace lmms::gui
 {
@@ -134,7 +134,7 @@ public:
 	void playNote( NotePlayHandle *, sampleFrame * buffer ) override
 	{
 		memset( buffer, 0, sizeof( sampleFrame ) *
-			Engine::audioEngine()->framesPerPeriod() );
+			getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->framesPerPeriod() );
 	}
 
 	void saveSettings( QDomDocument &, QDomElement & ) override

@@ -27,7 +27,7 @@
 #include "AutomationClip.h"
 
 #include "AutomationNode.h"
-#include "AutomationTrack.h"
+#include "tracks/AutomationTrack.h"
 #include "LocaleHelper.h"
 #include "Note.h"
 #include "PatternStore.h"

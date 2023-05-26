@@ -46,8 +46,16 @@ public:
 
     std::unique_ptr<IEngine> createEngine(bool renderOnly) override
     {
-        return std::make_unique<Engine>();
+        m_enginePointer = new Engine();
+        return std::unique_ptr<IEngine>(m_enginePointer);
     }
+
+    IEngine* getEngineInteface() override
+    {
+        return m_enginePointer;
+    }
+private:
+    IEngine* m_enginePointer = nullptr;
 };
 
 LMMS_EXPORT ICoreApplication* getCoreApplication() {

@@ -31,7 +31,7 @@
 #include "AudioEngine.h"
 #include "ControllerConnection.h"
 #include "LfoController.h"
-#include "MidiController.h"
+#include "midi/MidiController.h"
 #include "PeakController.h"
 
 namespace lmms

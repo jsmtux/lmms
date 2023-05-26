@@ -25,9 +25,13 @@
 
 #include <QDomElement>
 
+
+#include "AudioEngine.h"
+#include "AutomatableModel.h"
 #include "Effect.h"
 #include "EffectChain.h"
 #include "EffectControls.h"
+#include "TempoSyncKnobModel.h"
 
 #include "ConfigManager.h"
 
@@ -45,10 +49,10 @@ Effect::Effect( const Plugin::Descriptor * _desc,
 	m_noRun( false ),
 	m_running( false ),
 	m_bufferCount( 0 ),
-	m_enabledModel( true, this, tr( "Effect enabled" ) ),
-	m_wetDryModel( 1.0f, -1.0f, 1.0f, 0.01f, this, tr( "Wet/Dry mix" ) ),
-	m_gateModel( 0.0f, 0.0f, 1.0f, 0.01f, this, tr( "Gate" ) ),
-	m_autoQuitModel( 1.0f, 1.0f, 8000.0f, 100.0f, 1.0f, this, tr( "Decay" ) ),
+	m_enabledModel( new BoolModel( true, this, tr( "Effect enabled" ) ) ),
+	m_wetDryModel( new FloatModel( 1.0f, -1.0f, 1.0f, 0.01f, this, tr( "Wet/Dry mix" ) ) ),
+	m_gateModel( new FloatModel( 0.0f, 0.0f, 1.0f, 0.01f, this, tr( "Gate" ) ) ),
+	m_autoQuitModel( new TempoSyncKnobModel( 1.0f, 1.0f, 8000.0f, 100.0f, 1.0f, this, tr( "Decay" ) ) ),
 	m_autoQuitDisabled( false )
 {
 	m_srcState[0] = m_srcState[1] = nullptr;
@@ -74,15 +78,38 @@ Effect::~Effect()
 	}
 }
 
+f_cnt_t Effect::timeout() const
+{
+	const float samples = Engine::audioEngine()->processingSampleRate() * m_autoQuitModel->value() / 1000.0f;
+	return 1 + ( static_cast<int>( samples ) / Engine::audioEngine()->framesPerPeriod() );
+}
 
+void Effect::sampleDown( const sampleFrame * _src_buf,
+						sampleFrame * _dst_buf,
+						sample_rate_t _dst_sr )
+{
+	resample( 0, _src_buf,
+			Engine::audioEngine()->processingSampleRate(),
+				_dst_buf, _dst_sr,
+				Engine::audioEngine()->framesPerPeriod() );
+}
 
+void Effect::sampleBack( const sampleFrame * _src_buf,
+						sampleFrame * _dst_buf,
+						sample_rate_t _src_sr )
+{
+	resample( 1, _src_buf, _src_sr, _dst_buf,
+			Engine::audioEngine()->processingSampleRate(),
+		Engine::audioEngine()->framesPerPeriod() * _src_sr /
+			Engine::audioEngine()->processingSampleRate() );
+}
 
 void Effect::saveSettings( QDomDocument & _doc, QDomElement & _this )
 {
-	m_enabledModel.saveSettings( _doc, _this, "on" );
-	m_wetDryModel.saveSettings( _doc, _this, "wet" );
-	m_autoQuitModel.saveSettings( _doc, _this, "autoquit" );
-	m_gateModel.saveSettings( _doc, _this, "gate" );
+	m_enabledModel->saveSettings( _doc, _this, "on" );
+	m_wetDryModel->saveSettings( _doc, _this, "wet" );
+	m_autoQuitModel->saveSettings( _doc, _this, "autoquit" );
+	m_gateModel->saveSettings( _doc, _this, "gate" );
 	controls()->saveState( _doc, _this );
 }
 
@@ -91,10 +118,10 @@ void Effect::saveSettings( QDomDocument & _doc, QDomElement & _this )
 
 void Effect::loadSettings( const QDomElement & _this )
 {
-	m_enabledModel.loadSettings( _this, "on" );
-	m_wetDryModel.loadSettings( _this, "wet" );
-	m_autoQuitModel.loadSettings( _this, "autoquit" );
-	m_gateModel.loadSettings( _this, "gate" );
+	m_enabledModel->loadSettings( _this, "on" );
+	m_wetDryModel->loadSettings( _this, "wet" );
+	m_autoQuitModel->loadSettings( _this, "autoquit" );
+	m_gateModel->loadSettings( _this, "gate" );
 
 	QDomNode node = _this.firstChild();
 	while( !node.isNull() )

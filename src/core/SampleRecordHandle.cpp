@@ -26,10 +26,11 @@
 #include "SampleRecordHandle.h"
 #include "AudioEngine.h"
 #include "Engine.h"
-#include "PatternTrack.h"
 #include "SampleBuffer.h"
 #include "SampleClip.h"
 #include "debug.h"
+
+#include "tracks/PatternTrack.h"
 
 
 namespace lmms

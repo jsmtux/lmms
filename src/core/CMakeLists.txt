@@ -45,7 +45,6 @@ set(LMMS_SRCS
 	MicroTimer.cpp
 	Microtuner.cpp
 	MixHelpers.cpp
-	Model.cpp
 	ModelVisitor.cpp
 	Note.cpp
 	NotePlayHandle.cpp

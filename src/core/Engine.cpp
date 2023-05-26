@@ -28,7 +28,7 @@
 #include "ConfigManager.h"
 #include "Mixer.h"
 #include "Ladspa2LMMS.h"
-#include "Lv2Manager.h"
+#include "lv2/Lv2Manager.h"
 #include "PatternStore.h"
 #include "Plugin.h"
 #include "PresetPreviewPlayHandle.h"

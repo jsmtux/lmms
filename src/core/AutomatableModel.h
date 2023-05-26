@@ -28,6 +28,7 @@
 #include <QMap>
 #include <QMutex>
 
+#include "IModels.h"
 #include "JournallingObject.h"
 #include "Model.h"
 #include "TimePos.h"
@@ -426,7 +427,7 @@ signals:
 
 
 
-template <typename T> class LMMS_EXPORT TypedAutomatableModel : public AutomatableModel
+template <typename T> class LMMS_EXPORT TypedAutomatableModel : public AutomatableModel, public IAutomatableModel<T>
 {
 public:
 	using AutomatableModel::AutomatableModel;
@@ -448,6 +449,16 @@ public:
 	T maxValue() const
 	{
 		return AutomatableModel::maxValue<T>();
+	}
+
+
+	void saveSettings( QDomDocument& doc, QDomElement& element, const QString& name )
+	{
+		AutomatableModel::saveSettings(doc, element, name);
+	}
+    void loadSettings( const QDomElement& element, const QString& name )
+	{
+		AutomatableModel::loadSettings(element, name);
 	}
 };
 

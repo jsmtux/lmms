@@ -177,7 +177,7 @@ public:
 
 
 	// methods providing information for other classes
-	inline fpp_t framesPerPeriod() const
+	inline fpp_t framesPerPeriod() const override
 	{
 		return m_framesPerPeriod;
 	}

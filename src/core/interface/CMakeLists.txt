@@ -1,3 +1,3 @@
-ADD_LIBRARY(lmms_core_interface STATIC IRenderManager.cpp)
+ADD_LIBRARY(lmms_core_interface STATIC IRenderManager.cpp Model.cpp)
 
-TARGET_INCLUDE_DIRECTORIES(lmms_core_interface PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+TARGET_INCLUDE_DIRECTORIES(lmms_core_interface PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR}/src/core)

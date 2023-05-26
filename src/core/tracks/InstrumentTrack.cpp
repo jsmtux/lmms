@@ -30,7 +30,7 @@
 #include "DataFile.h"
 #include "Instrument.h"
 #include "Keymap.h"
-#include "MidiClient.h"
+#include "midi/MidiClient.h"
 #include "MidiClip.h"
 #include "Mixer.h"
 #include "MixHelpers.h"

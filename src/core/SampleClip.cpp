@@ -31,7 +31,7 @@
 #include "ITimeLineWidget.h"
 #include "TrackContainer.h"
 #include "SampleBuffer.h"
-#include "SampleTrack.h"
+#include "tracks/SampleTrack.h"
 #include "Song.h"
 
 

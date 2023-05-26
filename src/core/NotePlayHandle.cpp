@@ -29,7 +29,7 @@
 #include "BasicFilters.h"
 #include "DetuningHelper.h"
 #include "InstrumentSoundShaping.h"
-#include "InstrumentTrack.h"
+#include "tracks/InstrumentTrack.h"
 #include "Instrument.h"
 #include "Song.h"
 
