@@ -26,7 +26,7 @@
 #ifndef LMMS_GUI_EFFECT_VIEW_H
 #define LMMS_GUI_EFFECT_VIEW_H
 
-#include "AutomatableModel.h"
+// #include "AutomatableModel.h"
 #include "Effect.h"
 #include "PluginView.h"
 

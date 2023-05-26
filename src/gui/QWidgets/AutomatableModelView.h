@@ -26,7 +26,7 @@
 #ifndef LMMS_GUI_AUTOMATABLE_MODEL_VIEW_H
 #define LMMS_GUI_AUTOMATABLE_MODEL_VIEW_H
 
-#include "AutomatableModel.h"
+// #include "AutomatableModel.h"
 #include "ModelView.h"
 
 class QMenu;
@@ -41,16 +41,16 @@ public:
 	AutomatableModelView( Model* model, QWidget* _this );
 	~AutomatableModelView() override = default;
 
-	// some basic functions for convenience
-	AutomatableModel* modelUntyped()
-	{
-		return castModel<AutomatableModel>();
-	}
+	// // some basic functions for convenience
+	// AutomatableModel* modelUntyped()
+	// {
+	// 	return castModel<AutomatableModel>();
+	// }
 
-	const AutomatableModel* modelUntyped() const
-	{
-		return castModel<AutomatableModel>();
-	}
+	// const AutomatableModel* modelUntyped() const
+	// {
+	// 	return castModel<AutomatableModel>();
+	// }
 
 	void setModel( Model* model, bool isOldModelValid = true ) override;
 	void unsetModel() override;

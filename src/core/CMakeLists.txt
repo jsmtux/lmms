@@ -31,7 +31,6 @@ set(LMMS_SRCS
 	InstrumentFunctions.cpp
 	InstrumentPlayHandle.cpp
 	InstrumentSoundShaping.cpp
-	JournallingObject.cpp
 	Keymap.cpp
 	Ladspa2LMMS.cpp
 	LadspaControl.cpp

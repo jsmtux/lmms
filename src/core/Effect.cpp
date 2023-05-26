@@ -32,6 +32,7 @@
 #include "EffectChain.h"
 #include "EffectControls.h"
 #include "TempoSyncKnobModel.h"
+#include "ICoreApplication.h"
 
 #include "ConfigManager.h"
 
@@ -80,8 +81,8 @@ Effect::~Effect()
 
 f_cnt_t Effect::timeout() const
 {
-	const float samples = Engine::audioEngine()->processingSampleRate() * m_autoQuitModel->value() / 1000.0f;
-	return 1 + ( static_cast<int>( samples ) / Engine::audioEngine()->framesPerPeriod() );
+	const float samples = getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->processingSampleRate() * m_autoQuitModel->value() / 1000.0f;
+	return 1 + ( static_cast<int>( samples ) / getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->framesPerPeriod() );
 }
 
 void Effect::sampleDown( const sampleFrame * _src_buf,
@@ -89,9 +90,9 @@ void Effect::sampleDown( const sampleFrame * _src_buf,
 						sample_rate_t _dst_sr )
 {
 	resample( 0, _src_buf,
-			Engine::audioEngine()->processingSampleRate(),
+			getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->processingSampleRate(),
 				_dst_buf, _dst_sr,
-				Engine::audioEngine()->framesPerPeriod() );
+				getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->framesPerPeriod() );
 }
 
 void Effect::sampleBack( const sampleFrame * _src_buf,
@@ -99,9 +100,9 @@ void Effect::sampleBack( const sampleFrame * _src_buf,
 						sample_rate_t _src_sr )
 {
 	resample( 1, _src_buf, _src_sr, _dst_buf,
-			Engine::audioEngine()->processingSampleRate(),
-		Engine::audioEngine()->framesPerPeriod() * _src_sr /
-			Engine::audioEngine()->processingSampleRate() );
+			getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->processingSampleRate(),
+		getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->framesPerPeriod() * _src_sr /
+			getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->processingSampleRate() );
 }
 
 void Effect::saveSettings( QDomDocument & _doc, QDomElement & _this )
@@ -198,7 +199,7 @@ void Effect::reinitSRC()
 			src_delete(state);
 		}
 		int error;
-		const int currentInterpolation = Engine::audioEngine()->currentQualitySettings().libsrcInterpolation();
+		const int currentInterpolation = getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->currentQualitySettings().libsrcInterpolation();
 		if((state = src_new(currentInterpolation, DEFAULT_CHANNELS, &error)) == nullptr)
 		{
 			qFatal( "Error: src_new() failed in effect.cpp!\n" );
@@ -219,7 +220,7 @@ void Effect::resample( int _i, const sampleFrame * _src_buf,
 		return;
 	}
 	m_srcData[_i].input_frames = _frames;
-	m_srcData[_i].output_frames = Engine::audioEngine()->framesPerPeriod();
+	m_srcData[_i].output_frames = getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->framesPerPeriod();
 	m_srcData[_i].data_in = const_cast<float*>(_src_buf[0].data());
 	m_srcData[_i].data_out = _dst_buf[0].data ();
 	m_srcData[_i].src_ratio = (double) _dst_sr / _src_sr;

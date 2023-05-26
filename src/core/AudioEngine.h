@@ -197,7 +197,7 @@ public:
 		return m_profiler.cpuLoad();
 	}
 
-	const IAudioEngine::qualitySettings & currentQualitySettings() const
+	const IAudioEngine::qualitySettings& currentQualitySettings() const override
 	{
 		return m_qualitySettings;
 	}
@@ -206,7 +206,7 @@ public:
 	sample_rate_t baseSampleRate() const;
 	sample_rate_t outputSampleRate() const;
 	sample_rate_t inputSampleRate() const;
-	sample_rate_t processingSampleRate() const;
+	sample_rate_t processingSampleRate() const override;
 
 
 	inline float masterGain() const
@@ -273,8 +273,8 @@ public:
 	inline void setMetronomeActive(bool value = true) { m_metronomeActive = value; }
 
 	//! Block until a change in model can be done (i.e. wait for audio thread)
-	void requestChangeInModel();
-	void doneChangeInModel();
+	void requestChangeInModel() override;
+	void doneChangeInModel() override;
 
 	RequestChangesGuard requestChangesGuard()
 	{

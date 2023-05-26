@@ -30,6 +30,7 @@
 
 #include "AudioEngine.h"
 #include "Effect.h"
+#include "ICoreApplication.h"
 #include "IGuiApplication.h"
 #include "MixHelpers.h"
 
@@ -125,9 +126,9 @@ void EffectChain::loadSettings( const QDomElement & _this )
 
 void EffectChain::appendEffect( Effect * _effect )
 {
-	Engine::audioEngine()->requestChangeInModel();
+	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->requestChangeInModel();
 	m_effects.append( _effect );
-	Engine::audioEngine()->doneChangeInModel();
+	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->doneChangeInModel();
 
 	m_enabledModel.setValue( true );
 
@@ -139,17 +140,17 @@ void EffectChain::appendEffect( Effect * _effect )
 
 void EffectChain::removeEffect( Effect * _effect )
 {
-	Engine::audioEngine()->requestChangeInModel();
+	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->requestChangeInModel();
 
 	Effect ** found = std::find( m_effects.begin(), m_effects.end(), _effect );
 	if( found == m_effects.end() )
 	{
-		Engine::audioEngine()->doneChangeInModel();
+		getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->doneChangeInModel();
 		return;
 	}
 	m_effects.erase( found );
 
-	Engine::audioEngine()->doneChangeInModel();
+	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->doneChangeInModel();
 
 	if( m_effects.isEmpty() )
 	{
@@ -231,7 +232,7 @@ void EffectChain::clear()
 {
 	emit aboutToClear();
 
-	Engine::audioEngine()->requestChangeInModel();
+	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->requestChangeInModel();
 
 	while( m_effects.count() )
 	{
@@ -240,7 +241,7 @@ void EffectChain::clear()
 		delete e;
 	}
 
-	Engine::audioEngine()->doneChangeInModel();
+	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->doneChangeInModel();
 
 	m_enabledModel.setValue( false );
 }

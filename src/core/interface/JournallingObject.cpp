@@ -25,9 +25,9 @@
 #include <QDomElement>
 
 #include "JournallingObject.h"
-#include "AutomatableModel.h"
-#include "ProjectJournal.h"
-#include "Engine.h"
+#include "Model.h"
+#include "IProjectJournal.h"
+#include "ICoreApplication.h"
 
 namespace lmms
 {
@@ -35,7 +35,7 @@ namespace lmms
 
 JournallingObject::JournallingObject() :
 	SerializingObject(),
-	m_id( Engine::projectJournal()->allocID( this ) ),
+	m_id( getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->allocID( this ) ),
 	m_journalling( true ),
 	m_journallingStateStack()
 {
@@ -46,9 +46,9 @@ JournallingObject::JournallingObject() :
 
 JournallingObject::~JournallingObject()
 {
-	if( Engine::projectJournal() )
+	if( getCoreApplication()->getEngineInteface()->getProjectJournalInterface() )
 	{
-		Engine::projectJournal()->freeID( id() );
+		getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->freeID( id() );
 	}
 }
 
@@ -59,7 +59,7 @@ void JournallingObject::addJournalCheckPoint()
 {
 	if( isJournalling() )
 	{
-		Engine::projectJournal()->addJournalCheckPoint( this );
+		getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->addJournalCheckPoint( this );
 	}
 }
 
@@ -118,16 +118,16 @@ void JournallingObject::changeID( jo_id_t _id )
 {
 	if( id() != _id )
 	{
-		JournallingObject * jo = Engine::projectJournal()->
+		JournallingObject * jo = getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->
 											journallingObject( _id );
 		if( jo != nullptr )
 		{
 			QString used_by = jo->nodeName();
 			if( used_by == "automatablemodel" &&
-				dynamic_cast<AutomatableModel *>( jo ) )
+				dynamic_cast<Model *>( jo ) )
 			{
 				used_by += ":" +
-					dynamic_cast<AutomatableModel *>( jo )->
+					dynamic_cast<Model *>( jo )->
 								displayName();
 			}
 			fprintf( stderr, "JO-ID %d already in use by %s!\n",
@@ -135,8 +135,8 @@ void JournallingObject::changeID( jo_id_t _id )
 			return;
 		}
 
-		Engine::projectJournal()->freeID( m_id );
-		Engine::projectJournal()->reallocID( _id, this );
+		getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->freeID( m_id );
+		getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->reallocID( _id, this );
 		m_id = _id;
 	}
 }

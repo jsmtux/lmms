@@ -120,6 +120,7 @@ public:
 
     ISong* getSongInterface() override;
     IAudioEngine* getAudioEngineInterface() override;
+	IProjectJournal* getProjectJournalInterface() override;
 
 signals:
 	void initProgress(const QString &msg);

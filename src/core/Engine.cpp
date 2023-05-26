@@ -178,6 +178,12 @@ IAudioEngine* Engine::getAudioEngineInterface()
 }
 
 
+IProjectJournal* Engine::getProjectJournalInterface()
+{
+	return Engine::projectJournal();
+}
+
+
 Engine * Engine::s_instanceOfMe = nullptr;
 
 } // namespace lmms

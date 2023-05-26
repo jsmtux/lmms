@@ -21,14 +21,7 @@ enum
 } ;
 
 class IAudioEngine{
-public:
-    virtual ~IAudioEngine() = default;
-
-    virtual void setProfilerOutputFile(QString path) = 0;
-
-	virtual fpp_t framesPerPeriod() const = 0;
-
-	struct qualitySettings
+public:struct qualitySettings
 	{
 		enum Mode
 		{
@@ -110,6 +103,16 @@ public:
 			return SRC_LINEAR;
 		}
 	} ;
+
+    virtual ~IAudioEngine() = default;
+
+    virtual void setProfilerOutputFile(QString path) = 0;
+
+	virtual fpp_t framesPerPeriod() const = 0;
+	virtual sample_rate_t processingSampleRate() const = 0;
+	virtual const qualitySettings& currentQualitySettings() const = 0;
+	virtual void requestChangeInModel() = 0;
+	virtual void doneChangeInModel() = 0;
 };
 
 }

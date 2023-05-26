@@ -452,11 +452,11 @@ public:
 	}
 
 
-	void saveSettings( QDomDocument& doc, QDomElement& element, const QString& name )
+	void saveSettings( QDomDocument& doc, QDomElement& element, const QString& name ) override
 	{
 		AutomatableModel::saveSettings(doc, element, name);
 	}
-    void loadSettings( const QDomElement& element, const QString& name )
+    void loadSettings( const QDomElement& element, const QString& name ) override
 	{
 		AutomatableModel::loadSettings(element, name);
 	}

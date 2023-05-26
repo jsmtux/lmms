@@ -27,7 +27,6 @@
 #define LMMS_EFFECT_H
 
 #include "Plugin.h"
-#include "Engine.h"
 #include "IModels.h"
 #include "MemoryManager.h"
 #include "samplerate.h"
