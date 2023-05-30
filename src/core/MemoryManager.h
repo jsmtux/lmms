@@ -30,13 +30,15 @@
 #include <cstddef>
 #include <vector>
 
+#include "IMemoryManager.h"
+
 #include "lmms_export.h"
 
 namespace lmms
 {
 
 
-class LMMS_EXPORT MemoryManager
+class LMMS_EXPORT MemoryManager: public IMemoryManager
 {
 public:
 	struct ThreadGuard
@@ -47,6 +49,9 @@ public:
 
 	static void * alloc( size_t size );
 	static void free( void * ptr );
+
+    void * do_alloc( size_t size ) override;
+    void do_free( void * ptr ) override;
 };
 
 template<typename T>

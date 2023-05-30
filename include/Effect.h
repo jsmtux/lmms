@@ -27,8 +27,8 @@
 #define LMMS_EFFECT_H
 
 #include "Plugin.h"
+#include "IMemoryManager.h"
 #include "IModels.h"
-#include "MemoryManager.h"
 #include "samplerate.h"
 
 namespace lmms
@@ -47,7 +47,7 @@ class EffectView;
 
 class LMMS_EXPORT Effect : public Plugin
 {
-	MM_OPERATORS
+	I_MM_OPERATORS
 	Q_OBJECT
 public:
 	Effect( const Plugin::Descriptor * _desc,

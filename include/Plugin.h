@@ -28,9 +28,9 @@
 #include <QStringList>
 #include <QMap>
 
+#include "IMemoryManager.h"
 #include "JournallingObject.h"
 #include "Model.h"
-#include "MemoryManager.h"
 
 
 class QWidget;
@@ -71,7 +71,7 @@ class PluginView;
 */
 class LMMS_EXPORT Plugin : public Model, public JournallingObject
 {
-	MM_OPERATORS
+	I_MM_OPERATORS
 	Q_OBJECT
 public:
 	enum PluginTypes

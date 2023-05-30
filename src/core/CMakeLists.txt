@@ -71,7 +71,6 @@ set(LMMS_SRCS
 	SamplePlayHandle.cpp
 	SampleRecordHandle.cpp
 	Scale.cpp
-	SerializingObject.cpp
 	Song.cpp
 	TempoSyncKnobModel.cpp
 	TimePos.cpp
