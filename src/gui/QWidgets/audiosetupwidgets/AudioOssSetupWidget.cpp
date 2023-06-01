@@ -1,5 +1,7 @@
 #include "AudioOssSetupWidget.h"
 
+#ifdef LMMS_HAVE_OSS
+
 #include "ConfigManager.h"
 #include "gui_templates.h"
 
@@ -50,3 +52,5 @@ void AudioOssSetupWidget::saveSettings()
 }
 
 }
+
+#endif // LMMS_HAVE_OSS

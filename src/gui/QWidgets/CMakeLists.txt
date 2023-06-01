@@ -37,6 +37,7 @@ SET(LMMS_UI_SRCS
 
 	audiosetupwidgets/AudioAlsaSetupWidget.cpp
 	audiosetupwidgets/AudioJackSetupWidget.cpp
+	audiosetupwidgets/AudioPortAudioSetupWidget.cpp
 	audiosetupwidgets/AudioPulseAudioSetupWidget.cpp
 	audiosetupwidgets/AudioSdlSetupWidget.cpp
 	audiosetupwidgets/AudioOssSetupWidget.cpp
@@ -143,8 +144,10 @@ SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${LMMS_UI_OUT})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
+FIND_PACKAGE(Samplerate 0.1.8 MODULE REQUIRED)
+
 add_library(lmms_gui STATIC ${LMMS_UI_SRCS} ${LMMS_UI_OUT})
-target_include_directories(lmms_gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/include" "${CMAKE_BINARY_DIR}" "${CMAKE_BINARY_DIR}/src" "${WEAKJACK_INCLUDE_DIRS}")
+target_include_directories(lmms_gui PUBLIC ${SAMPLERATE_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/include" "${CMAKE_BINARY_DIR}" "${CMAKE_BINARY_DIR}/src" "${WEAKJACK_INCLUDE_DIRS}")
 target_link_libraries(lmms_gui PUBLIC lmmsobjs PRIVATE Qt5::Widgets)
 
 GENERATE_EXPORT_HEADER(lmms_gui
