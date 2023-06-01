@@ -28,14 +28,12 @@
 #include <QObject>
 
 #include "lmmsconfig.h"
-#include "ComboBoxModel.h"
 
 #ifdef LMMS_HAVE_PORTAUDIO
 
 #   include <portaudio.h>
 
 #   include "AudioDevice.h"
-#   include "AudioDeviceSetupWidget.h"
 
 #   if defined paNeverDropInput || defined paNonInterleaved
 #	    define PORTAUDIO_V19
@@ -48,21 +46,6 @@
 
 namespace lmms
 {
-
-class AudioPortAudioSetupUtil : public QObject
-{
-Q_OBJECT
-public slots:
-	void updateBackends();
-	void updateDevices();
-	void updateChannels();
-
-public:
-	ComboBoxModel m_backendModel;
-	ComboBoxModel m_deviceModel;
-};
-
-
 #ifdef LMMS_HAVE_PORTAUDIO
 
 
@@ -88,23 +71,6 @@ public:
 	int process_callback( const float *_inputBuffer,
 		float * _outputBuffer,
 		unsigned long _framesPerBuffer );
-
-
-	class setupWidget : public gui::AudioDeviceSetupWidget
-	{
-	public:
-		setupWidget( QWidget * _parent );
-		~setupWidget() override;
-
-		void saveSettings() override;
-		void show() override;
-
-	private:
-		gui::ComboBox * m_backend;
-		gui::ComboBox * m_device;
-		AudioPortAudioSetupUtil m_setupUtil;
-
-	} ;
 
 private:
 	void startProcessing() override;

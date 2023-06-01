@@ -1,5 +1,7 @@
 #include "AudioPulseAudioSetupWidget.h"
 
+#ifdef LMMS_HAVE_PULSEAUDIO
+
 #include <QLabel>
 
 #include "AudioPulseAudio.h"
@@ -47,3 +49,5 @@ void AudioPulseAudioSetupWidget::saveSettings()
 }
 
 }
+
+#endif // LMMS_HAVE_PULSEAUDIO

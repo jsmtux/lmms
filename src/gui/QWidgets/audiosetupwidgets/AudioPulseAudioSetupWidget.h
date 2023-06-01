@@ -1,6 +1,10 @@
 #ifndef LMMS_GUI_AUDIO_PULSE_AUDIO_SETUP_WIDGET_H
 #define LMMS_GUI_AUDIO_PULSE_AUDIO_SETUP_WIDGET_H
 
+#include "lmmsconfig.h"
+
+#ifdef LMMS_HAVE_PULSEAUDIO
+
 #include <QLineEdit>
 
 #include "AudioDeviceSetupWidget.h"
@@ -30,5 +34,7 @@ private:
 } ;
 
 }
+
+#endif // LMMS_HAVE_PULSEAUDIO
 
 #endif /* LMMS_GUI_AUDIO_PULSE_AUDIO_SETUP_WIDGET_H */

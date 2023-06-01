@@ -1,13 +1,17 @@
 #ifndef LMMS_GUI_AUDIO_OSS_SETUP_WIDGET_H
 #define LMMS_GUI_AUDIO_OSS_SETUP_WIDGET_H
 
-#include <QWidget>
-#include <QLineEdit>
+#include "lmmsconfig.h"
+
+#ifdef LMMS_HAVE_OSS
 
 #include "AudioOss.h"
 #include "AudioDeviceSetupWidget.h"
 
 #include "widgets/LcdSpinBox.h"
+
+#include <QWidget>
+#include <QLineEdit>
 
 namespace lmms {
 
@@ -31,5 +35,7 @@ private:
 } ;
 
 }
+
+#endif // LMMS_HAVE_OSS
 
 #endif /* LMMS_GUI_AUDIO_OSS_SETUP_WIDGET_H */
