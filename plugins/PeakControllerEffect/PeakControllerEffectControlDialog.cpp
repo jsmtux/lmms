@@ -30,10 +30,12 @@
 #include <QVBoxLayout>
 
 #include "PeakControllerEffectControlDialog.h"
-#include "PeakControllerEffectControls.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
+
 #include "embed.h"
+#include "PeakControllerEffectControls.h"
+
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
 
 namespace lmms::gui
 {

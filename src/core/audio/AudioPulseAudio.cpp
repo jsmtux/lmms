@@ -30,7 +30,6 @@
 #ifdef LMMS_HAVE_PULSEAUDIO
 
 #include "ConfigManager.h"
-#include "LcdSpinBox.h"
 #include "AudioEngine.h"
 #include "gui_templates.h"
 #include "Engine.h"
@@ -306,50 +305,6 @@ void AudioPulseAudio::signalConnected( bool connected )
 	}
 }
 
-
-
-
-AudioPulseAudio::setupWidget::setupWidget( QWidget * _parent ) :
-	AudioDeviceSetupWidget( AudioPulseAudio::name(), _parent )
-{
-	m_device = new QLineEdit( AudioPulseAudio::probeDevice(), this );
-	m_device->setGeometry( 10, 20, 160, 20 );
-
-	auto dev_lbl = new QLabel(tr("Device"), this);
-	dev_lbl->setFont( pointSize<7>( dev_lbl->font() ) );
-	dev_lbl->setGeometry( 10, 40, 160, 10 );
-
-	auto m = new gui::LcdSpinBoxModel(/* this */);
-	m->setRange( DEFAULT_CHANNELS, SURROUND_CHANNELS );
-	m->setStep( 2 );
-	m->setValue( ConfigManager::inst()->value( "audiopa",
-							"channels" ).toInt() );
-
-	m_channels = new gui::LcdSpinBox( 1, this );
-	m_channels->setModel( m );
-	m_channels->setLabel( tr( "Channels" ) );
-	m_channels->move( 180, 20 );
-
-}
-
-
-
-
-AudioPulseAudio::setupWidget::~setupWidget()
-{
-	delete m_channels->model();
-}
-
-
-
-
-void AudioPulseAudio::setupWidget::saveSettings()
-{
-	ConfigManager::inst()->setValue( "audiopa", "device",
-							m_device->text() );
-	ConfigManager::inst()->setValue( "audiopa", "channels",
-				QString::number( m_channels->value<int>() ) );
-}
 
 } // namespace lmms
 

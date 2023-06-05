@@ -33,18 +33,15 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
-#include <QMessageBox>
 
 #include "base64.h"
 #include "ConfigManager.h"
 #include "Effect.h"
 #include "embed.h"
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 #include "LocaleHelper.h"
 #include "PluginFactory.h"
 #include "ProjectVersion.h"
-#include "SongEditor.h"
-#include "TextFloat.h"
 #include "Track.h"
 #include "PathUtil.h"
 
@@ -151,11 +148,11 @@ DataFile::DataFile( const QString & _fileName ) :
 	QFile inFile( _fileName );
 	if( !inFile.open( QIODevice::ReadOnly ) )
 	{
-		if (gui::getGUI() != nullptr)
+		if (gui::getGUIInterface() != nullptr)
 		{
-			QMessageBox::critical( nullptr,
-				gui::SongEditor::tr( "Could not open file" ),
-				gui::SongEditor::tr( "Could not open file %1. You probably "
+			gui::getGUIInterface()->mainWindowInterface()->ShowCriticalMessage(
+				QObject::tr( "Could not open file" ),
+				QObject::tr( "Could not open file %1. You probably "
 						"have no permissions to read this "
 						"file.\n Please make sure to have at "
 						"least read permissions to the file "
@@ -301,14 +298,9 @@ bool DataFile::writeFile(const QString& filename, bool withResources)
 {
 	// Small lambda function for displaying errors
 	auto showError = [this](QString title, QString body){
-		if (gui::getGUI() != nullptr)
+		if (gui::getGUIInterface() != nullptr)
 		{
-			QMessageBox mb;
-			mb.setWindowTitle(title);
-			mb.setText(body);
-			mb.setIcon(QMessageBox::Warning);
-			mb.setStandardButtons(QMessageBox::Ok);
-			mb.exec();
+			gui::getGUIInterface()->mainWindowInterface()->ShowWarnMessage(title, body);
 		}
 		else
 		{
@@ -331,8 +323,6 @@ bool DataFile::writeFile(const QString& filename, bool withResources)
 	const QString fullNameTemp = fullName + ".new";
 	const QString fullNameBak = fullName + ".bak";
 
-	using gui::SongEditor;
-
 	// If we are saving with resources, setup the bundle folder first
 	if (withResources)
 	{
@@ -341,8 +331,8 @@ bool DataFile::writeFile(const QString& filename, bool withResources)
 		// project bundle.
 		if (QDir(bundleDir).exists())
 		{
-			showError(SongEditor::tr("Operation denied"),
-				SongEditor::tr("A bundle folder with that name already eists on the "
+			showError(QObject::tr("Operation denied"),
+				QObject::tr("A bundle folder with that name already eists on the "
 				"selected path. Can't overwrite a project bundle. Please select a different "
 				"name."));
 
@@ -352,24 +342,24 @@ bool DataFile::writeFile(const QString& filename, bool withResources)
 		// Create bundle folder
 		if (!QDir().mkdir(bundleDir))
 		{
-			showError(SongEditor::tr("Error"),
-				SongEditor::tr("Couldn't create bundle folder."));
+			showError(QObject::tr("Error"),
+				QObject::tr("Couldn't create bundle folder."));
 			return false;
 		}
 
 		// Create resources folder
 		if (!QDir().mkdir(resourcesDir))
 		{
-			showError(SongEditor::tr("Error"),
-				SongEditor::tr("Couldn't create resources folder."));
+			showError(QObject::tr("Error"),
+				QObject::tr("Couldn't create resources folder."));
 			return false;
 		}
 
 		// Copy resources to folder and update paths
 		if (!copyResources(resourcesDir))
 		{
-			showError(SongEditor::tr("Error"),
-				SongEditor::tr("Failed to copy resources."));
+			showError(QObject::tr("Error"),
+				QObject::tr("Failed to copy resources."));
 			return false;
 		}
 	}
@@ -378,8 +368,8 @@ bool DataFile::writeFile(const QString& filename, bool withResources)
 
 	if (!outfile.open(QIODevice::WriteOnly | QIODevice::Truncate))
 	{
-		showError(SongEditor::tr("Could not write file"),
-			SongEditor::tr("Could not open %1 for writing. You probably are not permitted to"
+		showError(QObject::tr("Could not write file"),
+			QObject::tr("Could not open %1 for writing. You probably are not permitted to"
 				"write to this file. Please make sure you have write-access to "
 				"the file and try again.").arg(fullName));
 
@@ -1890,14 +1880,12 @@ void DataFile::loadData( const QByteArray & _data, const QString & _sourceFile )
 		}
 		if( line >= 0 && col >= 0 )
 		{
-			using gui::SongEditor;
-
 			qWarning() << "at line" << line << "column" << errorMsg;
-			if (gui::getGUI() != nullptr)
+			if (gui::getGUIInterface() != nullptr)
 			{
-				QMessageBox::critical( nullptr,
-					SongEditor::tr( "Error in file" ),
-					SongEditor::tr( "The file %1 seems to contain "
+				gui::getGUIInterface()->mainWindowInterface()->ShowCriticalMessage(
+					QObject::tr( "Error in file" ),
+					QObject::tr( "The file %1 seems to contain "
 							"errors and therefore can't be "
 							"loaded." ).
 								arg( _sourceFile ) );
@@ -1926,22 +1914,20 @@ void DataFile::loadData( const QByteArray & _data, const QString & _sourceFile )
 
 	if (root.hasAttribute("creatorversion"))
 	{
-		using gui::SongEditor;
-
 		// compareType defaults to All, so it doesn't have to be set here
 		ProjectVersion createdWith = root.attribute("creatorversion");
 		ProjectVersion openedWith = LMMS_VERSION;
 
 		if (createdWith.setCompareType(ProjectVersion::Minor)
 		 !=  openedWith.setCompareType(ProjectVersion::Minor)
-		 && gui::getGUI() != nullptr && root.attribute("type") == "song"
+		 && gui::getGUIInterface() != nullptr && root.attribute("type") == "song"
 		){
 			auto projectType = _sourceFile.endsWith(".mpt") ?
-				SongEditor::tr("template") : SongEditor::tr("project");
+				QObject::tr("template") : QObject::tr("project");
 
-			gui::TextFloat::displayMessage(
-				SongEditor::tr("Version difference"),
-				SongEditor::tr("This %1 was created with LMMS %2")
+			gui::getGUIInterface()->mainWindowInterface()->ShowTextFloatMessage(
+				QObject::tr("Version difference"),
+				QObject::tr("This %1 was created with LMMS %2")
 				.arg(projectType).arg(createdWith.getVersion()),
 				embed::getIconPixmap("whatsthis", 24, 24),
 				2500

@@ -52,9 +52,10 @@
 
 // lmms/include/
 #include "AutomatableModel.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
 #include "SubWindow.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 class QPushButton;
 class QComboBox;
@@ -169,7 +170,7 @@ private:
 
 // -------------------------------------------------------------------
 
-class CARLABASE_EXPORT CarlaInstrument : public Instrument
+class CARLABASE_EXPORT CarlaInstrument : public gui::QWidgetInstrumentPlugin
 {
     Q_OBJECT
 

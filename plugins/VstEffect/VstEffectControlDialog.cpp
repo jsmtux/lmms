@@ -30,7 +30,8 @@
 #include "VstEffect.h"
 #include "VstPlugin.h"
 
-#include "PixmapButton.h"
+#include "widgets/PixmapButton.h"
+
 #include "embed.h"
 
 #include "gui_templates.h"

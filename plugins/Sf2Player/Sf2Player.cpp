@@ -32,19 +32,19 @@
 
 #include "AudioEngine.h"
 #include "ConfigManager.h"
-#include "FileDialog.h"
 #include "Engine.h"
+#include "IGuiApplication.h"
 #include "InstrumentTrack.h"
 #include "InstrumentPlayHandle.h"
-#include "Knob.h"
 #include "NotePlayHandle.h"
+#include "PatchesDialog.h"
 #include "PathUtil.h"
-#include "PixmapButton.h"
 #include "Song.h"
 #include "fluidsynthshims.h"
 
-#include "PatchesDialog.h"
-#include "LcdSpinBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LcdSpinBox.h"
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 #include "plugin_export.h"
@@ -92,7 +92,7 @@ QMutex Sf2Instrument::s_fontsMutex;
 
 
 Sf2Instrument::Sf2Instrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &sf2player_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &sf2player_plugin_descriptor ),
 	m_srcState( nullptr ),
 	m_synth(nullptr),
 	m_font( nullptr ),
@@ -1175,29 +1175,29 @@ void Sf2InstrumentView::showFileDialog()
 {
 	auto k = castModel<Sf2Instrument>();
 
-	FileDialog ofd( nullptr, tr( "Open SoundFont file" ) );
-	ofd.setFileMode( FileDialog::ExistingFiles );
+	auto ofd = getGUIInterface()->createFileDialog(tr("Open SoundFont file"));
+	ofd->setFileMode( IFileDialog::ExistingFiles );
 
 	QStringList types;
 	types << tr( "SoundFont Files (*.sf2 *.sf3)" );
-	ofd.setNameFilters( types );
+	ofd->setNameFilters( types );
 
 	if( k->m_filename != "" )
 	{
 		QString f = PathUtil::toAbsolute( k->m_filename );
-		ofd.setDirectory( QFileInfo( f ).absolutePath() );
-		ofd.selectFile( QFileInfo( f ).fileName() );
+		ofd->setDirectory( QFileInfo( f ).absolutePath() );
+		ofd->selectFile( QFileInfo( f ).fileName() );
 	}
 	else
 	{
-		ofd.setDirectory( ConfigManager::inst()->sf2Dir() );
+		ofd->setDirectory( ConfigManager::inst()->sf2Dir() );
 	}
 
 	m_fileDialogButton->setEnabled( false );
 
-	if( ofd.exec() == QDialog::Accepted && !ofd.selectedFiles().isEmpty() )
+	if( ofd->exec() == IFileDialog::Accepted && !ofd->selectedFiles().isEmpty() )
 	{
-		QString f = ofd.selectedFiles()[0];
+		QString f = ofd->selectedFiles()[0];
 		if( f != "" )
 		{
 			k->openFile( f );

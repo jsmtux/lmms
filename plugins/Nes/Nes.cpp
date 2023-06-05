@@ -30,8 +30,9 @@
 #include "Engine.h"
 #include "InstrumentTrack.h"
 #include "interpolation.h"
-#include "Knob.h"
 #include "Oscillator.h"
+
+#include "widgets/Knob.h"
 
 #include "embed.h"
 #include "plugin_export.h"
@@ -481,7 +482,7 @@ void NesObject::updatePitch()
 
 
 NesInstrument::NesInstrument( InstrumentTrack * instrumentTrack ) :
-	Instrument( instrumentTrack, &nes_plugin_descriptor ),
+	QWidgetInstrumentPlugin( instrumentTrack, &nes_plugin_descriptor ),
 	m_ch1Enabled( true, this ),
 	m_ch1Crs( 0.f, -24.f, 24.f, 1.f, this, tr( "Channel 1 coarse detune" ) ),
 	m_ch1Volume( 15.f, 0.f, 15.f, 1.f, this, tr( "Channel 1 volume" ) ),

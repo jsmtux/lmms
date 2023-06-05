@@ -27,11 +27,9 @@
 #define _PEAK_CONTROLLER_EFFECT_CONTROLS_H
 
 #include "EffectControls.h"
-#include "PeakControllerEffectControlDialog.h"
 
 namespace lmms
 {
-
 
 class PeakControllerEffect;
 
@@ -54,13 +52,9 @@ public:
 	{
 		return 1;
 	}
-	gui::EffectControlDialog * createView() override
-	{
-		return new gui::PeakControllerEffectControlDialog( this );
-	}
 
+	gui::EffectControlDialog * createView() override;
 
-private:
 	PeakControllerEffect * m_effect;
 
 	FloatModel m_baseModel;
@@ -71,8 +65,8 @@ private:
 	BoolModel m_muteModel;
 	BoolModel m_absModel;
 	FloatModel m_amountMultModel;
+private:
 
-	friend class gui::PeakControllerEffectControlDialog;
 	friend class PeakControllerEffect;
 
 } ;

@@ -32,7 +32,7 @@
 #include "Engine.h"
 #include "EnvelopeAndLfoParameters.h"
 #include "Instrument.h"
-#include "InstrumentTrack.h"
+#include "tracks/InstrumentTrack.h"
 
 namespace lmms
 {

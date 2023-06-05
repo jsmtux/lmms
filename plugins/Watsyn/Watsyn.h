@@ -26,13 +26,16 @@
 #ifndef WATSYN_H
 #define WATSYN_H
 
-#include "Instrument.h"
-#include "InstrumentView.h"
-#include "Graph.h"
 #include "AutomatableModel.h"
-#include "TempoSyncKnob.h"
 #include <samplerate.h>
 #include "MemoryManager.h"
+
+#include "instrument/InstrumentView.h"
+
+#include "plugins/QWidgetInstrumentPlugin.h"
+
+#include "widgets/Graph.h"
+#include "widgets/TempoSyncKnob.h"
 
 namespace lmms
 {
@@ -134,7 +137,7 @@ private:
 	float m_B2wave [WAVELEN];
 };
 
-class WatsynInstrument : public Instrument
+class WatsynInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

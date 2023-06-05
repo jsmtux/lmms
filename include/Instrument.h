@@ -29,7 +29,7 @@
 #include <QString>
 #include "lmms_export.h"
 #include "lmms_basics.h"
-#include "MemoryManager.h"
+#include "IMemoryManager.h"
 #include "Plugin.h"
 #include "TimePos.h"
 
@@ -45,7 +45,7 @@ class Track;
 
 class LMMS_EXPORT Instrument : public Plugin
 {
-	MM_OPERATORS
+	I_MM_OPERATORS
 public:
 	enum Flag
 	{

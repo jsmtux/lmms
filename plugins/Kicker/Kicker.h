@@ -28,9 +28,10 @@
 #define KICKER_H
 
 #include "AutomatableModel.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
 #include "TempoSyncKnobModel.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 
 namespace lmms
@@ -49,7 +50,7 @@ class KickerInstrumentView;
 }
 
 
-class KickerInstrument : public Instrument
+class KickerInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

@@ -26,8 +26,10 @@
 
 #include <cmath>
 
-#include "DummyInstrument.h"
-#include "InstrumentTrack.h"
+#include "AudioEngine.h"
+#include "Engine.h"
+#include "IGuiApplication.h"
+#include "tracks/InstrumentTrack.h"
 #include "lmms_constants.h"
 
 
@@ -75,7 +77,7 @@ Instrument *Instrument::instantiate(const QString &_plugin_name,
 	if(dynamic_cast<Instrument *>(p))
 		return dynamic_cast<Instrument *>(p);
 	delete p;
-	return( new DummyInstrument( _instrument_track ) );
+	return( gui::getGUIInterface()->createDummyInstrument( _instrument_track ) );
 }
 
 

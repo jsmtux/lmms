@@ -27,7 +27,7 @@
 
 #include "Clip.h"
 #include "Engine.h"
-#include "PatternTrack.h"
+#include "tracks/PatternTrack.h"
 #include "Song.h"
 
 namespace lmms

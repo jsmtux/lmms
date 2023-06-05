@@ -29,7 +29,8 @@
 #include "BassBoosterControlDialog.h"
 #include "BassBoosterControls.h"
 #include "embed.h"
-#include "Knob.h"
+
+#include "widgets/Knob.h"
 
 
 namespace lmms::gui

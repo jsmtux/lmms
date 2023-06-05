@@ -28,7 +28,7 @@
 #include "ConfigManager.h"
 #include "Mixer.h"
 #include "Ladspa2LMMS.h"
-#include "Lv2Manager.h"
+#include "lv2/Lv2Manager.h"
 #include "PatternStore.h"
 #include "Plugin.h"
 #include "PresetPreviewPlayHandle.h"
@@ -167,6 +167,21 @@ void *Engine::pickDndPluginKey()
 }
 
 
+ISong* Engine::getSongInterface()
+{
+	return Engine::getSong();
+}
+
+IAudioEngine* Engine::getAudioEngineInterface()
+{
+	return Engine::audioEngine();
+}
+
+
+IProjectJournal* Engine::getProjectJournalInterface()
+{
+	return Engine::projectJournal();
+}
 
 
 Engine * Engine::s_instanceOfMe = nullptr;

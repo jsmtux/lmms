@@ -24,9 +24,10 @@
 #ifndef _VIBED_H
 #define _VIBED_H
 
-#include "Instrument.h"
-#include "InstrumentView.h"
 #include "NineButtonSelector.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 namespace lmms
 {
@@ -42,7 +43,7 @@ class LedCheckBox;
 class VibedView;
 }
 
-class Vibed : public Instrument
+class Vibed : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

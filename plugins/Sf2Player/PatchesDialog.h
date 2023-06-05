@@ -29,7 +29,8 @@
 #include <fluidsynth/types.h>
 
 #include "ui_PatchesDialog.h"
-#include "LcdSpinBox.h"
+
+#include "widgets/LcdSpinBox.h"
 
 class QLabel;
 

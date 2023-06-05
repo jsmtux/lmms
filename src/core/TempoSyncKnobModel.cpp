@@ -23,7 +23,6 @@
  *
  */
 
-#include <QAction>
 #include <QDomElement>
 
 #include "TempoSyncKnobModel.h"
@@ -49,15 +48,6 @@ TempoSyncKnobModel::TempoSyncKnobModel( const float _val, const float _min,
 			this, SLOT(calculateTempoSyncTime(lmms::bpm_t)),
 			Qt::DirectConnection );
 }
-
-
-
-
-void TempoSyncKnobModel::setTempoSync( QAction * _item )
-{
-	setTempoSync( _item->data().toInt() );
-}
-
 
 
 

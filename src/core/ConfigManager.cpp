@@ -25,15 +25,13 @@
 
 #include <QDomElement>
 #include <QDir>
-#include <QMessageBox>
 #include <QApplication>
 #include <QStandardPaths>
 #include <QTextStream>
 
 #include "ConfigManager.h"
-#include "MainWindow.h"
+#include "IGuiApplication.h"
 #include "ProjectVersion.h"
-#include "GuiApplication.h"
 
 #include "lmmsversion.h"
 
@@ -515,13 +513,10 @@ void ConfigManager::loadConfigFile(const QString & configFile)
 		#endif
 			setBackgroundPicFile(value("paths", "backgroundtheme"));
 		}
-		else if (gui::getGUI() != nullptr)
+		else if (gui::getGUIInterface() != nullptr)
 		{
-			QMessageBox::warning(nullptr, gui::MainWindow::tr("Configuration file"),
-									gui::MainWindow::tr("Error while parsing configuration file at line %1:%2: %3").
-													arg(errorLine).
-													arg(errorCol).
-													arg(errorString));
+			gui::getGUIInterface()->mainWindowInterface()->ShowWarnMessageWithPosition(
+				errorLine, errorCol, errorString);
 		}
 		cfg_file.close();
 	}
@@ -632,24 +627,7 @@ void ConfigManager::saveConfigFile()
 	QFile outfile(m_lmmsRcFile);
 	if(!outfile.open(QIODevice::WriteOnly | QIODevice::Truncate))
 	{
-		using gui::MainWindow;
-
-		QString title, message;
-		title = MainWindow::tr("Could not open file");
-		message = MainWindow::tr("Could not open file %1 "
-					"for writing.\nPlease make "
-					"sure you have write "
-					"permission to the file and "
-					"the directory containing the "
-					"file and try again!"
-						).arg(m_lmmsRcFile);
-		if (gui::getGUI() != nullptr)
-		{
-			QMessageBox::critical(nullptr, title, message,
-						QMessageBox::Ok,
-						QMessageBox::NoButton);
-		}
-		return;
+		gui::getGUIInterface()->mainWindowInterface()->ShowFileNotFoundMessage(m_lmmsRcFile);
 	}
 
 	outfile.write(xml.toUtf8());

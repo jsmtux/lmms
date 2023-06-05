@@ -26,7 +26,7 @@
 #ifndef AMPLIFIER_CONTROL_DIALOG_H
 #define AMPLIFIER_CONTROL_DIALOG_H
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 namespace lmms
 {

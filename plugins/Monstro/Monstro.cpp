@@ -27,12 +27,13 @@
 
 #include "Monstro.h"
 
-#include "ComboBox.h"
 #include "Engine.h"
 #include "InstrumentTrack.h"
 #include "gui_templates.h"
 #include "lmms_math.h"
 #include "interpolation.h"
+
+#include "widgets/ComboBox.h"
 
 #include "embed.h"
 
@@ -826,7 +827,7 @@ inline sample_t MonstroSynth::calcSlope( int slope, sample_t s )
 
 
 MonstroInstrument::MonstroInstrument( InstrumentTrack * _instrument_track ) :
-		Instrument( _instrument_track, &monstro_plugin_descriptor ),
+		QWidgetInstrumentPlugin( _instrument_track, &monstro_plugin_descriptor ),
 
 		m_osc1Vol( 33.0, 0.0, 200.0, 0.1, this, tr( "Osc 1 volume" ) ),
 		m_osc1Pan( 0.0, -100.0, 100.0, 0.1, this, tr( "Osc 1 panning" ) ),

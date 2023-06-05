@@ -27,10 +27,11 @@
 #include <QWidget>
 
 #include "EffectControls.h"
-#include "Fader.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
-#include "TextFloat.h"
+
+#include "widgets/Fader.h"
+#include "widgets/TextFloat.h"
 
 namespace lmms::gui
 {

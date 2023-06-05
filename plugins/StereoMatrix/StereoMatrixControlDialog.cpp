@@ -28,8 +28,9 @@
 #include "StereoMatrixControlDialog.h"
 
 #include "embed.h"
-#include "Knob.h"
 #include "StereoMatrixControls.h"
+
+#include "widgets/Knob.h"
 
 namespace lmms::gui
 {

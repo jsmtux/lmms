@@ -29,11 +29,12 @@
 #include "GuiApplication.h"
 #include "InstrumentPlayHandle.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
 #include "MidiEventToByteSeq.h"
 #include "MainWindow.h"
 #include "gui_templates.h"
 #include "Song.h"
+
+#include "widgets/Knob.h"
 
 #include <QApplication>
 #include <QComboBox>
@@ -150,7 +151,7 @@ static const char* host_ui_save_file(NativeHostHandle, bool isDir, const char* t
 
 
 CarlaInstrument::CarlaInstrument(InstrumentTrack* const instrumentTrack, const Descriptor* const descriptor, const bool isPatchbay)
-    : Instrument(instrumentTrack, descriptor),
+    : QWidgetInstrumentPlugin(instrumentTrack, descriptor),
       kIsPatchbay(isPatchbay),
       fHandle(nullptr),
       fDescriptor(isPatchbay ? carla_get_native_patchbay_plugin() : carla_get_native_rack_plugin()),

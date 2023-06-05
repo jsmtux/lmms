@@ -25,12 +25,14 @@
 #ifndef EXPRSYNTH_H
 #define EXPRSYNTH_H
 
+#include "AutomatableModel.h"
+#include "MemoryManager.h"
+
+#include "widgets/Graph.h"
+
 #include <cmath>
 #include <cstddef>
 #include <limits>
-#include "AutomatableModel.h"
-#include "Graph.h"
-#include "MemoryManager.h"
 
 namespace lmms
 {

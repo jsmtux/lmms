@@ -29,9 +29,10 @@
 #include "WaveShaperControls.h"
 #include "WaveShaper.h"
 #include "base64.h"
-#include "Graph.h"
 #include "Engine.h"
 #include "Song.h"
+
+#include "widgets/Graph.h"
 
 namespace lmms
 {

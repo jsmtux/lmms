@@ -28,9 +28,9 @@
 #include <QStringList>
 #include <QMap>
 
+#include "IMemoryManager.h"
 #include "JournallingObject.h"
 #include "Model.h"
-#include "MemoryManager.h"
 
 
 class QWidget;
@@ -71,7 +71,7 @@ class PluginView;
 */
 class LMMS_EXPORT Plugin : public Model, public JournallingObject
 {
-	MM_OPERATORS
+	I_MM_OPERATORS
 	Q_OBJECT
 public:
 	enum PluginTypes
@@ -292,11 +292,8 @@ public:
 	static Plugin * instantiate(const QString& pluginName, Model * parent, void *data);
 
 	//! Create a view for the model
-	gui::PluginView * createView( QWidget * parent );
 
 protected:
-	//! Create a view for the model
-	virtual gui::PluginView* instantiateView( QWidget * ) = 0;
 	void collectErrorForUI( QString errMsg );
 
 

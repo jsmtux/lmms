@@ -28,9 +28,10 @@
 
 #include <QString>
 
-#include "Instrument.h"
-#include "InstrumentView.h"
 #include "AutomatableModel.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 class QPixmap;
 
@@ -119,7 +120,7 @@ private slots:
 } ;
 
 
-class OrganicInstrument : public Instrument
+class OrganicInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

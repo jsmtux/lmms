@@ -25,7 +25,7 @@
 #ifndef FLANGERCONTROLSDIALOG_H
 #define FLANGERCONTROLSDIALOG_H
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 namespace lmms
 {

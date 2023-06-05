@@ -31,7 +31,6 @@
 #include <samplerate.h>
 
 #include "AudioEngine.h"
-#include "ComboBox.h"
 #include "ConfigManager.h"
 #include "DataFile.h"
 #include "Engine.h"
@@ -39,13 +38,15 @@
 #include "InstrumentTrack.h"
 #include "NotePlayHandle.h"
 #include "PathUtil.h"
-#include "PixmapButton.h"
 #include "Song.h"
 #include "StringPairDrag.h"
 #include "Clipboard.h"
 
 #include "embed.h"
 #include "plugin_export.h"
+
+#include "widgets/ComboBox.h"
+#include "widgets/PixmapButton.h"
 
 
 namespace lmms
@@ -77,7 +78,7 @@ Plugin::Descriptor PLUGIN_EXPORT audiofileprocessor_plugin_descriptor =
 
 
 AudioFileProcessor::AudioFileProcessor( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &audiofileprocessor_plugin_descriptor ),
+	gui::QWidgetInstrumentPlugin( _instrument_track, &audiofileprocessor_plugin_descriptor ),
 	m_sampleBuffer(),
 	m_ampModel( 100, 0, 500, 1, this, tr( "Amplify" ) ),
 	m_startPointModel( 0, 0, 1, 0.0000001f, this, tr( "Start of sample" ) ),

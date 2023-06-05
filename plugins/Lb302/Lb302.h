@@ -33,9 +33,11 @@
 #define LB302_H
 
 #include "DspEffectLibrary.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
 #include "NotePlayHandle.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+
 #include <QMutex>
 
 namespace lmms
@@ -145,7 +147,7 @@ public:
 };
 
 
-class Lb302Synth : public Instrument
+class Lb302Synth : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

@@ -27,6 +27,7 @@
 #include <QDomElement>
 
 #include "PeakControllerEffectControls.h"
+#include "PeakControllerEffectControlDialog.h"
 #include "PeakControllerEffect.h"
 #include "Song.h"
 
@@ -106,5 +107,9 @@ void PeakControllerEffectControls::saveSettings( QDomDocument & _doc,
 	m_tresholdModel.saveSettings( _doc, _this, "treshold" );
 }
 
+gui::EffectControlDialog* PeakControllerEffectControls::createView()
+{
+	return new gui::PeakControllerEffectControlDialog( this );
+}
 
 } // namespace lmms

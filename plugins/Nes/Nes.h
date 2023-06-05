@@ -27,12 +27,12 @@
 
 #include <cmath>
 
-#include "Instrument.h"
-#include "InstrumentView.h"
 #include "AutomatableModel.h"
-#include "PixmapButton.h"
 #include "MemoryManager.h"
 
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/PixmapButton.h"
 
 #define makeknob( name, x, y, hint, unit, oname ) 		\
 	name = new Knob( knobStyled, this ); 				\
@@ -206,7 +206,7 @@ private:
 };
 
 
-class NesInstrument : public Instrument
+class NesInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

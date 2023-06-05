@@ -42,23 +42,23 @@
 
 #include "AudioEngine.h"
 #include "ConfigManager.h"
-#include "CustomTextKnob.h"
 #include "Engine.h"
-#include "FileDialog.h"
 #include "GuiApplication.h"
 #include "gui_templates.h"
+#include "IFileDialog.h"
 #include "InstrumentPlayHandle.h"
 #include "InstrumentTrack.h"
 #include "LocaleHelper.h"
 #include "MainWindow.h"
 #include "PathUtil.h"
-#include "PixmapButton.h"
 #include "Song.h"
 #include "StringPairDrag.h"
 #include "SubWindow.h"
-#include "TextFloat.h"
 #include "Clipboard.h"
 
+#include "widgets/CustomTextKnob.h"
+#include "widgets/PixmapButton.h"
+#include "widgets/TextFloat.h"
 
 #include "embed.h"
 
@@ -152,7 +152,7 @@ private:
 
 
 VestigeInstrument::VestigeInstrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &vestige_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &vestige_plugin_descriptor ),
 	m_plugin( nullptr ),
 	m_pluginMutex(),
 	m_subWindow( nullptr ),
@@ -680,7 +680,7 @@ void VestigeInstrumentView::modelChanged()
 
 void VestigeInstrumentView::openPlugin()
 {
-	FileDialog ofd( nullptr, tr( "Open VST plugin" ) );
+	auto ofd = getGUIInterface()->createFileDialog(tr( "Open VST plugin" ));
 
 	// set filters
 	QStringList types;
@@ -690,22 +690,22 @@ void VestigeInstrumentView::openPlugin()
 		<< tr( "SO-files (*.so)" )
 #endif
 		;
-	ofd.setNameFilters( types );
+	ofd->setNameFilters( types );
 
 	if( m_vi->m_pluginDLL != "" )
 	{
 		QString f = PathUtil::toAbsolute( m_vi->m_pluginDLL );
-		ofd.setDirectory( QFileInfo( f ).absolutePath() );
-		ofd.selectFile( QFileInfo( f ).fileName() );
+		ofd->setDirectory( QFileInfo( f ).absolutePath() );
+		ofd->selectFile( QFileInfo( f ).fileName() );
 	}
 	else
 	{
-		ofd.setDirectory( ConfigManager::inst()->vstDir() );
+		ofd->setDirectory( ConfigManager::inst()->vstDir() );
 	}
 
-	if ( ofd.exec () == QDialog::Accepted )
+	if ( ofd->exec () == IFileDialog::Accepted )
 	{
-		if( ofd.selectedFiles().isEmpty() )
+		if( ofd->selectedFiles().isEmpty() )
 		{
 			return;
 		}
@@ -716,7 +716,7 @@ void VestigeInstrumentView::openPlugin()
 			m_vi->p_subWindow = nullptr;
 		}
 
-		m_vi->loadFile( ofd.selectedFiles()[0] );
+		m_vi->loadFile( ofd->selectedFiles()[0] );
 		Engine::audioEngine()->doneChangeInModel();
 		if( m_vi->m_plugin && m_vi->m_plugin->pluginWidget() )
 		{

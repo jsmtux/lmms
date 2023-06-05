@@ -32,10 +32,12 @@
 #include "Engine.h"
 #include "AudioEngine.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
 #include "NotePlayHandle.h"
 #include "Oscillator.h"
-#include "PixmapButton.h"
+
+
+#include "widgets/Knob.h"
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 
@@ -77,7 +79,7 @@ float * OrganicInstrument::s_harmonics = nullptr;
 
 
 OrganicInstrument::OrganicInstrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &organic_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &organic_plugin_descriptor ),
 	m_modulationAlgo( Oscillator::SignalMix, Oscillator::SignalMix, Oscillator::SignalMix),
 	m_fx1Model( 0.0f, 0.0f, 0.99f, 0.01f , this, tr( "Distortion" ) ),
 	m_volModel( 100.0f, 0.0f, 200.0f, 1.0f, this, tr( "Volume" ) )

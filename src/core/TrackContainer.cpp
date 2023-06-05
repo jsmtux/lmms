@@ -25,7 +25,6 @@
 
 
 #include <QCoreApplication>
-#include <QProgressDialog>
 #include <QDomElement>
 #include <QWriteLocker>
 
@@ -34,12 +33,11 @@
 #include "TrackContainer.h"
 #include "PatternClip.h"
 #include "PatternStore.h"
-#include "PatternTrack.h"
 #include "Song.h"
 
-#include "GuiApplication.h"
-#include "MainWindow.h"
-#include "TextFloat.h"
+#include "IGuiApplication.h"
+
+#include "tracks/PatternTrack.h"
 
 namespace lmms
 {
@@ -89,19 +87,17 @@ void TrackContainer::loadSettings( const QDomElement & _this )
 		clearAllTracks();
 	}
 
-	static QProgressDialog * pd = nullptr;
+	static gui::IProgressModal * pd = nullptr;
 	bool was_null = ( pd == nullptr );
-	if (!journalRestore && gui::getGUI() != nullptr)
+	if (!journalRestore && gui::getGUIInterface() != nullptr)
 	{
 		if( pd == nullptr )
 		{
-			pd = new QProgressDialog( tr( "Loading project..." ),
-						tr( "Cancel" ), 0,
-						Engine::getSong()->getLoadingTrackCount(),
-						gui::getGUI()->mainWindow());
-			pd->setWindowModality( Qt::ApplicationModal );
-			pd->setWindowTitle( tr( "Please wait..." ) );
-			pd->show();
+			pd = gui::getGUIInterface()->mainWindowInterface()->ShowProgressMessage(
+				tr( "Loading project..." ),
+				0,
+				Engine::getSong()->getLoadingTrackCount()
+			);
 		}
 	}
 
@@ -115,12 +111,13 @@ void TrackContainer::loadSettings( const QDomElement & _this )
 						QEventLoop::AllEvents, 100 );
 			if( pd->wasCanceled() )
 			{
-				if (gui::getGUI() != nullptr)
+				if (gui::getGUIInterface() != nullptr)
 				{
-					gui::TextFloat::displayMessage( tr( "Loading cancelled" ),
-					tr( "Project loading was cancelled." ),
-					embed::getIconPixmap( "project_file", 24, 24 ),
-					2000 );
+					gui::getGUIInterface()->mainWindowInterface()->ShowTextFloatMessage(
+						tr( "Loading cancelled" ),
+						tr( "Project loading was cancelled." ),
+						embed::getIconPixmap( "project_file", 24, 24 ),
+						2000 );
 				}
 				Engine::getSong()->loadingCancelled();
 				break;
@@ -135,7 +132,7 @@ void TrackContainer::loadSettings( const QDomElement & _this )
 						node.firstChild().toElement().attribute( "name" );
 			if( pd != nullptr )
 			{
-				pd->setLabelText( tr("Loading Track %1 (%2/Total %3)").arg( trackName ).
+				pd->updateDescription( tr("Loading Track %1 (%2/Total %3)").arg( trackName ).
 						  arg( pd->value() + 1 ).arg( Engine::getSong()->getLoadingTrackCount() ) );
 			}
 			Track::create( node.toElement(), this );

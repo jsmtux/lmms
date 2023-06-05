@@ -29,7 +29,7 @@
 #include <QElapsedTimer>
 #include <QPainter>
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 class QLabel;
 

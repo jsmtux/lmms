@@ -28,15 +28,16 @@
 
 #include "TripleOscillator.h"
 #include "AudioEngine.h"
-#include "AutomatableButton.h"
 #include "debug.h"
 #include "Engine.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
 #include "NotePlayHandle.h"
 #include "Oscillator.h"
-#include "PixmapButton.h"
 #include "SampleBuffer.h"
+
+#include "widgets/AutomatableButton.h"
+#include "widgets/Knob.h"
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 #include "plugin_export.h"
@@ -223,7 +224,7 @@ void OscillatorObject::updateUseWaveTable()
 
 
 TripleOscillator::TripleOscillator( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &tripleoscillator_plugin_descriptor )
+	QWidgetInstrumentPlugin( _instrument_track, &tripleoscillator_plugin_descriptor )
 {
 	for( int i = 0; i < NUM_OF_OSCILLATORS; ++i )
 	{

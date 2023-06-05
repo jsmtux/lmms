@@ -31,12 +31,13 @@
 #include "GbApuWrapper.h"
 #include "base64.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
 #include "AudioEngine.h"
 #include "NotePlayHandle.h"
-#include "PixmapButton.h"
 #include "Engine.h"
-#include "Graph.h"
+
+#include "widgets/Graph.h"
+#include "widgets/Knob.h"
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 
@@ -72,7 +73,7 @@ Plugin::Descriptor PLUGIN_EXPORT freeboy_plugin_descriptor =
 
 
 FreeBoyInstrument::FreeBoyInstrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &freeboy_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &freeboy_plugin_descriptor ),
 
 	m_ch1SweepTimeModel( 4.0f, 0.0f, 7.0f, 1.0f, this, tr( "Sweep time" ) ),
 	m_ch1SweepDirModel( false, this, tr( "Sweep direction" ) ),

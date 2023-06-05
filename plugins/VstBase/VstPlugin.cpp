@@ -50,11 +50,12 @@
 #include "AudioEngine.h"
 #include "ConfigManager.h"
 #include "GuiApplication.h"
+#include "IFileDialog.h"
+#include "IGuiApplication.h"
 #include "LocaleHelper.h"
 #include "MainWindow.h"
 #include "PathUtil.h"
 #include "Song.h"
-#include "FileDialog.h"
 
 #ifdef LMMS_BUILD_LINUX
 #	include <X11/Xlib.h>
@@ -504,13 +505,16 @@ QWidget *VstPlugin::editor()
 
 void VstPlugin::openPreset()
 {
-	gui::FileDialog ofd(nullptr, tr("Open Preset"), "", tr("VST Plugin Preset (*.fxp *.fxb)"));
-	ofd.setFileMode(gui::FileDialog::ExistingFiles);
-	if (ofd.exec() == QDialog::Accepted && !ofd.selectedFiles().isEmpty())
+	auto ofd = gui::getGUIInterface()->createFileDialog(tr("Open Preset"));
+	ofd->setFileMode(gui::IFileDialog::ExistingFiles);
+	QStringList types;
+	types << tr("VST Plugin Preset (*.fxp *.fxb)");
+	ofd->setNameFilters(types);
+	if (ofd->exec() == gui::IFileDialog::Accepted && !ofd->selectedFiles().isEmpty())
 	{
 		lock();
 		sendMessage(message(IdLoadPresetFile).addString(QSTR_TO_STDSTR(
-			QDir::toNativeSeparators(ofd.selectedFiles()[0]))));
+			QDir::toNativeSeparators(ofd->selectedFiles()[0]))));
 		waitForMessage(IdLoadPresetFile, true);
 		unlock();
 	}
@@ -579,19 +583,23 @@ void VstPlugin::savePreset()
 	QString presName = currentProgramName().isEmpty() ? tr(": default") : currentProgramName();
 	presName.replace("\"", "'"); // QFileDialog unable to handle double quotes properly
 
-	gui::FileDialog sfd(nullptr, tr("Save Preset"), presName.section(": ", 1, 1) + tr(".fxp"),
-		tr("VST Plugin Preset (*.fxp *.fxb)"));
+	auto sfd = gui::getGUIInterface()->createFileDialog(tr("Save Preset"));
+
+	QStringList types;
+	types << tr("VST Plugin Preset (*.fxp *.fxb)");
+	sfd->setNameFilters(types);
+	sfd->setDirectory(presName.section(": ", 1, 1) + tr(".fxp"));
 
 	if (p_name != "") // remember last directory
 	{
-		sfd.setDirectory(QFileInfo(p_name).absolutePath());
+		sfd->setDirectory(QFileInfo(p_name).absolutePath());
 	}
 
-	sfd.setAcceptMode(gui::FileDialog::AcceptSave);
-	sfd.setFileMode(gui::FileDialog::AnyFile);
-	if (sfd.exec() == QDialog::Accepted && !sfd.selectedFiles().isEmpty() && sfd.selectedFiles()[0] != "")
+	sfd->setAcceptMode(gui::IFileDialog::AcceptSave);
+	sfd->setFileMode(gui::IFileDialog::AnyFile);
+	if (sfd->exec() == gui::IFileDialog::Accepted && !sfd->selectedFiles().isEmpty() && sfd->selectedFiles()[0] != "")
 	{
-		QString fns = sfd.selectedFiles()[0];
+		QString fns = sfd->selectedFiles()[0];
 		p_name = fns;
 
 		if ((fns.toUpper().indexOf(tr(".FXP")) == -1) && (fns.toUpper().indexOf(tr(".FXB")) == -1))

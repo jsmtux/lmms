@@ -33,14 +33,15 @@
 #include <QVariant>
 
 #include "AutomationClip.h"
-#include "AutomationTrack.h"
 #include "ConfigManager.h"
 #include "Engine.h"
-#include "InstrumentTrack.h"
 #include "PatternStore.h"
-#include "PatternTrack.h"
-#include "SampleTrack.h"
 #include "Song.h"
+
+#include "tracks/AutomationTrack.h"
+#include "tracks/InstrumentTrack.h"
+#include "tracks/PatternTrack.h"
+#include "tracks/SampleTrack.h"
 
 
 namespace lmms

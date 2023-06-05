@@ -3,13 +3,15 @@
 
 #include <QString>
 
-#include "ImportFilter.h"
+#include "TrackContainer.h"
+
+#include "plugins/QWidgetImportFilter.h"
 
 namespace lmms
 {
 
 
-class HydrogenImport : public ImportFilter
+class HydrogenImport : public QWidgetImportFilter
 {
 public:
 	HydrogenImport( const QString & _file );

@@ -27,9 +27,9 @@
 #include "DispersionControls.h"
 
 #include "embed.h"
-#include "Knob.h"
-#include "LcdSpinBox.h"
-#include "PixmapButton.h"
+#include "widgets/Knob.h"
+#include "widgets/LcdSpinBox.h"
+#include "widgets/PixmapButton.h"
 
 
 namespace lmms::gui

@@ -172,7 +172,6 @@ INCLUDE_DIRECTORIES(
 SET(QT_LIBRARIES
 	Qt5::Core
 	Qt5::Gui
-	Qt5::Widgets
 	Qt5::Xml
 )
 

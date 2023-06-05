@@ -24,7 +24,7 @@
 
 
 #include "InstrumentPlayHandle.h"
-#include "InstrumentTrack.h"
+#include "tracks/InstrumentTrack.h"
 
 namespace lmms
 {

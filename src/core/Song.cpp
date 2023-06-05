@@ -27,35 +27,31 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
-#include <QMessageBox>
 
 #include <algorithm>
 #include <cmath>
 
-#include "AutomationTrack.h"
-#include "AutomationEditor.h"
+#include "AutomationClip.h"
 #include "ConfigManager.h"
-#include "ControllerRackView.h"
 #include "ControllerConnection.h"
 #include "EnvelopeAndLfoParameters.h"
 #include "Mixer.h"
-#include "MixerView.h"
-#include "GuiApplication.h"
 #include "ExportFilter.h"
-#include "InstrumentTrack.h"
+#include "IAutomationEditor.h"
+#include "IGuiApplication.h"
+#include "ITimeLineWidget.h"
 #include "Keymap.h"
 #include "NotePlayHandle.h"
-#include "MidiClip.h"
-#include "PatternEditor.h"
 #include "PatternStore.h"
-#include "PatternTrack.h"
-#include "PianoRoll.h"
 #include "ProjectJournal.h"
-#include "ProjectNotes.h"
 #include "Scale.h"
-#include "SongEditor.h"
-#include "TimeLineWidget.h"
 #include "PeakController.h"
+
+
+#include "tracks/AutomationTrack.h"
+#include "tracks/InstrumentTrack.h"
+#include "tracks/MidiClip.h"
+#include "tracks/PatternTrack.h"
 
 
 namespace lmms
@@ -186,7 +182,7 @@ void Song::setTimeSignature()
 
 void Song::savePos()
 {
-	gui::TimeLineWidget* tl = m_playPos[m_playMode].m_timeLine;
+	gui::ITimeLineWidget* tl = m_playPos[m_playMode].m_timeLine;
 
 	if( tl != nullptr )
 	{
@@ -639,12 +635,12 @@ void Song::stop()
 		return;
 	}
 
-	using gui::TimeLineWidget;
+	using gui::ITimeLineWidget;
 
 	// To avoid race conditions with the processing threads
 	Engine::audioEngine()->requestChangeInModel();
 
-	TimeLineWidget * tl = m_playPos[m_playMode].m_timeLine;
+	ITimeLineWidget * tl = m_playPos[m_playMode].m_timeLine;
 	m_paused = false;
 	m_recording = true;
 
@@ -652,12 +648,12 @@ void Song::stop()
 	{
 		switch( tl->behaviourAtStop() )
 		{
-			case TimeLineWidget::BackToZero:
+			case gui::TimeLineBehaviourAtStopStates::BackToZero:
 				m_playPos[m_playMode].setTicks(0);
 				m_elapsedMilliSeconds[m_playMode] = 0;
 				break;
 
-			case TimeLineWidget::BackToStart:
+			case gui::TimeLineBehaviourAtStopStates::BackToStart:
 				if( tl->savedPos() >= 0 )
 				{
 					m_playPos[m_playMode].setTicks(tl->savedPos().getTicks());
@@ -667,7 +663,7 @@ void Song::stop()
 				}
 				break;
 
-			case TimeLineWidget::KeepStopPosition:
+			case gui::TimeLineBehaviourAtStopStates::KeepStopPosition:
 				break;
 		}
 	}
@@ -848,7 +844,7 @@ AutomatedValueMap Song::automatedValuesAt(TimePos time, int clipNum) const
 
 void Song::clearProject()
 {
-	using gui::getGUI;
+	using gui::getGUIInterface;
 
 	Engine::projectJournal()->setJournalling( false );
 
@@ -865,33 +861,8 @@ void Song::clearProject()
 
 	Engine::audioEngine()->requestChangeInModel();
 
-	if( getGUI() != nullptr && getGUI()->patternEditor() )
-	{
-		getGUI()->patternEditor()->m_editor->clearAllTracks();
-	}
-	if( getGUI() != nullptr && getGUI()->songEditor() )
-	{
-		getGUI()->songEditor()->m_editor->clearAllTracks();
-	}
-	if( getGUI() != nullptr && getGUI()->mixerView() )
-	{
-		getGUI()->mixerView()->clear();
-	}
 	QCoreApplication::sendPostedEvents();
-	Engine::patternStore()->clearAllTracks();
-	clearAllTracks();
-
 	Engine::mixer()->clear();
-
-	if( getGUI() != nullptr && getGUI()->automationEditor() )
-	{
-		getGUI()->automationEditor()->setCurrentClip( nullptr );
-	}
-
-	if( getGUI() != nullptr && getGUI()->pianoRoll() )
-	{
-		getGUI()->pianoRoll()->reset();
-	}
 
 	m_tempoModel.reset();
 	m_masterVolumeModel.reset();
@@ -909,10 +880,13 @@ void Song::clearProject()
 
 	Engine::audioEngine()->doneChangeInModel();
 
-	if( getGUI() != nullptr && getGUI()->getProjectNotes() )
-	{
-		getGUI()->getProjectNotes()->clear();
+	if(getGUIInterface() != nullptr) {
+		getGUIInterface()->clear();
 	}
+
+	Engine::patternStore()->clearAllTracks();
+	clearAllTracks();
+
 
 	removeAllControllers();
 
@@ -1007,7 +981,7 @@ void Song::createNewProjectFromTemplate( const QString & templ )
 // load given song
 void Song::loadProject( const QString & fileName )
 {
-	using gui::getGUI;
+	using gui::getGUIInterface;
 
 	QDomNode node;
 
@@ -1035,9 +1009,10 @@ void Song::loadProject( const QString & fileName )
 		{
 			cantLoadProject = true;
 
-			if (getGUI() != nullptr)
+			if (getGUIInterface() != nullptr)
 			{
-				QMessageBox::critical(nullptr, tr("Aborting project load"),
+				getGUIInterface()->mainWindowInterface()->ShowCriticalMessage(
+					tr("Aborting project load"),
 					tr("Project file contains local paths to plugins, which could be used to "
 						"run malicious code."));
 			}
@@ -1098,10 +1073,10 @@ void Song::loadProject( const QString & fileName )
 	if( !node.isNull() )
 	{
 		Engine::mixer()->restoreState( node.toElement() );
-		if( getGUI() != nullptr )
+		if( getGUIInterface() != nullptr )
 		{
 			// refresh MixerView
-			getGUI()->mixerView()->refreshDisplay();
+			getGUIInterface()->mixerViewInterface()->refreshDisplay();
 		}
 	}
 
@@ -1147,28 +1122,14 @@ void Song::loadProject( const QString & fileName )
 			{
 				restoreKeymapStates(node.toElement());
 			}
-			else if( getGUI() != nullptr )
+			else if( getGUIInterface() != nullptr )
 			{
-				if( node.nodeName() == getGUI()->getControllerRackView()->nodeName() )
-				{
-					getGUI()->getControllerRackView()->restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == getGUI()->pianoRoll()->nodeName() )
-				{
-					getGUI()->pianoRoll()->restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == getGUI()->automationEditor()->m_editor->nodeName() )
-				{
-					getGUI()->automationEditor()->m_editor->restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == getGUI()->getProjectNotes()->nodeName() )
-				{
-					 getGUI()->getProjectNotes()->SerializingObject::restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == m_playPos[Mode_PlaySong].m_timeLine->nodeName() )
+				if( node.nodeName() == m_playPos[Mode_PlaySong].m_timeLine->nodeName() )
 				{
 					m_playPos[Mode_PlaySong].m_timeLine->restoreState( node.toElement() );
 				}
+
+				getGUIInterface()->restoreState(node);
 			}
 		}
 		node = node.nextSibling();
@@ -1207,10 +1168,10 @@ void Song::loadProject( const QString & fileName )
 
 	if ( hasErrors())
 	{
-		if ( getGUI() != nullptr )
+		if ( getGUIInterface() != nullptr )
 		{
-			QMessageBox::warning( nullptr, tr("LMMS Error report"), errorSummary(),
-							QMessageBox::Ok );
+			getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+				tr("LMMS Error report"), errorSummary());
 		}
 		else
 		{
@@ -1231,7 +1192,7 @@ void Song::loadProject( const QString & fileName )
 // only save current song as filename and do nothing else
 bool Song::saveProjectFile(const QString & filename, bool withResources)
 {
-	using gui::getGUI;
+	using gui::getGUIInterface;
 
 	DataFile dataFile( DataFile::SongProject );
 	m_savingProject = true;
@@ -1245,12 +1206,9 @@ bool Song::saveProjectFile(const QString & filename, bool withResources)
 
 	m_globalAutomationTrack->saveState( dataFile, dataFile.content() );
 	Engine::mixer()->saveState( dataFile, dataFile.content() );
-	if( getGUI() != nullptr )
+	if( getGUIInterface() != nullptr )
 	{
-		getGUI()->getControllerRackView()->saveState( dataFile, dataFile.content() );
-		getGUI()->pianoRoll()->saveState( dataFile, dataFile.content() );
-		getGUI()->automationEditor()->m_editor->saveState( dataFile, dataFile.content() );
-		getGUI()->getProjectNotes()->SerializingObject::saveState( dataFile, dataFile.content() );
+		getGUIInterface()->saveState(dataFile);
 		m_playPos[Mode_PlaySong].m_timeLine->saveState( dataFile, dataFile.content() );
 	}
 

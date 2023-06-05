@@ -31,10 +31,11 @@
 #include <QMutex>
 #include <samplerate.h>
 
-#include "Instrument.h"
-#include "InstrumentView.h"
-#include "LcdSpinBox.h"
 #include "MemoryManager.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/LcdSpinBox.h"
 
 class QLabel;
 
@@ -55,7 +56,7 @@ class PatchesDialog;
 } // namespace gui
 
 
-class Sf2Instrument : public Instrument
+class Sf2Instrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 	mapPropertyFromModel(int,getBank,setBank,m_bankNum);

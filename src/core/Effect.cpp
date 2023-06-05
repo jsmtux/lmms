@@ -25,10 +25,14 @@
 
 #include <QDomElement>
 
+
+#include "AudioEngine.h"
+#include "AutomatableModel.h"
 #include "Effect.h"
 #include "EffectChain.h"
 #include "EffectControls.h"
-#include "EffectView.h"
+#include "TempoSyncKnobModel.h"
+#include "ICoreApplication.h"
 
 #include "ConfigManager.h"
 
@@ -46,10 +50,10 @@ Effect::Effect( const Plugin::Descriptor * _desc,
 	m_noRun( false ),
 	m_running( false ),
 	m_bufferCount( 0 ),
-	m_enabledModel( true, this, tr( "Effect enabled" ) ),
-	m_wetDryModel( 1.0f, -1.0f, 1.0f, 0.01f, this, tr( "Wet/Dry mix" ) ),
-	m_gateModel( 0.0f, 0.0f, 1.0f, 0.01f, this, tr( "Gate" ) ),
-	m_autoQuitModel( 1.0f, 1.0f, 8000.0f, 100.0f, 1.0f, this, tr( "Decay" ) ),
+	m_enabledModel( new BoolModel( true, this, tr( "Effect enabled" ) ) ),
+	m_wetDryModel( new FloatModel( 1.0f, -1.0f, 1.0f, 0.01f, this, tr( "Wet/Dry mix" ) ) ),
+	m_gateModel( new FloatModel( 0.0f, 0.0f, 1.0f, 0.01f, this, tr( "Gate" ) ) ),
+	m_autoQuitModel( new TempoSyncKnobModel( 1.0f, 1.0f, 8000.0f, 100.0f, 1.0f, this, tr( "Decay" ) ) ),
 	m_autoQuitDisabled( false )
 {
 	m_srcState[0] = m_srcState[1] = nullptr;
@@ -75,15 +79,38 @@ Effect::~Effect()
 	}
 }
 
+f_cnt_t Effect::timeout() const
+{
+	const float samples = getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->processingSampleRate() * m_autoQuitModel->value() / 1000.0f;
+	return 1 + ( static_cast<int>( samples ) / getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->framesPerPeriod() );
+}
 
+void Effect::sampleDown( const sampleFrame * _src_buf,
+						sampleFrame * _dst_buf,
+						sample_rate_t _dst_sr )
+{
+	resample( 0, _src_buf,
+			getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->processingSampleRate(),
+				_dst_buf, _dst_sr,
+				getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->framesPerPeriod() );
+}
 
+void Effect::sampleBack( const sampleFrame * _src_buf,
+						sampleFrame * _dst_buf,
+						sample_rate_t _src_sr )
+{
+	resample( 1, _src_buf, _src_sr, _dst_buf,
+			getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->processingSampleRate(),
+		getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->framesPerPeriod() * _src_sr /
+			getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->processingSampleRate() );
+}
 
 void Effect::saveSettings( QDomDocument & _doc, QDomElement & _this )
 {
-	m_enabledModel.saveSettings( _doc, _this, "on" );
-	m_wetDryModel.saveSettings( _doc, _this, "wet" );
-	m_autoQuitModel.saveSettings( _doc, _this, "autoquit" );
-	m_gateModel.saveSettings( _doc, _this, "gate" );
+	m_enabledModel->saveSettings( _doc, _this, "on" );
+	m_wetDryModel->saveSettings( _doc, _this, "wet" );
+	m_autoQuitModel->saveSettings( _doc, _this, "autoquit" );
+	m_gateModel->saveSettings( _doc, _this, "gate" );
 	controls()->saveState( _doc, _this );
 }
 
@@ -92,10 +119,10 @@ void Effect::saveSettings( QDomDocument & _doc, QDomElement & _this )
 
 void Effect::loadSettings( const QDomElement & _this )
 {
-	m_enabledModel.loadSettings( _this, "on" );
-	m_wetDryModel.loadSettings( _this, "wet" );
-	m_autoQuitModel.loadSettings( _this, "autoquit" );
-	m_gateModel.loadSettings( _this, "gate" );
+	m_enabledModel->loadSettings( _this, "on" );
+	m_wetDryModel->loadSettings( _this, "wet" );
+	m_autoQuitModel->loadSettings( _this, "autoquit" );
+	m_gateModel->loadSettings( _this, "gate" );
 
 	QDomNode node = _this.firstChild();
 	while( !node.isNull() )
@@ -163,16 +190,6 @@ void Effect::checkGate( double _out_sum )
 }
 
 
-
-
-gui::PluginView * Effect::instantiateView( QWidget * _parent )
-{
-	return new gui::EffectView( this, _parent );
-}
-
-	
-
-
 void Effect::reinitSRC()
 {
 	for (auto& state : m_srcState)
@@ -182,7 +199,7 @@ void Effect::reinitSRC()
 			src_delete(state);
 		}
 		int error;
-		const int currentInterpolation = Engine::audioEngine()->currentQualitySettings().libsrcInterpolation();
+		const int currentInterpolation = getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->currentQualitySettings().libsrcInterpolation();
 		if((state = src_new(currentInterpolation, DEFAULT_CHANNELS, &error)) == nullptr)
 		{
 			qFatal( "Error: src_new() failed in effect.cpp!\n" );
@@ -203,7 +220,7 @@ void Effect::resample( int _i, const sampleFrame * _src_buf,
 		return;
 	}
 	m_srcData[_i].input_frames = _frames;
-	m_srcData[_i].output_frames = Engine::audioEngine()->framesPerPeriod();
+	m_srcData[_i].output_frames = getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->framesPerPeriod();
 	m_srcData[_i].data_in = const_cast<float*>(_src_buf[0].data());
 	m_srcData[_i].data_out = _dst_buf[0].data ();
 	m_srcData[_i].src_ratio = (double) _dst_sr / _src_sr;

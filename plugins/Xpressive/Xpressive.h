@@ -29,9 +29,9 @@
 
 #include <QTextEdit>
 
-#include "Graph.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/Graph.h"
 
 #include "ExprSynth.h"
 
@@ -61,7 +61,7 @@ class XpressiveView;
 
 
 
-class Xpressive : public Instrument
+class Xpressive : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

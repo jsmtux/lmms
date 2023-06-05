@@ -28,8 +28,9 @@
 #define _SID_H
 
 #include "AutomatableModel.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 namespace lmms
 {
@@ -78,7 +79,7 @@ private:
 	friend class gui::SidInstrumentView;
 } ;
 
-class SidInstrument : public Instrument
+class SidInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:

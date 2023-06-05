@@ -26,8 +26,8 @@
 
 #include "NineButtonSelector.h"
 
-#include "CaptionMenu.h"
-#include "PixmapButton.h"
+#include "widgets/CaptionMenu.h"
+#include "widgets/PixmapButton.h"
 
 namespace lmms::gui
 {

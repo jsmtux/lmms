@@ -29,8 +29,9 @@
 #include "embed.h"
 #include "BitcrushControlDialog.h"
 #include "BitcrushControls.h"
-#include "LedCheckBox.h"
-#include "Knob.h"
+
+#include "widgets/LedCheckBox.h"
+#include "widgets/Knob.h"
 
 namespace lmms::gui
 {

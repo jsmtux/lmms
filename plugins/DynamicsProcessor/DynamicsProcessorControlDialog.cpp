@@ -28,9 +28,10 @@
 #include "DynamicsProcessorControlDialog.h"
 #include "DynamicsProcessorControls.h"
 #include "embed.h"
-#include "Graph.h"
-#include "Knob.h"
-#include "PixmapButton.h"
+
+#include "widgets/Graph.h"
+#include "widgets/Knob.h"
+#include "widgets/PixmapButton.h"
 
 namespace lmms::gui
 {

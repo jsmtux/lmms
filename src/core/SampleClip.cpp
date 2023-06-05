@@ -26,10 +26,13 @@
 
 #include <QDomElement>
 
+#include "AudioEngine.h"
+#include "Engine.h"
+#include "ITimeLineWidget.h"
+#include "TrackContainer.h"
 #include "SampleBuffer.h"
-#include "SampleClipView.h"
-#include "SampleTrack.h"
-#include "TimeLineWidget.h"
+#include "tracks/SampleTrack.h"
+#include "Song.h"
 
 
 namespace lmms
@@ -53,7 +56,7 @@ SampleClip::SampleClip( Track * _track ) :
 					this, SLOT(updateLength()));
 
 	//care about positionmarker
-	gui::TimeLineWidget* timeLine = Engine::getSong()->getPlayPos( Engine::getSong()->Mode_PlaySong ).m_timeLine;
+	gui::ITimeLineWidget* timeLine = Engine::getSong()->getPlayPos( Engine::getSong()->Mode_PlaySong ).m_timeLine;
 	if( timeLine )
 	{
 		connect( timeLine, SIGNAL(positionMarkerMoved()), this, SLOT(playbackPositionChanged()));
@@ -317,14 +320,5 @@ void SampleClip::loadSettings( const QDomElement & _this )
 		emit wasReversed(); // tell SampleClipView to update the view
 	}
 }
-
-
-
-
-gui::ClipView * SampleClip::createView( gui::TrackView * _tv )
-{
-	return new gui::SampleClipView( this, _tv );
-}
-
 
 } // namespace lmms
