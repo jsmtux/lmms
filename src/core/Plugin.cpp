@@ -61,10 +61,11 @@ static Plugin::Descriptor dummyPluginDescriptor =
 
 
 
-Plugin::Plugin(const Descriptor * descriptor, Model * parent, const
-		Descriptor::SubPluginFeatures::Key* key) :
-	Model(parent),
+Plugin::Plugin(const Descriptor * descriptor,
+		Model * _parent,
+		const Descriptor::SubPluginFeatures::Key* key) :
 	JournallingObject(),
+	m_model(_parent),
 	m_descriptor(descriptor),
 	m_key(key ? *key : Descriptor::SubPluginFeatures::Key(m_descriptor))
 {
@@ -94,16 +95,16 @@ QString use_this_or(QString this_param, QString or_param)
 
 
 
-QString Plugin::displayName() const
-{
-	return Model::displayName().isEmpty() // currently always empty
-		? (m_descriptor->subPluginFeatures && m_key.isValid())
-			// get from sub plugin
-			? m_key.displayName()
-			// get from plugin
-			: m_descriptor->displayName
-		: Model::displayName();
-}
+// QString Plugin::displayName() const
+// {
+// 	return Model::displayName().isEmpty() // currently always empty
+// 		? (m_descriptor->subPluginFeatures && m_key.isValid())
+// 			// get from sub plugin
+// 			? m_key.displayName()
+// 			// get from plugin
+// 			: m_descriptor->displayName
+// 		: Model::displayName();
+// }
 
 
 
@@ -221,8 +222,8 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 	else if( pi.isNull() )
 	{
 		getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
-			tr( "Plugin not found" ),
-			tr( "The plugin \"%1\" wasn't found or could not be loaded!\nReason: \"%2\"" ).
+			QObject::tr( "Plugin not found" ),
+			QObject::tr( "The plugin \"%1\" wasn't found or could not be loaded!\nReason: \"%2\"" ).
 					arg( pluginName ).arg( getPluginFactory()->errorString(pluginName)) );
 		inst = gui::getGUIInterface()->createDummyPlugin();
 	}
@@ -241,8 +242,8 @@ Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
 			if (gui::getGUIInterface() != nullptr)
 			{
 				gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
-					tr( "Error while loading plugin" ),
-					tr( "Failed to load plugin \"%1\"!").arg( pluginName ));
+					QObject::tr( "Error while loading plugin" ),
+					QObject::tr( "Failed to load plugin \"%1\"!").arg( pluginName ));
 			}
 			inst = gui::getGUIInterface()->createDummyPlugin();
 		}

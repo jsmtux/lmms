@@ -50,8 +50,9 @@
 namespace lmms::gui
 {
 
-EffectView::EffectView( Effect * _model, QWidget * _parent ) :
-	PluginView( _model, _parent ),
+EffectView::EffectView( Effect * _effect, QWidget * _parent ) :
+	QWidget( _parent ),
+	m_effect(_effect),
 	m_bg( embed::getIconPixmap( "effect_plugin" ) ),
 	m_subWindow( nullptr ),
 	m_controlView(nullptr),
@@ -87,9 +88,6 @@ EffectView::EffectView( Effect * _model, QWidget * _parent ) :
 	m_gate->move( 116 - m_gate->width() / 2, 5 );
 	m_gate->setEnabled( isEnabled && !effect()->m_autoQuitDisabled );
 	m_gate->setHintText( tr( "Gate:" ), "" );
-
-
-	setModel( _model );
 
 	if( effect()->controls()->controlCount() > 0 )
 	{
@@ -201,7 +199,7 @@ void EffectView::closeEffects()
 
 void EffectView::contextMenuEvent( QContextMenuEvent * )
 {
-	QPointer<CaptionMenu> contextMenu = new CaptionMenu( model()->displayName(), this );
+	QPointer<CaptionMenu> contextMenu = new CaptionMenu( effect()->model()->displayName(), this );
 	contextMenu->addAction( embed::getIconPixmap( "arp_up" ),
 						tr( "Move &up" ),
 						this, SLOT(moveUp()));
@@ -266,7 +264,7 @@ void EffectView::paintEvent( QPaintEvent * )
 	f.setBold( true );
 	p.setFont( f );
 
-	QString elidedText = p.fontMetrics().elidedText( model()->displayName(), Qt::ElideRight, width() - 22 );
+	QString elidedText = p.fontMetrics().elidedText( effect()->model()->displayName(), Qt::ElideRight, width() - 22 );
 
 	p.setPen( palette().shadow().color() );
 	p.drawText( 6, 55, elidedText );

@@ -162,7 +162,7 @@ void EffectRackView::update()
 		int i = 0;
 		for (const auto& effectView : m_effectViews)
 		{
-			if (effectView->model() == effect)
+			if (effectView->effect() == effect)
 			{
 				view_map[i] = true;
 				break;

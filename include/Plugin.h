@@ -69,10 +69,9 @@ class PluginView;
 	are a bit like values to the sub plugins' keys (in terms of a key-value-
 	map).
 */
-class LMMS_EXPORT Plugin : public Model, public JournallingObject
+class LMMS_EXPORT Plugin : public JournallingObject
 {
 	MM_OPERATORS
-	Q_OBJECT
 public:
 	enum PluginTypes
 	{
@@ -239,12 +238,13 @@ public:
 	//! Constructor of a plugin
 	//! @param key Sub plugins must pass a key here, optional otherwise.
 	//!   See the key() function
-	Plugin(const Descriptor * descriptor, Model * parent,
+	Plugin(const Descriptor * descriptor,
+		Model * _parent,
 		const Descriptor::SubPluginFeatures::Key *key = nullptr);
 	~Plugin() override = default;
 
 	//! Return display-name out of sub plugin or descriptor
-	QString displayName() const override;
+	// QString displayName() const override;
 
 	//! Return logo out of sub plugin or descriptor
 	const PixmapLoader *logo() const;
@@ -293,14 +293,19 @@ public:
 
 	//! Create a view for the model
 
+	Model* model()
+	{
+		return &m_model;
+	}
 protected:
 	void collectErrorForUI( QString errMsg );
 
+	Model m_model;
+
+	Descriptor::SubPluginFeatures::Key m_key;
 
 private:
 	const Descriptor * m_descriptor;
-
-	Descriptor::SubPluginFeatures::Key m_key;
 
 	// pointer to instantiation-function in plugin
 	using InstantiationHook = Plugin* (*)(Model*, void*);

@@ -42,20 +42,11 @@ public:
 	InstrumentView( Instrument * _instrument, QWidget * _parent );
 	~InstrumentView() override;
 
-	Instrument * model()
-	{
-		return( castModel<Instrument>() );
-	}
-
-	const Instrument * model() const
-	{
-		return( castModel<Instrument>() );
-	}
-
-	void setModel( Model * _model, bool = false ) override;
+	void setInstrument( Instrument * _instrument );
 
 	InstrumentTrackWindow * instrumentTrackWindow();
-
+private:
+	Instrument* m_instrument;
 } ;
 
 

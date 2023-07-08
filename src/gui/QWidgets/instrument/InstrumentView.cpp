@@ -33,9 +33,9 @@ namespace lmms::gui
 {
 
 InstrumentView::InstrumentView( Instrument * _Instrument, QWidget * _parent ) :
-	PluginView( _Instrument, _parent )
+	PluginView( _parent )
 {
-	setModel( _Instrument );
+	setInstrument( _Instrument );
 	setAttribute( Qt::WA_DeleteOnClose, true );
 }
 
@@ -53,14 +53,11 @@ InstrumentView::~InstrumentView()
 
 
 
-void InstrumentView::setModel( Model * _model, bool )
+void InstrumentView::setInstrument( Instrument * _instrument )
 {
-	if( dynamic_cast<Instrument *>( _model ) != nullptr )
-	{
-		ModelView::setModel( _model );
-		instrumentTrackWindow()->setWindowIcon( model()->logo()->pixmap() );
-		connect( model(), SIGNAL(destroyed(QObject*)), this, SLOT(close()));
-	}
+	m_instrument = _instrument;
+	instrumentTrackWindow()->setWindowIcon( m_instrument->logo()->pixmap() );
+	connect( m_instrument, SIGNAL(destroyed(QObject*)), this, SLOT(close()));
 }
 
 

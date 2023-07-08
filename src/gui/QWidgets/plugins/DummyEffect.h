@@ -126,7 +126,7 @@ private:
 				if( attribute.hasAttribute( "value" ) )
 				{
 					QString name = tr("NOT FOUND") + " (" + attribute.attribute( "value" ) + ")";
-					setDisplayName(name);
+					// setDisplayName(name);
 					return;
 				}
 

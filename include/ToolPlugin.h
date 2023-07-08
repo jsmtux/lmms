@@ -44,7 +44,6 @@ public:
 	// on failure
 	static ToolPlugin * instantiate( const QString & _plugin_name,
 										Model * _parent );
-
 } ;
 
 

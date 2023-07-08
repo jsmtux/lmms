@@ -45,20 +45,20 @@ class LedCheckBox;
 class TempoSyncKnob;
 
 
-class EffectView : public PluginView
+class EffectView : public QWidget
 {
 	Q_OBJECT
 public:
-	EffectView( Effect * _model, QWidget * _parent );
+	EffectView( Effect * _effect, QWidget * _parent );
 	~EffectView() override;
 
 	inline Effect * effect()
 	{
-		return castModel<Effect>();
+		return m_effect;
 	}
 	inline const Effect * effect() const
 	{
-		return castModel<Effect>();
+		return m_effect;
 	}
 
 	static constexpr int DEFAULT_WIDTH = 215;
@@ -85,10 +85,11 @@ signals:
 protected:
 	void contextMenuEvent( QContextMenuEvent * _me ) override;
 	void paintEvent( QPaintEvent * _pe ) override;
-	void modelChanged() override;
+	void modelChanged();
 
 
 private:
+	Effect* m_effect;
 	QPixmap m_bg;
 	LedCheckBox * m_bypass;
 	Knob * m_wetDry;

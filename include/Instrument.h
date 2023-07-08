@@ -43,8 +43,9 @@ class NotePlayHandle;
 class Track;
 
 
-class LMMS_EXPORT Instrument : public Plugin
+class LMMS_EXPORT Instrument : public QObject, public Plugin
 {
+	Q_OBJECT
 	MM_OPERATORS
 public:
 	enum Flag
@@ -112,7 +113,7 @@ public:
 		return true;
 	}
 
-	QString fullDisplayName() const override;
+	// QString fullDisplayName() const override;
 
 	// --------------------------------------------------------------------
 	// provided functions:
@@ -132,6 +133,10 @@ public:
 		return m_instrumentTrack;
 	}
 
+	QString displayName()
+	{
+		return m_key.displayName();
+	}
 
 protected:
 	// fade in to prevent clicks
