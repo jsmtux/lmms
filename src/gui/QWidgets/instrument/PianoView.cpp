@@ -94,7 +94,6 @@ const int LABEL_TEXT_SIZE = 7;      /*!< The height of the key label text */
  */
 PianoView::PianoView(QWidget *parent) :
 	QWidget(parent),                 /*!< Our parent */
-	ModelView(nullptr, this),        /*!< Our view Model */
 	m_piano(nullptr),                /*!< Our piano Model */
 	m_startKey(Key_C + Octave_3*KeysPerOctave), /*!< The first key displayed? */
 	m_lastKey(-1),                   /*!< The last key displayed? */
@@ -304,9 +303,9 @@ int PianoView::getKeyFromKeyEvent( QKeyEvent * _ke )
 /*! \brief Register a change to this piano display view
  *
  */
-void PianoView::modelChanged()
+void PianoView::setPiano(Piano* piano)
 {
-	m_piano = castModel<Piano>();
+	m_piano = piano;
 	if (m_piano != nullptr)
 	{
 		connect(m_piano->instrumentTrack()->baseNoteModel(), SIGNAL(dataChanged()), this, SLOT(update()));

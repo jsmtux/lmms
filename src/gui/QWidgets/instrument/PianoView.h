@@ -39,7 +39,7 @@ class Piano;
 namespace gui
 {
 
-class PianoView : public QWidget, public ModelView
+class PianoView : public QWidget
 {
 	Q_OBJECT
 public:
@@ -48,14 +48,15 @@ public:
 
 	static int getKeyFromKeyEvent( QKeyEvent * _ke );
 
-
 public:
 	void keyPressEvent( QKeyEvent * ke ) override;
 	void keyReleaseEvent( QKeyEvent * ke ) override;
 
+	void setPiano(Piano* piano);
+
 
 protected:
-	void modelChanged() override;
+	// void modelChanged() override;
 	void contextMenuEvent( QContextMenuEvent * _me ) override;
 	void paintEvent( QPaintEvent * ) override;
 	void mousePressEvent( QMouseEvent * me ) override;

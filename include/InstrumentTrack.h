@@ -178,7 +178,7 @@ public:
 	int baseNote() const;
 	float baseFreq() const;
 
-	Piano *pianoModel()
+	Piano *piano()
 	{
 		return &m_piano;
 	}
