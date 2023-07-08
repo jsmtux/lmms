@@ -138,9 +138,8 @@ public:
 };
 
 
-class LMMS_EXPORT Mixer : public Model, public JournallingObject
+class LMMS_EXPORT Mixer : public JournallingObject
 {
-	Q_OBJECT
 public:
 	Mixer();
 	~Mixer() override;
@@ -161,6 +160,11 @@ public:
 	MixerChannel * mixerChannel( int _ch )
 	{
 		return m_mixerChannels[_ch];
+	}
+
+	Model * model()
+	{
+		return &m_mixerModel;
 	}
 
 	// make the output of channel fromChannel go to the input of channel toChannel
@@ -218,6 +222,7 @@ public:
 	MixerRouteVector m_mixerRoutes;
 
 private:
+	Model m_mixerModel;
 	// the mixer channels in the mixer. index 0 is always master.
 	QVector<MixerChannel *> m_mixerChannels;
 
