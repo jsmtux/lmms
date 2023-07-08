@@ -71,12 +71,6 @@ public:
 	AudioAlsa( bool & _success_ful, AudioEngine* audioEngine );
 	~AudioAlsa() override;
 
-	inline static QString name()
-	{
-		return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget",
-			"ALSA (Advanced Linux Sound Architecture)" );
-	}
-
 	static QString probeDevice();
 
 	static DeviceInfoCollection getAvailableDevices();

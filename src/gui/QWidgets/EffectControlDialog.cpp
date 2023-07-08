@@ -1,7 +1,8 @@
 /*
- * AudioOss.h - device-class that implements OSS-PCM-output
+ * EffectControlDialog.cpp - base-class for effect-dialogs for displaying
+ *                           and editing control port values
  *
- * Copyright (c) 2004-2009 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2006-2009 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
  * This file is part of LMMS - https://lmms.io
  *
@@ -22,52 +23,32 @@
  *
  */
 
-#ifndef LMMS_AUDIO_OSS_H
-#define LMMS_AUDIO_OSS_H
+#include "EffectControlDialog.h"
+#include "EffectControls.h"
 
-#include "lmmsconfig.h"
+#include <QCloseEvent>
 
-#ifdef LMMS_HAVE_OSS
-
-#include <QThread>
-
-#include "AudioDevice.h"
-
-class QLineEdit;
-
-namespace lmms
+namespace lmms::gui
 {
 
-namespace gui
+
+EffectControlDialog::EffectControlDialog( EffectControls * _controls ) :
+	QWidget( nullptr ),
+	ModelView( _controls, this ),
+	m_effectControls( _controls )
 {
-class LcdSpinBox;
+	setWindowTitle( m_effectControls->effect()->displayName() );
+	setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
 }
 
 
 
-class AudioOss : public QThread, public AudioDevice
+
+void EffectControlDialog::closeEvent( QCloseEvent * _ce )
 {
-	Q_OBJECT
-public:
-	AudioOss( bool & _success_ful, AudioEngine* audioEngine );
-	~AudioOss() override;
+	_ce->ignore();
+	emit closed();
+}
 
-	static QString probeDevice();
 
-private:
-	void startProcessing() override;
-	void stopProcessing() override;
-	void applyQualitySettings() override;
-	void run() override;
-
-	int m_audioFD;
-
-	bool m_convertEndian;
-
-} ;
-
-} // namespace lmms
-
-#endif // LMMS_HAVE_OSS
-
-#endif // LMMS_AUDIO_OSS_H
+} // namespace lmms::gui

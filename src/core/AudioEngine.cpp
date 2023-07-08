@@ -202,7 +202,7 @@ void AudioEngine::initDevices()
 	bool success_ful = false;
 	if( m_renderOnly ) {
 		m_audioDev = new AudioDummy( success_ful, this );
-		m_audioDevName = AudioDummy::name();
+		// m_audioDevName = AudioDummy::name();
 		m_midiClient = new MidiDummy;
 		m_midiClientName = MidiDummy::name();
 	} else {
@@ -959,10 +959,10 @@ AudioDevice * AudioEngine::tryAudioDevices()
 	bool success_ful = false;
 	AudioDevice * dev = nullptr;
 	QString dev_name = ConfigManager::inst()->value( "audioengine", "audiodev" );
-	if( !isAudioDevNameValid( dev_name ) )
-	{
-		dev_name = "";
-	}
+	// if( !isAudioDevNameValid( dev_name ) )
+	// {
+	// 	dev_name = "";
+	// }
 
 	m_audioDevStartFailed = false;
 

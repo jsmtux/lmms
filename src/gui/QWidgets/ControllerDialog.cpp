@@ -1,7 +1,8 @@
 /*
- * AudioOss.h - device-class that implements OSS-PCM-output
+ * ControllerDialog.cpp - per-controller-specific view for changing a
+ *                        controller's settings
  *
- * Copyright (c) 2004-2009 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2008 Paul Giblock <drfaygo/at/gmail.com>
  *
  * This file is part of LMMS - https://lmms.io
  *
@@ -22,52 +23,31 @@
  *
  */
 
-#ifndef LMMS_AUDIO_OSS_H
-#define LMMS_AUDIO_OSS_H
+#include "ControllerDialog.h"
 
-#include "lmmsconfig.h"
+#include "Controller.h"
 
-#ifdef LMMS_HAVE_OSS
+#include <QCloseEvent>
 
-#include <QThread>
-
-#include "AudioDevice.h"
-
-class QLineEdit;
-
-namespace lmms
+namespace lmms::gui
 {
 
-namespace gui
+
+ControllerDialog::ControllerDialog( Controller * _controller,
+							QWidget * _parent ) :
+	QWidget( _parent ),
+	ModelView( _controller, this )
 {
-class LcdSpinBox;
 }
 
 
 
-class AudioOss : public QThread, public AudioDevice
+void ControllerDialog::closeEvent( QCloseEvent * _ce )
 {
-	Q_OBJECT
-public:
-	AudioOss( bool & _success_ful, AudioEngine* audioEngine );
-	~AudioOss() override;
+	_ce->ignore();
+	emit closed();
+}
 
-	static QString probeDevice();
 
-private:
-	void startProcessing() override;
-	void stopProcessing() override;
-	void applyQualitySettings() override;
-	void run() override;
 
-	int m_audioFD;
-
-	bool m_convertEndian;
-
-} ;
-
-} // namespace lmms
-
-#endif // LMMS_HAVE_OSS
-
-#endif // LMMS_AUDIO_OSS_H
+} // namespace lmms::gui
