@@ -27,6 +27,7 @@
 
 #include "ConfigManager.h"
 #include "IMainWindow.h"
+#include "ToolPluginView.h"
 
 #include <QBasicTimer>
 #include <QTimer>
@@ -252,7 +253,7 @@ private:
 	QMenu * m_toolsMenu;
 	QAction * m_undoAction;
 	QAction * m_redoAction;
-	QList<PluginView *> m_tools;
+	QList<ToolPluginView *> m_tools;
 
 	QBasicTimer m_updateTimer;
 	QTimer m_autoSaveTimer;

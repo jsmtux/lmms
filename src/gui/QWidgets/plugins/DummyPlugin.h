@@ -59,9 +59,9 @@ public:
 
 
 protected:
-	gui::PluginView * instantiateView( QWidget * _parent ) override
+	gui::ToolPluginView * instantiateView( QWidget * _parent ) override
 	{
-		return new gui::PluginView( this, _parent );
+		return new gui::ToolPluginView( this, _parent );
 	}
 
 } ;

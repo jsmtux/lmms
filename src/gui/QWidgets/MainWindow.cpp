@@ -287,10 +287,10 @@ MainWindow::MainWindow() :
 
 MainWindow::~MainWindow()
 {
-	for( PluginView *view : m_tools )
+	for( ToolPluginView *tool_view : m_tools )
 	{
-		delete view->model();
-		delete view;
+		tool_view->deleteTool();
+		delete tool_view;
 	}
 	// TODO: Close tools
 	// dependencies are such that the editors must be destroyed BEFORE Song is deletect in Engine::destroy
@@ -1472,7 +1472,7 @@ void MainWindow::timerEvent( QTimerEvent * _te)
 
 void MainWindow::showTool( QAction * _idx )
 {
-	PluginView * p = m_tools[m_toolsMenu->actions().indexOf( _idx )];
+	ToolPluginView * p = m_tools[m_toolsMenu->actions().indexOf( _idx )];
 	p->show();
 	p->parentWidget()->show();
 	p->setFocus();

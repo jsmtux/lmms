@@ -1,7 +1,7 @@
 #ifndef Q_WIDGET_TOOL_PLUGIN_H_
 #define Q_WIDGET_TOOL_PLUGIN_H_
 
-#include "PluginView.h"
+#include "ToolPluginView.h"
 #include "ToolPlugin.h"
 
 namespace lmms::gui {
@@ -13,19 +13,15 @@ public:
 	{}
 
 	//! Create a view for the model
-	PluginView * createView( QWidget * parent )
+	ToolPluginView * createView( QWidget * parent )
 	{
-		gui::PluginView * pv = instantiateView( parent );
-		if( pv != nullptr )
-		{
-			pv->setModel( this );
-		}
+		ToolPluginView * pv = instantiateView( parent );
 		return pv;        
 	}
 
 protected:
 	//! Create a view for the model
-	virtual gui::PluginView* instantiateView( QWidget * ) = 0;
+	virtual ToolPluginView* instantiateView( QWidget * ) = 0;
 };
 
 }

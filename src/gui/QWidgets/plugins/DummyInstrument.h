@@ -68,7 +68,7 @@ public:
 		return "dummyinstrument";
 	}
 
-	gui::PluginView * instantiateView( QWidget * _parent ) override
+	gui::InstrumentView * instantiateView( QWidget * _parent ) override
 	{
 		return new gui::InstrumentViewFixedSize( this, _parent );
 	}

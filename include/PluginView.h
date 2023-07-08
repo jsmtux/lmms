@@ -33,15 +33,13 @@
 namespace lmms::gui
 {
 
-class LMMS_EXPORT PluginView  : public QWidget, public ModelView
+class LMMS_EXPORT PluginView  : public QWidget
 {
 public:
-	PluginView( Plugin * _plugin, QWidget * _parent ) :
-		QWidget( _parent ),
-		ModelView( _plugin, this )
+	PluginView( QWidget * _parent ) :
+		QWidget( _parent )
 	{
 	}
-
 } ;
 
 

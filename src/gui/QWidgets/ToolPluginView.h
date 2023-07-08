@@ -36,12 +36,17 @@ class ToolPlugin;
 namespace gui
 {
 
-
-class LMMS_EXPORT ToolPluginView : public PluginView
+class LMMS_EXPORT ToolPluginView : public QWidget
 {
 public:
-	ToolPluginView( ToolPlugin * _toolPlugin );
+	ToolPluginView( ToolPlugin * _toolPlugin, QWidget* _parent );
 
+	void deleteTool()
+	{
+		delete m_tool;
+	}
+private:
+	ToolPlugin* m_tool;
 } ;
 
 

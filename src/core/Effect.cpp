@@ -45,10 +45,10 @@ Effect::Effect( const Plugin::Descriptor * _desc,
 	m_noRun( false ),
 	m_running( false ),
 	m_bufferCount( 0 ),
-	m_enabledModel( true, this, tr( "Effect enabled" ) ),
-	m_wetDryModel( 1.0f, -1.0f, 1.0f, 0.01f, this, tr( "Wet/Dry mix" ) ),
-	m_gateModel( 0.0f, 0.0f, 1.0f, 0.01f, this, tr( "Gate" ) ),
-	m_autoQuitModel( 1.0f, 1.0f, 8000.0f, 100.0f, 1.0f, this, tr( "Decay" ) ),
+	m_enabledModel( true, &m_model, QObject::tr( "Effect enabled" ) ),
+	m_wetDryModel( 1.0f, -1.0f, 1.0f, 0.01f, &m_model, QObject::tr( "Wet/Dry mix" ) ),
+	m_gateModel( 0.0f, 0.0f, 1.0f, 0.01f, &m_model, QObject::tr( "Gate" ) ),
+	m_autoQuitModel( 1.0f, 1.0f, 8000.0f, 100.0f, 1.0f, &m_model, QObject::tr( "Decay" ) ),
 	m_autoQuitDisabled( false )
 {
 	m_srcState[0] = m_srcState[1] = nullptr;

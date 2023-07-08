@@ -40,7 +40,7 @@ namespace lmms
 Instrument::Instrument(InstrumentTrack * _instrument_track,
 			const Descriptor * _descriptor,
 			const Descriptor::SubPluginFeatures::Key *key) :
-	Plugin(_descriptor, nullptr/* _instrument_track*/, key),
+	Plugin(_descriptor, nullptr, key),
 	m_instrumentTrack( _instrument_track )
 {
 }
@@ -203,10 +203,10 @@ void Instrument::applyRelease( sampleFrame * buf, const NotePlayHandle * _n )
 
 
 
-QString Instrument::fullDisplayName() const
-{
-	return instrumentTrack()->displayName();
-}
+// QString Instrument::fullDisplayName() const
+// {
+// 	return instrumentTrack()->displayName();
+// }
 
 
 } // namespace lmms

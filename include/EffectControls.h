@@ -45,7 +45,7 @@ class EffectControls : public JournallingObject, public Model
 public:
 	EffectControls( Effect * _eff ) :
 		JournallingObject(),
-		Model( _eff ),
+		Model( _eff->model() ),
 		m_effect( _eff ),
 		m_viewVisible( false )
 	{

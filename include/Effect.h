@@ -33,6 +33,8 @@
 #include "TempoSyncKnobModel.h"
 #include "MemoryManager.h"
 
+#include <QObject>
+
 namespace lmms
 {
 
@@ -47,7 +49,7 @@ class EffectView;
 } // namespace gui
 
 
-class LMMS_EXPORT Effect : public Plugin
+class LMMS_EXPORT Effect : public QObject, public Plugin
 {
 	MM_OPERATORS
 	Q_OBJECT
