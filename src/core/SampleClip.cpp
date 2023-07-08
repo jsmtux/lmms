@@ -62,11 +62,11 @@ SampleClip::SampleClip( Track * _track ) :
 		connect( timeLine, SIGNAL(positionMarkerMoved()), this, SLOT(playbackPositionChanged()));
 	}
 	//playbutton clicked or space key / on Export Song set isPlaying to false
-	connect( Engine::getSong(), SIGNAL(playbackStateChanged()),
-			this, SLOT(playbackPositionChanged()), Qt::DirectConnection );
+	connect( Engine::getSong(), &Song::playbackStateChanged,
+			this, &SampleClip::playbackPositionChanged, Qt::DirectConnection );
 	//care about loops
-	connect( Engine::getSong(), SIGNAL(updateSampleTracks()),
-			this, SLOT(playbackPositionChanged()), Qt::DirectConnection );
+	connect( Engine::getSong(), &Song::updateSampleTracks,
+			this, &SampleClip::playbackPositionChanged, Qt::DirectConnection );
 	//care about mute Clips
 	connect( this, SIGNAL(dataChanged()), this, SLOT(playbackPositionChanged()));
 	//care about mute track
@@ -174,7 +174,7 @@ void SampleClip::setSampleFile( const QString & _sf )
 void SampleClip::toggleRecord()
 {
 	m_recordModel.setValue( !m_recordModel.value() );
-	emit dataChanged();
+	emit m_clipModel.dataChanged();
 }
 
 

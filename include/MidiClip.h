@@ -112,9 +112,6 @@ public:
 		return ClipType::Midi;
 	}
 
-
-	using Model::dataChanged;
-
 public slots:
 	void addSteps();
 	void cloneSteps();

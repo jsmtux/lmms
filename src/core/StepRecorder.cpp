@@ -242,7 +242,7 @@ void StepRecorder::applyStep()
 
 	m_midiClip->rearrangeAllNotes();
 	m_midiClip->updateLength();
-	m_midiClip->dataChanged();
+	m_midiClip->model().dataChanged();
 	Engine::getSong()->setModified();
 
 	prepareNewStep();

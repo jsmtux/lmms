@@ -48,7 +48,7 @@ class TextFloat;
 class TrackView;
 
 
-class ClipView : public selectableObject, public ModelView
+class ClipView : public selectableObject
 {
 	Q_OBJECT
 

@@ -52,7 +52,7 @@ enum class ClipType
 	Sample
 };
 
-class LMMS_EXPORT Clip : public Model, public JournallingObject
+class LMMS_EXPORT Clip : public QObject, public JournallingObject
 {
 	Q_OBJECT
 	MM_OPERATORS
@@ -75,12 +75,8 @@ public:
 	inline void setName( const QString & name )
 	{
 		m_name = name;
-		emit dataChanged();
-	}
-
-	QString displayName() const override
-	{
-		return name();
+		m_clipModel.setDisplayName(name);
+		emit m_clipModel.dataChanged();
 	}
 
 
@@ -159,6 +155,11 @@ public:
 	// Will copy the state of a clip to another clip
 	static void copyStateTo( Clip *src, Clip *dst );
 
+	Model& model()
+	{
+		return m_clipModel;
+	}
+
 public slots:
 	void toggleMute();
 
@@ -169,6 +170,8 @@ signals:
 	void destroyedClip();
 	void colorChanged();
 
+protected:
+	Model m_clipModel;
 
 private:
 	enum Actions

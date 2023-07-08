@@ -197,7 +197,7 @@ void MidiClipView::transposeSelection()
 		{
 			note->setKey(note->key() + semitones);
 		}
-		emit clip->dataChanged();
+		emit clip->model().dataChanged();
 	}
 	// At least one clip must have notes to show the transpose dialog, so something *has* changed
 	Engine::getSong()->setModified();

@@ -125,7 +125,7 @@ void MidiClip::resizeToFirstTrack()
 
 void MidiClip::init()
 {
-	connect( Engine::getSong(), SIGNAL(timeSignatureChanged(int,int)),
+	QObject::connect( Engine::getSong(), SIGNAL(timeSignatureChanged(int,int)),
 				this, SLOT(changeTimeSignature()));
 	saveJournallingState( false );
 
@@ -201,7 +201,7 @@ Note * MidiClip::addNote( const Note & _new_note, const bool _quant_pos )
 	checkType();
 	updateLength();
 
-	emit dataChanged();
+	emit model().dataChanged();
 
 	return new_note;
 }
@@ -228,7 +228,7 @@ void MidiClip::removeNote( Note * _note_to_del )
 	checkType();
 	updateLength();
 
-	emit dataChanged();
+	emit model().dataChanged();
 }
 
 
@@ -267,7 +267,7 @@ void MidiClip::clearNotes()
 	instrumentTrack()->unlock();
 
 	checkType();
-	emit dataChanged();
+	emit model().dataChanged();
 }
 
 
@@ -447,7 +447,7 @@ void MidiClip::loadSettings( const QDomElement & _this )
 	checkType();
 	updateLength();
 
-	emit dataChanged();
+	emit model().dataChanged();
 }
 
 
@@ -492,7 +492,7 @@ void MidiClip::addSteps()
 {
 	m_steps += TimePos::stepsPerBar();
 	updateLength();
-	emit dataChanged();
+	emit model().dataChanged();
 }
 
 void MidiClip::cloneSteps()
@@ -513,7 +513,7 @@ void MidiClip::cloneSteps()
 		}
 	}
 	updateLength();
-	emit dataChanged();
+	emit model().dataChanged();
 }
 
 
@@ -530,7 +530,7 @@ void MidiClip::removeSteps()
 		}
 		m_steps -= n;
 		updateLength();
-		emit dataChanged();
+		emit model().dataChanged();
 	}
 }
 

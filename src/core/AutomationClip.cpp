@@ -133,11 +133,9 @@ bool AutomationClip::addObject( AutomatableModel * _obj, bool _search_dup )
 
 	m_objects += _obj;
 
-	connect( _obj, SIGNAL(destroyed(lmms::jo_id_t)),
-			this, SLOT(objectDestroyed(lmms::jo_id_t)),
-						Qt::DirectConnection );
+	connect(_obj, &AutomatableModel::destroyed, this, &AutomationClip::objectDestroyed, Qt::DirectConnection );
 
-	emit dataChanged();
+	emit m_clipModel.dataChanged();
 
 	return true;
 }
@@ -155,7 +153,7 @@ void AutomationClip::setProgressionType(
 		_new_progression_type == CubicHermiteProgression )
 	{
 		m_progressionType = _new_progression_type;
-		emit dataChanged();
+		emit m_clipModel.dataChanged();
 	}
 }
 
@@ -275,7 +273,7 @@ TimePos AutomationClip::putValue(
 
 	updateLength();
 
-	emit dataChanged();
+	emit m_clipModel.dataChanged();
 
 	return newTime;
 }
@@ -330,7 +328,7 @@ TimePos AutomationClip::putValues(
 
 	updateLength();
 
-	emit dataChanged();
+	emit m_clipModel.dataChanged();
 
 	return newTime;
 }
@@ -354,7 +352,7 @@ void AutomationClip::removeNode(const TimePos & time)
 
 	updateLength();
 
-	emit dataChanged();
+	emit m_clipModel.dataChanged();
 }
 
 
@@ -645,7 +643,7 @@ void AutomationClip::flipY(int min, int max)
 	if (changedTimeMap)
 	{
 		generateTangents();
-		emit dataChanged();
+		emit m_clipModel.dataChanged();
 	}
 }
 
@@ -753,7 +751,7 @@ void AutomationClip::flipX(int length)
 	cleanObjects();
 
 	generateTangents();
-	emit dataChanged();
+	emit m_clipModel.dataChanged();
 }
 
 
@@ -868,7 +866,7 @@ QString AutomationClip::name() const
 	{
 		return m_objects.first()->fullDisplayName();
 	}
-	return tr( "Drag a control while pressing <%1>" ).arg(UI_CTRL_KEY);
+	return QObject::tr( "Drag a control while pressing <%1>" ).arg(UI_CTRL_KEY);
 }
 
 bool AutomationClip::isAutomated( const AutomatableModel * _m )
@@ -1015,7 +1013,7 @@ void AutomationClip::resolveAllIDs()
 						}
 					}
 					a->m_idsToResolve.clear();
-					a->dataChanged();
+					a->m_clipModel.dataChanged();
 				}
 			}
 		}
@@ -1031,7 +1029,7 @@ void AutomationClip::clear()
 
 	m_timeMap.clear();
 
-	emit dataChanged();
+	emit m_clipModel.dataChanged();
 }
 
 
@@ -1059,7 +1057,7 @@ void AutomationClip::objectDestroyed( jo_id_t _id )
 		}
 	}
 
-	emit dataChanged();
+	emit m_clipModel.dataChanged();
 }
 
 

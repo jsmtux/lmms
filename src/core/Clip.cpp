@@ -43,11 +43,11 @@ namespace lmms
  * \param _track The track that will contain the new object
  */
 Clip::Clip( Track * track ) :
-	Model( track ),
+	m_clipModel( track ),
 	m_track( track ),
 	m_startPosition(),
 	m_length(),
-	m_mutedModel( false, this, tr( "Mute" ) ),
+	m_mutedModel( false, &m_clipModel, QObject::tr( "Mute" ) ),
 	m_selectViewOnCreate( false ),
 	m_color( 128, 128, 128 ),
 	m_useCustomClipColor( false )
@@ -166,7 +166,7 @@ void Clip::copyStateTo( Clip *src, Clip *dst )
 void Clip::toggleMute()
 {
 	m_mutedModel.setValue( !m_mutedModel.value() );
-	emit dataChanged();
+	emit m_clipModel.dataChanged();
 }
 
 
