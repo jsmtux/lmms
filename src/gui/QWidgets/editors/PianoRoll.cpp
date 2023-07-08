@@ -1220,7 +1220,7 @@ void PianoRoll::shiftSemiTone(NoteVector notes, int amount)
 	for (Note *note : notes) { note->setKey( note->key() + amount ); }
 
 	m_midiClip->rearrangeAllNotes();
-	m_midiClip->dataChanged();
+	m_midiClip->model().dataChanged();
 	//We modified the song
 	update();
 	getGUI()->songEditor()->update();
@@ -1256,7 +1256,7 @@ void PianoRoll::shiftPos(NoteVector notes, int amount)
 
 	m_midiClip->rearrangeAllNotes();
 	m_midiClip->updateLength();
-	m_midiClip->dataChanged();
+	m_midiClip->model().dataChanged();
 	// we modified the song
 	update();
 	getGUI()->songEditor()->update();
@@ -2566,7 +2566,7 @@ void PianoRoll::mouseMoveEvent( QMouseEvent * me )
 			}
 
 			// Emit MIDI clip has changed
-			m_midiClip->dataChanged();
+			m_midiClip->model().dataChanged();
 		}
 
 		else if( me->buttons() == Qt::NoButton && m_editMode == ModeDraw )
@@ -3026,7 +3026,7 @@ void PianoRoll::dragNotes(int x, int y, bool alt, bool shift, bool ctrl)
 	}
 
 	m_midiClip->updateLength();
-	m_midiClip->dataChanged();
+	m_midiClip->model().dataChanged();
 	Engine::getSong()->setModified();
 }
 

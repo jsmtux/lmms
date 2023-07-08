@@ -36,6 +36,7 @@ namespace lmms
 */
 class PatternClip : public Clip
 {
+	Q_OBJECT
 public:
 	PatternClip(Track* track);
 	~PatternClip() override = default;

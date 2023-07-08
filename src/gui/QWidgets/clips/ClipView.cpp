@@ -86,7 +86,6 @@ TextFloat * ClipView::s_textFloat = nullptr;
 ClipView::ClipView( Clip * clip,
 							TrackView * tv ) :
 	selectableObject( tv->getTrackContentWidget() ),
-	ModelView( nullptr, this ),
 	m_trackView( tv ),
 	m_initialClipPos( TimePos(0) ),
 	m_initialClipEnd( TimePos(0) ),
@@ -133,7 +132,10 @@ ClipView::ClipView( Clip * clip,
 	connect( m_clip, SIGNAL(positionChanged()),
 			this, SLOT(updatePosition()));
 	connect( m_clip, SIGNAL(destroyedClip()), this, SLOT(close()));
-	setModel( m_clip );
+
+	connect( &m_clip->model(), &Model::dataChanged, this, &ClipView::update);
+	connect( &m_clip->model(), &Model::propertiesChanged, this, &ClipView::update);
+
 	connect(m_clip, SIGNAL(colorChanged()), this, SLOT(update()));
 
 	connect(m_trackView->getTrack(), &Track::colorChanged, this, [this]
