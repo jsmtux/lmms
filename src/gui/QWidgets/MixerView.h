@@ -48,7 +48,7 @@ namespace lmms::gui
 
 class MixerLine;
 
-class LMMS_EXPORT MixerView : public QWidget, public ModelView,
+class LMMS_EXPORT MixerView : public QWidget,
 					public SerializingObjectHook, public IMixerView
 {
 	Q_OBJECT

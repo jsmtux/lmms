@@ -54,7 +54,6 @@ namespace lmms::gui
 
 MixerView::MixerView() :
 	QWidget(),
-	ModelView( nullptr, this ),
 	SerializingObjectHook()
 {
 	Mixer * m = Engine::mixer();
@@ -163,9 +162,6 @@ MixerView::MixerView() :
 
 	parentWidget()->setAttribute( Qt::WA_DeleteOnClose, false );
 	parentWidget()->move( 5, 310 );
-
-	// we want to receive dataChanged-signals in order to update
-	setModel( m );
 }
 
 MixerView::~MixerView()
