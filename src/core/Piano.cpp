@@ -63,9 +63,9 @@ static const auto KEY_ORDER = std::array
  *  \param _it the InstrumentTrack window to attach to
  */
 Piano::Piano(InstrumentTrack* track) :
-	Model(nullptr),              /*!< base class ctor */
 	m_instrumentTrack(track),
-	m_midiEvProc(track)        /*!< the InstrumentTrack Model */
+	m_midiEvProc(track),        /*!< the InstrumentTrack Model */
+	m_pianoModel(nullptr)
 {
 }
 
@@ -80,7 +80,7 @@ void Piano::setKeyState(int key, bool state)
 	{
 		m_pressedKeys[key] = state;
 
-		emit dataChanged();
+		emit m_pianoModel.dataChanged();
 	}
 }
 

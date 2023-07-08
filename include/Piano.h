@@ -35,7 +35,7 @@ namespace lmms
 class InstrumentTrack;
 class MidiEventProcessor;
 
-class Piano final : public Model
+class Piano final
 {
 public:
 	enum KeyTypes
@@ -66,6 +66,11 @@ public:
 		return m_midiEvProc;
 	}
 
+	Model* model()
+	{
+		return &m_pianoModel;
+	}
+
 	static bool isWhiteKey(int key);
 	static bool isBlackKey(int key);
 
@@ -79,6 +84,8 @@ private:
 	{
 		return key >= 0 && key < NumKeys;
 	}
+
+	Model m_pianoModel;
 
 	InstrumentTrack* m_instrumentTrack;
 	MidiEventProcessor* m_midiEvProc;

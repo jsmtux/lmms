@@ -359,7 +359,7 @@ void InstrumentTrackWindow::modelChanged()
 	m_volumeKnob->setModel( &m_track->m_volumeModel );
 	m_panningKnob->setModel( &m_track->m_panningModel );
 	m_mixerChannelNumber->setModel( &m_track->m_mixerChannelModel );
-	m_pianoView->setModel( &m_track->m_piano );
+	m_pianoView->setPiano( &m_track->m_piano );
 
 	if( m_track->instrument() && m_track->instrument()->flags().testFlag( Instrument::IsNotBendable ) == false )
 	{
