@@ -80,49 +80,49 @@ Vibed::Vibed( InstrumentTrack * _instrumentTrack ) :
 	for( int harm = 0; harm < 9; harm++ )
 	{
 		knob = new FloatModel( DefaultVolume, MinVolume, MaxVolume,
-				1.0f, this, tr( "String %1 volume" ).arg( harm+1 ) );
+				1.0f, model(), tr( "String %1 volume" ).arg( harm+1 ) );
 		m_volumeKnobs.append( knob );
 
-		knob = new FloatModel( 0.0f, 0.0f, 0.05f, 0.001f, this,
+		knob = new FloatModel( 0.0f, 0.0f, 0.05f, 0.001f, model(),
 				tr( "String %1 stiffness" ).arg( harm+1 ) );
 		m_stiffnessKnobs.append( knob );
 
-		knob = new FloatModel( 0.0f, 0.0f, 0.05f, 0.005f, this,
+		knob = new FloatModel( 0.0f, 0.0f, 0.05f, 0.005f, model(),
 				tr( "Pick %1 position" ).arg( harm+1 )  );
 		m_pickKnobs.append( knob );
 
-		knob = new FloatModel( 0.05f, 0.0f, 0.05f, 0.005f, this,
+		knob = new FloatModel( 0.05f, 0.0f, 0.05f, 0.005f, model(),
 				tr( "Pickup %1 position" ).arg( harm+1 ) );
 		m_pickupKnobs.append( knob );
 
-		knob = new FloatModel( 0.0f, -1.0f, 1.0f, 0.01f, this,
+		knob = new FloatModel( 0.0f, -1.0f, 1.0f, 0.01f, model(),
 				tr( "String %1 panning" ).arg( harm+1 )  );
 		m_panKnobs.append( knob );
 
-		knob = new FloatModel( 0.0f, -0.1f, 0.1f, 0.001f, this,
+		knob = new FloatModel( 0.0f, -0.1f, 0.1f, 0.001f, model(),
 				tr( "String %1 detune" ).arg( harm+1 ) );
 		m_detuneKnobs.append( knob );
 
-		knob = new FloatModel( 0.0f, 0.0f, 0.75f, 0.01f, this,
+		knob = new FloatModel( 0.0f, 0.0f, 0.75f, 0.01f, model(),
 				tr( "String %1 fuzziness" ).arg( harm+1 ) );
 		m_randomKnobs.append( knob );
 
-		knob = new FloatModel( 1, 1, 16, 1, this,
+		knob = new FloatModel( 1, 1, 16, 1, model(),
 				tr( "String %1 length" ).arg( harm+1 ) );
 		m_lengthKnobs.append( knob );
 
-		led = new BoolModel( false, this,
+		led = new BoolModel( false, model(),
 				tr( "Impulse %1" ).arg( harm+1 ) );
 		m_impulses.append( led );
 
-		led = new BoolModel( harm==0, this,
+		led = new BoolModel( harm==0, model(),
 				tr( "String %1" ).arg( harm+1 )  );
 		m_powerButtons.append( led );
 
-		harmonic = new gui::NineButtonSelectorModel( 2, 0, 8, this );
+		harmonic = new gui::NineButtonSelectorModel( 2, 0, 8, model() );
 		m_harmonics.append( harmonic );
 
-		graphTmp = new graphModel( -1.0, 1.0, __sampleLength, this );
+		graphTmp = new graphModel( -1.0, 1.0, __sampleLength, model() );
 		graphTmp->setWaveToSine();
 
 		m_graphs.append( graphTmp );
@@ -337,7 +337,7 @@ void Vibed::deleteNotePluginData( NotePlayHandle * _n )
 
 
 
-gui::PluginView * Vibed::instantiateView( QWidget * _parent )
+gui::InstrumentView * Vibed::instantiateView( QWidget * _parent )
 {
 	return( new gui::VibedView( this, _parent ) );
 }
@@ -348,9 +348,9 @@ namespace gui
 {
 
 
-VibedView::VibedView( Instrument * _instrument,
+VibedView::VibedView( Vibed * _instrument,
 				QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent )
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 	setAutoFillBackground( true );
 	QPalette pal;
@@ -568,13 +568,6 @@ VibedView::VibedView( Instrument * _instrument,
 	connect( m_normalizeBtn, SIGNAL ( clicked () ),
 			this, SLOT ( normalizeClicked() ) );
 
-}
-
-
-
-
-void VibedView::modelChanged()
-{
 	showString( 0 );
 }
 
@@ -583,20 +576,18 @@ void VibedView::modelChanged()
 
 void VibedView::showString( int _string )
 {
-	auto v = castModel<Vibed>();
-
-	m_pickKnob->setModel( v->m_pickKnobs[_string] );
-	m_pickupKnob->setModel( v->m_pickupKnobs[_string] );
-	m_stiffnessKnob->setModel( v->m_stiffnessKnobs[_string] );
-	m_volumeKnob->setModel( v->m_volumeKnobs[_string] );
-	m_panKnob->setModel( v->m_panKnobs[_string] );
-	m_detuneKnob->setModel( v->m_detuneKnobs[_string] );
-	m_randomKnob->setModel( v->m_randomKnobs[_string] );
-	m_lengthKnob->setModel( v->m_lengthKnobs[_string] );
-	m_graph->setModel( v->m_graphs[_string] );
-	m_impulse->setModel( v->m_impulses[_string] );
-	m_harmonic->setModel( v->m_harmonics[_string] );
-	m_power->setModel( v->m_powerButtons[_string] );
+	m_pickKnob->setModel( m_instrument->m_pickKnobs[_string] );
+	m_pickupKnob->setModel( m_instrument->m_pickupKnobs[_string] );
+	m_stiffnessKnob->setModel( m_instrument->m_stiffnessKnobs[_string] );
+	m_volumeKnob->setModel( m_instrument->m_volumeKnobs[_string] );
+	m_panKnob->setModel( m_instrument->m_panKnobs[_string] );
+	m_detuneKnob->setModel( m_instrument->m_detuneKnobs[_string] );
+	m_randomKnob->setModel( m_instrument->m_randomKnobs[_string] );
+	m_lengthKnob->setModel( m_instrument->m_lengthKnobs[_string] );
+	m_graph->setModel( m_instrument->m_graphs[_string] );
+	m_impulse->setModel( m_instrument->m_impulses[_string] );
+	m_harmonic->setModel( m_instrument->m_harmonics[_string] );
+	m_power->setModel( m_instrument->m_powerButtons[_string] );
 
 }
 
@@ -672,7 +663,7 @@ void VibedView::normalizeClicked()
 void VibedView::contextMenuEvent( QContextMenuEvent * )
 {
 
-	CaptionMenu contextMenu( model()->displayName(), this );
+	CaptionMenu contextMenu( m_instrument->model()->displayName(), this );
 	contextMenu.exec( QCursor::pos() );
 
 }

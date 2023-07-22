@@ -101,19 +101,19 @@ Sf2Instrument::Sf2Instrument( InstrumentTrack * _instrument_track ) :
 	m_lastMidiPitch( -1 ),
 	m_lastMidiPitchRange( -1 ),
 	m_channel( 1 ),
-	m_bankNum( 0, 0, 999, this, tr("Bank") ),
-	m_patchNum( 0, 0, 127, this, tr("Patch") ),
-	m_gain( 1.0f, 0.0f, 5.0f, 0.01f, this, tr( "Gain" ) ),
-	m_reverbOn( false, this, tr( "Reverb" ) ),
-	m_reverbRoomSize( FLUID_REVERB_DEFAULT_ROOMSIZE, 0, 1.0, 0.01f, this, tr( "Reverb room size" ) ),
-	m_reverbDamping( FLUID_REVERB_DEFAULT_DAMP, 0, 1.0, 0.01, this, tr( "Reverb damping" ) ),
-	m_reverbWidth( FLUID_REVERB_DEFAULT_WIDTH, 0, 1.0, 0.01f, this, tr( "Reverb width" ) ),
-	m_reverbLevel( FLUID_REVERB_DEFAULT_LEVEL, 0, 1.0, 0.01f, this, tr( "Reverb level" ) ),
-	m_chorusOn( false, this, tr( "Chorus" ) ),
-	m_chorusNum( FLUID_CHORUS_DEFAULT_N, 0, 10.0, 1.0, this, tr( "Chorus voices" ) ),
-	m_chorusLevel( FLUID_CHORUS_DEFAULT_LEVEL, 0, 10.0, 0.01, this, tr( "Chorus level" ) ),
-	m_chorusSpeed( FLUID_CHORUS_DEFAULT_SPEED, 0.29, 5.0, 0.01, this, tr( "Chorus speed" ) ),
-	m_chorusDepth( FLUID_CHORUS_DEFAULT_DEPTH, 0, 46.0, 0.05, this, tr( "Chorus depth" ) )
+	m_bankNum( 0, 0, 999, model(), tr("Bank") ),
+	m_patchNum( 0, 0, 127, model(), tr("Patch") ),
+	m_gain( 1.0f, 0.0f, 5.0f, 0.01f, model(), tr( "Gain" ) ),
+	m_reverbOn( false, model(), tr( "Reverb" ) ),
+	m_reverbRoomSize( FLUID_REVERB_DEFAULT_ROOMSIZE, 0, 1.0, 0.01f, model(), tr( "Reverb room size" ) ),
+	m_reverbDamping( FLUID_REVERB_DEFAULT_DAMP, 0, 1.0, 0.01, model(), tr( "Reverb damping" ) ),
+	m_reverbWidth( FLUID_REVERB_DEFAULT_WIDTH, 0, 1.0, 0.01f, model(), tr( "Reverb width" ) ),
+	m_reverbLevel( FLUID_REVERB_DEFAULT_LEVEL, 0, 1.0, 0.01f, model(), tr( "Reverb level" ) ),
+	m_chorusOn( false, model(), tr( "Chorus" ) ),
+	m_chorusNum( FLUID_CHORUS_DEFAULT_N, 0, 10.0, 1.0, model(), tr( "Chorus voices" ) ),
+	m_chorusLevel( FLUID_CHORUS_DEFAULT_LEVEL, 0, 10.0, 0.01, model(), tr( "Chorus level" ) ),
+	m_chorusSpeed( FLUID_CHORUS_DEFAULT_SPEED, 0.29, 5.0, 0.01, model(), tr( "Chorus speed" ) ),
+	m_chorusDepth( FLUID_CHORUS_DEFAULT_DEPTH, 0, 46.0, 0.05, model(), tr( "Chorus depth" ) )
 {
 
 
@@ -922,7 +922,7 @@ void Sf2Instrument::deleteNotePluginData( NotePlayHandle * _n )
 
 
 
-gui::PluginView * Sf2Instrument::instantiateView( QWidget * _parent )
+gui::InstrumentView * Sf2Instrument::instantiateView( QWidget * _parent )
 {
 	return new gui::Sf2InstrumentView( this, _parent );
 }
@@ -946,16 +946,14 @@ public:
 
 
 
-Sf2InstrumentView::Sf2InstrumentView( Instrument * _instrument, QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent )
+Sf2InstrumentView::Sf2InstrumentView( Sf2Instrument * _instrument, QWidget * _parent ) :
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 //	QVBoxLayout * vl = new QVBoxLayout( this );
 //	QHBoxLayout * hl = new QHBoxLayout();
 
-	auto k = castModel<Sf2Instrument>();
-
-	connect(&k->m_bankNum, SIGNAL(dataChanged()), this, SLOT(updatePatchName()));
-	connect(&k->m_patchNum, SIGNAL(dataChanged()), this, SLOT(updatePatchName()));
+	connect(&m_instrument->m_bankNum, SIGNAL(dataChanged()), this, SLOT(updatePatchName()));
+	connect(&m_instrument->m_patchNum, SIGNAL(dataChanged()), this, SLOT(updatePatchName()));
 
 	// File Button
 	m_fileDialogButton = new PixmapButton(this);
@@ -1098,48 +1096,17 @@ Sf2InstrumentView::Sf2InstrumentView( Instrument * _instrument, QWidget * _paren
 
 
 
-void Sf2InstrumentView::modelChanged()
-{
-	auto k = castModel<Sf2Instrument>();
-	m_bankNumLcd->setModel( &k->m_bankNum );
-	m_patchNumLcd->setModel( &k->m_patchNum );
-
-	m_gainKnob->setModel( &k->m_gain );
-
-	m_reverbButton->setModel( &k->m_reverbOn );
-	m_reverbRoomSizeKnob->setModel( &k->m_reverbRoomSize );
-	m_reverbDampingKnob->setModel( &k->m_reverbDamping );
-	m_reverbWidthKnob->setModel( &k->m_reverbWidth );
-	m_reverbLevelKnob->setModel( &k->m_reverbLevel );
-
-	m_chorusButton->setModel( &k->m_chorusOn );
-	m_chorusNumKnob->setModel( &k->m_chorusNum );
-	m_chorusLevelKnob->setModel( &k->m_chorusLevel );
-	m_chorusSpeedKnob->setModel( &k->m_chorusSpeed );
-	m_chorusDepthKnob->setModel( &k->m_chorusDepth );
-
-
-	connect( k, SIGNAL( fileChanged() ), this, SLOT( updateFilename() ) );
-
-	connect( k, SIGNAL( fileLoading() ), this, SLOT( invalidateFile() ) );
-
-	updateFilename();
-}
-
-
-
 
 void Sf2InstrumentView::updateFilename()
 {
-	auto i = castModel<Sf2Instrument>();
 	QFontMetrics fm( m_filenameLabel->font() );
-	QString file = i->m_filename.endsWith( ".sf2", Qt::CaseInsensitive ) ?
-			i->m_filename.left( i->m_filename.length() - 4 ) :
-			i->m_filename;
+	QString file = m_instrument->m_filename.endsWith( ".sf2", Qt::CaseInsensitive ) ?
+			m_instrument->m_filename.left( m_instrument->m_filename.length() - 4 ) :
+			m_instrument->m_filename;
 	m_filenameLabel->setText( fm.elidedText( file, Qt::ElideLeft, m_filenameLabel->width() ) );
-			//		i->m_filename + "\nPatch: TODO" );
+			//		m_instrument->m_filename + "\nPatch: TODO" );
 
-	m_patchDialogButton->setEnabled( !i->m_filename.isEmpty() );
+	m_patchDialogButton->setEnabled( !m_instrument->m_filename.isEmpty() );
 
 	updatePatchName();
 
@@ -1151,13 +1118,36 @@ void Sf2InstrumentView::updateFilename()
 
 void Sf2InstrumentView::updatePatchName()
 {
-	auto i = castModel<Sf2Instrument>();
 	QFontMetrics fm( font() );
-	QString patch = i->getCurrentPatchName();
+	QString patch = m_instrument->getCurrentPatchName();
 	m_patchLabel->setText( fm.elidedText( patch, Qt::ElideLeft, m_patchLabel->width() ) );
 
 
 	update();
+
+	m_bankNumLcd->setModel( &m_instrument->m_bankNum );
+	m_patchNumLcd->setModel( &m_instrument->m_patchNum );
+
+	m_gainKnob->setModel( &m_instrument->m_gain );
+
+	m_reverbButton->setModel( &m_instrument->m_reverbOn );
+	m_reverbRoomSizeKnob->setModel( &m_instrument->m_reverbRoomSize );
+	m_reverbDampingKnob->setModel( &m_instrument->m_reverbDamping );
+	m_reverbWidthKnob->setModel( &m_instrument->m_reverbWidth );
+	m_reverbLevelKnob->setModel( &m_instrument->m_reverbLevel );
+
+	m_chorusButton->setModel( &m_instrument->m_chorusOn );
+	m_chorusNumKnob->setModel( &m_instrument->m_chorusNum );
+	m_chorusLevelKnob->setModel( &m_instrument->m_chorusLevel );
+	m_chorusSpeedKnob->setModel( &m_instrument->m_chorusSpeed );
+	m_chorusDepthKnob->setModel( &m_instrument->m_chorusDepth );
+
+
+	connect( m_instrument, SIGNAL( fileChanged() ), this, SLOT( updateFilename() ) );
+
+	connect( m_instrument, SIGNAL( fileLoading() ), this, SLOT( invalidateFile() ) );
+
+	updateFilename();
 }
 
 
@@ -1173,8 +1163,6 @@ void Sf2InstrumentView::invalidateFile()
 
 void Sf2InstrumentView::showFileDialog()
 {
-	auto k = castModel<Sf2Instrument>();
-
 	auto ofd = getGUIInterface()->createFileDialog(tr("Open SoundFont file"));
 	ofd->setFileMode( IFileDialog::ExistingFiles );
 
@@ -1182,9 +1170,9 @@ void Sf2InstrumentView::showFileDialog()
 	types << tr( "SoundFont Files (*.sf2 *.sf3)" );
 	ofd->setNameFilters( types );
 
-	if( k->m_filename != "" )
+	if( m_instrument->m_filename != "" )
 	{
-		QString f = PathUtil::toAbsolute( k->m_filename );
+		QString f = PathUtil::toAbsolute( m_instrument->m_filename );
 		ofd->setDirectory( QFileInfo( f ).absolutePath() );
 		ofd->selectFile( QFileInfo( f ).fileName() );
 	}
@@ -1200,7 +1188,7 @@ void Sf2InstrumentView::showFileDialog()
 		QString f = ofd->selectedFiles()[0];
 		if( f != "" )
 		{
-			k->openFile( f );
+			m_instrument->openFile( f );
 			Engine::getSong()->setModified();
 		}
 	}
@@ -1213,11 +1201,9 @@ void Sf2InstrumentView::showFileDialog()
 
 void Sf2InstrumentView::showPatchDialog()
 {
-	auto k = castModel<Sf2Instrument>();
-
 	PatchesDialog pd( this );
 
-	pd.setup( k->m_synth, 1, k->instrumentTrack()->name(), &k->m_bankNum, &k->m_patchNum, m_patchLabel );
+	pd.setup( m_instrument->m_synth, 1, m_instrument->instrumentTrack()->name(), &m_instrument->m_bankNum, &m_instrument->m_patchNum, m_patchLabel );
 
 	pd.exec();
 }

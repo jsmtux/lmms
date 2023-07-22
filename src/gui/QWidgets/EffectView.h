@@ -85,7 +85,7 @@ signals:
 protected:
 	void contextMenuEvent( QContextMenuEvent * _me ) override;
 	void paintEvent( QPaintEvent * _pe ) override;
-	void modelChanged();
+	// void modelChanged();
 
 
 private:

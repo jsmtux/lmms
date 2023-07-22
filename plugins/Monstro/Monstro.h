@@ -372,7 +372,7 @@ public:
 
 	f_cnt_t desiredReleaseFrames() const override;
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 public slots:
 	void updateVolume1();
@@ -590,11 +590,11 @@ namespace gui
 {
 
 
-class MonstroView : public InstrumentViewFixedSize
+class MonstroView : public InstrumentViewImpl<MonstroInstrument>
 {
 	Q_OBJECT
 public:
-	MonstroView( Instrument * _instrument,
+	MonstroView( MonstroInstrument * _instrument,
 					QWidget * _parent );
 	~MonstroView() override = default;
 
@@ -602,7 +602,6 @@ protected slots:
 	void updateLayout();
 
 private:
-	void modelChanged() override;
 
 	void setWidgetBackground( QWidget * _widget, const QString & _pic );
 	QWidget * setupOperatorsView( QWidget * _parent );

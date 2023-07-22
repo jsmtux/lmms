@@ -483,57 +483,57 @@ void NesObject::updatePitch()
 
 NesInstrument::NesInstrument( InstrumentTrack * instrumentTrack ) :
 	QWidgetInstrumentPlugin( instrumentTrack, &nes_plugin_descriptor ),
-	m_ch1Enabled( true, this ),
-	m_ch1Crs( 0.f, -24.f, 24.f, 1.f, this, tr( "Channel 1 coarse detune" ) ),
-	m_ch1Volume( 15.f, 0.f, 15.f, 1.f, this, tr( "Channel 1 volume" ) ),
+	m_ch1Enabled( true, model() ),
+	m_ch1Crs( 0.f, -24.f, 24.f, 1.f, model(), tr( "Channel 1 coarse detune" ) ),
+	m_ch1Volume( 15.f, 0.f, 15.f, 1.f, model(), tr( "Channel 1 volume" ) ),
 	
-	m_ch1EnvEnabled( false, this ),
-	m_ch1EnvLooped( false, this ),
-	m_ch1EnvLen( 0.f, 0.f, 15.f, 1.f, this, tr( "Channel 1 envelope length" ) ),
+	m_ch1EnvEnabled( false, model() ),
+	m_ch1EnvLooped( false, model() ),
+	m_ch1EnvLen( 0.f, 0.f, 15.f, 1.f, model(), tr( "Channel 1 envelope length" ) ),
 	
-	m_ch1DutyCycle( 0, 0, 3, this, tr( "Channel 1 duty cycle" ) ),
+	m_ch1DutyCycle( 0, 0, 3, model(), tr( "Channel 1 duty cycle" ) ),
 	
-	m_ch1SweepEnabled( false, this ),
-	m_ch1SweepAmt( 0.f, -7.f, 7.f, 1.f, this, tr( "Channel 1 sweep amount" ) ),
-	m_ch1SweepRate( 0.f, 0.f, 7.f, 1.f, this, tr( "Channel 1 sweep rate" ) ),
+	m_ch1SweepEnabled( false, model() ),
+	m_ch1SweepAmt( 0.f, -7.f, 7.f, 1.f, model(), tr( "Channel 1 sweep amount" ) ),
+	m_ch1SweepRate( 0.f, 0.f, 7.f, 1.f, model(), tr( "Channel 1 sweep rate" ) ),
 	
-	m_ch2Enabled( true, this ),
-	m_ch2Crs( 0.f, -24.f, 24.f, 1.f, this, tr( "Channel 2 Coarse detune" ) ),
-	m_ch2Volume( 15.f, 0.f, 15.f, 1.f, this, tr( "Channel 2 Volume" ) ),
+	m_ch2Enabled( true, model() ),
+	m_ch2Crs( 0.f, -24.f, 24.f, 1.f, model(), tr( "Channel 2 Coarse detune" ) ),
+	m_ch2Volume( 15.f, 0.f, 15.f, 1.f, model(), tr( "Channel 2 Volume" ) ),
 	
-	m_ch2EnvEnabled( false, this ),
-	m_ch2EnvLooped( false, this ),
-	m_ch2EnvLen( 0.f, 0.f, 15.f, 1.f, this, tr( "Channel 2 envelope length" ) ),
+	m_ch2EnvEnabled( false, model() ),
+	m_ch2EnvLooped( false, model() ),
+	m_ch2EnvLen( 0.f, 0.f, 15.f, 1.f, model(), tr( "Channel 2 envelope length" ) ),
 	
-	m_ch2DutyCycle( 2, 0, 3, this, tr( "Channel 2 duty cycle" ) ),
+	m_ch2DutyCycle( 2, 0, 3, model(), tr( "Channel 2 duty cycle" ) ),
 	
-	m_ch2SweepEnabled( false, this ),
-	m_ch2SweepAmt( 0.f, -7.f, 7.f, 1.f, this, tr( "Channel 2 sweep amount" ) ),
-	m_ch2SweepRate( 0.f, 0.f, 7.f, 1.f, this, tr( "Channel 2 sweep rate" ) ),
+	m_ch2SweepEnabled( false, model() ),
+	m_ch2SweepAmt( 0.f, -7.f, 7.f, 1.f, model(), tr( "Channel 2 sweep amount" ) ),
+	m_ch2SweepRate( 0.f, 0.f, 7.f, 1.f, model(), tr( "Channel 2 sweep rate" ) ),
 	
 	//channel 3
-	m_ch3Enabled( true, this ),
-	m_ch3Crs( 0.f, -24.f, 24.f, 1.f, this, tr( "Channel 3 coarse detune" ) ),
-	m_ch3Volume( 15.f, 0.f, 15.f, 1.f, this, tr( "Channel 3 volume" ) ),
+	m_ch3Enabled( true, model() ),
+	m_ch3Crs( 0.f, -24.f, 24.f, 1.f, model(), tr( "Channel 3 coarse detune" ) ),
+	m_ch3Volume( 15.f, 0.f, 15.f, 1.f, model(), tr( "Channel 3 volume" ) ),
 
 	//channel 4
-	m_ch4Enabled( false, this ),
-	m_ch4Volume( 15.f, 0.f, 15.f, 1.f, this, tr( "Channel 4 volume" ) ),
+	m_ch4Enabled( false, model() ),
+	m_ch4Volume( 15.f, 0.f, 15.f, 1.f, model(), tr( "Channel 4 volume" ) ),
 	
-	m_ch4EnvEnabled( false, this ),
-	m_ch4EnvLooped( false, this ),
-	m_ch4EnvLen( 0.f, 0.f, 15.f, 1.f, this, tr( "Channel 4 envelope length" ) ),
+	m_ch4EnvEnabled( false, model() ),
+	m_ch4EnvLooped( false, model() ),
+	m_ch4EnvLen( 0.f, 0.f, 15.f, 1.f, model(), tr( "Channel 4 envelope length" ) ),
 	
-	m_ch4NoiseMode( false, this ),
-	m_ch4NoiseFreqMode( false, this ),
-	m_ch4NoiseFreq( 0.f, 0.f, 15.f, 1.f, this, tr( "Channel 4 noise frequency" ) ),
+	m_ch4NoiseMode( false, model() ),
+	m_ch4NoiseFreqMode( false, model() ),
+	m_ch4NoiseFreq( 0.f, 0.f, 15.f, 1.f, model(), tr( "Channel 4 noise frequency" ) ),
 	
-	m_ch4Sweep( 0.f, -7.f, 7.f, 1.f, this, tr( "Channel 4 noise frequency sweep" ) ),
-	m_ch4NoiseQuantize( true, this ),
+	m_ch4Sweep( 0.f, -7.f, 7.f, 1.f, model(), tr( "Channel 4 noise frequency sweep" ) ),
+	m_ch4NoiseQuantize( true, model() ),
 	
 	//master
-	m_masterVol( 1.0f, 0.0f, 2.0f, 0.01f, this, tr( "Master volume" ) ),
-	m_vibrato( 0.0f, 0.0f, 15.0f, 1.0f, this, tr( "Vibrato" ) )
+	m_masterVol( 1.0f, 0.0f, 2.0f, 0.01f, model(), tr( "Master volume" ) ),
+	m_vibrato( 0.0f, 0.0f, 15.0f, 1.0f, model(), tr( "Vibrato" ) )
 {
 	connect( &m_ch1Crs, SIGNAL( dataChanged() ), this, SLOT( updateFreq1() ), Qt::DirectConnection );
 	connect( &m_ch2Crs, SIGNAL( dataChanged() ), this, SLOT( updateFreq2() ), Qt::DirectConnection );
@@ -693,7 +693,7 @@ QString NesInstrument::nodeName() const
 }
 
 
-gui::PluginView* NesInstrument::instantiateView( QWidget * parent )
+gui::InstrumentView* NesInstrument::instantiateView( QWidget * parent )
 {
 	return( new gui::NesInstrumentView( this, parent ) );
 }
@@ -725,8 +725,8 @@ namespace gui
 QPixmap * NesInstrumentView::s_artwork = nullptr;
 
 
-NesInstrumentView::NesInstrumentView( Instrument * instrument,	QWidget * parent ) :
-	InstrumentViewFixedSize( instrument, parent )
+NesInstrumentView::NesInstrumentView( NesInstrument * instrument,	QWidget * parent ) :
+	InstrumentViewImpl( instrument, parent, true )
 {
 	setAutoFillBackground( true );
 	QPalette pal;
@@ -840,68 +840,59 @@ NesInstrumentView::NesInstrumentView( Instrument * instrument,	QWidget * parent 
 	makeknob( m_masterVolKnob, KNOB_X4, KNOB_Y3, tr( "Master volume" ), "", "" )
 	makeknob( m_vibratoKnob, KNOB_X5, KNOB_Y3, tr( "Vibrato" ), "", "" )
 
-}
+	m_ch1EnabledBtn->setModel( &m_instrument->m_ch1Enabled );
+	m_ch1CrsKnob->setModel( &m_instrument->m_ch1Crs );
+	m_ch1VolumeKnob->setModel( &m_instrument->m_ch1Volume );
 
+	m_ch1EnvEnabledBtn->setModel( &m_instrument->m_ch1EnvEnabled );
+	m_ch1EnvLoopedBtn->setModel( &m_instrument->m_ch1EnvLooped );
+	m_ch1EnvLenKnob->setModel( &m_instrument->m_ch1EnvLen );
 
+	m_ch1DutyCycleGrp->setModel( &m_instrument->m_ch1DutyCycle );
 
-void NesInstrumentView::modelChanged()
-{
-	auto nes = castModel<NesInstrument>();
-
-	m_ch1EnabledBtn->setModel( &nes->m_ch1Enabled );
-	m_ch1CrsKnob->setModel( &nes->m_ch1Crs );
-	m_ch1VolumeKnob->setModel( &nes->m_ch1Volume );
-
-	m_ch1EnvEnabledBtn->setModel( &nes->m_ch1EnvEnabled );
-	m_ch1EnvLoopedBtn->setModel( &nes->m_ch1EnvLooped );
-	m_ch1EnvLenKnob->setModel( &nes->m_ch1EnvLen );
-
-	m_ch1DutyCycleGrp->setModel( &nes->m_ch1DutyCycle );
-
-	m_ch1SweepEnabledBtn->setModel( &nes->m_ch1SweepEnabled );
-	m_ch1SweepAmtKnob->setModel( &nes->m_ch1SweepAmt );
-	m_ch1SweepRateKnob->setModel( &nes->m_ch1SweepRate );
+	m_ch1SweepEnabledBtn->setModel( &m_instrument->m_ch1SweepEnabled );
+	m_ch1SweepAmtKnob->setModel( &m_instrument->m_ch1SweepAmt );
+	m_ch1SweepRateKnob->setModel( &m_instrument->m_ch1SweepRate );
 
 	// channel 2
-	m_ch2EnabledBtn->setModel( &nes->m_ch2Enabled );
-	m_ch2CrsKnob->setModel( &nes->m_ch2Crs );
-	m_ch2VolumeKnob->setModel( &nes->m_ch2Volume );
+	m_ch2EnabledBtn->setModel( &m_instrument->m_ch2Enabled );
+	m_ch2CrsKnob->setModel( &m_instrument->m_ch2Crs );
+	m_ch2VolumeKnob->setModel( &m_instrument->m_ch2Volume );
 
-	m_ch2EnvEnabledBtn->setModel( &nes->m_ch2EnvEnabled );
-	m_ch2EnvLoopedBtn->setModel( &nes->m_ch2EnvLooped );
-	m_ch2EnvLenKnob->setModel( &nes->m_ch2EnvLen );
+	m_ch2EnvEnabledBtn->setModel( &m_instrument->m_ch2EnvEnabled );
+	m_ch2EnvLoopedBtn->setModel( &m_instrument->m_ch2EnvLooped );
+	m_ch2EnvLenKnob->setModel( &m_instrument->m_ch2EnvLen );
 
-	m_ch2DutyCycleGrp->setModel( &nes->m_ch2DutyCycle );
+	m_ch2DutyCycleGrp->setModel( &m_instrument->m_ch2DutyCycle );
 
-	m_ch2SweepEnabledBtn->setModel( &nes->m_ch2SweepEnabled );
-	m_ch2SweepAmtKnob->setModel( &nes->m_ch2SweepAmt );
-	m_ch2SweepRateKnob->setModel( &nes->m_ch2SweepRate );
+	m_ch2SweepEnabledBtn->setModel( &m_instrument->m_ch2SweepEnabled );
+	m_ch2SweepAmtKnob->setModel( &m_instrument->m_ch2SweepAmt );
+	m_ch2SweepRateKnob->setModel( &m_instrument->m_ch2SweepRate );
 
 	//channel 3
-	m_ch3EnabledBtn->setModel( &nes->m_ch3Enabled );
-	m_ch3CrsKnob->setModel( &nes->m_ch3Crs );
-	m_ch3VolumeKnob->setModel( &nes->m_ch3Volume );
+	m_ch3EnabledBtn->setModel( &m_instrument->m_ch3Enabled );
+	m_ch3CrsKnob->setModel( &m_instrument->m_ch3Crs );
+	m_ch3VolumeKnob->setModel( &m_instrument->m_ch3Volume );
 
 	//channel 4
-	m_ch4EnabledBtn->setModel( &nes->m_ch4Enabled );
-	m_ch4VolumeKnob->setModel( &nes->m_ch4Volume );
+	m_ch4EnabledBtn->setModel( &m_instrument->m_ch4Enabled );
+	m_ch4VolumeKnob->setModel( &m_instrument->m_ch4Volume );
 
-	m_ch4EnvEnabledBtn->setModel( &nes->m_ch4EnvEnabled );
-	m_ch4EnvLoopedBtn->setModel( &nes->m_ch4EnvLooped );
-	m_ch4EnvLenKnob->setModel( &nes->m_ch4EnvLen );
+	m_ch4EnvEnabledBtn->setModel( &m_instrument->m_ch4EnvEnabled );
+	m_ch4EnvLoopedBtn->setModel( &m_instrument->m_ch4EnvLooped );
+	m_ch4EnvLenKnob->setModel( &m_instrument->m_ch4EnvLen );
 
-	m_ch4NoiseModeBtn->setModel( &nes->m_ch4NoiseMode );
-	m_ch4NoiseFreqModeBtn->setModel( &nes->m_ch4NoiseFreqMode );
-	m_ch4NoiseFreqKnob->setModel( &nes->m_ch4NoiseFreq );
+	m_ch4NoiseModeBtn->setModel( &m_instrument->m_ch4NoiseMode );
+	m_ch4NoiseFreqModeBtn->setModel( &m_instrument->m_ch4NoiseFreqMode );
+	m_ch4NoiseFreqKnob->setModel( &m_instrument->m_ch4NoiseFreq );
 
-	m_ch4SweepKnob->setModel( &nes->m_ch4Sweep );
-	m_ch4NoiseQuantizeBtn->setModel( &nes->m_ch4NoiseQuantize );
+	m_ch4SweepKnob->setModel( &m_instrument->m_ch4Sweep );
+	m_ch4NoiseQuantizeBtn->setModel( &m_instrument->m_ch4NoiseQuantize );
 
 	//master
-	m_masterVolKnob->setModel( &nes->m_masterVol );
-	m_vibratoKnob->setModel( &nes->m_vibrato );		
+	m_masterVolKnob->setModel( &m_instrument->m_masterVol );
+	m_vibratoKnob->setModel( &m_instrument->m_vibrato );	
 }
-
 
 } // namespace gui
 

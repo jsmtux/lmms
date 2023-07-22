@@ -196,7 +196,7 @@ public:
     void loadSettings(const QDomElement& elem) override;
     void play(sampleFrame* workingBuffer) override;
     bool handleMidiEvent(const MidiEvent& event, const TimePos& time, f_cnt_t offset) override;
-    gui::PluginView* instantiateView(QWidget* parent) override;
+    gui::InstrumentView* instantiateView(QWidget* parent) override;
 
 signals:
     void uiClosed();
@@ -293,7 +293,7 @@ private:
 
 // -------------------------------------------------------------------
 
-class CarlaInstrumentView : public InstrumentViewFixedSize
+class CarlaInstrumentView : public InstrumentViewImpl<CarlaInstrument>
 {
     Q_OBJECT
 
@@ -308,7 +308,6 @@ private slots:
     void paramsUiClosed();
 
 private:
-    void modelChanged() override;
     void timerEvent(QTimerEvent*) override;
 
     NativePluginHandle fHandle;

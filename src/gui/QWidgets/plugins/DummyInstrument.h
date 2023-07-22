@@ -70,7 +70,7 @@ public:
 
 	gui::InstrumentView * instantiateView( QWidget * _parent ) override
 	{
-		return new gui::InstrumentViewFixedSize( this, _parent );
+		return new gui::InstrumentViewImpl<DummyInstrument>( this, _parent, true );
 	}
 } ;
 

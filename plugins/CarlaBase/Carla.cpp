@@ -210,7 +210,7 @@ CarlaInstrument::CarlaInstrument(InstrumentTrack* const instrumentTrack, const D
     m_paramModels.reserve(paramCount);
     for (int i=0; i < paramCount; ++i)
     {
-        m_paramModels.push_back(new CarlaParamFloatModel(this));
+        m_paramModels.push_back(new CarlaParamFloatModel(model()));
         connect(m_paramModels[i], &CarlaParamFloatModel::dataChanged,
             this, [this, i]() {paramModelChanged(i);}, Qt::DirectConnection);
     }
@@ -580,7 +580,7 @@ bool CarlaInstrument::handleMidiEvent(const MidiEvent& event, const TimePos&, f_
     return true;
 }
 
-gui::PluginView* CarlaInstrument::instantiateView(QWidget* parent)
+gui::InstrumentView* CarlaInstrument::instantiateView(QWidget* parent)
 {
 // Disable plugin focus per https://bugreports.qt.io/browse/QTBUG-30181
 #ifndef CARLA_OS_MAC
@@ -611,7 +611,7 @@ namespace gui
 {
 
 CarlaInstrumentView::CarlaInstrumentView(CarlaInstrument* const instrument, QWidget* const parent)
-    : InstrumentViewFixedSize(instrument, parent),
+    : InstrumentViewImpl(instrument, parent, true),
       fHandle(instrument->fHandle),
       fDescriptor(instrument->fDescriptor),
       fTimerId(fHandle != nullptr && fDescriptor->ui_idle != nullptr ? startTimer(30) : 0),
@@ -700,10 +700,6 @@ void CarlaInstrumentView::toggleUI(bool visible)
 void CarlaInstrumentView::uiClosed()
 {
     m_toggleUIButton->setChecked(false);
-}
-
-void CarlaInstrumentView::modelChanged()
-{
 }
 
 void CarlaInstrumentView::timerEvent(QTimerEvent* event)

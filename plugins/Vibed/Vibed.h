@@ -65,7 +65,7 @@ public:
 	}
 
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 private:
@@ -92,11 +92,11 @@ namespace gui
 {
 
 
-class VibedView : public InstrumentViewFixedSize
+class VibedView : public InstrumentViewImpl<Vibed>
 {
 	Q_OBJECT
 public:
-	VibedView( Instrument * _instrument,
+	VibedView( Vibed * _instrument,
 					QWidget * _parent );
 	~VibedView() override = default;
 
@@ -115,9 +115,6 @@ protected slots:
 	void normalizeClicked();
 
 private:
-	void modelChanged() override;
-
-
 	// String-related
 	Knob * m_pickKnob;
 	Knob * m_pickupKnob;

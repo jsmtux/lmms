@@ -42,27 +42,40 @@ public:
 	InstrumentView( Instrument * _instrument, QWidget * _parent );
 	~InstrumentView() override;
 
-	void setInstrument( Instrument * _instrument );
-
 	InstrumentTrackWindow * instrumentTrackWindow();
-private:
-	Instrument* m_instrument;
 } ;
 
-
-
-
-//! Instrument view with fixed LMMS-default size
-class LMMS_EXPORT InstrumentViewFixedSize : public InstrumentView
+template<typename InstrumentType>
+class LMMS_EXPORT InstrumentViewImpl : public InstrumentView
 {
-	QSize sizeHint() const override { return QSize(250, 250); }
-	QSize minimumSizeHint() const override { return sizeHint(); }
-
 public:
-	using InstrumentView::InstrumentView;
-	~InstrumentViewFixedSize() override = default;
-} ;
+	InstrumentViewImpl( InstrumentType * _instrument, QWidget * _parent, bool _is_fixed_size ) :
+		InstrumentView(_instrument, _parent),
+		is_fixed_size(_is_fixed_size)
+	{
+		m_instrument = _instrument;
+	}
+	~InstrumentViewImpl() override = default;
+protected:
+	QSize sizeHint() const override {
+		if (is_fixed_size){
+			return QSize(250, 250);
+		} else {
+			return QWidget::sizeHint();
+		}
+	}
 
+	QSize minimumSizeHint() const override {
+		if (is_fixed_size){
+			return sizeHint();
+		} else {
+			return QWidget::minimumSizeHint();
+		}		
+	}
+
+	InstrumentType* m_instrument;
+	bool is_fixed_size;
+};
 
 } // namespace lmms::gui
 

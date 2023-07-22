@@ -127,7 +127,7 @@ public:
 		return( 128 );
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 protected slots:
@@ -154,17 +154,15 @@ namespace gui
 {
 
 
-class TripleOscillatorView : public InstrumentViewFixedSize
+class TripleOscillatorView : public InstrumentViewImpl<TripleOscillator>
 {
 	Q_OBJECT
 public:
-	TripleOscillatorView( Instrument * _instrument, QWidget * _parent );
+	TripleOscillatorView( TripleOscillator * _instrument, QWidget * _parent );
 	~TripleOscillatorView() override = default;
 
 
 private:
-	void modelChanged() override;
-
 	automatableButtonGroup * m_mod1BtnGrp;
 	automatableButtonGroup * m_mod2BtnGrp;
 

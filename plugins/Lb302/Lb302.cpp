@@ -276,17 +276,17 @@ float Lb302Filter3Pole::process(const float& samp)
 
 Lb302Synth::Lb302Synth( InstrumentTrack * _instrumentTrack ) :
 	QWidgetInstrumentPlugin( _instrumentTrack, &lb302_plugin_descriptor ),
-	vcf_cut_knob( 0.75f, 0.0f, 1.5f, 0.005f, this, tr( "VCF Cutoff Frequency" ) ),
-	vcf_res_knob( 0.75f, 0.0f, 1.25f, 0.005f, this, tr( "VCF Resonance" ) ),
-	vcf_mod_knob( 0.1f, 0.0f, 1.0f, 0.005f, this, tr( "VCF Envelope Mod" ) ),
-	vcf_dec_knob( 0.1f, 0.0f, 1.0f, 0.005f, this, tr( "VCF Envelope Decay" ) ),
-	dist_knob( 0.0f, 0.0f, 1.0f, 0.01f, this, tr( "Distortion" ) ),
-	wave_shape( 8.0f, 0.0f, 11.0f, this, tr( "Waveform" ) ),
-	slide_dec_knob( 0.6f, 0.0f, 1.0f, 0.005f, this, tr( "Slide Decay" ) ),
-	slideToggle( false, this, tr( "Slide" ) ),
-	accentToggle( false, this, tr( "Accent" ) ),
-	deadToggle( false, this, tr( "Dead" ) ),
-	db24Toggle( false, this, tr( "24dB/oct Filter" ) ),
+	vcf_cut_knob( 0.75f, 0.0f, 1.5f, 0.005f, model(), tr( "VCF Cutoff Frequency" ) ),
+	vcf_res_knob( 0.75f, 0.0f, 1.25f, 0.005f, model(), tr( "VCF Resonance" ) ),
+	vcf_mod_knob( 0.1f, 0.0f, 1.0f, 0.005f, model(), tr( "VCF Envelope Mod" ) ),
+	vcf_dec_knob( 0.1f, 0.0f, 1.0f, 0.005f, model(), tr( "VCF Envelope Decay" ) ),
+	dist_knob( 0.0f, 0.0f, 1.0f, 0.01f, model(), tr( "Distortion" ) ),
+	wave_shape( 8.0f, 0.0f, 11.0f, model(), tr( "Waveform" ) ),
+	slide_dec_knob( 0.6f, 0.0f, 1.0f, 0.005f, model(), tr( "Slide Decay" ) ),
+	slideToggle( false, model(), tr( "Slide" ) ),
+	accentToggle( false, model(), tr( "Accent" ) ),
+	deadToggle( false, model(), tr( "Dead" ) ),
+	db24Toggle( false, model(), tr( "24dB/oct Filter" ) ),
 	vca_attack(1.0 - 0.96406088),
 	vca_decay(0.99897516),
 	vca_a0(0.5),
@@ -807,7 +807,7 @@ void Lb302Synth::deleteNotePluginData( NotePlayHandle * _n )
 }
 
 
-gui::PluginView * Lb302Synth::instantiateView( QWidget * _parent )
+gui::InstrumentView * Lb302Synth::instantiateView( QWidget * _parent )
 {
 	return( new gui::Lb302SynthView( this, _parent ) );
 }
@@ -816,8 +816,8 @@ namespace gui
 {
 
 
-Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent )
+Lb302SynthView::Lb302SynthView( Lb302Synth * _instrument, QWidget * _parent ) :
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 	// GUI
 	m_vcfCutKnob = new Knob( knobBright_26, this );
@@ -999,26 +999,20 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	pal.setBrush( backgroundRole(), PLUGIN_NAME::getIconPixmap(
 			"artwork" ) );
 	setPalette( pal );
-}
 
+	m_vcfCutKnob->setModel( &m_instrument->vcf_cut_knob );
+	m_vcfResKnob->setModel( &m_instrument->vcf_res_knob );
+	m_vcfDecKnob->setModel( &m_instrument->vcf_dec_knob );
+	m_vcfModKnob->setModel( &m_instrument->vcf_mod_knob );
+	m_slideDecKnob->setModel( &m_instrument->slide_dec_knob );
 
-void Lb302SynthView::modelChanged()
-{
-	auto syn = castModel<Lb302Synth>();
+	m_distKnob->setModel( &m_instrument->dist_knob );
+	m_waveBtnGrp->setModel( &m_instrument->wave_shape );
 
-	m_vcfCutKnob->setModel( &syn->vcf_cut_knob );
-	m_vcfResKnob->setModel( &syn->vcf_res_knob );
-	m_vcfDecKnob->setModel( &syn->vcf_dec_knob );
-	m_vcfModKnob->setModel( &syn->vcf_mod_knob );
-	m_slideDecKnob->setModel( &syn->slide_dec_knob );
-
-	m_distKnob->setModel( &syn->dist_knob );
-	m_waveBtnGrp->setModel( &syn->wave_shape );
-
-	m_slideToggle->setModel( &syn->slideToggle );
-	/*m_accentToggle->setModel( &syn->accentToggle );*/
-	m_deadToggle->setModel( &syn->deadToggle );
-	m_db24Toggle->setModel( &syn->db24Toggle );
+	m_slideToggle->setModel( &m_instrument->slideToggle );
+	/*m_accentToggle->setModel( &m_instrument->accentToggle );*/
+	m_deadToggle->setModel( &m_instrument->deadToggle );
+	m_db24Toggle->setModel( &m_instrument->db24Toggle );
 }
 
 

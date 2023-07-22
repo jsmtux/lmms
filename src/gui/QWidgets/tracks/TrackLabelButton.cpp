@@ -38,6 +38,7 @@
 #include "modals/RenameDialog.h"
 
 #include <QMouseEvent>
+#include <QDebug>
 
 namespace lmms::gui
 {
@@ -185,7 +186,6 @@ void TrackLabelButton::mouseReleaseEvent( QMouseEvent *_me )
 
 
 
-
 void TrackLabelButton::paintEvent( QPaintEvent * _pe )
 {
 	if( m_trackView->getTrack()->type() == Track::InstrumentTrack )
@@ -194,9 +194,15 @@ void TrackLabelButton::paintEvent( QPaintEvent * _pe )
 		const PixmapLoader * pl;
 		auto get_logo = [](InstrumentTrack* it) -> const PixmapLoader*
 		{
-			return it->instrument()->key().isValid()
-				? it->instrument()->key().logo()
-				: it->instrument()->descriptor()->logo;
+			qDebug() << "Getting logo\n";
+			qDebug() << "Instrument is " << it->instrument()->displayName() << "\n";
+			qDebug() << "Instrument key is valid? " << it->instrument()->key().isValid() << "\n";
+			// auto ret = it->instrument()->key().isValid()
+			// 	? it->instrument()->key().logo()
+			// 	: it->instrument()->descriptor()->logo;
+			auto ret = it->instrument()->descriptor()->logo;
+			qDebug() << "Got logo\n";
+			return ret;
 		};
 		if( it && it->instrument() &&
 			it->instrument()->descriptor() &&

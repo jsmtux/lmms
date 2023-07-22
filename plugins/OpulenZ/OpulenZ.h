@@ -63,7 +63,7 @@ public:
 	~OpulenzInstrument() override;
 
 	QString nodeName() const override;
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 	Flags flags() const override
 	{
@@ -159,14 +159,13 @@ namespace gui
 {
 
 
-class OpulenzInstrumentView : public InstrumentViewFixedSize
+class OpulenzInstrumentView : public InstrumentViewImpl<OpulenzInstrument>
 {
 	Q_OBJECT
 public:
-	OpulenzInstrumentView( Instrument * _instrument, QWidget * _parent );
+	OpulenzInstrumentView( OpulenzInstrument * _instrument, QWidget * _parent );
 	~OpulenzInstrumentView() override;
 	LcdSpinBox *m_patch;
-	void modelChanged() override;
 
 	Knob *op1_a_kn;
 	Knob *op1_d_kn;

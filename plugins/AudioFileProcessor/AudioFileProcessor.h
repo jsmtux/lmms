@@ -77,7 +77,7 @@ public:
 		return 128;
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 public slots:
@@ -126,11 +126,11 @@ namespace gui
 class AudioFileProcessorWaveView;
 
 
-class AudioFileProcessorView : public gui::InstrumentViewFixedSize
+class AudioFileProcessorView : public InstrumentViewImpl<AudioFileProcessor>
 {
 	Q_OBJECT
 public:
-	AudioFileProcessorView( Instrument * _instrument, QWidget * _parent );
+	AudioFileProcessorView( AudioFileProcessor * _instrument, QWidget * _parent );
 	virtual ~AudioFileProcessorView() = default;
 
 	void newWaveView();
@@ -146,8 +146,6 @@ protected:
 
 
 private:
-	virtual void modelChanged();
-
 	static QPixmap * s_artwork;
 
 	AudioFileProcessorWaveView * m_waveView;
