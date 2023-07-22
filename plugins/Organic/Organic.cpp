@@ -81,15 +81,15 @@ float * OrganicInstrument::s_harmonics = nullptr;
 OrganicInstrument::OrganicInstrument( InstrumentTrack * _instrument_track ) :
 	QWidgetInstrumentPlugin( _instrument_track, &organic_plugin_descriptor ),
 	m_modulationAlgo( Oscillator::SignalMix, Oscillator::SignalMix, Oscillator::SignalMix),
-	m_fx1Model( 0.0f, 0.0f, 0.99f, 0.01f , this, tr( "Distortion" ) ),
-	m_volModel( 100.0f, 0.0f, 200.0f, 1.0f, this, tr( "Volume" ) )
+	m_fx1Model( 0.0f, 0.0f, 0.99f, 0.01f , model(), tr( "Distortion" ) ),
+	m_volModel( 100.0f, 0.0f, 200.0f, 1.0f, model(), tr( "Volume" ) )
 {
 	m_numOscillators = NUM_OSCILLATORS;
 
 	m_osc = new OscillatorObject*[ m_numOscillators ];
 	for (int i=0; i < m_numOscillators; i++)
 	{
-		m_osc[i] = new OscillatorObject( this, i );
+		m_osc[i] = new OscillatorObject( model(), i );
 		m_osc[i]->m_numOscillators = m_numOscillators;
 
 		// Connect events
@@ -397,7 +397,7 @@ int OrganicInstrument::intRand( int min, int max )
 }
 
 
-gui::PluginView * OrganicInstrument::instantiateView( QWidget * _parent )
+gui::InstrumentView * OrganicInstrument::instantiateView( QWidget * _parent )
 {
 	return( new gui::OrganicInstrumentView( this, _parent ) );
 }
@@ -419,13 +419,11 @@ public:
 
 
 
-OrganicInstrumentView::OrganicInstrumentView( Instrument * _instrument,
+OrganicInstrumentView::OrganicInstrumentView( OrganicInstrument * _instrument,
 							QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent ),
+	InstrumentViewImpl( _instrument, _parent, true ),
 	m_oscKnobs( nullptr )
 {
-	auto oi = castModel<OrganicInstrument>();
-
 	setAutoFillBackground( true );
 	QPalette pal;
 	pal.setBrush( backgroundRole(), PLUGIN_NAME::getIconPixmap(
@@ -456,7 +454,7 @@ OrganicInstrumentView::OrganicInstrumentView( Instrument * _instrument,
 								"randomise" ) );
 
 	connect( m_randBtn, SIGNAL ( clicked() ),
-					oi, SLOT( randomiseSettings() ) );
+					m_instrument, SLOT( randomiseSettings() ) );
 
 
 	if( s_artwork == nullptr )
@@ -465,28 +463,16 @@ OrganicInstrumentView::OrganicInstrumentView( Instrument * _instrument,
 								"artwork" ) );
 	}
 
-}
-
-
-OrganicInstrumentView::~OrganicInstrumentView()
-{
-	delete[] m_oscKnobs;
-}
-
-
-void OrganicInstrumentView::modelChanged()
-{
-	auto oi = castModel<OrganicInstrument>();
 
 	const float y=91.0f;
 	const float rowHeight = 26.0f;
 	const float x=53.0f;
 	const float colWidth = 24.0f;
 
-	m_numOscillators = oi->m_numOscillators;
+	m_numOscillators = m_instrument->m_numOscillators;
 
-	m_fx1Knob->setModel( &oi->m_fx1Model );
-	m_volKnob->setModel( &oi->m_volModel );
+	m_fx1Knob->setModel( &m_instrument->m_fx1Model );
+	m_volKnob->setModel( &m_instrument->m_volModel );
 
 	if( m_oscKnobs != nullptr )
 	{
@@ -502,13 +488,13 @@ void OrganicInstrumentView::modelChanged()
 		Knob * harmKnob = new OrganicKnob( this );
 		harmKnob->move( x + i * colWidth, y - rowHeight );
 		harmKnob->setObjectName( "harmKnob" );
-		connect( &oi->m_osc[i]->m_harmModel, SIGNAL( dataChanged() ),
+		connect( &m_instrument->m_osc[i]->m_harmModel, SIGNAL( dataChanged() ),
 			this, SLOT( updateKnobHint() ) );
 
 		// setup waveform-knob
 		Knob * oscKnob = new OrganicKnob( this );
 		oscKnob->move( x + i * colWidth, y );
-		connect( &oi->m_osc[i]->m_oscModel, SIGNAL( dataChanged() ),
+		connect( &m_instrument->m_osc[i]->m_oscModel, SIGNAL( dataChanged() ),
 			this, SLOT( updateKnobHint() ) );
 
 		oscKnob->setHintText( tr( "Osc %1 waveform:" ).arg( i + 1 ), QString() );
@@ -537,23 +523,28 @@ void OrganicInstrumentView::modelChanged()
 		m_oscKnobs[i] = OscillatorKnobs( harmKnob, volKnob, oscKnob, panKnob, detuneKnob );
 
 		// Attach to models
-		m_oscKnobs[i].m_harmKnob->setModel( &oi->m_osc[i]->m_harmModel );
-		m_oscKnobs[i].m_volKnob->setModel( &oi->m_osc[i]->m_volModel );
-		m_oscKnobs[i].m_oscKnob->setModel( &oi->m_osc[i]->m_oscModel );
-		m_oscKnobs[i].m_panKnob->setModel( &oi->m_osc[i]->m_panModel );
-		m_oscKnobs[i].m_detuneKnob->setModel( &oi->m_osc[i]->m_detuneModel );
+		m_oscKnobs[i].m_harmKnob->setModel( &m_instrument->m_osc[i]->m_harmModel );
+		m_oscKnobs[i].m_volKnob->setModel( &m_instrument->m_osc[i]->m_volModel );
+		m_oscKnobs[i].m_oscKnob->setModel( &m_instrument->m_osc[i]->m_oscModel );
+		m_oscKnobs[i].m_panKnob->setModel( &m_instrument->m_osc[i]->m_panModel );
+		m_oscKnobs[i].m_detuneKnob->setModel( &m_instrument->m_osc[i]->m_detuneModel );
 	}
 	updateKnobHint();
 }
 
 
+OrganicInstrumentView::~OrganicInstrumentView()
+{
+	delete[] m_oscKnobs;
+}
+
+
 void OrganicInstrumentView::updateKnobHint()
 {
-	auto oi = castModel<OrganicInstrument>();
 	for( int i = 0; i < m_numOscillators; ++i )
 	{
-		const float harm = oi->m_osc[i]->m_harmModel.value();
-		const float wave = oi->m_osc[i]->m_oscModel.value();
+		const float harm = m_instrument->m_osc[i]->m_harmModel.value();
+		const float wave = m_instrument->m_osc[i]->m_oscModel.value();
 
 		m_oscKnobs[i].m_harmKnob->setHintText( tr( "Osc %1 harmonic:" ).arg( i + 1 ), " (" +
 			HARMONIC_NAMES[ static_cast<int>( harm ) ] + ")" );

@@ -228,7 +228,7 @@ TripleOscillator::TripleOscillator( InstrumentTrack * _instrument_track ) :
 {
 	for( int i = 0; i < NUM_OF_OSCILLATORS; ++i )
 	{
-		m_osc[i] = new OscillatorObject( this, i );
+		m_osc[i] = new OscillatorObject( model(), i );
 
 	}
 
@@ -400,7 +400,7 @@ void TripleOscillator::deleteNotePluginData( NotePlayHandle * _n )
 
 
 
-gui::PluginView* TripleOscillator::instantiateView( QWidget * _parent )
+gui::InstrumentView* TripleOscillator::instantiateView( QWidget * _parent )
 {
 	return new gui::TripleOscillatorView( this, _parent );
 }
@@ -436,9 +436,9 @@ public:
 // 82, 109
 
 
-TripleOscillatorView::TripleOscillatorView( Instrument * _instrument,
+TripleOscillatorView::TripleOscillatorView( TripleOscillator * _instrument,
 							QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent )
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 	setAutoFillBackground( true );
 	QPalette pal;
@@ -549,6 +549,9 @@ TripleOscillatorView::TripleOscillatorView( Instrument * _instrument,
 	m_mod2BtnGrp->addButton( sync_osc2_btn );
 	m_mod2BtnGrp->addButton( fm_osc2_btn );
 
+
+	m_mod1BtnGrp->setModel( &m_instrument->m_osc[0]->m_modulationAlgoModel );
+	m_mod2BtnGrp->setModel( &m_instrument->m_osc[1]->m_modulationAlgoModel );
 
 	for( int i = 0; i < NUM_OF_OSCILLATORS; ++i )
 	{
@@ -697,42 +700,29 @@ TripleOscillatorView::TripleOscillatorView( Instrument * _instrument,
 
 		m_oscKnobs[i] = OscillatorKnobs( vk, pk, ck, flk, frk, pok,
 							spdk, uwb, wsbg, uwt );
-	}
-}
 
-
-
-
-void TripleOscillatorView::modelChanged()
-{
-	auto t = castModel<TripleOscillator>();
-	m_mod1BtnGrp->setModel( &t->m_osc[0]->m_modulationAlgoModel );
-	m_mod2BtnGrp->setModel( &t->m_osc[1]->m_modulationAlgoModel );
-
-	for( int i = 0; i < NUM_OF_OSCILLATORS; ++i )
-	{
 		m_oscKnobs[i].m_volKnob->setModel(
-					&t->m_osc[i]->m_volumeModel );
+					&m_instrument->m_osc[i]->m_volumeModel );
 		m_oscKnobs[i].m_panKnob->setModel(
-					&t->m_osc[i]->m_panModel );
+					&m_instrument->m_osc[i]->m_panModel );
 		m_oscKnobs[i].m_coarseKnob->setModel(
-					&t->m_osc[i]->m_coarseModel );
+					&m_instrument->m_osc[i]->m_coarseModel );
 		m_oscKnobs[i].m_fineLeftKnob->setModel(
-					&t->m_osc[i]->m_fineLeftModel );
+					&m_instrument->m_osc[i]->m_fineLeftModel );
 		m_oscKnobs[i].m_fineRightKnob->setModel(
-					&t->m_osc[i]->m_fineRightModel );
+					&m_instrument->m_osc[i]->m_fineRightModel );
 		m_oscKnobs[i].m_phaseOffsetKnob->setModel(
-					&t->m_osc[i]->m_phaseOffsetModel );
+					&m_instrument->m_osc[i]->m_phaseOffsetModel );
 		m_oscKnobs[i].m_stereoPhaseDetuningKnob->setModel(
-				&t->m_osc[i]->m_stereoPhaseDetuningModel );
+				&m_instrument->m_osc[i]->m_stereoPhaseDetuningModel );
 		m_oscKnobs[i].m_waveShapeBtnGrp->setModel(
-					&t->m_osc[i]->m_waveShapeModel );
+					&m_instrument->m_osc[i]->m_waveShapeModel );
 		m_oscKnobs[i].m_multiBandWaveTableButton->setModel(
-					&t->m_osc[i]->m_useWaveTableModel );
+					&m_instrument->m_osc[i]->m_useWaveTableModel );
 
 		connect( m_oscKnobs[i].m_userWaveButton,
 						SIGNAL( doubleClicked() ),
-				t->m_osc[i], SLOT( oscUserDefWaveDblClick() ) );
+				m_instrument->m_osc[i], SLOT( oscUserDefWaveDblClick() ) );
 	}
 }
 

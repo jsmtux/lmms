@@ -92,7 +92,7 @@ public:
 		return IsSingleStreamed;
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 	
 	QString getCurrentPatchName();
 
@@ -198,17 +198,15 @@ namespace gui
 {
 
 
-class Sf2InstrumentView : public InstrumentViewFixedSize
+class Sf2InstrumentView : public InstrumentViewImpl<Sf2Instrument>
 {
 	Q_OBJECT
 public:
-	Sf2InstrumentView( Instrument * _instrument,
+	Sf2InstrumentView( Sf2Instrument * _instrument,
 					QWidget * _parent );
 	~Sf2InstrumentView() override = default;
 
 private:
-	void modelChanged() override;
-
 	PixmapButton * m_fileDialogButton;
 	PixmapButton * m_patchDialogButton;
 

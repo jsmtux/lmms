@@ -67,19 +67,19 @@ Plugin::Descriptor PLUGIN_EXPORT kicker_plugin_descriptor =
 
 KickerInstrument::KickerInstrument( InstrumentTrack * _instrument_track ) :
 	QWidgetInstrumentPlugin( _instrument_track, &kicker_plugin_descriptor ),
-	m_startFreqModel( 150.0f, 5.0f, 1000.0f, 1.0f, this, tr( "Start frequency" ) ),
-	m_endFreqModel( 40.0f, 5.0f, 1000.0f, 1.0f, this, tr( "End frequency" ) ),
-	m_decayModel( 440.0f, 5.0f, 5000.0f, 1.0f, 5000.0f, this, tr( "Length" ) ),
-	m_distModel( 0.8f, 0.0f, 100.0f, 0.1f, this, tr( "Start distortion" ) ),
-	m_distEndModel( 0.8f, 0.0f, 100.0f, 0.1f, this, tr( "End distortion" ) ),
-	m_gainModel( 1.0f, 0.1f, 5.0f, 0.05f, this, tr( "Gain" ) ),
-	m_envModel( 0.163f, 0.01f, 1.0f, 0.001f, this, tr( "Envelope slope" ) ),
-	m_noiseModel( 0.0f, 0.0f, 1.0f, 0.01f, this, tr( "Noise" ) ),
-	m_clickModel( 0.4f, 0.0f, 1.0f, 0.05f, this, tr( "Click" ) ),
-	m_slopeModel( 0.06f, 0.001f, 1.0f, 0.001f, this, tr( "Frequency slope" ) ),
-	m_startNoteModel( true, this, tr( "Start from note" ) ),
-	m_endNoteModel( false, this, tr( "End to note" ) ),
-	m_versionModel( KICKER_PRESET_VERSION, 0, KICKER_PRESET_VERSION, this, "" )
+	m_startFreqModel( 150.0f, 5.0f, 1000.0f, 1.0f, model(), tr( "Start frequency" ) ),
+	m_endFreqModel( 40.0f, 5.0f, 1000.0f, 1.0f, model(), tr( "End frequency" ) ),
+	m_decayModel( 440.0f, 5.0f, 5000.0f, 1.0f, 5000.0f, model(), tr( "Length" ) ),
+	m_distModel( 0.8f, 0.0f, 100.0f, 0.1f, model(), tr( "Start distortion" ) ),
+	m_distEndModel( 0.8f, 0.0f, 100.0f, 0.1f, model(), tr( "End distortion" ) ),
+	m_gainModel( 1.0f, 0.1f, 5.0f, 0.05f, model(), tr( "Gain" ) ),
+	m_envModel( 0.163f, 0.01f, 1.0f, 0.001f, model(), tr( "Envelope slope" ) ),
+	m_noiseModel( 0.0f, 0.0f, 1.0f, 0.01f, model(), tr( "Noise" ) ),
+	m_clickModel( 0.4f, 0.0f, 1.0f, 0.05f, model(), tr( "Click" ) ),
+	m_slopeModel( 0.06f, 0.001f, 1.0f, 0.001f, model(), tr( "Frequency slope" ) ),
+	m_startNoteModel( true, model(), tr( "Start from note" ) ),
+	m_endNoteModel( false, model(), tr( "End to note" ) ),
+	m_versionModel( KICKER_PRESET_VERSION, 0, KICKER_PRESET_VERSION, model(), "" )
 {
 }
 
@@ -215,7 +215,7 @@ void KickerInstrument::deleteNotePluginData( NotePlayHandle * _n )
 
 
 
-gui::PluginView * KickerInstrument::instantiateView( QWidget * _parent )
+gui::InstrumentView * KickerInstrument::instantiateView( QWidget * _parent )
 {
 	return new gui::KickerInstrumentView( this, _parent );
 }
@@ -263,9 +263,9 @@ public:
 
 
 
-KickerInstrumentView::KickerInstrumentView( Instrument * _instrument,
+KickerInstrumentView::KickerInstrumentView( KickerInstrument * _instrument,
 							QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent )
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 	const int ROW1 = 14;
 	const int ROW2 = ROW1 + 56;
@@ -328,26 +328,19 @@ KickerInstrumentView::KickerInstrumentView( Instrument * _instrument,
 	QPalette pal;
 	pal.setBrush( backgroundRole(), PLUGIN_NAME::getIconPixmap( "artwork" ) );
 	setPalette( pal );
-}
 
-
-
-
-void KickerInstrumentView::modelChanged()
-{
-	auto k = castModel<KickerInstrument>();
-	m_startFreqKnob->setModel( &k->m_startFreqModel );
-	m_endFreqKnob->setModel( &k->m_endFreqModel );
-	m_decayKnob->setModel( &k->m_decayModel );
-	m_distKnob->setModel( &k->m_distModel );
-	m_distEndKnob->setModel( &k->m_distEndModel );
-	m_gainKnob->setModel( &k->m_gainModel );
-	m_envKnob->setModel( &k->m_envModel );
-	m_noiseKnob->setModel( &k->m_noiseModel );
-	m_clickKnob->setModel( &k->m_clickModel );
-	m_slopeKnob->setModel( &k->m_slopeModel );
-	m_startNoteToggle->setModel( &k->m_startNoteModel );
-	m_endNoteToggle->setModel( &k->m_endNoteModel );
+	m_startFreqKnob->setModel( &m_instrument->m_startFreqModel );
+	m_endFreqKnob->setModel( &m_instrument->m_endFreqModel );
+	m_decayKnob->setModel( &m_instrument->m_decayModel );
+	m_distKnob->setModel( &m_instrument->m_distModel );
+	m_distEndKnob->setModel( &m_instrument->m_distEndModel );
+	m_gainKnob->setModel( &m_instrument->m_gainModel );
+	m_envKnob->setModel( &m_instrument->m_envModel );
+	m_noiseKnob->setModel( &m_instrument->m_noiseModel );
+	m_clickKnob->setModel( &m_instrument->m_clickModel );
+	m_slopeKnob->setModel( &m_instrument->m_slopeModel );
+	m_startNoteToggle->setModel( &m_instrument->m_startNoteModel );
+	m_endNoteToggle->setModel( &m_instrument->m_endNoteModel );
 }
 
 

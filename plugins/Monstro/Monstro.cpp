@@ -829,120 +829,120 @@ inline sample_t MonstroSynth::calcSlope( int slope, sample_t s )
 MonstroInstrument::MonstroInstrument( InstrumentTrack * _instrument_track ) :
 		QWidgetInstrumentPlugin( _instrument_track, &monstro_plugin_descriptor ),
 
-		m_osc1Vol( 33.0, 0.0, 200.0, 0.1, this, tr( "Osc 1 volume" ) ),
-		m_osc1Pan( 0.0, -100.0, 100.0, 0.1, this, tr( "Osc 1 panning" ) ),
-		m_osc1Crs( 0.0, -24.0, 24.0, 1.0, this, tr( "Osc 1 coarse detune" ) ),
-		m_osc1Ftl( 0.0, -100.0, 100.0, 1.0, this, tr( "Osc 1 fine detune left" ) ),
-		m_osc1Ftr( 0.0, -100.0, 100.0, 1.0, this, tr( "Osc 1 fine detune right" ) ),
-		m_osc1Spo( 0.0, -180.0, 180.0, 0.1, this, tr( "Osc 1 stereo phase offset" ) ),
-		m_osc1Pw( 50.0, PW_MIN, PW_MAX, 0.01, this, tr( "Osc 1 pulse width" ) ),
-		m_osc1SSR( false, this, tr( "Osc 1 sync send on rise" ) ),
-		m_osc1SSF( false, this, tr( "Osc 1 sync send on fall" ) ),
+		m_osc1Vol( 33.0, 0.0, 200.0, 0.1, model(), tr( "Osc 1 volume" ) ),
+		m_osc1Pan( 0.0, -100.0, 100.0, 0.1, model(), tr( "Osc 1 panning" ) ),
+		m_osc1Crs( 0.0, -24.0, 24.0, 1.0, model(), tr( "Osc 1 coarse detune" ) ),
+		m_osc1Ftl( 0.0, -100.0, 100.0, 1.0, model(), tr( "Osc 1 fine detune left" ) ),
+		m_osc1Ftr( 0.0, -100.0, 100.0, 1.0, model(), tr( "Osc 1 fine detune right" ) ),
+		m_osc1Spo( 0.0, -180.0, 180.0, 0.1, model(), tr( "Osc 1 stereo phase offset" ) ),
+		m_osc1Pw( 50.0, PW_MIN, PW_MAX, 0.01, model(), tr( "Osc 1 pulse width" ) ),
+		m_osc1SSR( false, model(), tr( "Osc 1 sync send on rise" ) ),
+		m_osc1SSF( false, model(), tr( "Osc 1 sync send on fall" ) ),
 
-		m_osc2Vol( 33.0, 0.0, 200.0, 0.1, this, tr( "Osc 2 volume" ) ),
-		m_osc2Pan( 0.0, -100.0, 100.0, 0.1, this, tr( "Osc 2 panning" ) ),
-		m_osc2Crs( 0.0, -24.0, 24.0, 1.0, this, tr( "Osc 2 coarse detune" ) ),
-		m_osc2Ftl( 0.0, -100.0, 100.0, 1.0, this, tr( "Osc 2 fine detune left" ) ),
-		m_osc2Ftr( 0.0, -100.0, 100.0, 1.0, this, tr( "Osc 2 fine detune right" ) ),
-		m_osc2Spo( 0.0, -180.0, 180.0, 0.1, this, tr( "Osc 2 stereo phase offset" ) ),
-		m_osc2Wave( this, tr( "Osc 2 waveform" ) ),
-		m_osc2SyncH( false, this, tr( "Osc 2 sync hard" ) ),
-		m_osc2SyncR( false, this, tr( "Osc 2 sync reverse" ) ),
+		m_osc2Vol( 33.0, 0.0, 200.0, 0.1, model(), tr( "Osc 2 volume" ) ),
+		m_osc2Pan( 0.0, -100.0, 100.0, 0.1, model(), tr( "Osc 2 panning" ) ),
+		m_osc2Crs( 0.0, -24.0, 24.0, 1.0, model(), tr( "Osc 2 coarse detune" ) ),
+		m_osc2Ftl( 0.0, -100.0, 100.0, 1.0, model(), tr( "Osc 2 fine detune left" ) ),
+		m_osc2Ftr( 0.0, -100.0, 100.0, 1.0, model(), tr( "Osc 2 fine detune right" ) ),
+		m_osc2Spo( 0.0, -180.0, 180.0, 0.1, model(), tr( "Osc 2 stereo phase offset" ) ),
+		m_osc2Wave( model(), tr( "Osc 2 waveform" ) ),
+		m_osc2SyncH( false, model(), tr( "Osc 2 sync hard" ) ),
+		m_osc2SyncR( false, model(), tr( "Osc 2 sync reverse" ) ),
 
-		m_osc3Vol( 33.0, 0.0, 200.0, 0.1, this, tr( "Osc 3 volume" ) ),
-		m_osc3Pan( 0.0, -100.0, 100.0, 0.1, this, tr( "Osc 3 panning" ) ),
-		m_osc3Crs( 0.0, -24.0, 24.0, 1.0, this, tr( "Osc 3 coarse detune" ) ),
-		m_osc3Spo( 0.0, -180.0, 180.0, 0.1, this, tr( "Osc 3 Stereo phase offset" ) ),
-		m_osc3Sub( 0.0, -100.0, 100.0, 0.1, this, tr( "Osc 3 sub-oscillator mix" ) ),
-		m_osc3Wave1( this, tr( "Osc 3 waveform 1" ) ),
-		m_osc3Wave2( this, tr( "Osc 3 waveform 2" ) ),
-		m_osc3SyncH( false, this, tr( "Osc 3 sync hard" ) ),
-		m_osc3SyncR( false, this, tr( "Osc 3 Sync reverse" ) ),
+		m_osc3Vol( 33.0, 0.0, 200.0, 0.1, model(), tr( "Osc 3 volume" ) ),
+		m_osc3Pan( 0.0, -100.0, 100.0, 0.1, model(), tr( "Osc 3 panning" ) ),
+		m_osc3Crs( 0.0, -24.0, 24.0, 1.0, model(), tr( "Osc 3 coarse detune" ) ),
+		m_osc3Spo( 0.0, -180.0, 180.0, 0.1, model(), tr( "Osc 3 Stereo phase offset" ) ),
+		m_osc3Sub( 0.0, -100.0, 100.0, 0.1, model(), tr( "Osc 3 sub-oscillator mix" ) ),
+		m_osc3Wave1( model(), tr( "Osc 3 waveform 1" ) ),
+		m_osc3Wave2( model(), tr( "Osc 3 waveform 2" ) ),
+		m_osc3SyncH( false, model(), tr( "Osc 3 sync hard" ) ),
+		m_osc3SyncR( false, model(), tr( "Osc 3 Sync reverse" ) ),
 
-		m_lfo1Wave( this, tr( "LFO 1 waveform" ) ),
-		m_lfo1Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "LFO 1 attack" ) ),
-		m_lfo1Rate( 1.0f, 0.1, 10000.0, 0.1, 10000.0f, this, tr( "LFO 1 rate" ) ),
-		m_lfo1Phs( 0.0, -180.0, 180.0, 0.1, this, tr( "LFO 1 phase" ) ),
+		m_lfo1Wave( model(), tr( "LFO 1 waveform" ) ),
+		m_lfo1Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "LFO 1 attack" ) ),
+		m_lfo1Rate( 1.0f, 0.1, 10000.0, 0.1, 10000.0f, model(), tr( "LFO 1 rate" ) ),
+		m_lfo1Phs( 0.0, -180.0, 180.0, 0.1, model(), tr( "LFO 1 phase" ) ),
 
-		m_lfo2Wave( this, tr( "LFO 2 waveform" ) ),
-		m_lfo2Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "LFO 2 attack" ) ),
-		m_lfo2Rate( 1.0f, 0.1, 10000.0, 0.1, 10000.0f, this, tr( "LFO 2 rate" ) ),
-		m_lfo2Phs( 0.0, -180.0, 180.0, 0.1, this, tr( "LFO 2 phase" ) ),
+		m_lfo2Wave( model(), tr( "LFO 2 waveform" ) ),
+		m_lfo2Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "LFO 2 attack" ) ),
+		m_lfo2Rate( 1.0f, 0.1, 10000.0, 0.1, 10000.0f, model(), tr( "LFO 2 rate" ) ),
+		m_lfo2Phs( 0.0, -180.0, 180.0, 0.1, model(), tr( "LFO 2 phase" ) ),
 
-		m_env1Pre( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "Env 1 pre-delay" ) ),
-		m_env1Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "Env 1 attack" ) ),
-		m_env1Hold( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 1 hold" ) ),
-		m_env1Dec( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 1 decay" ) ),
-		m_env1Sus( 1.0f, 0.0f, 1.0f, 0.001f, this, tr( "Env 1 sustain" ) ),
-		m_env1Rel( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 1 release" ) ),
-		m_env1Slope( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Env 1 slope" ) ),
+		m_env1Pre( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "Env 1 pre-delay" ) ),
+		m_env1Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "Env 1 attack" ) ),
+		m_env1Hold( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 1 hold" ) ),
+		m_env1Dec( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 1 decay" ) ),
+		m_env1Sus( 1.0f, 0.0f, 1.0f, 0.001f, model(), tr( "Env 1 sustain" ) ),
+		m_env1Rel( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 1 release" ) ),
+		m_env1Slope( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Env 1 slope" ) ),
 
-		m_env2Pre( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "Env 2 pre-delay" ) ),
-		m_env2Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "Env 2 attack" ) ),
-		m_env2Hold( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 2 hold" ) ),
-		m_env2Dec( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 2 decay" ) ),
-		m_env2Sus( 1.0f, 0.0f, 1.0f, 0.001f, this, tr( "Env 2 sustain" ) ),
-		m_env2Rel( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 2 release" ) ),
-		m_env2Slope( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Env 2 slope" ) ),
+		m_env2Pre( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "Env 2 pre-delay" ) ),
+		m_env2Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "Env 2 attack" ) ),
+		m_env2Hold( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 2 hold" ) ),
+		m_env2Dec( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 2 decay" ) ),
+		m_env2Sus( 1.0f, 0.0f, 1.0f, 0.001f, model(), tr( "Env 2 sustain" ) ),
+		m_env2Rel( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 2 release" ) ),
+		m_env2Slope( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Env 2 slope" ) ),
 
-		m_o23Mod( 0, 0, NUM_MODS - 1, this, tr( "Osc 2+3 modulation" ) ),
+		m_o23Mod( 0, 0, NUM_MODS - 1, model(), tr( "Osc 2+3 modulation" ) ),
 
-		m_selectedView( 0, 0, 1, this, tr( "Selected view" ) ),
+		m_selectedView( 0, 0, 1, model(), tr( "Selected view" ) ),
 
-		m_vol1env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Vol env 1" ) ),
-		m_vol1env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Vol env 2" ) ),
-		m_vol1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Vol LFO 1" ) ),
-		m_vol1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Vol LFO 2" ) ),
+		m_vol1env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Vol env 1" ) ),
+		m_vol1env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Vol env 2" ) ),
+		m_vol1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Vol LFO 1" ) ),
+		m_vol1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Vol LFO 2" ) ),
 
-		m_vol2env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Vol env 1" ) ),
-		m_vol2env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Vol env 2" ) ),
-		m_vol2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Vol LFO 1" ) ),
-		m_vol2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Vol LFO 2" ) ),
+		m_vol2env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Vol env 1" ) ),
+		m_vol2env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Vol env 2" ) ),
+		m_vol2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Vol LFO 1" ) ),
+		m_vol2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Vol LFO 2" ) ),
 
-		m_vol3env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Vol env 1" ) ),
-		m_vol3env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Vol env 2" ) ),
-		m_vol3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Vol LFO 1" ) ),
-		m_vol3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Vol LFO 2" ) ),
+		m_vol3env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Vol env 1" ) ),
+		m_vol3env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Vol env 2" ) ),
+		m_vol3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Vol LFO 1" ) ),
+		m_vol3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Vol LFO 2" ) ),
 
-		m_phs1env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Phs env 1" ) ),
-		m_phs1env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Phs env 2" ) ),
-		m_phs1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Phs LFO 1" ) ),
-		m_phs1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Phs LFO 2" ) ),
+		m_phs1env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Phs env 1" ) ),
+		m_phs1env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Phs env 2" ) ),
+		m_phs1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Phs LFO 1" ) ),
+		m_phs1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Phs LFO 2" ) ),
 
-		m_phs2env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Phs env 1" ) ),
-		m_phs2env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Phs env 2" ) ),
-		m_phs2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Phs LFO 1" ) ),
-		m_phs2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Phs LFO 2" ) ),
+		m_phs2env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Phs env 1" ) ),
+		m_phs2env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Phs env 2" ) ),
+		m_phs2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Phs LFO 1" ) ),
+		m_phs2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Phs LFO 2" ) ),
 
-		m_phs3env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Phs env 1" ) ),
-		m_phs3env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Phs env 2" ) ),
-		m_phs3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Phs LFO 1" ) ),
-		m_phs3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Phs LFO 2" ) ),
+		m_phs3env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Phs env 1" ) ),
+		m_phs3env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Phs env 2" ) ),
+		m_phs3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Phs LFO 1" ) ),
+		m_phs3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Phs LFO 2" ) ),
 
-		m_pit1env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Pit env 1" ) ),
-		m_pit1env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Pit env 2" ) ),
-		m_pit1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Pit LFO 1" ) ),
-		m_pit1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Pit LFO 2" ) ),
+		m_pit1env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Pit env 1" ) ),
+		m_pit1env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Pit env 2" ) ),
+		m_pit1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Pit LFO 1" ) ),
+		m_pit1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Pit LFO 2" ) ),
 
-		m_pit2env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Pit env 1" ) ),
-		m_pit2env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Pit env 2" ) ),
-		m_pit2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Pit LFO 1" ) ),
-		m_pit2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Pit LFO 2" ) ),
+		m_pit2env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Pit env 1" ) ),
+		m_pit2env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Pit env 2" ) ),
+		m_pit2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Pit LFO 1" ) ),
+		m_pit2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Pit LFO 2" ) ),
 
-		m_pit3env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Pit env 1" ) ),
-		m_pit3env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Pit env 2" ) ),
-		m_pit3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Pit LFO 1" ) ),
-		m_pit3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Pit LFO 2" ) ),
+		m_pit3env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Pit env 1" ) ),
+		m_pit3env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Pit env 2" ) ),
+		m_pit3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Pit LFO 1" ) ),
+		m_pit3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Pit LFO 2" ) ),
 
-		m_pw1env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - PW env 1" ) ),
-		m_pw1env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - PW env 2" ) ),
-		m_pw1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - PW LFO 1" ) ),
-		m_pw1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - PW LFO 2" ) ),
+		m_pw1env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - PW env 1" ) ),
+		m_pw1env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - PW env 2" ) ),
+		m_pw1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - PW LFO 1" ) ),
+		m_pw1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - PW LFO 2" ) ),
 
-		m_sub3env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Sub env 1" ) ),
-		m_sub3env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Sub env 2" ) ),
-		m_sub3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Sub LFO 1" ) ),
-		m_sub3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Sub LFO 2" ) )
+		m_sub3env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Sub env 1" ) ),
+		m_sub3env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Sub env 2" ) ),
+		m_sub3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Sub LFO 1" ) ),
+		m_sub3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Sub LFO 2" ) )
 
 {
 
@@ -1299,7 +1299,7 @@ f_cnt_t MonstroInstrument::desiredReleaseFrames() const
 }
 
 
-gui::PluginView* MonstroInstrument::instantiateView( QWidget * _parent )
+gui::InstrumentView* MonstroInstrument::instantiateView( QWidget * _parent )
 {
 	return( new gui::MonstroView( this, _parent ) );
 }
@@ -1444,9 +1444,9 @@ namespace gui
 {
 
 
-MonstroView::MonstroView( Instrument * _instrument,
+MonstroView::MonstroView( MonstroInstrument * _instrument,
 					QWidget * _parent ) :
-					InstrumentViewFixedSize( _instrument, _parent )
+					InstrumentViewImpl( _instrument, _parent, true )
 {
 	m_operatorsView = setupOperatorsView( this );
 	setWidgetBackground( m_operatorsView, "artwork_op" );
@@ -1478,6 +1478,120 @@ MonstroView::MonstroView( Instrument * _instrument,
 
 	connect( m_opViewButton, SIGNAL( clicked() ), this, SLOT( updateLayout() ) );
 	connect( m_matViewButton, SIGNAL( clicked() ), this, SLOT( updateLayout() ) );
+
+	m_osc1VolKnob-> setModel( &m_instrument-> m_osc1Vol );
+	m_osc1PanKnob-> setModel( &m_instrument-> m_osc1Pan );
+	m_osc1CrsKnob-> setModel( &m_instrument-> m_osc1Crs );
+	m_osc1FtlKnob-> setModel( &m_instrument-> m_osc1Ftl );
+	m_osc1FtrKnob-> setModel( &m_instrument-> m_osc1Ftr );
+	m_osc1SpoKnob-> setModel( &m_instrument-> m_osc1Spo );
+	m_osc1PwKnob-> setModel( &m_instrument-> m_osc1Pw );
+	m_osc1SSRButton-> setModel( &m_instrument-> m_osc1SSR );
+	m_osc1SSFButton-> setModel( &m_instrument-> m_osc1SSF );
+
+	m_osc2VolKnob-> setModel( &m_instrument-> m_osc2Vol );
+	m_osc2PanKnob-> setModel( &m_instrument-> m_osc2Pan );
+	m_osc2CrsKnob-> setModel( &m_instrument-> m_osc2Crs );
+	m_osc2FtlKnob-> setModel( &m_instrument-> m_osc2Ftl );
+	m_osc2FtrKnob-> setModel( &m_instrument-> m_osc2Ftr );
+	m_osc2SpoKnob-> setModel( &m_instrument-> m_osc2Spo );
+	m_osc2WaveBox-> setModel( &m_instrument-> m_osc2Wave );
+	m_osc2SyncHButton-> setModel( &m_instrument-> m_osc2SyncH );
+	m_osc2SyncRButton-> setModel( &m_instrument-> m_osc2SyncR );
+
+	m_osc3VolKnob-> setModel( &m_instrument-> m_osc3Vol );
+	m_osc3PanKnob-> setModel( &m_instrument-> m_osc3Pan );
+	m_osc3CrsKnob-> setModel( &m_instrument-> m_osc3Crs );
+	m_osc3SpoKnob-> setModel( &m_instrument-> m_osc3Spo );
+	m_osc3SubKnob-> setModel( &m_instrument-> m_osc3Sub );
+	m_osc3Wave1Box-> setModel( &m_instrument-> m_osc3Wave1 );
+	m_osc3Wave2Box-> setModel( &m_instrument-> m_osc3Wave2 );
+	m_osc3SyncHButton-> setModel( &m_instrument-> m_osc3SyncH );
+	m_osc3SyncRButton-> setModel( &m_instrument-> m_osc3SyncR );
+
+	m_lfo1WaveBox-> setModel( &m_instrument-> m_lfo1Wave );
+	m_lfo1AttKnob-> setModel( &m_instrument-> m_lfo1Att );
+	m_lfo1RateKnob-> setModel( &m_instrument-> m_lfo1Rate );
+	m_lfo1PhsKnob-> setModel( &m_instrument-> m_lfo1Phs );
+
+	m_lfo2WaveBox-> setModel( &m_instrument-> m_lfo2Wave );
+	m_lfo2AttKnob-> setModel( &m_instrument-> m_lfo2Att );
+	m_lfo2RateKnob-> setModel( &m_instrument-> m_lfo2Rate );
+	m_lfo2PhsKnob-> setModel( &m_instrument-> m_lfo2Phs );
+
+	m_env1PreKnob-> setModel( &m_instrument->  m_env1Pre );
+	m_env1AttKnob-> setModel( &m_instrument->  m_env1Att );
+	m_env1HoldKnob-> setModel( &m_instrument->  m_env1Hold );
+	m_env1DecKnob-> setModel( &m_instrument->  m_env1Dec );
+	m_env1SusKnob-> setModel( &m_instrument->  m_env1Sus );
+	m_env1RelKnob-> setModel( &m_instrument->  m_env1Rel  );
+	m_env1SlopeKnob-> setModel( &m_instrument->  m_env1Slope );
+
+	m_env2PreKnob-> setModel( &m_instrument->  m_env2Pre );
+	m_env2AttKnob-> setModel( &m_instrument->  m_env2Att );
+	m_env2HoldKnob-> setModel( &m_instrument->  m_env2Hold );
+	m_env2DecKnob-> setModel( &m_instrument->  m_env2Dec );
+	m_env2SusKnob-> setModel( &m_instrument->  m_env2Sus );
+	m_env2RelKnob-> setModel( &m_instrument->  m_env2Rel  );
+	m_env2SlopeKnob-> setModel( &m_instrument->  m_env2Slope );
+
+	m_o23ModGroup-> setModel( &m_instrument-> m_o23Mod );
+	m_selectedViewGroup-> setModel( &m_instrument-> m_selectedView );
+
+	m_vol1env1Knob-> setModel( &m_instrument-> m_vol1env1 );
+	m_vol1env2Knob-> setModel( &m_instrument-> m_vol1env2 );
+	m_vol1lfo1Knob-> setModel( &m_instrument-> m_vol1lfo1 );
+	m_vol1lfo2Knob-> setModel( &m_instrument-> m_vol1lfo2 );
+
+	m_vol2env1Knob-> setModel( &m_instrument-> m_vol2env1 );
+	m_vol2env2Knob-> setModel( &m_instrument-> m_vol2env2 );
+	m_vol2lfo1Knob-> setModel( &m_instrument-> m_vol2lfo1 );
+	m_vol2lfo2Knob-> setModel( &m_instrument-> m_vol2lfo2 );
+
+	m_vol3env1Knob-> setModel( &m_instrument-> m_vol3env1 );
+	m_vol3env2Knob-> setModel( &m_instrument-> m_vol3env2 );
+	m_vol3lfo1Knob-> setModel( &m_instrument-> m_vol3lfo1 );
+	m_vol3lfo2Knob-> setModel( &m_instrument-> m_vol3lfo2 );
+
+ 	m_phs1env1Knob-> setModel( &m_instrument-> m_phs1env1 );
+	m_phs1env2Knob-> setModel( &m_instrument-> m_phs1env2 );
+	m_phs1lfo1Knob-> setModel( &m_instrument-> m_phs1lfo1 );
+	m_phs1lfo2Knob-> setModel( &m_instrument-> m_phs1lfo2 );
+
+	m_phs2env1Knob-> setModel( &m_instrument-> m_phs2env1 );
+	m_phs2env2Knob-> setModel( &m_instrument-> m_phs2env2 );
+	m_phs2lfo1Knob-> setModel( &m_instrument-> m_phs2lfo1 );
+	m_phs2lfo2Knob-> setModel( &m_instrument-> m_phs2lfo2 );
+
+	m_phs3env1Knob-> setModel( &m_instrument-> m_phs3env1 );
+	m_phs3env2Knob-> setModel( &m_instrument-> m_phs3env2 );
+	m_phs3lfo1Knob-> setModel( &m_instrument-> m_phs3lfo1 );
+	m_phs3lfo2Knob-> setModel( &m_instrument-> m_phs3lfo2 );
+
+	m_pit1env1Knob-> setModel( &m_instrument-> m_pit1env1 );
+	m_pit1env2Knob-> setModel( &m_instrument-> m_pit1env2 );
+	m_pit1lfo1Knob-> setModel( &m_instrument-> m_pit1lfo1 );
+	m_pit1lfo2Knob-> setModel( &m_instrument-> m_pit1lfo2 );
+
+	m_pit2env1Knob-> setModel( &m_instrument-> m_pit2env1 );
+	m_pit2env2Knob-> setModel( &m_instrument-> m_pit2env2 );
+	m_pit2lfo1Knob-> setModel( &m_instrument-> m_pit2lfo1 );
+	m_pit2lfo2Knob-> setModel( &m_instrument-> m_pit2lfo2 );
+
+	m_pit3env1Knob-> setModel( &m_instrument-> m_pit3env1 );
+	m_pit3env2Knob-> setModel( &m_instrument-> m_pit3env2 );
+	m_pit3lfo1Knob-> setModel( &m_instrument-> m_pit3lfo1 );
+	m_pit3lfo2Knob-> setModel( &m_instrument-> m_pit3lfo2 );
+
+	m_pw1env1Knob-> setModel( &m_instrument-> m_pw1env1 );
+	m_pw1env2Knob-> setModel( &m_instrument-> m_pw1env2 );
+	m_pw1lfo1Knob-> setModel( &m_instrument-> m_pw1lfo1 );
+	m_pw1lfo2Knob-> setModel( &m_instrument-> m_pw1lfo2 );
+
+	m_sub3env1Knob-> setModel( &m_instrument-> m_sub3env1 );
+	m_sub3env2Knob-> setModel( &m_instrument-> m_sub3env2 );
+	m_sub3lfo1Knob-> setModel( &m_instrument-> m_sub3lfo1 );
+	m_sub3lfo2Knob-> setModel( &m_instrument->	m_sub3lfo2 );
 }
 
 
@@ -1494,127 +1608,6 @@ void MonstroView::updateLayout()
 			m_matrixView->show();
 			break;
 	}
-}
-
-
-void MonstroView::modelChanged()
-{
-	auto m = castModel<MonstroInstrument>();
-
-	m_osc1VolKnob-> setModel( &m-> m_osc1Vol );
-	m_osc1PanKnob-> setModel( &m-> m_osc1Pan );
-	m_osc1CrsKnob-> setModel( &m-> m_osc1Crs );
-	m_osc1FtlKnob-> setModel( &m-> m_osc1Ftl );
-	m_osc1FtrKnob-> setModel( &m-> m_osc1Ftr );
-	m_osc1SpoKnob-> setModel( &m-> m_osc1Spo );
-	m_osc1PwKnob-> setModel( &m-> m_osc1Pw );
-	m_osc1SSRButton-> setModel( &m-> m_osc1SSR );
-	m_osc1SSFButton-> setModel( &m-> m_osc1SSF );
-
-	m_osc2VolKnob-> setModel( &m-> m_osc2Vol );
-	m_osc2PanKnob-> setModel( &m-> m_osc2Pan );
-	m_osc2CrsKnob-> setModel( &m-> m_osc2Crs );
-	m_osc2FtlKnob-> setModel( &m-> m_osc2Ftl );
-	m_osc2FtrKnob-> setModel( &m-> m_osc2Ftr );
-	m_osc2SpoKnob-> setModel( &m-> m_osc2Spo );
-	m_osc2WaveBox-> setModel( &m-> m_osc2Wave );
-	m_osc2SyncHButton-> setModel( &m-> m_osc2SyncH );
-	m_osc2SyncRButton-> setModel( &m-> m_osc2SyncR );
-
-	m_osc3VolKnob-> setModel( &m-> m_osc3Vol );
-	m_osc3PanKnob-> setModel( &m-> m_osc3Pan );
-	m_osc3CrsKnob-> setModel( &m-> m_osc3Crs );
-	m_osc3SpoKnob-> setModel( &m-> m_osc3Spo );
-	m_osc3SubKnob-> setModel( &m-> m_osc3Sub );
-	m_osc3Wave1Box-> setModel( &m-> m_osc3Wave1 );
-	m_osc3Wave2Box-> setModel( &m-> m_osc3Wave2 );
-	m_osc3SyncHButton-> setModel( &m-> m_osc3SyncH );
-	m_osc3SyncRButton-> setModel( &m-> m_osc3SyncR );
-
-	m_lfo1WaveBox-> setModel( &m-> m_lfo1Wave );
-	m_lfo1AttKnob-> setModel( &m-> m_lfo1Att );
-	m_lfo1RateKnob-> setModel( &m-> m_lfo1Rate );
-	m_lfo1PhsKnob-> setModel( &m-> m_lfo1Phs );
-
-	m_lfo2WaveBox-> setModel( &m-> m_lfo2Wave );
-	m_lfo2AttKnob-> setModel( &m-> m_lfo2Att );
-	m_lfo2RateKnob-> setModel( &m-> m_lfo2Rate );
-	m_lfo2PhsKnob-> setModel( &m-> m_lfo2Phs );
-
-	m_env1PreKnob-> setModel( &m->  m_env1Pre );
-	m_env1AttKnob-> setModel( &m->  m_env1Att );
-	m_env1HoldKnob-> setModel( &m->  m_env1Hold );
-	m_env1DecKnob-> setModel( &m->  m_env1Dec );
-	m_env1SusKnob-> setModel( &m->  m_env1Sus );
-	m_env1RelKnob-> setModel( &m->  m_env1Rel  );
-	m_env1SlopeKnob-> setModel( &m->  m_env1Slope );
-
-	m_env2PreKnob-> setModel( &m->  m_env2Pre );
-	m_env2AttKnob-> setModel( &m->  m_env2Att );
-	m_env2HoldKnob-> setModel( &m->  m_env2Hold );
-	m_env2DecKnob-> setModel( &m->  m_env2Dec );
-	m_env2SusKnob-> setModel( &m->  m_env2Sus );
-	m_env2RelKnob-> setModel( &m->  m_env2Rel  );
-	m_env2SlopeKnob-> setModel( &m->  m_env2Slope );
-
-	m_o23ModGroup-> setModel( &m-> m_o23Mod );
-	m_selectedViewGroup-> setModel( &m-> m_selectedView );
-
-	m_vol1env1Knob-> setModel( &m-> m_vol1env1 );
-	m_vol1env2Knob-> setModel( &m-> m_vol1env2 );
-	m_vol1lfo1Knob-> setModel( &m-> m_vol1lfo1 );
-	m_vol1lfo2Knob-> setModel( &m-> m_vol1lfo2 );
-
-	m_vol2env1Knob-> setModel( &m-> m_vol2env1 );
-	m_vol2env2Knob-> setModel( &m-> m_vol2env2 );
-	m_vol2lfo1Knob-> setModel( &m-> m_vol2lfo1 );
-	m_vol2lfo2Knob-> setModel( &m-> m_vol2lfo2 );
-
-	m_vol3env1Knob-> setModel( &m-> m_vol3env1 );
-	m_vol3env2Knob-> setModel( &m-> m_vol3env2 );
-	m_vol3lfo1Knob-> setModel( &m-> m_vol3lfo1 );
-	m_vol3lfo2Knob-> setModel( &m-> m_vol3lfo2 );
-
- 	m_phs1env1Knob-> setModel( &m-> m_phs1env1 );
-	m_phs1env2Knob-> setModel( &m-> m_phs1env2 );
-	m_phs1lfo1Knob-> setModel( &m-> m_phs1lfo1 );
-	m_phs1lfo2Knob-> setModel( &m-> m_phs1lfo2 );
-
-	m_phs2env1Knob-> setModel( &m-> m_phs2env1 );
-	m_phs2env2Knob-> setModel( &m-> m_phs2env2 );
-	m_phs2lfo1Knob-> setModel( &m-> m_phs2lfo1 );
-	m_phs2lfo2Knob-> setModel( &m-> m_phs2lfo2 );
-
-	m_phs3env1Knob-> setModel( &m-> m_phs3env1 );
-	m_phs3env2Knob-> setModel( &m-> m_phs3env2 );
-	m_phs3lfo1Knob-> setModel( &m-> m_phs3lfo1 );
-	m_phs3lfo2Knob-> setModel( &m-> m_phs3lfo2 );
-
-	m_pit1env1Knob-> setModel( &m-> m_pit1env1 );
-	m_pit1env2Knob-> setModel( &m-> m_pit1env2 );
-	m_pit1lfo1Knob-> setModel( &m-> m_pit1lfo1 );
-	m_pit1lfo2Knob-> setModel( &m-> m_pit1lfo2 );
-
-	m_pit2env1Knob-> setModel( &m-> m_pit2env1 );
-	m_pit2env2Knob-> setModel( &m-> m_pit2env2 );
-	m_pit2lfo1Knob-> setModel( &m-> m_pit2lfo1 );
-	m_pit2lfo2Knob-> setModel( &m-> m_pit2lfo2 );
-
-	m_pit3env1Knob-> setModel( &m-> m_pit3env1 );
-	m_pit3env2Knob-> setModel( &m-> m_pit3env2 );
-	m_pit3lfo1Knob-> setModel( &m-> m_pit3lfo1 );
-	m_pit3lfo2Knob-> setModel( &m-> m_pit3lfo2 );
-
-	m_pw1env1Knob-> setModel( &m-> m_pw1env1 );
-	m_pw1env2Knob-> setModel( &m-> m_pw1env2 );
-	m_pw1lfo1Knob-> setModel( &m-> m_pw1lfo1 );
-	m_pw1lfo2Knob-> setModel( &m-> m_pw1lfo2 );
-
-	m_sub3env1Knob-> setModel( &m-> m_sub3env1 );
-	m_sub3env2Knob-> setModel( &m-> m_sub3env2 );
-	m_sub3lfo1Knob-> setModel( &m-> m_sub3lfo1 );
-	m_sub3lfo2Knob-> setModel( &m->	m_sub3lfo2 );
-
 }
 
 
@@ -1826,9 +1819,9 @@ extern "C"
 {
 
 // necessary for getting instance out of shared lib
-PLUGIN_EXPORT Plugin * lmms_plugin_main( Model *m, void * )
+PLUGIN_EXPORT Plugin * lmms_plugin_main( Model *m_instrument, void * )
 {
-	return new MonstroInstrument( static_cast<InstrumentTrack *>( m ) );
+	return new MonstroInstrument( static_cast<InstrumentTrack *>( m_instrument ) );
 }
 
 

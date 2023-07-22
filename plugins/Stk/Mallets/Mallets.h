@@ -175,7 +175,7 @@ public:
 
 	QString nodeName() const override;
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 private:
@@ -216,7 +216,7 @@ namespace gui
 {
 
 
-class MalletsInstrumentView: public InstrumentViewFixedSize
+class MalletsInstrumentView: public InstrumentViewImpl<MalletsInstrument>
 {
 	Q_OBJECT
 public:
@@ -228,8 +228,6 @@ public slots:
 	void changePreset();
 
 private:
-	void modelChanged() override;
-
 	void setWidgetBackground( QWidget * _widget, const QString & _pic );
 	QWidget * setupModalBarControls( QWidget * _parent );
 	QWidget * setupTubeBellControls( QWidget * _parent );

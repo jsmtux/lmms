@@ -36,7 +36,7 @@ namespace lmms
 {
 
 
-class MidiImport : public QWidgetImportFilter
+class MidiImport : public QObject, public QWidgetImportFilter
 {
 	Q_OBJECT
 public:

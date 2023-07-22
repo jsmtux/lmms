@@ -236,49 +236,49 @@ void WatsynObject::renderOutput( fpp_t _frames )
 WatsynInstrument::WatsynInstrument( InstrumentTrack * _instrument_track ) :
 		QWidgetInstrumentPlugin( _instrument_track, &watsyn_plugin_descriptor ),
 
-		a1_vol( 100.0f, 0.0f, 200.0f, 0.1f, this, tr( "Volume A1" ) ),
-		a2_vol( 100.0f, 0.0f, 200.0f, 0.1f, this, tr( "Volume A2" ) ),
-		b1_vol( 100.0f, 0.0f, 200.0f, 0.1f, this, tr( "Volume B1" ) ),
-		b2_vol( 100.0f, 0.0f, 200.0f, 0.1f, this, tr( "Volume B2" ) ),
+		a1_vol( 100.0f, 0.0f, 200.0f, 0.1f, model(), tr( "Volume A1" ) ),
+		a2_vol( 100.0f, 0.0f, 200.0f, 0.1f, model(), tr( "Volume A2" ) ),
+		b1_vol( 100.0f, 0.0f, 200.0f, 0.1f, model(), tr( "Volume B1" ) ),
+		b2_vol( 100.0f, 0.0f, 200.0f, 0.1f, model(), tr( "Volume B2" ) ),
 
-		a1_pan( 0.0f, -100.0f, 100.0f, 0.1f, this, tr( "Panning A1" ) ),
-		a2_pan( 0.0f, -100.0f, 100.0f, 0.1f, this, tr( "Panning A2" ) ),
-		b1_pan( 0.0f, -100.0f, 100.0f, 0.1f, this, tr( "Panning B1" ) ),
-		b2_pan( 0.0f, -100.0f, 100.0f, 0.1f, this, tr( "Panning B2" ) ),
+		a1_pan( 0.0f, -100.0f, 100.0f, 0.1f, model(), tr( "Panning A1" ) ),
+		a2_pan( 0.0f, -100.0f, 100.0f, 0.1f, model(), tr( "Panning A2" ) ),
+		b1_pan( 0.0f, -100.0f, 100.0f, 0.1f, model(), tr( "Panning B1" ) ),
+		b2_pan( 0.0f, -100.0f, 100.0f, 0.1f, model(), tr( "Panning B2" ) ),
 
-		a1_mult( 8.0f, 1.0, 24.0, 1.0, this, tr( "Freq. multiplier A1" ) ),
-		a2_mult( 8.0f, 1.0, 24.0, 1.0, this, tr( "Freq. multiplier A2" ) ),
-		b1_mult( 8.0f, 1.0, 24.0, 1.0, this, tr( "Freq. multiplier B1" ) ),
-		b2_mult( 8.0f, 1.0, 24.0, 1.0, this, tr( "Freq. multiplier B2" ) ),
+		a1_mult( 8.0f, 1.0, 24.0, 1.0, model(), tr( "Freq. multiplier A1" ) ),
+		a2_mult( 8.0f, 1.0, 24.0, 1.0, model(), tr( "Freq. multiplier A2" ) ),
+		b1_mult( 8.0f, 1.0, 24.0, 1.0, model(), tr( "Freq. multiplier B1" ) ),
+		b2_mult( 8.0f, 1.0, 24.0, 1.0, model(), tr( "Freq. multiplier B2" ) ),
 
-		a1_ltune( 0.0f, -600.0f, 600.0f, 1.0f, this, tr( "Left detune A1" ) ),
-		a2_ltune( 0.0f, -600.0f, 600.0f, 1.0f, this, tr( "Left detune A2" ) ),
-		b1_ltune( 0.0f, -600.0f, 600.0f, 1.0f, this, tr( "Left detune B1" ) ),
-		b2_ltune( 0.0f, -600.0f, 600.0f, 1.0f, this, tr( "Left detune B2" ) ),
+		a1_ltune( 0.0f, -600.0f, 600.0f, 1.0f, model(), tr( "Left detune A1" ) ),
+		a2_ltune( 0.0f, -600.0f, 600.0f, 1.0f, model(), tr( "Left detune A2" ) ),
+		b1_ltune( 0.0f, -600.0f, 600.0f, 1.0f, model(), tr( "Left detune B1" ) ),
+		b2_ltune( 0.0f, -600.0f, 600.0f, 1.0f, model(), tr( "Left detune B2" ) ),
 
-		a1_rtune( 0.0f, -600.0f, 600.0f, 1.0f, this, tr( "Right detune A1" ) ),
-		a2_rtune( 0.0f, -600.0f, 600.0f, 1.0f, this, tr( "Right detune A2" ) ),
-		b1_rtune( 0.0f, -600.0f, 600.0f, 1.0f, this, tr( "Right detune B1" ) ),
-		b2_rtune( 0.0f, -600.0f, 600.0f, 1.0f, this, tr( "Right detune B2" ) ),
+		a1_rtune( 0.0f, -600.0f, 600.0f, 1.0f, model(), tr( "Right detune A1" ) ),
+		a2_rtune( 0.0f, -600.0f, 600.0f, 1.0f, model(), tr( "Right detune A2" ) ),
+		b1_rtune( 0.0f, -600.0f, 600.0f, 1.0f, model(), tr( "Right detune B1" ) ),
+		b2_rtune( 0.0f, -600.0f, 600.0f, 1.0f, model(), tr( "Right detune B2" ) ),
 
-		a1_graph( -1.0f, 1.0f, GRAPHLEN, this ),
-		a2_graph( -1.0f, 1.0f, GRAPHLEN, this ),
-		b1_graph( -1.0f, 1.0f, GRAPHLEN, this ),
-		b2_graph( -1.0f, 1.0f, GRAPHLEN, this ),
+		a1_graph( -1.0f, 1.0f, GRAPHLEN, model() ),
+		a2_graph( -1.0f, 1.0f, GRAPHLEN, model() ),
+		b1_graph( -1.0f, 1.0f, GRAPHLEN, model() ),
+		b2_graph( -1.0f, 1.0f, GRAPHLEN, model() ),
 
-		m_abmix( 0.0f, -100.0f, 100.0f, 0.1f, this, tr( "A-B Mix" ) ),
-		m_envAmt( 0.0f, -200.0f, 200.0f, 1.0f, this, tr( "A-B Mix envelope amount" ) ),
+		m_abmix( 0.0f, -100.0f, 100.0f, 0.1f, model(), tr( "A-B Mix" ) ),
+		m_envAmt( 0.0f, -200.0f, 200.0f, 1.0f, model(), tr( "A-B Mix envelope amount" ) ),
 
-		m_envAtt( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "A-B Mix envelope attack" ) ),
-		m_envHold( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "A-B Mix envelope hold" ) ),
-		m_envDec( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "A-B Mix envelope decay" ) ),
+		m_envAtt( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "A-B Mix envelope attack" ) ),
+		m_envHold( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "A-B Mix envelope hold" ) ),
+		m_envDec( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "A-B Mix envelope decay" ) ),
 
-		m_xtalk( 0.0f, 0.0f, 100.0f, 0.1f, this, tr( "A1-B2 Crosstalk" ) ),
+		m_xtalk( 0.0f, 0.0f, 100.0f, 0.1f, model(), tr( "A1-B2 Crosstalk" ) ),
 
-		m_amod( 0, 0, 3, this, tr( "A2-A1 modulation" ) ),
-		m_bmod( 0, 0, 3, this, tr( "B2-B1 modulation" ) ),
+		m_amod( 0, 0, 3, model(), tr( "A2-A1 modulation" ) ),
+		m_bmod( 0, 0, 3, model(), tr( "B2-B1 modulation" ) ),
 
-		m_selectedGraph( 0, 0, 3, this, tr( "Selected graph" ) )
+		m_selectedGraph( 0, 0, 3, model(), tr( "Selected graph" ) )
 {
 	connect( &a1_vol, SIGNAL( dataChanged() ), this, SLOT( updateVolumes() ) );
 	connect( &a2_vol, SIGNAL( dataChanged() ), this, SLOT( updateVolumes() ) );
@@ -574,7 +574,7 @@ QString WatsynInstrument::nodeName() const
 }
 
 
-gui::PluginView* WatsynInstrument::instantiateView( QWidget * _parent )
+gui::InstrumentView* WatsynInstrument::instantiateView( QWidget * _parent )
 {
 	return( new gui::WatsynView( this, _parent ) );
 }
@@ -660,9 +660,9 @@ namespace gui
 {
 
 
-WatsynView::WatsynView( Instrument * _instrument,
+WatsynView::WatsynView( WatsynInstrument * _instrument,
 					QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent )
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 	setAutoFillBackground( true );
 	QPalette pal;
@@ -747,8 +747,8 @@ WatsynView::WatsynView( Instrument * _instrument,
 	m_selectedGraphGroup -> addButton( a2_selectButton );
 	m_selectedGraphGroup -> addButton( b1_selectButton );
 	m_selectedGraphGroup -> addButton( b2_selectButton );
-	auto w = castModel<WatsynInstrument>();
-	m_selectedGraphGroup -> setModel( &w -> m_selectedGraph);
+
+	m_selectedGraphGroup -> setModel( &m_instrument -> m_selectedGraph);
 
 // A-modulation button group
 	auto amod_mixButton = new PixmapButton(this, nullptr);
@@ -934,6 +934,50 @@ WatsynView::WatsynView( Instrument * _instrument,
 	connect( b2_selectButton, SIGNAL( clicked() ), this, SLOT( updateLayout() ) );
 
 	updateLayout();
+
+	a1_volKnob -> setModel( &m_instrument -> a1_vol );
+	a2_volKnob -> setModel( &m_instrument -> a2_vol );
+	b1_volKnob -> setModel( &m_instrument -> b1_vol );
+	b2_volKnob -> setModel( &m_instrument -> b2_vol );
+
+	a1_panKnob -> setModel( &m_instrument -> a1_pan );
+	a2_panKnob -> setModel( &m_instrument -> a2_pan );
+	b1_panKnob -> setModel( &m_instrument -> b1_pan );
+	b2_panKnob -> setModel( &m_instrument -> b2_pan );
+
+	a1_multKnob -> setModel( &m_instrument -> a1_mult );
+	a2_multKnob -> setModel( &m_instrument -> a2_mult );
+	b1_multKnob -> setModel( &m_instrument -> b1_mult );
+	b2_multKnob -> setModel( &m_instrument -> b2_mult );
+
+	a1_ltuneKnob -> setModel( &m_instrument -> a1_ltune );
+	a2_ltuneKnob -> setModel( &m_instrument -> a2_ltune );
+	b1_ltuneKnob -> setModel( &m_instrument -> b1_ltune );
+	b2_ltuneKnob -> setModel( &m_instrument -> b2_ltune );
+
+	a1_rtuneKnob -> setModel( &m_instrument -> a1_rtune );
+	a2_rtuneKnob -> setModel( &m_instrument -> a2_rtune );
+	b1_rtuneKnob -> setModel( &m_instrument -> b1_rtune );
+	b2_rtuneKnob -> setModel( &m_instrument -> b2_rtune );
+
+	m_abmixKnob -> setModel( &m_instrument -> m_abmix );
+
+	m_selectedGraphGroup -> setModel( &m_instrument -> m_selectedGraph );
+
+	m_aModGroup -> setModel( &m_instrument -> m_amod );
+	m_bModGroup -> setModel( &m_instrument -> m_bmod );
+
+	a1_graph -> setModel( &m_instrument -> a1_graph );
+	a2_graph -> setModel( &m_instrument -> a2_graph );
+	b1_graph -> setModel( &m_instrument -> b1_graph );
+	b2_graph -> setModel( &m_instrument -> b2_graph );
+
+	m_envAmtKnob -> setModel( &m_instrument -> m_envAmt );
+	m_envAttKnob -> setModel( &m_instrument -> m_envAtt );
+	m_envHoldKnob -> setModel( &m_instrument -> m_envHold );
+	m_envDecKnob -> setModel( &m_instrument -> m_envDec );
+
+	m_xtalkKnob -> setModel( &m_instrument -> m_xtalk );
 }
 
 
@@ -1209,57 +1253,6 @@ void WatsynView::loadClicked()
 			break;
 	}
 }
-
-
-void WatsynView::modelChanged()
-{
-	auto w = castModel<WatsynInstrument>();
-
-	a1_volKnob -> setModel( &w -> a1_vol );
-	a2_volKnob -> setModel( &w -> a2_vol );
-	b1_volKnob -> setModel( &w -> b1_vol );
-	b2_volKnob -> setModel( &w -> b2_vol );
-
-	a1_panKnob -> setModel( &w -> a1_pan );
-	a2_panKnob -> setModel( &w -> a2_pan );
-	b1_panKnob -> setModel( &w -> b1_pan );
-	b2_panKnob -> setModel( &w -> b2_pan );
-
-	a1_multKnob -> setModel( &w -> a1_mult );
-	a2_multKnob -> setModel( &w -> a2_mult );
-	b1_multKnob -> setModel( &w -> b1_mult );
-	b2_multKnob -> setModel( &w -> b2_mult );
-
-	a1_ltuneKnob -> setModel( &w -> a1_ltune );
-	a2_ltuneKnob -> setModel( &w -> a2_ltune );
-	b1_ltuneKnob -> setModel( &w -> b1_ltune );
-	b2_ltuneKnob -> setModel( &w -> b2_ltune );
-
-	a1_rtuneKnob -> setModel( &w -> a1_rtune );
-	a2_rtuneKnob -> setModel( &w -> a2_rtune );
-	b1_rtuneKnob -> setModel( &w -> b1_rtune );
-	b2_rtuneKnob -> setModel( &w -> b2_rtune );
-
-	m_abmixKnob -> setModel( &w -> m_abmix );
-
-	m_selectedGraphGroup -> setModel( &w -> m_selectedGraph );
-
-	m_aModGroup -> setModel( &w -> m_amod );
-	m_bModGroup -> setModel( &w -> m_bmod );
-
-	a1_graph -> setModel( &w -> a1_graph );
-	a2_graph -> setModel( &w -> a2_graph );
-	b1_graph -> setModel( &w -> b1_graph );
-	b2_graph -> setModel( &w -> b2_graph );
-
-	m_envAmtKnob -> setModel( &w -> m_envAmt );
-	m_envAttKnob -> setModel( &w -> m_envAtt );
-	m_envHoldKnob -> setModel( &w -> m_envHold );
-	m_envDecKnob -> setModel( &w -> m_envDec );
-
-	m_xtalkKnob -> setModel( &w -> m_xtalk );
-}
-
 
 } // namespace gui
 

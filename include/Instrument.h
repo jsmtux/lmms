@@ -135,7 +135,13 @@ public:
 
 	QString displayName()
 	{
-		return m_key.displayName();
+		return model()->displayName().isEmpty() // currently always empty
+		? (descriptor()->subPluginFeatures && m_key.isValid())
+			// get from sub plugin
+			? m_key.displayName()
+			// get from plugin
+			: descriptor()->displayName
+		: model()->displayName();
 	}
 
 protected:

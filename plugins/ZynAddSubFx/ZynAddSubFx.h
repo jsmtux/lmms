@@ -91,7 +91,7 @@ public:
 		return IsSingleStreamed | IsMidiBased;
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 private slots:
@@ -141,11 +141,11 @@ namespace gui
 {
 
 
-class ZynAddSubFxView : public InstrumentViewFixedSize
+class ZynAddSubFxView : public InstrumentViewImpl<ZynAddSubFxInstrument>
 {
 	Q_OBJECT
 public:
-	ZynAddSubFxView( Instrument * _instrument, QWidget * _parent );
+	ZynAddSubFxView( ZynAddSubFxInstrument * _instrument, QWidget * _parent );
 
 
 protected:
@@ -154,8 +154,6 @@ protected:
 
 
 private:
-	void modelChanged() override;
-
 	QPushButton * m_toggleUIButton;
 	Knob * m_portamento;
 	Knob * m_filterFreq;

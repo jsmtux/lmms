@@ -229,7 +229,7 @@ public:
 		return( 8 );
 	}
 	
-	gui::PluginView* instantiateView( QWidget * parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * parent ) override;
 	
 public slots:
 	void updateFreq1();
@@ -307,17 +307,15 @@ namespace gui
 {
 
 
-class NesInstrumentView : public InstrumentViewFixedSize
+class NesInstrumentView : public InstrumentViewImpl<NesInstrument>
 {
 	Q_OBJECT
 public:
-	NesInstrumentView( Instrument * instrument,
+	NesInstrumentView( NesInstrument * instrument,
 					QWidget * parent );
 	~NesInstrumentView() override = default;
 
-private:
-	void modelChanged() override;
-	
+private:	
 	// channel 1
 	PixmapButton * 	m_ch1EnabledBtn;
 	Knob *			m_ch1CrsKnob;

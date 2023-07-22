@@ -65,7 +65,7 @@ public:
 
 	f_cnt_t desiredReleaseFrames() const override;
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 /*public slots:
@@ -119,16 +119,14 @@ namespace gui
 {
 
 
-class FreeBoyInstrumentView : public InstrumentViewFixedSize
+class FreeBoyInstrumentView : public InstrumentViewImpl<FreeBoyInstrument>
 {
 	Q_OBJECT
 public:
-	FreeBoyInstrumentView( Instrument * _instrument, QWidget * _parent );
+	FreeBoyInstrumentView( FreeBoyInstrument * _instrument, QWidget * _parent );
 	~FreeBoyInstrumentView() override = default;
 
 private:
-	void modelChanged() override;
-
 	Knob * m_ch1SweepTimeKnob;
 	PixmapButton * m_ch1SweepDirButton;
 	Knob * m_ch1SweepRtShiftKnob;

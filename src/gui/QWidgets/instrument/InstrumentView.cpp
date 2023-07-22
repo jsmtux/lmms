@@ -32,10 +32,13 @@
 namespace lmms::gui
 {
 
-InstrumentView::InstrumentView( Instrument * _Instrument, QWidget * _parent ) :
+InstrumentView::InstrumentView( Instrument * _instrument, QWidget * _parent ) :
 	PluginView( _parent )
 {
-	setInstrument( _Instrument );
+	instrumentTrackWindow()->setWindowIcon( _instrument->logo()->pixmap() );
+	connect( _instrument, SIGNAL(destroyed(QObject*)), this, SLOT(close()));
+	// connect( _instrument->model(), &Model::dataChanged, this, &QWidget::update);
+	// connect( _instrument->model(), &Model::propertiesChanged, this, &QWidget::update);
 	setAttribute( Qt::WA_DeleteOnClose, true );
 }
 
@@ -48,16 +51,6 @@ InstrumentView::~InstrumentView()
 	{
 		instrumentTrackWindow()->m_instrumentView = nullptr;
 	}
-}
-
-
-
-
-void InstrumentView::setInstrument( Instrument * _instrument )
-{
-	m_instrument = _instrument;
-	instrumentTrackWindow()->setWindowIcon( m_instrument->logo()->pixmap() );
-	connect( m_instrument, SIGNAL(destroyed(QObject*)), this, SLOT(close()));
 }
 
 

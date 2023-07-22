@@ -76,7 +76,7 @@ public:
 		return( 512 );
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 private:
@@ -105,16 +105,14 @@ namespace gui
 {
 
 
-class KickerInstrumentView : public InstrumentViewFixedSize
+class KickerInstrumentView : public InstrumentViewImpl<KickerInstrument>
 {
 	Q_OBJECT
 public:
-	KickerInstrumentView( Instrument * _instrument, QWidget * _parent );
+	KickerInstrumentView( KickerInstrument * _instrument, QWidget * _parent );
 	~KickerInstrumentView() override = default;
 
 private:
-	void modelChanged() override;
-
 	Knob * m_startFreqKnob;
 	Knob * m_endFreqKnob;
 	Knob * m_decayKnob;

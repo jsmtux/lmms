@@ -129,6 +129,10 @@ EffectView::EffectView( Effect * _effect, QWidget * _parent ) :
 
 	//move above vst effect view creation
 	//setModel( _model );
+	m_bypass->setModel( &effect()->m_enabledModel );
+	m_wetDry->setModel( &effect()->m_wetDryModel );
+	m_autoQuit->setModel( &effect()->m_autoQuitModel );
+	m_gate->setModel( &effect()->m_gateModel );
 }
 
 
@@ -272,15 +276,5 @@ void EffectView::paintEvent( QPaintEvent * )
 	p.drawText( 5, 54, elidedText );
 }
 
-
-
-
-void EffectView::modelChanged()
-{
-	m_bypass->setModel( &effect()->m_enabledModel );
-	m_wetDry->setModel( &effect()->m_wetDryModel );
-	m_autoQuit->setModel( &effect()->m_autoQuitModel );
-	m_gate->setModel( &effect()->m_gateModel );
-}
 
 } // namespace lmms::gui

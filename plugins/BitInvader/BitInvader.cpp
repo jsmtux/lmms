@@ -152,10 +152,10 @@ sample_t BSynth::nextStringSample( float sample_length )
 
 BitInvader::BitInvader( InstrumentTrack * _instrument_track ) :
 	QWidgetInstrumentPlugin( _instrument_track, &bitinvader_plugin_descriptor ),
-	m_sampleLength(wavetableSize, 4, wavetableSize, 1, this, tr("Sample length")),
-	m_graph(-1.0f, 1.0f, wavetableSize, this),
-	m_interpolation( false, this ),
-	m_normalize( false, this )
+	m_sampleLength(wavetableSize, 4, wavetableSize, 1, model(), tr("Sample length")),
+	m_graph(-1.0f, 1.0f, wavetableSize, model()),
+	m_interpolation( false, model() ),
+	m_normalize( false, model() )
 {
 	m_graph.setWaveToSine();
 	lengthChanged();
@@ -324,7 +324,7 @@ void BitInvader::deleteNotePluginData( NotePlayHandle * _n )
 
 
 
-gui::PluginView * BitInvader::instantiateView( QWidget * _parent )
+gui::InstrumentView * BitInvader::instantiateView( QWidget * _parent )
 {
 	return( new gui::BitInvaderView( this, _parent ) );
 }
@@ -336,9 +336,9 @@ namespace gui
 {
 
 
-BitInvaderView::BitInvaderView( Instrument * _instrument,
+BitInvaderView::BitInvaderView( BitInvader * _instrument,
 					QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent )
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 	setAutoFillBackground( true );
 	QPalette pal;
@@ -440,8 +440,12 @@ BitInvaderView::BitInvaderView( Instrument * _instrument,
 	m_normalizeToggle = new LedCheckBox( "Normalize", this,
 							tr( "Normalize" ), LedCheckBox::Green );
 	m_normalizeToggle->move( 131, 236 );
-	
-	
+
+	m_graph->setModel( &m_instrument->m_graph );
+	m_sampleLengthKnob->setModel( &m_instrument->m_sampleLength );
+	m_interpolationToggle->setModel( &m_instrument->m_interpolation );
+	m_normalizeToggle->setModel( &m_instrument->m_normalize );
+
 	connect( m_sinWaveBtn, SIGNAL (clicked () ),
 			this, SLOT ( sinWaveClicked() ) );
 	connect( m_triangleWaveBtn, SIGNAL ( clicked () ),
@@ -463,20 +467,6 @@ BitInvaderView::BitInvaderView( Instrument * _instrument,
 
 	connect( m_normalizeToggle, SIGNAL( toggled( bool ) ),
 			this, SLOT ( normalizeToggled( bool ) ) );
-
-}
-
-
-
-
-void BitInvaderView::modelChanged()
-{
-	auto b = castModel<BitInvader>();
-
-	m_graph->setModel( &b->m_graph );
-	m_sampleLengthKnob->setModel( &b->m_sampleLength );
-	m_interpolationToggle->setModel( &b->m_interpolation );
-	m_normalizeToggle->setModel( &b->m_normalize );
 
 }
 

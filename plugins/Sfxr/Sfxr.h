@@ -188,7 +188,7 @@ public:
 
 	QString nodeName() const override;
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 	void resetModels();
 
@@ -234,11 +234,11 @@ namespace gui
 {
 
 
-class SfxrInstrumentView : public InstrumentViewFixedSize
+class SfxrInstrumentView : public InstrumentViewImpl<SfxrInstrument>
 {
 	Q_OBJECT
 public:
-	SfxrInstrumentView( Instrument * _instrument,
+	SfxrInstrumentView( SfxrInstrument * _instrument,
 					QWidget * _parent );
 
 	~SfxrInstrumentView() override = default;
@@ -257,8 +257,6 @@ protected slots:
 	void previewSound();
 
 private:
-	void modelChanged() override;
-
 	Knob * m_attKnob; //Attack Time
 	Knob * m_holdKnob; //Sustain Time
 	Knob * m_susKnob; //Sustain Punch

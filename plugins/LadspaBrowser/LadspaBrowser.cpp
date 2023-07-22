@@ -94,7 +94,7 @@ namespace gui
 
 
 LadspaBrowserView::LadspaBrowserView( ToolPlugin * _tool ) :
-	ToolPluginView( _tool  )
+	ToolPluginView( _tool, nullptr )
 {
 	auto hlayout = new QHBoxLayout(this);
 	hlayout->setSpacing( 0 );

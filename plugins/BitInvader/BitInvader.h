@@ -93,7 +93,7 @@ public:
 		return( 64 );
 	}
 
-	gui::PluginView * instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView * instantiateView( QWidget * _parent ) override;
 
 protected slots:
 	void lengthChanged();
@@ -118,11 +118,11 @@ private:
 namespace gui
 {
 
-class BitInvaderView : public InstrumentViewFixedSize
+class BitInvaderView : public InstrumentViewImpl<BitInvader>
 {
 	Q_OBJECT
 public:
-	BitInvaderView( Instrument * _instrument,
+	BitInvaderView( BitInvader * _instrument,
 					QWidget * _parent );
 
 	~BitInvaderView() override = default;
@@ -143,8 +143,6 @@ protected slots:
 	void smoothClicked(  );
 
 private:
-	void modelChanged() override;
-
 	Knob * m_sampleLengthKnob;
 	PixmapButton * m_sinWaveBtn;
 	PixmapButton * m_triangleWaveBtn;

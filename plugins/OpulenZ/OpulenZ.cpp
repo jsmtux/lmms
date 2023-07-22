@@ -96,46 +96,46 @@ const auto adlib_opadd = std::array<unsigned int, OPL2_VOICES>{0x00, 0x01, 0x02,
 
 OpulenzInstrument::OpulenzInstrument( InstrumentTrack * _instrument_track ) :
 	QWidgetInstrumentPlugin( _instrument_track, &opulenz_plugin_descriptor ),
-	m_patchModel( 0, 0, 127, this, tr( "Patch" ) ),
-	op1_a_mdl(14.0, 0.0, 15.0, 1.0, this, tr( "Op 1 attack" )  ),
-	op1_d_mdl(14.0, 0.0, 15.0, 1.0, this, tr( "Op 1 decay" )   ),
-	op1_s_mdl(3.0, 0.0, 15.0, 1.0, this, tr( "Op 1 sustain" )   ),
-	op1_r_mdl(10.0, 0.0, 15.0, 1.0, this, tr( "Op 1 release" )   ),
-	op1_lvl_mdl(62.0, 0.0, 63.0, 1.0, this, tr( "Op 1 level" )   ),
-	op1_scale_mdl(0.0, 0.0, 3.0, 1.0, this, tr( "Op 1 level scaling" ) ),
-	op1_mul_mdl(0.0, 0.0, 15.0, 1.0, this, tr( "Op 1 frequency multiplier" ) ),
-	feedback_mdl(0.0, 0.0, 7.0, 1.0, this, tr( "Op 1 feedback" )    ),
-	op1_ksr_mdl(false, this, tr( "Op 1 key scaling rate" ) ),
-	op1_perc_mdl(false, this, tr( "Op 1 percussive envelope" )   ),
-	op1_trem_mdl(true, this, tr( "Op 1 tremolo" )   ),
-	op1_vib_mdl(false, this, tr( "Op 1 vibrato" )   ),
+	m_patchModel( 0, 0, 127, model(), tr( "Patch" ) ),
+	op1_a_mdl(14.0, 0.0, 15.0, 1.0, model(), tr( "Op 1 attack" )  ),
+	op1_d_mdl(14.0, 0.0, 15.0, 1.0, model(), tr( "Op 1 decay" )   ),
+	op1_s_mdl(3.0, 0.0, 15.0, 1.0, model(), tr( "Op 1 sustain" )   ),
+	op1_r_mdl(10.0, 0.0, 15.0, 1.0, model(), tr( "Op 1 release" )   ),
+	op1_lvl_mdl(62.0, 0.0, 63.0, 1.0, model(), tr( "Op 1 level" )   ),
+	op1_scale_mdl(0.0, 0.0, 3.0, 1.0, model(), tr( "Op 1 level scaling" ) ),
+	op1_mul_mdl(0.0, 0.0, 15.0, 1.0, model(), tr( "Op 1 frequency multiplier" ) ),
+	feedback_mdl(0.0, 0.0, 7.0, 1.0, model(), tr( "Op 1 feedback" )    ),
+	op1_ksr_mdl(false, model(), tr( "Op 1 key scaling rate" ) ),
+	op1_perc_mdl(false, model(), tr( "Op 1 percussive envelope" )   ),
+	op1_trem_mdl(true, model(), tr( "Op 1 tremolo" )   ),
+	op1_vib_mdl(false, model(), tr( "Op 1 vibrato" )   ),
 	op1_w0_mdl(  ),
 	op1_w1_mdl(  ),
 	op1_w2_mdl(  ),
 	op1_w3_mdl(  ),
-	op1_waveform_mdl(0,0,3,this, tr( "Op 1 waveform" ) ),
+	op1_waveform_mdl(0,0,3,model(), tr( "Op 1 waveform" ) ),
 
 
-	op2_a_mdl(1.0, 0.0, 15.0, 1.0, this, tr( "Op 2 attack" )   ),
-	op2_d_mdl(3.0, 0.0, 15.0, 1.0, this, tr( "Op 2 decay" )   ),
-	op2_s_mdl(14.0, 0.0, 15.0, 1.0, this, tr( "Op 2 sustain" ) ),
-	op2_r_mdl(12.0, 0.0, 15.0, 1.0, this, tr( "Op 2 release" )   ),
-	op2_lvl_mdl(63.0, 0.0, 63.0, 1.0, this, tr( "Op 2 level" )   ),
-	op2_scale_mdl(0.0, 0.0, 3.0, 1.0, this, tr( "Op 2 level scaling" ) ),
-	op2_mul_mdl(1.0, 0.0, 15.0, 1.0, this, tr( "Op 2 frequency multiplier" ) ),
-	op2_ksr_mdl(false, this, tr( "Op 2 key scaling rate" ) ),
-	op2_perc_mdl(false, this, tr( "Op 2 percussive envelope" )   ),
-	op2_trem_mdl(false, this, tr( "Op 2 tremolo" )   ),
-	op2_vib_mdl(true, this, tr( "Op 2 vibrato" )   ),
+	op2_a_mdl(1.0, 0.0, 15.0, 1.0, model(), tr( "Op 2 attack" )   ),
+	op2_d_mdl(3.0, 0.0, 15.0, 1.0, model(), tr( "Op 2 decay" )   ),
+	op2_s_mdl(14.0, 0.0, 15.0, 1.0, model(), tr( "Op 2 sustain" ) ),
+	op2_r_mdl(12.0, 0.0, 15.0, 1.0, model(), tr( "Op 2 release" )   ),
+	op2_lvl_mdl(63.0, 0.0, 63.0, 1.0, model(), tr( "Op 2 level" )   ),
+	op2_scale_mdl(0.0, 0.0, 3.0, 1.0, model(), tr( "Op 2 level scaling" ) ),
+	op2_mul_mdl(1.0, 0.0, 15.0, 1.0, model(), tr( "Op 2 frequency multiplier" ) ),
+	op2_ksr_mdl(false, model(), tr( "Op 2 key scaling rate" ) ),
+	op2_perc_mdl(false, model(), tr( "Op 2 percussive envelope" )   ),
+	op2_trem_mdl(false, model(), tr( "Op 2 tremolo" )   ),
+	op2_vib_mdl(true, model(), tr( "Op 2 vibrato" )   ),
 	op2_w0_mdl(  ),
 	op2_w1_mdl(  ),
 	op2_w2_mdl(  ),
 	op2_w3_mdl(  ),
-	op2_waveform_mdl(0,0,3,this, tr( "Op 2 waveform" ) ),
+	op2_waveform_mdl(0,0,3,model(), tr( "Op 2 waveform" ) ),
 
-	fm_mdl(true, this, tr( "FM" )   ),
-	vib_depth_mdl(false, this, tr( "Vibrato depth" )   ),
-	trem_depth_mdl(false, this, tr( "Tremolo depth" )   )
+	fm_mdl(true, model(), tr( "FM" )   ),
+	vib_depth_mdl(false, model(), tr( "Vibrato depth" )   ),
+	trem_depth_mdl(false, model(), tr( "Tremolo depth" )   )
 {
 
 	// Create an emulator - samplerate, 16 bit, mono
@@ -392,7 +392,7 @@ QString OpulenzInstrument::nodeName() const
         return( opulenz_plugin_descriptor.name );
 }
 
-gui::PluginView* OpulenzInstrument::instantiateView( QWidget * _parent )
+gui::InstrumentView* OpulenzInstrument::instantiateView( QWidget * _parent )
 {
         return( new gui::OpulenzInstrumentView( this, _parent ) );
 }
@@ -680,9 +680,9 @@ void OpulenzInstrument::loadFile( const QString& file ) {
 namespace gui
 {
 
-OpulenzInstrumentView::OpulenzInstrumentView( Instrument * _instrument,
+OpulenzInstrumentView::OpulenzInstrumentView( OpulenzInstrument * _instrument,
                                                         QWidget * _parent ) :
-        InstrumentViewFixedSize( _instrument, _parent )
+        InstrumentViewImpl( _instrument, _parent, true )
 {
 
 #define KNOB_GEN(knobname, hinttext, hintunit,xpos,ypos) \
@@ -798,79 +798,73 @@ void OpulenzInstrumentView::updateKnobHints()
 		-12, 0, 12, 19, 24, 28, 31, 34, 36, 38, 40, 40, 43, 43, 47, 47
 	};
 
-	auto m = castModel<OpulenzInstrument>();
 
 	op1_a_kn->setHintText( tr( "Attack" ),
-						   " (" + knobHintHelper(attack_times[(int)m->op1_a_mdl.value()]) + ")");
+						   " (" + knobHintHelper(attack_times[(int)m_instrument->op1_a_mdl.value()]) + ")");
 	op2_a_kn->setHintText( tr( "Attack" ),
-						   " (" + knobHintHelper(attack_times[(int)m->op2_a_mdl.value()]) + ")");
+						   " (" + knobHintHelper(attack_times[(int)m_instrument->op2_a_mdl.value()]) + ")");
 	op1_d_kn->setHintText( tr( "Decay" ),
-						   " (" + knobHintHelper(dr_times[(int)m->op1_d_mdl.value()]) + ")");
+						   " (" + knobHintHelper(dr_times[(int)m_instrument->op1_d_mdl.value()]) + ")");
 	op2_d_kn->setHintText( tr( "Decay" ),
-						   " (" + knobHintHelper(dr_times[(int)m->op2_d_mdl.value()]) + ")");
+						   " (" + knobHintHelper(dr_times[(int)m_instrument->op2_d_mdl.value()]) + ")");
 	op1_r_kn->setHintText( tr( "Release" ),
-						   " (" + knobHintHelper(dr_times[(int)m->op1_r_mdl.value()]) + ")");
+						   " (" + knobHintHelper(dr_times[(int)m_instrument->op1_r_mdl.value()]) + ")");
 	op2_r_kn->setHintText( tr( "Release" ),
-						   " (" + knobHintHelper(dr_times[(int)m->op2_r_mdl.value()]) + ")");
+						   " (" + knobHintHelper(dr_times[(int)m_instrument->op2_r_mdl.value()]) + ")");
 	op1_mul_kn->setHintText( tr( "Frequency multiplier" ),
-			       " (" + QString::number(fmultipliers[(int)m->op1_mul_mdl.value()]) + " semitones)");
+			       " (" + QString::number(fmultipliers[(int)m_instrument->op1_mul_mdl.value()]) + " semitones)");
 	op2_mul_kn->setHintText( tr( "Frequency multiplier" ),
-			       " (" + QString::number(fmultipliers[(int)m->op2_mul_mdl.value()]) + " semitones)");
-}
+			       " (" + QString::number(fmultipliers[(int)m_instrument->op2_mul_mdl.value()]) + " semitones)");
 
-void OpulenzInstrumentView::modelChanged()
-{
-	auto m = castModel<OpulenzInstrument>();
 	// m_patch->setModel( &m->m_patchModel );
 
-	op1_a_kn->setModel( &m->op1_a_mdl );
-	op1_d_kn->setModel( &m->op1_d_mdl );
-	op1_s_kn->setModel( &m->op1_s_mdl );
-	op1_r_kn->setModel( &m->op1_r_mdl );
-	op1_lvl_kn->setModel( &m->op1_lvl_mdl );
-	op1_scale_kn->setModel( &m->op1_scale_mdl );
-	op1_mul_kn->setModel( &m->op1_mul_mdl );
-	feedback_kn->setModel( &m->feedback_mdl );
-	op1_ksr_btn->setModel( &m->op1_ksr_mdl );
-	op1_perc_btn->setModel( &m->op1_perc_mdl );
-	op1_trem_btn->setModel( &m->op1_trem_mdl );
-	op1_vib_btn->setModel( &m->op1_vib_mdl );
-	op1_waveform->setModel( &m->op1_waveform_mdl );
+	op1_a_kn->setModel( &m_instrument->op1_a_mdl );
+	op1_d_kn->setModel( &m_instrument->op1_d_mdl );
+	op1_s_kn->setModel( &m_instrument->op1_s_mdl );
+	op1_r_kn->setModel( &m_instrument->op1_r_mdl );
+	op1_lvl_kn->setModel( &m_instrument->op1_lvl_mdl );
+	op1_scale_kn->setModel( &m_instrument->op1_scale_mdl );
+	op1_mul_kn->setModel( &m_instrument->op1_mul_mdl );
+	feedback_kn->setModel( &m_instrument->feedback_mdl );
+	op1_ksr_btn->setModel( &m_instrument->op1_ksr_mdl );
+	op1_perc_btn->setModel( &m_instrument->op1_perc_mdl );
+	op1_trem_btn->setModel( &m_instrument->op1_trem_mdl );
+	op1_vib_btn->setModel( &m_instrument->op1_vib_mdl );
+	op1_waveform->setModel( &m_instrument->op1_waveform_mdl );
 
 
-	op2_a_kn->setModel( &m->op2_a_mdl );
-	op2_d_kn->setModel( &m->op2_d_mdl );
-	op2_s_kn->setModel( &m->op2_s_mdl );
-	op2_r_kn->setModel( &m->op2_r_mdl );
-	op2_lvl_kn->setModel( &m->op2_lvl_mdl );
-	op2_scale_kn->setModel( &m->op2_scale_mdl );
-	op2_mul_kn->setModel( &m->op2_mul_mdl );
-	op2_ksr_btn->setModel( &m->op2_ksr_mdl );
-	op2_perc_btn->setModel( &m->op2_perc_mdl );
-	op2_trem_btn->setModel( &m->op2_trem_mdl );
-	op2_vib_btn->setModel( &m->op2_vib_mdl );
-	op2_waveform->setModel( &m->op2_waveform_mdl );
+	op2_a_kn->setModel( &m_instrument->op2_a_mdl );
+	op2_d_kn->setModel( &m_instrument->op2_d_mdl );
+	op2_s_kn->setModel( &m_instrument->op2_s_mdl );
+	op2_r_kn->setModel( &m_instrument->op2_r_mdl );
+	op2_lvl_kn->setModel( &m_instrument->op2_lvl_mdl );
+	op2_scale_kn->setModel( &m_instrument->op2_scale_mdl );
+	op2_mul_kn->setModel( &m_instrument->op2_mul_mdl );
+	op2_ksr_btn->setModel( &m_instrument->op2_ksr_mdl );
+	op2_perc_btn->setModel( &m_instrument->op2_perc_mdl );
+	op2_trem_btn->setModel( &m_instrument->op2_trem_mdl );
+	op2_vib_btn->setModel( &m_instrument->op2_vib_mdl );
+	op2_waveform->setModel( &m_instrument->op2_waveform_mdl );
 
-	fm_btn->setModel( &m->fm_mdl );
-	vib_depth_btn->setModel( &m->vib_depth_mdl );
-	trem_depth_btn->setModel( &m->trem_depth_mdl );
+	fm_btn->setModel( &m_instrument->fm_mdl );
+	vib_depth_btn->setModel( &m_instrument->vib_depth_mdl );
+	trem_depth_btn->setModel( &m_instrument->trem_depth_mdl );
 
 
 	// All knobs needing a user friendly unit
-	connect( &m->op1_a_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
-	connect( &m->op2_a_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
+	connect( &m_instrument->op1_a_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
+	connect( &m_instrument->op2_a_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
 
-	connect( &m->op1_d_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
-	connect( &m->op2_d_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
+	connect( &m_instrument->op1_d_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
+	connect( &m_instrument->op2_d_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
 
-	connect( &m->op1_r_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
-	connect( &m->op2_r_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
+	connect( &m_instrument->op1_r_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
+	connect( &m_instrument->op2_r_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
 
-	connect( &m->op1_mul_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
-	connect( &m->op2_mul_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
+	connect( &m_instrument->op1_mul_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
+	connect( &m_instrument->op2_mul_mdl, SIGNAL( dataChanged() ), this, SLOT( updateKnobHints() ) );
 
 	updateKnobHints();
-
 }
 
 

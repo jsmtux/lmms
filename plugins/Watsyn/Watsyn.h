@@ -160,7 +160,7 @@ public:
 		return( 64 );
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 public slots:
 	void updateVolumes();
@@ -307,11 +307,11 @@ namespace gui
 {
 
 
-class WatsynView : public InstrumentViewFixedSize
+class WatsynView : public InstrumentViewImpl<WatsynInstrument>
 {
 	Q_OBJECT
 public:
-	WatsynView( Instrument * _instrument,
+	WatsynView( WatsynInstrument * _instrument,
 					QWidget * _parent );
 	~WatsynView() override = default;
 
@@ -331,8 +331,6 @@ protected slots:
 	void loadClicked();
 
 private:
-	void modelChanged() override;
-
 // knobs
 	Knob * a1_volKnob;
 	Knob * a2_volKnob;

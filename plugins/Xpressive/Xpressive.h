@@ -78,7 +78,7 @@ public:
 
 	QString nodeName() const override;
 
-	gui::PluginView* instantiateView( QWidget * parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * parent ) override;
 
 	graphModel& graphO1() { return m_graphO1; }
 	graphModel& graphO2() { return m_graphO2; }
@@ -149,14 +149,12 @@ namespace gui
 {
 
 
-class XpressiveView : public InstrumentViewFixedSize
+class XpressiveView : public InstrumentViewImpl<Xpressive>
 {
 	Q_OBJECT
 public:
-	XpressiveView( Instrument* _instrument,
+	XpressiveView( Xpressive* _instrument,
 					QWidget* _parent );
-
-protected:
 
 
 protected slots:
@@ -176,8 +174,6 @@ protected slots:
 	void graphDrawn();
 
 private:
-	void modelChanged() override;
-
 	Knob *m_generalPurposeKnob[3];
 	Knob *m_panningKnob[2];
 	Knob *m_relKnob;

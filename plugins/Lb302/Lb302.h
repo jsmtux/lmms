@@ -175,7 +175,7 @@ public:
 		return 0; //4048;
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 private:
 	void processNote( NotePlayHandle * n );
@@ -273,17 +273,15 @@ namespace gui
 {
 
 
-class Lb302SynthView : public InstrumentViewFixedSize
+class Lb302SynthView : public InstrumentViewImpl<Lb302Synth>
 {
 	Q_OBJECT
 public:
-	Lb302SynthView( Instrument * _instrument,
+	Lb302SynthView( Lb302Synth * _instrument,
 	                QWidget * _parent );
 	~Lb302SynthView() override = default;
 
 private:
-	void modelChanged() override;
-
 	Knob * m_vcfCutKnob;
 	Knob * m_vcfResKnob;
 	Knob * m_vcfDecKnob;

@@ -77,7 +77,7 @@ public:
 		return( 128 );
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 public slots:
@@ -127,11 +127,11 @@ namespace gui
 {
 
 
-class PatmanView : public InstrumentViewFixedSize
+class PatmanView : public InstrumentViewImpl<PatmanInstrument>
 {
 	Q_OBJECT
 public:
-	PatmanView( Instrument * _instrument, QWidget * _parent );
+	PatmanView( PatmanInstrument * _instrument, QWidget * _parent );
 	~PatmanView() override = default;
 
 
@@ -147,9 +147,6 @@ protected:
 
 
 private:
-	void modelChanged() override;
-
-	PatmanInstrument * m_pi;
 	QString m_displayFilename;
 
 	PixmapButton * m_openFileButton;
