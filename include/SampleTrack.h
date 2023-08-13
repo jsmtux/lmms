@@ -26,7 +26,7 @@
 #define LMMS_SAMPLE_TRACK_H
 
 #include "AudioPort.h"
-#include "Track.h"
+#include "TypedTrack.h"
 
 
 namespace lmms
@@ -40,8 +40,9 @@ class SampleTrackWindow;
 
 } // namespace gui
 
+class SampleClip;
 
-class SampleTrack : public Track
+class SampleTrack : public TypedTrack<SampleTrack>
 {
 	Q_OBJECT
 public:
@@ -82,7 +83,6 @@ public:
 		if (m_isPlaying != playing) { emit playingChanged(); }
 		m_isPlaying = playing;
 	}
-
 signals:
 	void playingChanged();
 

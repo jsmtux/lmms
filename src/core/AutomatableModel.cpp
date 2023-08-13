@@ -28,6 +28,7 @@
 
 #include "AudioEngine.h"
 #include "AutomationClip.h"
+#include "AutomationTrack.h"
 #include "ControllerConnection.h"
 #include "LocaleHelper.h"
 #include "ProjectJournal.h"

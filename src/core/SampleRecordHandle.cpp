@@ -29,6 +29,7 @@
 #include "PatternTrack.h"
 #include "SampleBuffer.h"
 #include "SampleClip.h"
+#include "SampleTrack.h"
 #include "debug.h"
 
 

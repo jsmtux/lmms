@@ -27,6 +27,7 @@
 
 #include <cmath>
 
+#include "AutomationTrack.h"
 #include "Note.h"
 #include "DetuningHelper.h"
 

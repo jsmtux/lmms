@@ -27,12 +27,14 @@
 #ifndef LMMS_AUTOMATION_TRACK_H
 #define LMMS_AUTOMATION_TRACK_H
 
-#include "Track.h"
+#include "TypedTrack.h"
 
 namespace lmms
 {
 
-class AutomationTrack : public Track
+class AutomationClip;
+
+class AutomationTrack : public TypedTrack<AutomationTrack>
 {
 	Q_OBJECT
 public:

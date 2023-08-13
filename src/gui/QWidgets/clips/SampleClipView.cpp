@@ -32,6 +32,7 @@
 #include "PathUtil.h"
 #include "SampleBuffer.h"
 #include "SampleClip.h"
+#include "SampleTrack.h"
 #include "Song.h"
 #include "StringPairDrag.h"
 
@@ -232,9 +233,7 @@ void SampleClipView::paintEvent( QPaintEvent * pe )
 	}
 
 	auto clipColor = m_clip->hasColor()
-			? (m_clip->usesCustomClipColor()
-				? m_clip->color()
-				: m_clip->getTrack()->color())
+			? m_clip->getEffectiveColor()
 			: painter.pen().brush().color();
 
 	p.setPen(clipColor);

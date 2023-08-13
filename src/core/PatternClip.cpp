@@ -34,8 +34,8 @@ namespace lmms
 {
 
 
-PatternClip::PatternClip(Track* track) :
-	Clip(track)
+PatternClip::PatternClip(PatternTrack* track) :
+	TypedClip(track)
 {
 	bar_t t = Engine::patternStore()->lengthOfPattern(patternIndex());
 	if( t > 0 )
@@ -109,7 +109,7 @@ void PatternClip::loadSettings(const QDomElement& element)
 
 int PatternClip::patternIndex()
 {
-	return dynamic_cast<PatternTrack*>(getTrack())->patternIndex();
+	return dynamic_cast<PatternTrack*>(m_track)->patternIndex();
 }
 
 } // namespace lmms

@@ -325,43 +325,6 @@ void Track::loadSettings( const QDomElement & element )
 }
 
 
-
-
-/*! \brief Add another Clip into this track
- *
- *  \param clip The Clip to attach to this track.
- */
-Clip * Track::addClip( Clip * clip )
-{
-	m_clips.push_back( clip );
-
-	emit clipAdded( clip );
-
-	return clip; // just for convenience
-}
-
-
-
-
-/*! \brief Remove a given Clip from this track
- *
- *  \param clip The Clip to remove from this track.
- */
-void Track::removeClip( Clip * clip )
-{
-	clipVector::iterator it = std::find( m_clips.begin(), m_clips.end(), clip );
-	if( it != m_clips.end() )
-	{
-		m_clips.erase( it );
-		if( Engine::getSong() )
-		{
-			Engine::getSong()->updateLength();
-			Engine::getSong()->setModified();
-		}
-	}
-}
-
-
 /*! \brief Remove all Clips from this track */
 void Track::deleteClips()
 {
@@ -651,6 +614,15 @@ void Track::resetColor()
 BoolModel *Track::getMutedModel()
 {
 	return &m_mutedModel;
+}
+
+void Track::updateSongProperties()
+{
+	if( Engine::getSong() )
+	{
+		Engine::getSong()->updateLength();
+		Engine::getSong()->setModified();
+	}
 }
 
 } // namespace lmms

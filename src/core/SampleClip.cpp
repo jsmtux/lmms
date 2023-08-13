@@ -39,8 +39,8 @@ namespace lmms
 {
 
 
-SampleClip::SampleClip( Track * _track ) :
-	Clip( _track ),
+SampleClip::SampleClip( SampleTrack * _track ) :
+	TypedClip( _track ),
 	m_sampleBuffer( new SampleBuffer ),
 	m_isPlaying( false )
 {
@@ -91,7 +91,8 @@ SampleClip::SampleClip( Track * _track ) :
 }
 
 SampleClip::SampleClip(const SampleClip& orig) :
-	SampleClip(orig.getTrack())
+	// TODO: remove getTrack from base clip
+	SampleClip(static_cast<SampleTrack*>(orig.getTrack()))
 {
 	// TODO: This creates a new SampleBuffer for the new Clip, eating up memory
 	// & eventually causing performance issues. Letting tracks share buffers

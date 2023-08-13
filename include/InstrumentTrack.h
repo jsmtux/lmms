@@ -36,13 +36,13 @@
 #include "NotePlayHandle.h"
 #include "Piano.h"
 #include "Plugin.h"
-#include "Track.h"
+#include "TypedTrack.h"
 
 
 namespace lmms
 {
 
-
+class MidiClip;
 class Instrument;
 class DataFile;
 
@@ -57,7 +57,7 @@ class MidiCCRackView;
 } // namespace gui
 
 
-class LMMS_EXPORT InstrumentTrack : public Track, public MidiEventProcessor
+class LMMS_EXPORT InstrumentTrack : public TypedTrack<InstrumentTrack>, public MidiEventProcessor
 {
 	Q_OBJECT
 	MM_OPERATORS

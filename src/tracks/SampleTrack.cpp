@@ -44,7 +44,7 @@ namespace lmms
 
 
 SampleTrack::SampleTrack(TrackContainer* tc) :
-	Track(Track::SampleTrack, tc),
+	TypedTrack(Track::SampleTrack, tc),
 	m_volumeModel(DefaultVolume, MinVolume, MaxVolume, 0.1f, this, tr("Volume")),
 	m_panningModel(DefaultPanning, PanningLeft, PanningRight, 0.1f, this, tr("Panning")),
 	m_mixerChannelModel(0, 0, 0, this, tr("Mixer channel")),
@@ -242,6 +242,5 @@ void SampleTrack::updateMixerChannel()
 {
 	m_audioPort.setNextMixerChannel( m_mixerChannelModel.value() );
 }
-
 
 } // namespace lmms

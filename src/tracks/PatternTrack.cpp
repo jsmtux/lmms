@@ -40,7 +40,7 @@ PatternTrack::infoMap PatternTrack::s_infoMap;
 
 
 PatternTrack::PatternTrack(TrackContainer* tc) :
-	Track(Track::PatternTrack, tc)
+	TypedTrack(Track::PatternTrack, tc)
 {
 	int patternNum = s_infoMap.size();
 	s_infoMap[this] = patternNum;

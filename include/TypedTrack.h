@@ -1,7 +1,4 @@
 /*
- * PatternClip.h
- *
- * Copyright (c) 2004-2014 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
  * This file is part of LMMS - https://lmms.io
  *
@@ -22,47 +19,40 @@
  *
  */
 
-#ifndef LMMS_PATTERN_CLIP_H
-#define LMMS_PATTERN_CLIP_H
+#ifndef LMMS_TYPED_TRACK_H
+#define LMMS_TYPED_TRACK_H
 
+#include "Track.h"
 #include "Clip.h"
 
 namespace lmms
 {
 
-class PatternTrack;
-
-/*! \brief Dummy clip for PatternTracks
- *
- *  Only used in the Song (Editor). See PatternStore.h for more info.
-*/
-class PatternClip : public TypedClip<PatternTrack>
+template<typename SpecialisedTrack>
+class TypedTrack : public Track
 {
-	Q_OBJECT
 public:
-	PatternClip(PatternTrack* track);
-	~PatternClip() override = default;
-
-	void saveSettings( QDomDocument & _doc, QDomElement & _parent ) override;
-	void loadSettings( const QDomElement & _this ) override;
-	inline QString nodeName() const override
+	TypedTrack( TrackTypes type, TrackContainer * tc ) :
+		Track(type, tc)
+	{}
+	// -- for usage by Clip only ---------------
+	void addClip( TypedClip<SpecialisedTrack> * clip )
 	{
-		return "patternclip";
+		m_clips.push_back( clip );
+		emit clipAdded( clip );
 	}
-
-	int patternIndex();
-
-	ClipType getType() override
+	void removeClip( TypedClip<SpecialisedTrack> * clip )
 	{
-		return ClipType::Pattern;
+		clipVector::iterator it = std::find( m_clips.begin(), m_clips.end(), clip );
+		if( it != m_clips.end() )
+		{
+			updateSongProperties();
+			m_clips.erase( it );
+		}
 	}
-
-private:
-	PatternTrack* m_track;
-	friend class PatternClipView;
-} ;
+};
 
 
 } // namespace lmms
 
-#endif // LMMS_PATTERN_CLIP_H
+#endif // LMMS_TYPED_TRACK_H

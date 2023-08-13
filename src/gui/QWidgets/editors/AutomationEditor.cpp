@@ -33,6 +33,7 @@
 
 #include "ActionGroup.h"
 #include "AutomationNode.h"
+#include "AutomationTrack.h"
 #include "debug.h"
 #include "DeprecationHelper.h"
 #include "embed.h"

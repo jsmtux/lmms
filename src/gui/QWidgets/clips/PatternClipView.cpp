@@ -33,13 +33,14 @@
 #include "MainWindow.h"
 #include "PatternClip.h"
 #include "PatternStore.h"
+#include "PatternTrack.h"
 #include "modals/RenameDialog.h"
 
 namespace lmms::gui
 {
 
 
-PatternClipView::PatternClipView(Clip* _clip, TrackView* _tv) :
+PatternClipView::PatternClipView(PatternClip* _clip, TrackView* _tv) :
 	ClipView( _clip, _tv ),
 	m_patternClip(dynamic_cast<PatternClip*>(_clip)),
 	m_paintPixmap()

@@ -25,6 +25,7 @@
 #include "AutomatableModelView.h"
 
 #include "AutomationClip.h"
+#include "AutomationTrack.h"
 #include "Clipboard.h"
 #include "ControllerConnection.h"
 #include "embed.h"

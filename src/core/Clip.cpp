@@ -36,52 +36,22 @@
 namespace lmms
 {
 
-/*! \brief Create a new Clip
- *
- *  Creates a new clip for the given track.
- *
- * \param _track The track that will contain the new object
- */
-Clip::Clip( Track * track ) :
-	m_clipModel( track ),
-	m_track( track ),
-	m_startPosition(),
-	m_length(),
-	m_mutedModel( false, &m_clipModel, QObject::tr( "Mute" ) ),
-	m_selectViewOnCreate( false ),
-	m_color( 128, 128, 128 ),
-	m_useCustomClipColor( false )
-{
-	if( getTrack() )
-	{
-		getTrack()->addClip( this );
-	}
-	setJournalling( false );
-	movePosition( 0 );
-	changeLength( 0 );
-	setJournalling( true );
-}
-
-
-
-
-/*! \brief Destroy a Clip
- *
- *  Destroys the given clip.
- *
- */
-Clip::~Clip()
-{
-	emit destroyedClip();
-
-	if( getTrack() )
-	{
-		getTrack()->removeClip( this );
+QString ClipTypeToString(const ClipType _type) {
+	switch(_type) {
+		case ClipType::Automation:
+			return "Automation";
+		case ClipType::Midi:
+			return "Midi";
+		case ClipType::Pattern:
+			return "Pattern";
+		case ClipType::Sample:
+			return "Sample";
 	}
 }
 
-
-
+std::size_t ClipTypeToId(const ClipType _type) {
+	static_cast<std::size_t>(_type);
+}
 
 /*! \brief Move this Clip's position in time
  *
@@ -197,7 +167,7 @@ void Clip::useCustomClipColor( bool b )
 
 bool Clip::hasColor()
 {
-	return usesCustomClipColor() || getTrack()->useColor();
+	return usesCustomClipColor() || trackUseColor();
 }
 
 } // namespace lmms

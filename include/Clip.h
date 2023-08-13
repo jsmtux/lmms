@@ -32,7 +32,6 @@
 namespace lmms
 {
 
-class Track;
 class TrackContainer;
 
 namespace gui
@@ -46,11 +45,14 @@ class TrackView;
 
 enum class ClipType
 {
-	Automation,
+	Automation = 0,
 	Midi,
 	Pattern,
 	Sample
 };
+
+QString ClipTypeToString(const ClipType _type);
+std::size_t ClipTypeToId(const ClipType _type);
 
 class LMMS_EXPORT Clip : public QObject, public JournallingObject
 {
@@ -59,12 +61,24 @@ class LMMS_EXPORT Clip : public QObject, public JournallingObject
 	mapPropertyFromModel(bool,isMuted,setMuted,m_mutedModel);
 	mapPropertyFromModel(bool,isSolo,setSolo,m_soloModel);
 public:
-	Clip( Track * track );
-	~Clip() override;
-
-	inline Track * getTrack() const
+	Clip( Model * _parent ) :
+		m_clipModel( _parent ),
+		m_startPosition(),
+		m_length(),
+		m_mutedModel( false, &m_clipModel, QObject::tr( "Mute" ) ),
+		m_selectViewOnCreate( false ),
+		m_color( 128, 128, 128 ),
+		m_useCustomClipColor( false )
 	{
-		return m_track;
+		setJournalling( false );
+		movePosition( 0 );
+		changeLength( 0 );
+		setJournalling( true );
+	}
+
+	virtual ~Clip()
+	{
+		emit destroyedClip();
 	}
 
 	inline const QString & name() const
@@ -131,6 +145,9 @@ public:
 		return m_useCustomClipColor;
 	}
 
+	// Return track color unless clip has a custom one
+	virtual QColor getEffectiveColor() = 0;
+
 	virtual void movePosition( const TimePos & pos );
 	virtual void changeLength( const TimePos & length );
 
@@ -160,6 +177,10 @@ public:
 		return m_clipModel;
 	}
 
+	virtual bool isClipOrTrackMuted() = 0;
+	virtual void* getTrackId() const = 0;
+	virtual void addJournalCheckPointToTrack() = 0;
+
 public slots:
 	void toggleMute();
 
@@ -181,7 +202,8 @@ private:
 		Resize
 	} ;
 
-	Track * m_track;
+	virtual bool trackUseColor() = 0;
+
 	QString m_name;
 
 	TimePos m_startPosition;
@@ -200,6 +222,58 @@ private:
 	friend class ClipView;
 
 } ;
+
+
+template<class TrackType>
+class TypedClip: public Clip
+{
+public:
+	TypedClip( TrackType * _track ) :
+		Clip(_track),
+		m_track(_track)
+	{
+		if( m_track )
+		{
+			m_track->addClip( this );
+		}
+	}
+
+	virtual ~TypedClip()
+	{
+		if( m_track )
+		{
+			m_track->removeClip( this );
+		}
+	}
+
+	TrackType* getTrack() const {
+		return m_track;
+	}
+	void* getTrackId() const {
+		return m_track;
+	}
+
+	void addJournalCheckPointToTrack() {
+		m_track->addJournalCheckPoint();
+	}
+
+	virtual bool trackUseColor() override {
+		return m_track->useColor();
+	}
+
+	bool isClipOrTrackMuted() override {
+		return isMuted() || m_track->isMuted();
+	}
+
+	QColor getEffectiveColor() override {
+		return  usesCustomClipColor()
+					? color()
+					: getTrack()->color();
+	}
+
+private:
+	TrackType* m_track;
+};
 
 
 } // namespace lmms

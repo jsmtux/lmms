@@ -33,7 +33,7 @@ namespace lmms
 
 
 AutomationTrack::AutomationTrack( TrackContainer* tc, bool _hidden ) :
-	Track( _hidden ? HiddenAutomationTrack : Track::AutomationTrack, tc )
+	TypedTrack( _hidden ? HiddenAutomationTrack : Track::AutomationTrack, tc )
 {
 	setName( tr( "Automation track" ) );
 }
@@ -71,6 +71,5 @@ void AutomationTrack::loadTrackSpecificSettings( const QDomElement & _this )
 		setMuted( false );
 	}
 }
-
 
 } // namespace lmms

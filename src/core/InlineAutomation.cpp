@@ -24,6 +24,7 @@
 
 #include <QDomElement>
 
+#include "AutomationTrack.h"
 #include "InlineAutomation.h"
 
 

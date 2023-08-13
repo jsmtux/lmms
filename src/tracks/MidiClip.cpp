@@ -40,8 +40,7 @@ namespace lmms
 
 
 MidiClip::MidiClip( InstrumentTrack * _instrument_track ) :
-	Clip( _instrument_track ),
-	m_instrumentTrack( _instrument_track ),
+	TypedClip( _instrument_track ),
 	m_clipType( BeatClip ),
 	m_steps( TimePos::stepsPerBar() )
 {
@@ -57,8 +56,7 @@ MidiClip::MidiClip( InstrumentTrack * _instrument_track ) :
 
 
 MidiClip::MidiClip( const MidiClip& other ) :
-	Clip( other.m_instrumentTrack ),
-	m_instrumentTrack( other.m_instrumentTrack ),
+	TypedClip( other.getTrack() ),
 	m_clipType( other.m_clipType ),
 	m_steps( other.m_steps )
 {
@@ -85,6 +83,7 @@ MidiClip::MidiClip( const MidiClip& other ) :
 
 MidiClip::~MidiClip()
 {
+	getTrack()->removeClip(this);
 	emit destroyedMidiClip( this );
 
 	for (const auto& note : m_notes)
@@ -102,14 +101,14 @@ void MidiClip::resizeToFirstTrack()
 {
 	// Resize this track to be the same as existing tracks in the pattern
 	const TrackContainer::TrackList & tracks =
-		m_instrumentTrack->trackContainer()->tracks();
+		getTrack()->trackContainer()->tracks();
 	for (const auto& track : tracks)
 	{
 		if (track->type() == Track::InstrumentTrack)
 		{
-			if (track != m_instrumentTrack)
+			if (track != getTrack())
 			{
-				unsigned int currentClip = m_instrumentTrack->
+				unsigned int currentClip = getTrack()->
 					getClips().indexOf(this);
 				m_steps = static_cast<MidiClip *>
 					(track->getClip(currentClip))
@@ -194,9 +193,9 @@ Note * MidiClip::addNote( const Note & _new_note, const bool _quant_pos )
 		new_note->quantizePos(gui::getGUIInterface()->pianoRollInterface()->quantization());
 	}
 
-	instrumentTrack()->lock();
+	getTrack()->lock();
 	m_notes.insert(std::upper_bound(m_notes.begin(), m_notes.end(), new_note, Note::lessThan), new_note);
-	instrumentTrack()->unlock();
+	getTrack()->unlock();
 
 	checkType();
 	updateLength();
@@ -211,7 +210,7 @@ Note * MidiClip::addNote( const Note & _new_note, const bool _quant_pos )
 
 void MidiClip::removeNote( Note * _note_to_del )
 {
-	instrumentTrack()->lock();
+	getTrack()->lock();
 	NoteVector::Iterator it = m_notes.begin();
 	while( it != m_notes.end() )
 	{
@@ -223,7 +222,7 @@ void MidiClip::removeNote( Note * _note_to_del )
 		}
 		++it;
 	}
-	instrumentTrack()->unlock();
+	getTrack()->unlock();
 
 	checkType();
 	updateLength();
@@ -258,13 +257,13 @@ void MidiClip::rearrangeAllNotes()
 
 void MidiClip::clearNotes()
 {
-	instrumentTrack()->lock();
+	getTrack()->lock();
 	for (const auto& note : m_notes)
 	{
 		delete note;
 	}
 	m_notes.clear();
-	instrumentTrack()->unlock();
+	getTrack()->unlock();
 
 	checkType();
 	emit model().dataChanged();
@@ -471,8 +470,8 @@ MidiClip *  MidiClip::nextMidiClip() const
 
 MidiClip * MidiClip::adjacentMidiClipByOffset(int offset) const
 {
-	QVector<Clip *> clips = m_instrumentTrack->getClips();
-	int clipNum = m_instrumentTrack->getClipNum(this);
+	QVector<Clip *> clips = getTrack()->getClips();
+	int clipNum = getTrack()->getClipNum(this);
 	return dynamic_cast<MidiClip*>(clips.value(clipNum + offset, nullptr));
 }
 

@@ -26,6 +26,7 @@
 #include "NotePlayHandle.h"
 
 #include "AudioEngine.h"
+#include "AutomationTrack.h"
 #include "BasicFilters.h"
 #include "DetuningHelper.h"
 #include "InstrumentSoundShaping.h"

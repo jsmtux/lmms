@@ -27,12 +27,13 @@
 
 #include <QMap>
 
-#include "Track.h"
+#include "TypedTrack.h"
 
 namespace lmms
 {
 
 class TrackContainer;
+class PatternClip;
 
 namespace gui
 {
@@ -44,7 +45,7 @@ class PatternTrackView;
 
 
 /*! Track type used in the Song (Editor) to reference a pattern in the PatternStore */
-class LMMS_EXPORT PatternTrack : public Track
+class LMMS_EXPORT PatternTrack : public TypedTrack<PatternTrack>
 {
 	Q_OBJECT
 public:

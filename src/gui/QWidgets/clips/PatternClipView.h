@@ -41,7 +41,7 @@ class PatternClipView : public ClipView
 {
 	Q_OBJECT
 public:
-	PatternClipView(Clip* clip, TrackView* tv);
+	PatternClipView(PatternClip* clip, TrackView* tv);
 	~PatternClipView() override = default;
 
 

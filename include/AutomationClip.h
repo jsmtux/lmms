@@ -45,7 +45,7 @@ class TimePos;
 
 
 
-class LMMS_EXPORT AutomationClip : public Clip
+class LMMS_EXPORT AutomationClip : public TypedClip<AutomationTrack>
 {
 	Q_OBJECT
 public:
@@ -207,8 +207,6 @@ private:
 #else
 	mutable QMutex m_clipMutex;
 #endif
-
-	AutomationTrack * m_autoTrack;
 	QVector<jo_id_t> m_idsToResolve;
 	objectVector m_objects;
 	timeMap m_timeMap;	// actual values

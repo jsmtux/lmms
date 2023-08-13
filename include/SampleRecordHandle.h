@@ -38,7 +38,7 @@ namespace lmms
 class PatternTrack;
 class SampleBuffer;
 class SampleClip;
-class Track;
+class SampleTrack;
 
 
 class SampleRecordHandle : public PlayHandle
@@ -65,7 +65,7 @@ private:
 	f_cnt_t m_framesRecorded;
 	TimePos m_minLength;
 
-	Track * m_track;
+	SampleTrack * m_track;
 	PatternTrack* m_patternTrack;
 	SampleClip * m_clip;
 

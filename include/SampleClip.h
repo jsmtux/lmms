@@ -31,6 +31,7 @@ namespace lmms
 {
 
 class SampleBuffer;
+class SampleTrack;
 
 namespace gui
 {
@@ -40,12 +41,12 @@ class SampleClipView;
 } // namespace gui
 
 
-class SampleClip : public Clip
+class SampleClip : public TypedClip<SampleTrack>
 {
 	Q_OBJECT
 	mapPropertyFromModel(bool,isRecord,setRecord,m_recordModel);
 public:
-	SampleClip( Track * _track );
+	SampleClip( SampleTrack * _track );
 	SampleClip( const SampleClip& orig );
 	~SampleClip() override;
 

@@ -32,13 +32,12 @@
 #include "JournallingObject.h"
 #include "lmms_basics.h"
 
-
 namespace lmms
 {
 
+class Clip;
 class TimePos;
 class TrackContainer;
-class Clip;
 
 
 namespace gui
@@ -116,9 +115,6 @@ public:
 		m_simpleSerializingMode = true;
 	}
 
-	// -- for usage by Clip only ---------------
-	Clip * addClip( Clip * clip );
-	void removeClip( Clip * clip );
 	// -------------------------------------------------------
 	void deleteClips();
 
@@ -225,15 +221,16 @@ private:
 	int m_height;
 
 protected:
+	void updateSongProperties();
 	BoolModel m_mutedModel;
+
+	clipVector m_clips;
 
 private:
 	BoolModel m_soloModel;
 	bool m_mutedBeforeSolo;
 
 	bool m_simpleSerializingMode;
-
-	clipVector m_clips;
 
 	QMutex m_processingLock;
 	

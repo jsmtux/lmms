@@ -42,7 +42,7 @@ class MidiClipView;
 }
 
 
-class LMMS_EXPORT MidiClip : public Clip
+class LMMS_EXPORT MidiClip : public TypedClip<InstrumentTrack>
 {
 	Q_OBJECT
 public:
@@ -100,11 +100,6 @@ public:
 		return "midiclip";
 	}
 
-	inline InstrumentTrack * instrumentTrack() const
-	{
-		return m_instrumentTrack;
-	}
-
 	bool empty();
 
 	ClipType getType() override
@@ -132,8 +127,6 @@ private:
 	void checkType();
 
 	void resizeToFirstTrack();
-
-	InstrumentTrack * m_instrumentTrack;
 
 	MidiClipTypes m_clipType;
 

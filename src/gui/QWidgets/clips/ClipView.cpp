@@ -381,13 +381,13 @@ void ClipView::resetColor()
  */
 void ClipView::setColor(const QColor* color)
 {
-	std::set<Track*> journaledTracks;
+	std::set<void*> journaledTracks;
 
 	auto selectedClips = getClickedClips();
 	for (auto clipv: selectedClips)
 	{
 		auto clip = clipv->getClip();
-		auto track = clip->getTrack();
+		auto trackId = clip->getTrackId();
 
 		// TODO journal whole Song or group of clips instead of one journal entry for each track
 
@@ -398,9 +398,9 @@ void ClipView::setColor(const QColor* color)
 		}
 		// If multiple clips changed, store whole Track in the journal
 		// Check if track has been journaled already by trying to add it to the set
-		else if (journaledTracks.insert(track).second)
+		else if (journaledTracks.insert(trackId).second)
 		{
-			track->addJournalCheckPoint();
+			clip->addJournalCheckPointToTrack();
 		}
 
 		if (color)
@@ -442,7 +442,7 @@ void ClipView::dragEnterEvent( QDragEnterEvent * dee )
 	else
 	{
 		StringPairDrag::processDragEnterEvent( dee, "clip_" +
-					QString::number( m_clip->getTrack()->type() ) );
+					QString::number( ClipTypeToId(m_clip->getType()) ) );
 	}
 }
 
@@ -464,7 +464,7 @@ void ClipView::dropEvent( QDropEvent * de )
 	QString value = StringPairDrag::decodeValue( de );
 
 	// Track must be the same type to paste into
-	if( type != ( "clip_" + QString::number( m_clip->getTrack()->type() ) ) )
+	if( type != ( QString("clip_") + ClipTypeToString( m_clip->getType() ) ) )
 	{
 		return;
 	}
@@ -831,7 +831,7 @@ void ClipView::mouseMoveEvent( QMouseEvent * me )
 				Qt::KeepAspectRatio,
 				Qt::SmoothTransformation );
 			new StringPairDrag( QString( "clip_%1" ).arg(
-								m_clip->getTrack()->type() ),
+								ClipTypeToId(m_clip->getType()) ),
 								dataFile.toString(), thumbnail, this );
 		}
 	}
@@ -1209,7 +1209,7 @@ void ClipView::copy( QVector<ClipView *> clipvs )
 	DataFile dataFile = createClipDataFiles( clipvs );
 
 	// Copy the Clip type as a key and the Clip data file to the clipboard
-	copyStringPair( QString( "clip_%1" ).arg( m_clip->getTrack()->type() ),
+	copyStringPair( QString( "clip_%1" ).arg( ClipTypeToId(m_clip->getType()) ),
 		dataFile.toString() );
 }
 
@@ -1486,14 +1486,12 @@ QColor ClipView::getColorForDisplay( QColor defaultColor )
 {
 	// Get the pure Clip color
 	auto clipColor = m_clip->hasColor()
-					? m_clip->usesCustomClipColor()
-						? m_clip->color()
-						: m_clip->getTrack()->color()
+					? m_clip->getEffectiveColor()
 					: defaultColor;
 
 	// Set variables
 	QColor c, mutedCustomColor;
-	bool muted = m_clip->getTrack()->isMuted() || m_clip->isMuted();
+	bool muted = m_clip->isClipOrTrackMuted();
 	mutedCustomColor = clipColor;
 	mutedCustomColor.setHsv( mutedCustomColor.hsvHue(), mutedCustomColor.hsvSaturation() / 4, mutedCustomColor.value() );
 

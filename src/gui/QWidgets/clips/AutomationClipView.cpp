@@ -22,6 +22,7 @@
  *
  */
 #include "AutomationClipView.h"
+#include "AutomationTrack.h"
 
 #include <QApplication>
 #include <QMouseEvent>
