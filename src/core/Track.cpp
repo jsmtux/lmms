@@ -62,9 +62,9 @@ Track::Track( TrackTypes type, TrackContainer * tc ) :
 	m_type( type ),                /*!< The track type */
 	m_name(),                       /*!< The track's name */
 	m_mutedModel( false, this, tr( "Mute" ) ), /*!< For controlling track muting */
+	m_clips(),        /*!< The clips (segments) */
 	m_soloModel( false, this, tr( "Solo" ) ), /*!< For controlling track soloing */
 	m_simpleSerializingMode( false ),
-	m_clips(),        /*!< The clips (segments) */
 	m_color( 0, 0, 0 ),
 	m_hasColor( false )
 {

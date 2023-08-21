@@ -109,7 +109,7 @@ void PatternClip::loadSettings(const QDomElement& element)
 
 int PatternClip::patternIndex()
 {
-	return dynamic_cast<PatternTrack*>(m_track)->patternIndex();
+	return getTrack()->patternIndex();
 }
 
 } // namespace lmms

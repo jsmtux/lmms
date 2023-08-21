@@ -63,9 +63,9 @@ static const auto KEY_ORDER = std::array
  *  \param _it the InstrumentTrack window to attach to
  */
 Piano::Piano(InstrumentTrack* track) :
+	m_pianoModel(nullptr),
 	m_instrumentTrack(track),
-	m_midiEvProc(track),        /*!< the InstrumentTrack Model */
-	m_pianoModel(nullptr)
+	m_midiEvProc(track)        /*!< the InstrumentTrack Model */
 {
 }
 

@@ -27,11 +27,10 @@
 #define LMMS_GUI_TOOL_PLUGIN_VIEW_H
 
 #include "PluginView.h"
+#include "ToolPlugin.h"
 
 namespace lmms
 {
-
-class ToolPlugin;
 
 namespace gui
 {

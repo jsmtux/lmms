@@ -194,14 +194,11 @@ void TrackLabelButton::paintEvent( QPaintEvent * _pe )
 		const PixmapLoader * pl;
 		auto get_logo = [](InstrumentTrack* it) -> const PixmapLoader*
 		{
-			qDebug() << "Getting logo\n";
-			qDebug() << "Instrument is " << it->instrument()->displayName() << "\n";
-			qDebug() << "Instrument key is valid? " << it->instrument()->key().isValid() << "\n";
+			//! TODO: Double check this assumption
 			// auto ret = it->instrument()->key().isValid()
 			// 	? it->instrument()->key().logo()
 			// 	: it->instrument()->descriptor()->logo;
 			auto ret = it->instrument()->descriptor()->logo;
-			qDebug() << "Got logo\n";
 			return ret;
 		};
 		if( it && it->instrument() &&

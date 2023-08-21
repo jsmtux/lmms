@@ -516,7 +516,7 @@ class PianoRollWindow : public Editor, public IPianoRollWindow, SerializingObjec
 public:
 	PianoRollWindow();
 
-	const MidiClip* currentMidiClip() const;
+	const MidiClip* currentMidiClip() const override;
 	void setCurrentMidiClip( MidiClip* clip );
 	void setGhostMidiClip( MidiClip* clip );
 

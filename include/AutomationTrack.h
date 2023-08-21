@@ -32,8 +32,6 @@
 namespace lmms
 {
 
-class AutomationClip;
-
 class AutomationTrack : public TypedTrack<AutomationTrack>
 {
 	Q_OBJECT

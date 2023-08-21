@@ -58,7 +58,6 @@ public:
 	}
 
 private:
-	PatternTrack* m_track;
 	friend class PatternClipView;
 } ;
 

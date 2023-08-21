@@ -100,17 +100,17 @@ public:
 
 class FileDialog: public IFileDialog {
 public:
-	void setDirectory(const QString& directory)
+	void setDirectory(const QString& directory) override
 	{}
-	void setNameFilters(const QStringList &filters)
+	void setNameFilters(const QStringList &filters) override
 	{}
-	void selectFile(const QString &filename)
+	void selectFile(const QString &filename) override
 	{}
-	int exec()
+	int exec() override
 	{
 		return IFileDialog::Accepted;
 	}
-	QStringList selectedFiles() const
+	QStringList selectedFiles() const override
 	{
 		return QStringList();
 	}
@@ -226,7 +226,7 @@ public:
 	{
 		return new DummyPlugin;
 	}
-	Effect* createDummyEffect( Model * _parent, const QDomElement& originalPluginData )
+	Effect* createDummyEffect( Model * _parent, const QDomElement& originalPluginData ) override
 	{
 		return new DummyEffect(_parent, originalPluginData);
 	}

@@ -47,7 +47,6 @@ public:
 		m_type( type ),
 		m_metaEvent( MidiMetaInvalid ),
 		m_channel( channel ),
-		m_sysExData( nullptr ),
 		m_sourcePort(sourcePort),
 		m_source(source)
 	{
@@ -59,7 +58,6 @@ public:
 		m_type( type ),
 		m_metaEvent( MidiMetaInvalid ),
 		m_channel( 0 ),
-		m_sysExData( sysExData ),
 		m_sourcePort(nullptr),
 		m_source(source)
 	{
@@ -212,7 +210,6 @@ private:
 		int32_t m_sysExDataLen;	// len of m_sysExData
 	} m_data;
 
-	const char* m_sysExData;
 	const void* m_sourcePort;
 
 	// Stores the source of the MidiEvent: Internal or External (hardware controllers).

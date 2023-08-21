@@ -61,25 +61,8 @@ class LMMS_EXPORT Clip : public QObject, public JournallingObject
 	mapPropertyFromModel(bool,isMuted,setMuted,m_mutedModel);
 	mapPropertyFromModel(bool,isSolo,setSolo,m_soloModel);
 public:
-	Clip( Model * _parent ) :
-		m_clipModel( _parent ),
-		m_startPosition(),
-		m_length(),
-		m_mutedModel( false, &m_clipModel, QObject::tr( "Mute" ) ),
-		m_selectViewOnCreate( false ),
-		m_color( 128, 128, 128 ),
-		m_useCustomClipColor( false )
-	{
-		setJournalling( false );
-		movePosition( 0 );
-		changeLength( 0 );
-		setJournalling( true );
-	}
-
-	virtual ~Clip()
-	{
-		emit destroyedClip();
-	}
+	Clip( Model * track );
+	~Clip() override;
 
 	inline const QString & name() const
 	{
@@ -136,7 +119,7 @@ public:
 		m_color = c;
 	}
 
-	bool hasColor();
+	virtual bool hasColor() = 0;
 
 	void useCustomClipColor( bool b );
 
@@ -202,8 +185,6 @@ private:
 		Resize
 	} ;
 
-	virtual bool trackUseColor() = 0;
-
 	QString m_name;
 
 	TimePos m_startPosition;
@@ -249,16 +230,16 @@ public:
 	TrackType* getTrack() const {
 		return m_track;
 	}
-	void* getTrackId() const {
+	void* getTrackId() const override {
 		return m_track;
 	}
 
-	void addJournalCheckPointToTrack() {
+	void addJournalCheckPointToTrack() override {
 		m_track->addJournalCheckPoint();
 	}
 
-	virtual bool trackUseColor() override {
-		return m_track->useColor();
+	virtual bool hasColor() override {
+		return usesCustomClipColor() || m_track->useColor();
 	}
 
 	bool isClipOrTrackMuted() override {
