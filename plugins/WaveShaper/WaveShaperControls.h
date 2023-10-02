@@ -78,7 +78,7 @@ private:
 	WaveShaperEffect * m_effect;
 	FloatModel m_inputModel;
 	FloatModel m_outputModel;
-	graphModel m_wavegraphModel;
+	gui::graphModel m_wavegraphModel;
 	BoolModel  m_clipModel;
 
 	friend class gui::WaveShaperControlDialog;

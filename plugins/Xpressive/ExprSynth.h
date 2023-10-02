@@ -82,13 +82,13 @@ public:
 		for(int i = 0 ; i < m_length ; ++i)
 			m_samples[i] = 0;
 	}
-	WaveSample(const graphModel * graph)
+	WaveSample(const gui::graphModel * graph)
 	{
 		m_length = graph->length();
 		m_samples = new float[m_length];
 		memcpy(m_samples, graph->samples(), m_length * sizeof(float));
 	}
-	inline void copyFrom(const graphModel * graph)
+	inline void copyFrom(const gui::graphModel * graph)
 	{
 		memcpy(m_samples, graph->samples(), m_length * sizeof(float));
 	}

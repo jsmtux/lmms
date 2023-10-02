@@ -34,15 +34,15 @@
 #include "plugins/QWidgetInstrumentPlugin.h"
 #include "widgets/PixmapButton.h"
 
-#define makeknob( name, x, y, hint, unit, oname ) 		\
-	name = new Knob( knobStyled, this ); 				\
+#define makeknob( model, name, x, y, hint, unit, oname ) 		\
+	name = new Knob( knobStyled, model, this ); 				\
 	name ->move( x, y );								\
 	name ->setHintText( hint, unit );		\
 	name ->setObjectName( oname );						\
 	name ->setFixedSize( 29, 29 );
 
-#define makenesled( name, x, y, ttip ) \
-	name = new PixmapButton( this, nullptr ); 	\
+#define makenesled( model, name, x, y, ttip ) \
+	name = new PixmapButton( this, model ); 	\
 	name -> setCheckable( true );			\
 	name -> move( x, y );					\
 	name -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( "nesled_on" ) ); \
@@ -50,7 +50,7 @@
 	name->setToolTip(ttip);
 
 #define makedcled( name, x, y, ttip, active ) \
-	PixmapButton * name = new PixmapButton( this, nullptr ); 	\
+	PixmapButton * name = new PixmapButton( this, new BoolModel(false, this) ); 	\
 	name -> move( x, y );					\
 	name -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( active ) ); \
 	name -> setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "nesdc_off" ) ); \

@@ -45,22 +45,22 @@
 //	UI Macros
 //
 
-#define makeknob( name, x, y, hint, unit, oname ) 		\
-	name = new Knob( knobStyled, view ); 				\
+#define makeknob( model, name, x, y, hint, unit, oname ) 		\
+	name = new Knob( knobStyled, model, view ); 				\
 	name ->move( x, y );								\
 	name ->setHintText( hint, unit );             \
 	name ->setObjectName( oname );						\
 	name ->setFixedSize( 20, 20 );
 
-#define maketsknob( name, x, y, hint, unit, oname ) 		\
-	name = new TempoSyncKnob( knobStyled, view ); 				\
+#define maketsknob( model, name, x, y, hint, unit, oname ) 		\
+	name = new TempoSyncKnob( knobStyled, model, view ); 				\
 	name ->move( x, y );								\
 	name ->setHintText( hint, unit );		\
 	name ->setObjectName( oname );						\
 	name ->setFixedSize( 20, 20 );
 
-#define maketinyled( name, x, y, ttip ) \
-	name = new PixmapButton( view, nullptr ); 	\
+#define maketinyled( model, name, x, y, ttip ) \
+	name = new PixmapButton( view, model ); 	\
 	name -> setCheckable( true );			\
 	name -> move( x, y );					\
 	name -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( "tinyled_on" ) ); \

@@ -104,7 +104,7 @@ protected slots:
 
 private:
 	FloatModel  m_sampleLength;
-	graphModel  m_graph;
+	gui::graphModel  m_graph;
 	
 	BoolModel m_interpolation;
 	BoolModel m_normalize;

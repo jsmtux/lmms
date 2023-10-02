@@ -109,7 +109,7 @@ private:
 	FloatModel m_trebleModel;
 	FloatModel m_bassModel;
 
-	graphModel  m_graphModel;
+	gui::graphModel  m_graphModel;
 
 	friend class gui::FreeBoyInstrumentView;
 };

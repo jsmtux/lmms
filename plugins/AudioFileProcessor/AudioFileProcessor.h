@@ -192,8 +192,8 @@ public:
 
 
 	public:
-		knob( QWidget * _parent ) :
-			Knob( knobBright_26, _parent ),
+		knob( FloatModel* _model, QWidget * _parent ) :
+			Knob( knobBright_26, _model, _parent ),
 			m_waveView( 0 ),
 			m_relatedKnob( 0 )
 		{

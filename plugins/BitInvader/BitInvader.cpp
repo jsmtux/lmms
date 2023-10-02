@@ -347,11 +347,11 @@ BitInvaderView::BitInvaderView( BitInvader * _instrument,
 								"artwork" ) );
 	setPalette( pal );
 	
-	m_sampleLengthKnob = new Knob( knobDark_28, this );
+	m_sampleLengthKnob = new Knob( knobDark_28, &m_instrument->m_sampleLength, this );
 	m_sampleLengthKnob->move( 6, 201 );
 	m_sampleLengthKnob->setHintText( tr( "Sample length" ), "" );
 
-	m_graph = new Graph( this, Graph::NearestStyle, 204, 134 );
+	m_graph = new Graph( new graphModel( -1.0, 1.0, 128, this ), this, Graph::NearestStyle, 204, 134 );
 	m_graph->move(23,59);	// 55,120 - 2px border
 	m_graph->setAutoFillBackground( true );
 	m_graph->setGraphColor( QColor( 255, 255, 255 ) );
@@ -367,7 +367,7 @@ BitInvaderView::BitInvaderView( BitInvader * _instrument,
 	m_graph->setPalette( pal );
 
 
-	m_sinWaveBtn = new PixmapButton( this, tr( "Sine wave" ) );
+	m_sinWaveBtn = new PixmapButton( this, new BoolModel(false, this), tr( "Sine wave" ) );
 	m_sinWaveBtn->move( 131, 205 );
 	m_sinWaveBtn->setActiveGraphic( embed::getIconPixmap(
 						"sin_wave_active" ) );
@@ -376,7 +376,7 @@ BitInvaderView::BitInvaderView( BitInvader * _instrument,
 	m_sinWaveBtn->setToolTip(
 			tr( "Sine wave" ) );
 
-	m_triangleWaveBtn = new PixmapButton( this, tr( "Triangle wave" ) );
+	m_triangleWaveBtn = new PixmapButton( this, new BoolModel(false, this), tr( "Triangle wave" ) );
 	m_triangleWaveBtn->move( 131 + 14, 205 );
 	m_triangleWaveBtn->setActiveGraphic(
 		embed::getIconPixmap( "triangle_wave_active" ) );
@@ -385,7 +385,7 @@ BitInvaderView::BitInvaderView( BitInvader * _instrument,
 	m_triangleWaveBtn->setToolTip(
 			tr( "Triangle wave" ) );
 
-	m_sawWaveBtn = new PixmapButton( this, tr( "Saw wave" ) );
+	m_sawWaveBtn = new PixmapButton( this, new BoolModel(false, this), tr( "Saw wave" ) );
 	m_sawWaveBtn->move( 131 + 14*2, 205  );
 	m_sawWaveBtn->setActiveGraphic( embed::getIconPixmap(
 						"saw_wave_active" ) );
@@ -394,7 +394,7 @@ BitInvaderView::BitInvaderView( BitInvader * _instrument,
 	m_sawWaveBtn->setToolTip(
 			tr( "Saw wave" ) );
 
-	m_sqrWaveBtn = new PixmapButton( this, tr( "Square wave" ) );
+	m_sqrWaveBtn = new PixmapButton( this, new BoolModel(false, this), tr( "Square wave" ) );
 	m_sqrWaveBtn->move( 131 + 14*3, 205 );
 	m_sqrWaveBtn->setActiveGraphic( embed::getIconPixmap(
 					"square_wave_active" ) );
@@ -403,7 +403,7 @@ BitInvaderView::BitInvaderView( BitInvader * _instrument,
 	m_sqrWaveBtn->setToolTip(
 			tr( "Square wave" ) );
 
-	m_whiteNoiseWaveBtn = new PixmapButton( this,
+	m_whiteNoiseWaveBtn = new PixmapButton( this, new BoolModel(false, this),
 					tr( "White noise" ) );
 	m_whiteNoiseWaveBtn->move( 131 + 14*4, 205 );
 	m_whiteNoiseWaveBtn->setActiveGraphic(
@@ -413,7 +413,7 @@ BitInvaderView::BitInvaderView( BitInvader * _instrument,
 	m_whiteNoiseWaveBtn->setToolTip(
 			tr( "White noise" ) );
 
-	m_usrWaveBtn = new PixmapButton( this, tr( "User-defined wave" ) );
+	m_usrWaveBtn = new PixmapButton( this, new BoolModel(false, this), tr( "User-defined wave" ) );
 	m_usrWaveBtn->move( 131 + 14*5, 205 );
 	m_usrWaveBtn->setActiveGraphic( embed::getIconPixmap(
 						"usr_wave_active" ) );
@@ -422,7 +422,7 @@ BitInvaderView::BitInvaderView( BitInvader * _instrument,
 	m_usrWaveBtn->setToolTip(
 			tr( "User-defined wave" ) );
 
-	m_smoothBtn = new PixmapButton( this, tr( "Smooth waveform" ) );
+	m_smoothBtn = new PixmapButton( this, new BoolModel(false, this), tr( "Smooth waveform" ) );
 	m_smoothBtn->move( 131 + 14*6, 205 );
 	m_smoothBtn->setActiveGraphic( PLUGIN_NAME::getIconPixmap(
 						"smooth_active" ) );
@@ -432,19 +432,14 @@ BitInvaderView::BitInvaderView( BitInvader * _instrument,
 			tr( "Smooth waveform" ) );
 
 
-	m_interpolationToggle = new LedCheckBox( "Interpolation", this,
+	m_interpolationToggle = new LedCheckBox( "Interpolation", &m_instrument->m_interpolation, this,
 							tr( "Interpolation" ), LedCheckBox::Yellow );
 	m_interpolationToggle->move( 131, 221 );
 
 
-	m_normalizeToggle = new LedCheckBox( "Normalize", this,
+	m_normalizeToggle = new LedCheckBox( "Normalize", &m_instrument->m_normalize, this,
 							tr( "Normalize" ), LedCheckBox::Green );
 	m_normalizeToggle->move( 131, 236 );
-
-	m_graph->setModel( &m_instrument->m_graph );
-	m_sampleLengthKnob->setModel( &m_instrument->m_sampleLength );
-	m_interpolationToggle->setModel( &m_instrument->m_interpolation );
-	m_normalizeToggle->setModel( &m_instrument->m_normalize );
 
 	connect( m_sinWaveBtn, SIGNAL (clicked () ),
 			this, SLOT ( sinWaveClicked() ) );

@@ -89,7 +89,7 @@ private:
 	FloatModel m_outputModel;
 	FloatModel m_attackModel;
 	FloatModel m_releaseModel;
-	graphModel m_wavegraphModel;
+	gui::graphModel m_wavegraphModel;
 	IntModel m_stereomodeModel;
 
 	friend class gui::DynProcControlDialog;

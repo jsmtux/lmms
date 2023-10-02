@@ -937,8 +937,8 @@ namespace gui
 class Sf2Knob : public Knob
 {
 public:
-	Sf2Knob( QWidget * _parent ) :
-			Knob( knobStyled, _parent )
+	Sf2Knob( FloatModel* _model, QWidget * _parent ) :
+			Knob( knobStyled, _model, _parent )
 	{
 		setFixedSize( 31, 38 );
 	}
@@ -956,7 +956,7 @@ Sf2InstrumentView::Sf2InstrumentView( Sf2Instrument * _instrument, QWidget * _pa
 	connect(&m_instrument->m_patchNum, SIGNAL(dataChanged()), this, SLOT(updatePatchName()));
 
 	// File Button
-	m_fileDialogButton = new PixmapButton(this);
+	m_fileDialogButton = new PixmapButton(this, new BoolModel(false, this));
 	m_fileDialogButton->setCursor(QCursor(Qt::PointingHandCursor));
 	m_fileDialogButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("fileselect_on"));
 	m_fileDialogButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("fileselect_off"));
@@ -967,7 +967,7 @@ Sf2InstrumentView::Sf2InstrumentView( Sf2Instrument * _instrument, QWidget * _pa
 	m_fileDialogButton->setToolTip(tr("Open SoundFont file"));
 
 	// Patch Button
-	m_patchDialogButton = new PixmapButton(this);
+	m_patchDialogButton = new PixmapButton(this, new BoolModel(false, this));
 	m_patchDialogButton->setCursor(QCursor(Qt::PointingHandCursor));
 	m_patchDialogButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("patches_on"));
 	m_patchDialogButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("patches_off"));
@@ -979,12 +979,12 @@ Sf2InstrumentView::Sf2InstrumentView( Sf2Instrument * _instrument, QWidget * _pa
 	m_patchDialogButton->setToolTip(tr("Choose patch"));
 
 	// LCDs
-	m_bankNumLcd = new LcdSpinBox(3, "21pink", this);
+	m_bankNumLcd = new LcdSpinBox(3, "21pink",&m_instrument->m_bankNum, this );
 	m_bankNumLcd->move(131, 62);
 //	m_bankNumLcd->addTextForValue( -1, "---" );
 //	m_bankNumLcd->setEnabled( false );
 
-	m_patchNumLcd = new LcdSpinBox( 3, "21pink", this );
+	m_patchNumLcd = new LcdSpinBox( 3, "21pink", &m_instrument->m_patchNum, this );
 	m_patchNumLcd->move(190, 62);
 //	m_patchNumLcd->addTextForValue( -1, "---" );
 //	m_patchNumLcd->setEnabled( false );
@@ -1009,7 +1009,7 @@ Sf2InstrumentView::Sf2InstrumentView( Sf2Instrument * _instrument, QWidget * _pa
 //	vl->addLayout( hl );
 
 	// Gain
-	m_gainKnob = new Sf2Knob( this );
+	m_gainKnob = new Sf2Knob( &m_instrument->m_gain, this );
 	m_gainKnob->setHintText( tr("Gain:"), "" );
 	m_gainKnob->move( 86, 55 );
 //	vl->addWidget( m_gainKnob );
@@ -1018,7 +1018,7 @@ Sf2InstrumentView::Sf2InstrumentView( Sf2Instrument * _instrument, QWidget * _pa
 //	hl = new QHBoxLayout();
 
 
-	m_reverbButton = new PixmapButton( this );
+	m_reverbButton = new PixmapButton( this, &m_instrument->m_reverbOn );
 	m_reverbButton->setCheckable( true );
 	m_reverbButton->move( 14, 180 );
 	m_reverbButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "reverb_on" ) );
@@ -1026,19 +1026,19 @@ Sf2InstrumentView::Sf2InstrumentView( Sf2Instrument * _instrument, QWidget * _pa
 	m_reverbButton->setToolTip(tr("Apply reverb (if supported)"));
 
 
-	m_reverbRoomSizeKnob = new Sf2Knob( this );
+	m_reverbRoomSizeKnob = new Sf2Knob( &m_instrument->m_reverbRoomSize, this );
 	m_reverbRoomSizeKnob->setHintText( tr("Room size:"), "" );
 	m_reverbRoomSizeKnob->move( 93, 160 );
 
-	m_reverbDampingKnob = new Sf2Knob( this );
+	m_reverbDampingKnob = new Sf2Knob( &m_instrument->m_reverbDamping, this );
 	m_reverbDampingKnob->setHintText( tr("Damping:"), "" );
 	m_reverbDampingKnob->move( 130, 160 );
 
-	m_reverbWidthKnob = new Sf2Knob( this );
+	m_reverbWidthKnob = new Sf2Knob( &m_instrument->m_reverbWidth, this );
 	m_reverbWidthKnob->setHintText( tr("Width:"), "" );
 	m_reverbWidthKnob->move( 167, 160 );
 
-	m_reverbLevelKnob = new Sf2Knob( this );
+	m_reverbLevelKnob = new Sf2Knob( &m_instrument->m_reverbLevel, this );
 	m_reverbLevelKnob->setHintText( tr("Level:"), "" );
 	m_reverbLevelKnob->move( 204, 160 );
 
@@ -1054,26 +1054,26 @@ Sf2InstrumentView::Sf2InstrumentView( Sf2Instrument * _instrument, QWidget * _pa
 	// Chorus
 //	hl = new QHBoxLayout();
 
-	m_chorusButton = new PixmapButton( this );
+	m_chorusButton = new PixmapButton( this, &m_instrument->m_chorusOn );
 	m_chorusButton->setCheckable( true );
 	m_chorusButton->move( 14, 226 );
 	m_chorusButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "chorus_on" ) );
 	m_chorusButton->setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "chorus_off" ) );
 	m_chorusButton->setToolTip(tr("Apply chorus (if supported)"));
 
-	m_chorusNumKnob = new Sf2Knob( this );
+	m_chorusNumKnob = new Sf2Knob( &m_instrument->m_chorusNum, this );
 	m_chorusNumKnob->setHintText( tr("Voices:"), "" );
 	m_chorusNumKnob->move( 93, 206 );
 
-	m_chorusLevelKnob = new Sf2Knob( this );
+	m_chorusLevelKnob = new Sf2Knob( &m_instrument->m_chorusLevel, this );
 	m_chorusLevelKnob->setHintText( tr("Level:"), "" );
 	m_chorusLevelKnob->move( 130 , 206 );
 
-	m_chorusSpeedKnob = new Sf2Knob( this );
+	m_chorusSpeedKnob = new Sf2Knob( &m_instrument->m_chorusSpeed, this );
 	m_chorusSpeedKnob->setHintText( tr("Speed:"), "" );
 	m_chorusSpeedKnob->move( 167 , 206 );
 
-	m_chorusDepthKnob = new Sf2Knob( this );
+	m_chorusDepthKnob = new Sf2Knob( &m_instrument->m_chorusDepth, this );
 	m_chorusDepthKnob->setHintText( tr("Depth:"), "" );
 	m_chorusDepthKnob->move( 204 , 206 );
 /*
@@ -1124,23 +1124,6 @@ void Sf2InstrumentView::updatePatchName()
 
 
 	update();
-
-	m_bankNumLcd->setModel( &m_instrument->m_bankNum );
-	m_patchNumLcd->setModel( &m_instrument->m_patchNum );
-
-	m_gainKnob->setModel( &m_instrument->m_gain );
-
-	m_reverbButton->setModel( &m_instrument->m_reverbOn );
-	m_reverbRoomSizeKnob->setModel( &m_instrument->m_reverbRoomSize );
-	m_reverbDampingKnob->setModel( &m_instrument->m_reverbDamping );
-	m_reverbWidthKnob->setModel( &m_instrument->m_reverbWidth );
-	m_reverbLevelKnob->setModel( &m_instrument->m_reverbLevel );
-
-	m_chorusButton->setModel( &m_instrument->m_chorusOn );
-	m_chorusNumKnob->setModel( &m_instrument->m_chorusNum );
-	m_chorusLevelKnob->setModel( &m_instrument->m_chorusLevel );
-	m_chorusSpeedKnob->setModel( &m_instrument->m_chorusSpeed );
-	m_chorusDepthKnob->setModel( &m_instrument->m_chorusDepth );
 
 
 	connect( m_instrument, SIGNAL( fileChanged() ), this, SLOT( updateFilename() ) );

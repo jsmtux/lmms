@@ -96,94 +96,76 @@ CompressorControlDialog::CompressorControlDialog(CompressorControls* controls) :
 	m_ratioEnabledLabel->setPixmap(PLUGIN_NAME::getIconPixmap("knob_enabled_large"));
 	m_ratioEnabledLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
 
-	m_thresholdKnob = new Knob(knobStyled, this);
+	m_thresholdKnob = new Knob(knobStyled, &controls->m_thresholdModel, this);
 	makeLargeKnob(m_thresholdKnob, tr("Threshold:") , " dBFS");
-	m_thresholdKnob->setModel(&controls->m_thresholdModel);
 	m_thresholdKnob->setToolTip(tr("Volume at which the compression begins to take place"));
 
-	m_ratioKnob = new Knob(knobStyled, this);
+	m_ratioKnob = new Knob(knobStyled, &controls->m_ratioModel, this);
 	makeLargeKnob(m_ratioKnob, tr("Ratio:") , ":1");
-	m_ratioKnob->setModel(&controls->m_ratioModel);
 	m_ratioKnob->setToolTip(tr("How far the compressor must turn the volume down after crossing the threshold"));
 
-	m_attackKnob = new Knob(knobStyled, this);
+	m_attackKnob = new Knob(knobStyled, &controls->m_attackModel, this);
 	makeLargeKnob(m_attackKnob, tr("Attack:") , " ms");
-	m_attackKnob->setModel(&controls->m_attackModel);
 	m_attackKnob->setToolTip(tr("Speed at which the compressor starts to compress the audio"));
 
-	m_releaseKnob = new Knob(knobStyled, this);
+	m_releaseKnob = new Knob(knobStyled, &controls->m_releaseModel, this);
 	makeLargeKnob(m_releaseKnob, tr("Release:") , " ms");
-	m_releaseKnob->setModel(&controls->m_releaseModel);
 	m_releaseKnob->setToolTip(tr("Speed at which the compressor ceases to compress the audio"));
 
-	m_kneeKnob = new Knob(knobStyled, this);
+	m_kneeKnob = new Knob(knobStyled, &controls->m_kneeModel, this);
 	makeSmallKnob(m_kneeKnob, tr("Knee:") , " dB");
-	m_kneeKnob->setModel(&controls->m_kneeModel);
 	m_kneeKnob->setToolTip(tr("Smooth out the gain reduction curve around the threshold"));
 
-	m_rangeKnob = new Knob(knobStyled, this);
+	m_rangeKnob = new Knob(knobStyled, &controls->m_rangeModel, this);
 	makeSmallKnob(m_rangeKnob, tr("Range:") , " dBFS");
-	m_rangeKnob->setModel(&controls->m_rangeModel);
 	m_rangeKnob->setToolTip(tr("Maximum gain reduction"));
 
-	m_lookaheadLengthKnob = new Knob(knobStyled, this);
+	m_lookaheadLengthKnob = new Knob(knobStyled, &controls->m_lookaheadLengthModel, this);
 	makeSmallKnob(m_lookaheadLengthKnob, tr("Lookahead Length:") , " ms");
-	m_lookaheadLengthKnob->setModel(&controls->m_lookaheadLengthModel);
 	m_lookaheadLengthKnob->setToolTip(tr("How long the compressor has to react to the sidechain signal ahead of time"));
 
-	m_holdKnob = new Knob(knobStyled, this);
+	m_holdKnob = new Knob(knobStyled, &controls->m_holdModel, this);
 	makeSmallKnob(m_holdKnob, tr("Hold:") , " ms");
-	m_holdKnob->setModel(&controls->m_holdModel);
 	m_holdKnob->setToolTip(tr("Delay between attack and release stages"));
 
-	m_rmsKnob = new Knob(knobStyled, this);
+	m_rmsKnob = new Knob(knobStyled, &controls->m_rmsModel, this);
 	makeSmallKnob(m_rmsKnob, tr("RMS Size:") , "");
-	m_rmsKnob->setModel(&controls->m_rmsModel);
 	m_rmsKnob->setToolTip(tr("Size of the RMS buffer"));
 
-	m_inBalanceKnob = new Knob(knobStyled, this);
+	m_inBalanceKnob = new Knob(knobStyled, &controls->m_inBalanceModel, this);
 	makeSmallKnob(m_inBalanceKnob, tr("Input Balance:") , "");
-	m_inBalanceKnob->setModel(&controls->m_inBalanceModel);
 	m_inBalanceKnob->setToolTip(tr("Bias the input audio to the left/right or mid/side"));
 
-	m_outBalanceKnob = new Knob(knobStyled, this);
+	m_outBalanceKnob = new Knob(knobStyled, &controls->m_outBalanceModel, this);
 	makeSmallKnob(m_outBalanceKnob, tr("Output Balance:") , "");
-	m_outBalanceKnob->setModel(&controls->m_outBalanceModel);
 	m_outBalanceKnob->setToolTip(tr("Bias the output audio to the left/right or mid/side"));
 
-	m_stereoBalanceKnob = new Knob(knobStyled, this);
+	m_stereoBalanceKnob = new Knob(knobStyled, &controls->m_stereoBalanceModel, this);
 	makeSmallKnob(m_stereoBalanceKnob, tr("Stereo Balance:") , "");
-	m_stereoBalanceKnob->setModel(&controls->m_stereoBalanceModel);
 	m_stereoBalanceKnob->setToolTip(tr("Bias the sidechain signal to the left/right or mid/side"));
 
-	m_blendKnob = new Knob(knobStyled, this);
+	m_blendKnob = new Knob(knobStyled, &controls->m_blendModel, this);
 	makeSmallKnob(m_blendKnob, tr("Stereo Link Blend:") , "");
-	m_blendKnob->setModel(&controls->m_blendModel);
 	m_blendKnob->setToolTip(tr("Blend between unlinked/maximum/average/minimum stereo linking modes"));
 
-	m_tiltKnob = new Knob(knobStyled, this);
+	m_tiltKnob = new Knob(knobStyled, &controls->m_tiltModel, this);
 	makeSmallKnob(m_tiltKnob, tr("Tilt Gain:") , " dB");
-	m_tiltKnob->setModel(&controls->m_tiltModel);
 	m_tiltKnob->setToolTip(tr("Bias the sidechain signal to the low or high frequencies.  -6 db is lowpass, 6 db is highpass."));
 
-	m_tiltFreqKnob = new Knob(knobStyled, this);
+	m_tiltFreqKnob = new Knob(knobStyled, &controls->m_tiltFreqModel, this);
 	makeSmallKnob(m_tiltFreqKnob, tr("Tilt Frequency:") , " Hz");
-	m_tiltFreqKnob->setModel(&controls->m_tiltFreqModel);
 	m_tiltFreqKnob->setToolTip(tr("Center frequency of sidechain tilt filter"));
 
-	m_mixKnob = new Knob(knobStyled, this);
+	m_mixKnob = new Knob(knobStyled, &controls->m_mixModel, this);
 	makeSmallKnob(m_mixKnob, tr("Mix:") , "%");
-	m_mixKnob->setModel(&controls->m_mixModel);
 	m_mixKnob->setToolTip(tr("Balance between wet and dry signals"));
 
-	m_autoAttackKnob = new Knob(knobStyled, this);
+	m_autoAttackKnob = new Knob(knobStyled, &controls->m_autoAttackModel, this);
 	makeSmallKnob(m_autoAttackKnob, tr("Auto Attack:") , "%");
-	m_autoAttackKnob->setModel(&controls->m_autoAttackModel);
 	m_autoAttackKnob->setToolTip(tr("Automatically control attack value depending on crest factor"));
 
-	m_autoReleaseKnob = new Knob(knobStyled, this);
+	m_autoReleaseKnob = new Knob(knobStyled, &controls->m_autoReleaseModel, this);
 	makeSmallKnob(m_autoReleaseKnob, tr("Auto Release:") , "%");
-	m_autoReleaseKnob->setModel(&controls->m_autoReleaseModel);
 	m_autoReleaseKnob->setToolTip(tr("Automatically control release value depending on crest factor"));
 
 	m_outFader = new EqFader(&controls->m_outGainModel,tr("Output gain"),
@@ -198,111 +180,103 @@ CompressorControlDialog::CompressorControlDialog(CompressorControls* controls) :
 	m_inFader->setHintText(tr("Gain"), "dBFS");
 	m_inFader->setToolTip(tr("Input volume"));
 
-	rmsButton = new PixmapButton(this, tr("Root Mean Square"));
+	rmsButton = new PixmapButton(this, new BoolModel(false, this), tr("Root Mean Square"));
 	rmsButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("rms_sel"));
 	rmsButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("rms_unsel"));
 	rmsButton->setToolTip(tr("Use RMS of the input"));
 
-	peakButton = new PixmapButton(this, tr("Peak"));
+	peakButton = new PixmapButton(this, new BoolModel(false, this), tr("Peak"));
 	peakButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("peak_sel"));
 	peakButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("peak_unsel"));
 	peakButton->setToolTip(tr("Use absolute value of the input"));
 
-	rmsPeakGroup = new automatableButtonGroup(this);
+	rmsPeakGroup = new automatableButtonGroup(&controls->m_peakmodeModel, this);
 	rmsPeakGroup->addButton(rmsButton);
 	rmsPeakGroup->addButton(peakButton);
-	rmsPeakGroup->setModel(&controls->m_peakmodeModel);
 
-	leftRightButton = new PixmapButton(this, tr("Left/Right"));
+	leftRightButton = new PixmapButton(this, new BoolModel(false, this), tr("Left/Right"));
 	leftRightButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("leftright_sel"));
 	leftRightButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("leftright_unsel"));
 	leftRightButton->setToolTip(tr("Compress left and right audio"));
 
-	midSideButton = new PixmapButton(this, tr("Mid/Side"));
+	midSideButton = new PixmapButton(this, new BoolModel(false, this), tr("Mid/Side"));
 	midSideButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("midside_sel"));
 	midSideButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("midside_unsel"));
 	midSideButton->setToolTip(tr("Compress mid and side audio"));
 
-	leftRightMidSideGroup = new automatableButtonGroup(this);
+	leftRightMidSideGroup = new automatableButtonGroup(&controls->m_midsideModel, this);
 	leftRightMidSideGroup->addButton(leftRightButton);
 	leftRightMidSideGroup->addButton(midSideButton);
-	leftRightMidSideGroup->setModel(&controls->m_midsideModel);
 
-	compressButton = new PixmapButton(this, tr("Compressor"));
+	compressButton = new PixmapButton(this, new BoolModel(false, this), tr("Compressor"));
 	compressButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("compressor_sel"));
 	compressButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("compressor_unsel"));
 	compressButton->setToolTip(tr("Compress the audio"));
 
-	limitButton = new PixmapButton(this, tr("Limiter"));
+	limitButton = new PixmapButton(this, new BoolModel(false, this), tr("Limiter"));
 	limitButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("limiter_sel"));
 	limitButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("limiter_unsel"));
 	limitButton->setToolTip(tr("Set Ratio to infinity (is not guaranteed to limit audio volume)"));
 
-	compressLimitGroup = new automatableButtonGroup(this);
+	compressLimitGroup = new automatableButtonGroup(&controls->m_limiterModel, this);
 	compressLimitGroup->addButton(compressButton);
 	compressLimitGroup->addButton(limitButton);
-	compressLimitGroup->setModel(&controls->m_limiterModel);
 
-	unlinkedButton = new PixmapButton(this, tr("Unlinked"));
+	unlinkedButton = new PixmapButton(this, new BoolModel(false, this), tr("Unlinked"));
 	unlinkedButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("unlinked_sel"));
 	unlinkedButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("unlinked_unsel"));
 	unlinkedButton->setToolTip(tr("Compress each channel separately"));
 
-	maximumButton = new PixmapButton(this, tr("Maximum"));
+	maximumButton = new PixmapButton(this, new BoolModel(false, this), tr("Maximum"));
 	maximumButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("maximum_sel"));
 	maximumButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("maximum_unsel"));
 	maximumButton->setToolTip(tr("Compress based on the loudest channel"));
 
-	averageButton = new PixmapButton(this, tr("Average"));
+	averageButton = new PixmapButton(this, new BoolModel(false, this), tr("Average"));
 	averageButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("average_sel"));
 	averageButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("average_unsel"));
 	averageButton->setToolTip(tr("Compress based on the averaged channel volume"));
 
-	minimumButton = new PixmapButton(this, tr("Minimum"));
+	minimumButton = new PixmapButton(this, new BoolModel(false, this), tr("Minimum"));
 	minimumButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("minimum_sel"));
 	minimumButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("minimum_unsel"));
 	minimumButton->setToolTip(tr("Compress based on the quietest channel"));
 
-	blendButton = new PixmapButton(this, tr("Blend"));
+	blendButton = new PixmapButton(this, new BoolModel(false, this), tr("Blend"));
 	blendButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("blend_sel"));
 	blendButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("blend_unsel"));
 	blendButton->setToolTip(tr("Blend between stereo linking modes"));
 
-	stereoLinkGroup = new automatableButtonGroup(this);
+	stereoLinkGroup = new automatableButtonGroup(&controls->m_stereoLinkModel, this);
 	stereoLinkGroup->addButton(unlinkedButton);
 	stereoLinkGroup->addButton(maximumButton);
 	stereoLinkGroup->addButton(averageButton);
 	stereoLinkGroup->addButton(minimumButton);
 	stereoLinkGroup->addButton(blendButton);
-	stereoLinkGroup->setModel(&controls->m_stereoLinkModel);
 
-	autoMakeupButton = new PixmapButton(this, tr("Auto Makeup Gain"));
+	autoMakeupButton = new PixmapButton(this, &controls->m_autoMakeupModel, tr("Auto Makeup Gain"));
 	autoMakeupButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("autogain_sel"));
 	autoMakeupButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("autogain_unsel"));
 	autoMakeupButton->setToolTip(tr("Automatically change makeup gain depending on threshold, knee, and ratio settings"));
 	autoMakeupButton->setCheckable(true);
-	autoMakeupButton->setModel(&controls->m_autoMakeupModel);
 
-	auditionButton = new PixmapButton(this, tr("Soft Clip"));
+	auditionButton = new PixmapButton(this, &controls->m_auditionModel, tr("Soft Clip"));
 	auditionButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("audition_sel"));
 	auditionButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("audition_unsel"));
 	auditionButton->setToolTip(tr("Play the delta signal"));
 	auditionButton->setCheckable(true);
-	auditionButton->setModel(&controls->m_auditionModel);
 
-	feedbackButton = new PixmapButton(this, tr("Soft Clip"));
+	feedbackButton = new PixmapButton(this, &controls->m_feedbackModel, tr("Soft Clip"));
 	feedbackButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("feedback_sel"));
 	feedbackButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("feedback_unsel"));
 	feedbackButton->setToolTip(tr("Use the compressor's output as the sidechain input"));
 	feedbackButton->setCheckable(true);
-	feedbackButton->setModel(&controls->m_feedbackModel);
 
-	lookaheadButton = new PixmapButton(this, tr("Lookahead Enabled"));
+	lookaheadButton = new PixmapButton(this, &controls->m_lookaheadModel, tr("Lookahead Enabled"));
 	lookaheadButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("lookahead_sel"));
 	lookaheadButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("lookahead_unsel"));
 	lookaheadButton->setToolTip(tr("Enable Lookahead, which introduces 20 milliseconds of latency"));
 	lookaheadButton->setCheckable(true);
-	lookaheadButton->setModel(&controls->m_lookaheadModel);
 
 	connect(getGUI()->mainWindow(), SIGNAL(periodicUpdate()), this, SLOT(updateDisplay()));
 

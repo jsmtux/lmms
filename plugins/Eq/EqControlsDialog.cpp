@@ -107,30 +107,26 @@ EqControlsDialog::EqControlsDialog( EqControls *controls ) :
 	distance = 81;
 	for( int i = 0; i < m_parameterWidget->bandCount() ; i++ )
 	{
-		auto resKnob = new Knob(knobBright_26, this);
+		auto resKnob = new Knob(knobBright_26, m_parameterWidget->getBandModels( i )->res, this);
 		resKnob->move( distance, 440 );
 		resKnob->setVolumeKnob(false);
-		resKnob->setModel( m_parameterWidget->getBandModels( i )->res );
 		if(i > 1 && i < 6) { resKnob->setHintText( tr( "Bandwidth: " ) , tr( " Octave" ) ); }
 		else { resKnob->setHintText( tr( "Resonance : " ) , "" ); }
 
-		auto freqKnob = new Knob(knobBright_26, this);
+		auto freqKnob = new Knob(knobBright_26, m_parameterWidget->getBandModels( i )->freq, this);
 		freqKnob->move( distance, 396 );
 		freqKnob->setVolumeKnob( false );
-		freqKnob->setModel( m_parameterWidget->getBandModels( i )->freq );
 		freqKnob->setHintText( tr( "Frequency:" ), "Hz" );
 
 		// adds the Number Active buttons
-		auto activeButton = new PixmapButton(this, nullptr);
+		auto activeButton = new PixmapButton(this, m_parameterWidget->getBandModels( i )->active );
 		activeButton->setCheckable(true);
-		activeButton->setModel( m_parameterWidget->getBandModels( i )->active );
 
 		QString iconActiveFileName = "bandLabel" + QString::number(i+1);
 		QString iconInactiveFileName = "bandLabel" + QString::number(i+1) + "off";
 		activeButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap( iconActiveFileName.toLatin1() ) );
 		activeButton->setInactiveGraphic( PLUGIN_NAME::getIconPixmap( iconInactiveFileName.toLatin1() ) );
 		activeButton->move( distance - 2, 276 );
-		activeButton->setModel( m_parameterWidget->getBandModels( i )->active );
 
 		// Connects the knobs, Faders and buttons with the curve graphic
 		QObject::connect( m_parameterWidget->getBandModels( i )->freq , SIGNAL( dataChanged() ), m_parameterWidget, SLOT ( updateHandle() ) );
@@ -144,49 +140,41 @@ EqControlsDialog::EqControlsDialog( EqControls *controls ) :
 
 
 	// adds the buttons for Spectrum analyser on/off
-	auto inSpecButton = new LedCheckBox(this);
+	auto inSpecButton = new LedCheckBox(&controls->m_analyseInModel, this);
 	inSpecButton->setCheckable(true);
-	inSpecButton->setModel( &controls->m_analyseInModel );
 	inSpecButton->move( 172, 240 );
-	auto outSpecButton = new LedCheckBox(this);
+	auto outSpecButton = new LedCheckBox(&controls->m_analyseOutModel, this);
 	outSpecButton->setCheckable(true);
-	outSpecButton->setModel( &controls->m_analyseOutModel );
 	outSpecButton->move( 302, 240 );
 
 	//hp filter type
-	auto hp12Button = new PixmapButton(this, nullptr);
-	hp12Button->setModel( m_parameterWidget->getBandModels( 0 )->hp12 );
+	auto hp12Button = new PixmapButton(this, m_parameterWidget->getBandModels( 0 )->hp12);
 	hp12Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "12dB" ) );
 	hp12Button->setInactiveGraphic(  PLUGIN_NAME::getIconPixmap( "12dBoff" ) );
 	hp12Button->move( 79, 298 );
-	auto hp24Button = new PixmapButton(this, nullptr);
-	hp24Button->setModel(m_parameterWidget->getBandModels( 0 )->hp24 );
+	auto hp24Button = new PixmapButton(this, m_parameterWidget->getBandModels( 0 )->hp24);
 	hp24Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "24dB" ) );
 	hp24Button->setInactiveGraphic(  PLUGIN_NAME::getIconPixmap( "24dBoff" ) );
 
 	hp24Button->move( 79 , 328 );
-	auto hp48Button = new PixmapButton(this, nullptr);
-	hp48Button->setModel( m_parameterWidget->getBandModels(0)->hp48 );
+	auto hp48Button = new PixmapButton(this, m_parameterWidget->getBandModels(0)->hp48);
 	hp48Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "48dB" ) );
 	hp48Button->setInactiveGraphic(  PLUGIN_NAME::getIconPixmap( "48dBoff" ) );
 
 	hp48Button->move( 79, 358 );
 	//LP filter type
-	auto lp12Button = new PixmapButton(this, nullptr);
-	lp12Button->setModel( m_parameterWidget->getBandModels( 7 )->lp12 );
+	auto lp12Button = new PixmapButton(this, m_parameterWidget->getBandModels( 7 )->lp12);
 	lp12Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "12dB" ) );
 	lp12Button->setInactiveGraphic(  PLUGIN_NAME::getIconPixmap( "12dBoff" ) );
 
 	lp12Button->move( 387, 298 );
-	auto lp24Button = new PixmapButton(this, nullptr);
-	lp24Button->setModel( m_parameterWidget->getBandModels( 7 )->lp24 );
+	auto lp24Button = new PixmapButton(this, m_parameterWidget->getBandModels( 7 )->lp24);
 	lp24Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "24dB" ) );
 	lp24Button->setInactiveGraphic(  PLUGIN_NAME::getIconPixmap( "24dBoff" ) );
 
 	lp24Button->move( 387, 328 );
 
-	auto lp48Button = new PixmapButton(this, nullptr);
-	lp48Button->setModel( m_parameterWidget->getBandModels( 7 )->lp48 );
+	auto lp48Button = new PixmapButton(this, m_parameterWidget->getBandModels( 7 )->lp48);
 	lp48Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "48dB" ) );
 	lp48Button->setInactiveGraphic(  PLUGIN_NAME::getIconPixmap( "48dBoff" ) );
 
@@ -200,17 +188,15 @@ EqControlsDialog::EqControlsDialog( EqControls *controls ) :
 	QObject::connect( m_parameterWidget->getBandModels( 7 )->lp24 , SIGNAL ( dataChanged() ), m_parameterWidget, SLOT( updateHandle()));
 	QObject::connect( m_parameterWidget->getBandModels( 7 )->lp48 , SIGNAL ( dataChanged() ), m_parameterWidget, SLOT( updateHandle()));
 
-	auto lpBtnGrp = new automatableButtonGroup(this, tr("LP group"));
+	auto lpBtnGrp = new automatableButtonGroup(&m_controls->m_lpTypeModel, this, tr("LP group"));
 	lpBtnGrp->addButton( lp12Button );
 	lpBtnGrp->addButton( lp24Button );
 	lpBtnGrp->addButton( lp48Button );
-	lpBtnGrp->setModel(&m_controls->m_lpTypeModel);
 
-	auto hpBtnGrp = new automatableButtonGroup(this, tr("HP group"));
+	auto hpBtnGrp = new automatableButtonGroup(&m_controls->m_hpTypeModel, this, tr("HP group"));
 	hpBtnGrp->addButton( hp12Button );
 	hpBtnGrp->addButton( hp24Button );
 	hpBtnGrp->addButton( hp48Button );
-	hpBtnGrp->setModel(&m_controls->m_hpTypeModel);
 }
 
 

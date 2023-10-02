@@ -37,11 +37,11 @@ namespace lmms
 namespace gui
 {
 
-Graph::Graph( QWidget * _parent, graphStyle _style, int _width,
+Graph::Graph( graphModel* _model, QWidget * _parent, graphStyle _style, int _width,
 		int _height ) :
 	QWidget( _parent ),
 	/* TODO: size, background? */
-	m_gModel( -1.0, 1.0, 128, nullptr ),
+	m_gModel(_model),
 	m_graphStyle( _style )
 {
 	m_mouseDown = false;
@@ -51,13 +51,13 @@ Graph::Graph( QWidget * _parent, graphStyle _style, int _width,
 	setAcceptDrops( true );
 	setCursor( Qt::CrossCursor );
 
-	QObject::connect( &m_gModel, SIGNAL(samplesChanged(int,int)),
+	QObject::connect( m_gModel, SIGNAL(samplesChanged(int,int)),
 			this, SLOT(updateGraph(int,int)));
 
-	QObject::connect( &m_gModel, SIGNAL(lengthChanged()),
+	QObject::connect( m_gModel, SIGNAL(lengthChanged()),
 			this, SLOT(updateGraph()));
-	QObject::connect( &m_gModel, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( &m_gModel, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_gModel, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_gModel, SIGNAL(propertiesChanged()), this, SLOT(update()));
 }
 
 void Graph::setForeground( const QPixmap &_pixmap )

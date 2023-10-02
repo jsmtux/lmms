@@ -158,7 +158,7 @@ public:
 	 * @param _width Pixel width of widget
 	 * @param _height Pixel height of widget
 	 */
-	Graph( QWidget * _parent, graphStyle _style = Graph::LinearStyle,
+	Graph( graphModel* _model, QWidget * _parent, graphStyle _style = Graph::LinearStyle,
 		int _width = 132,
 		int _height = 104
 	);
@@ -171,7 +171,7 @@ public:
 
 	inline graphModel * model()
 	{
-		return &m_gModel;
+		return m_gModel;
 	}
 
 	inline graphStyle getGraphStyle()
@@ -205,7 +205,7 @@ private:
 	void changeSampleAt( int _x, int _y );
 	void drawLineAt( int _x, int _y, int _lastx );
 
-	graphModel m_gModel;
+	graphModel* m_gModel;
 
 	QPixmap m_foreground;
 	QColor m_graphColor;

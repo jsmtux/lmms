@@ -25,6 +25,7 @@
 #define _VIBED_H
 
 #include "NineButtonSelector.h"
+#include "widgets/Graph.h"
 
 #include "instrument/InstrumentView.h"
 #include "plugins/QWidgetInstrumentPlugin.h"
@@ -78,7 +79,7 @@ private:
 	QList<FloatModel*> m_randomKnobs;
 	QList<FloatModel*> m_lengthKnobs;
 	QList<BoolModel*> m_powerButtons;
-	QList<graphModel*> m_graphs;
+	QList<gui::graphModel*> m_graphs;
 	QList<BoolModel*> m_impulses;
 	QList<gui::NineButtonSelectorModel*> m_harmonics;
 
@@ -116,18 +117,18 @@ protected slots:
 
 private:
 	// String-related
-	Knob * m_pickKnob;
-	Knob * m_pickupKnob;
-	Knob * m_stiffnessKnob;
-	Knob * m_volumeKnob;
-	Knob * m_panKnob;
-	Knob * m_detuneKnob;
-	Knob * m_randomKnob;
-	Knob * m_lengthKnob;
-	Graph * m_graph;
-	NineButtonSelector * m_harmonic;
-	LedCheckBox * m_impulse;
-	LedCheckBox * m_power;
+	QList<Knob*> m_pickKnobs;
+	QList<Knob*> m_pickupKnobs;
+	QList<Knob*> m_stiffnessKnobs;
+	QList<Knob*> m_volumeKnobs;
+	QList<Knob*> m_panKnobs;
+	QList<Knob*> m_detuneKnobs;
+	QList<Knob*> m_randomKnobs;
+	QList<Knob*> m_lengthKnobs;
+	QList<Graph*> m_graphs;
+	QList<NineButtonSelector*> m_harmonics;
+	QList<LedCheckBox*> m_impulses;
+	QList<LedCheckBox*> m_powers;
 
 	// Not in model
 	NineButtonSelector * m_stringSelector;
@@ -142,7 +143,7 @@ private:
 	PixmapButton * m_whiteNoiseWaveBtn;
 	PixmapButton * m_usrWaveBtn;
 
-
+	int m_prevString;
 };
 
 

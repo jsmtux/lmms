@@ -754,17 +754,17 @@ NesInstrumentView::NesInstrumentView( NesInstrument * instrument,	QWidget * pare
 	
 	// channel 1
 	
-	makeknob( m_ch1VolumeKnob, KNOB_X1, KNOB_Y1, tr( "Volume" ), "", "" )
-	makeknob( m_ch1CrsKnob, KNOB_X2, KNOB_Y1, tr( "Coarse detune" ), "", "" )
-	makeknob( m_ch1EnvLenKnob, KNOB_X3, KNOB_Y1, tr( "Envelope length" ), "", "" )
+	makeknob( &m_instrument->m_ch1Volume, m_ch1VolumeKnob, KNOB_X1, KNOB_Y1, tr( "Volume" ), "", "" )
+	makeknob( &m_instrument->m_ch1Crs, m_ch1CrsKnob, KNOB_X2, KNOB_Y1, tr( "Coarse detune" ), "", "" )
+	makeknob( &m_instrument->m_ch1EnvLen, m_ch1EnvLenKnob, KNOB_X3, KNOB_Y1, tr( "Envelope length" ), "", "" )
 	
-	makenesled( m_ch1EnabledBtn, KNOB_X1, KNOB_Y1 - 12, tr( "Enable channel 1" ) )
-	makenesled( m_ch1EnvEnabledBtn, KNOB_X3, KNOB_Y1 - 12, tr( "Enable envelope 1" ) )
-	makenesled( m_ch1EnvLoopedBtn, 129, KNOB_Y1 - 12, tr( "Enable envelope 1 loop" ) )
+	makenesled( &m_instrument->m_ch1Enabled, m_ch1EnabledBtn, KNOB_X1, KNOB_Y1 - 12, tr( "Enable channel 1" ) )
+	makenesled( &m_instrument->m_ch1EnvEnabled, m_ch1EnvEnabledBtn, KNOB_X3, KNOB_Y1 - 12, tr( "Enable envelope 1" ) )
+	makenesled( &m_instrument->m_ch1EnvLooped, m_ch1EnvLoopedBtn, 129, KNOB_Y1 - 12, tr( "Enable envelope 1 loop" ) )
 
-	makenesled( m_ch1SweepEnabledBtn, KNOB_X6, KNOB_Y1 - 12, tr( "Enable sweep 1" ) )
-	makeknob( m_ch1SweepAmtKnob, KNOB_X6, KNOB_Y1, tr( "Sweep amount" ), "", "" )
-	makeknob( m_ch1SweepRateKnob, KNOB_X7, KNOB_Y1, tr( "Sweep rate" ), "", "" )
+	makenesled( &m_instrument->m_ch1SweepEnabled, m_ch1SweepEnabledBtn, KNOB_X6, KNOB_Y1 - 12, tr( "Enable sweep 1" ) )
+	makeknob( &m_instrument->m_ch1SweepAmt, m_ch1SweepAmtKnob, KNOB_X6, KNOB_Y1, tr( "Sweep amount" ), "", "" )
+	makeknob( &m_instrument->m_ch1SweepRate, m_ch1SweepRateKnob, KNOB_X7, KNOB_Y1, tr( "Sweep rate" ), "", "" )
 
 	int dcx = 117;
 	makedcled( ch1_dc1, dcx, 42, tr( "12.5% Duty cycle" ), "nesdc1_on" )
@@ -775,27 +775,26 @@ NesInstrumentView::NesInstrumentView( NesInstrument * instrument,	QWidget * pare
 	dcx += 13;
 	makedcled( ch1_dc4, dcx, 42, tr( "75% Duty cycle" ), "nesdc4_on" )
 		
-	m_ch1DutyCycleGrp = new automatableButtonGroup( this );
+	m_ch1DutyCycleGrp = new automatableButtonGroup( &m_instrument->m_ch1DutyCycle, this );
 	m_ch1DutyCycleGrp -> addButton( ch1_dc1 );
 	m_ch1DutyCycleGrp -> addButton( ch1_dc2 );
 	m_ch1DutyCycleGrp -> addButton( ch1_dc3 );
 	m_ch1DutyCycleGrp -> addButton( ch1_dc4 );
-	
 
 	
 	// channel 2
 	
-	makeknob( m_ch2VolumeKnob, KNOB_X1, KNOB_Y2, tr( "Volume" ), "", "" )
-	makeknob( m_ch2CrsKnob, KNOB_X2, KNOB_Y2, tr( "Coarse detune" ), "", "" )
-	makeknob( m_ch2EnvLenKnob, KNOB_X3, KNOB_Y2, tr( "Envelope length" ), "", "" )
+	makeknob( &m_instrument->m_ch2Volume, m_ch2VolumeKnob, KNOB_X1, KNOB_Y2, tr( "Volume" ), "", "" )
+	makeknob( &m_instrument->m_ch2Crs , m_ch2CrsKnob, KNOB_X2, KNOB_Y2, tr( "Coarse detune" ), "", "" )
+	makeknob( &m_instrument->m_ch2EnvLen, m_ch2EnvLenKnob, KNOB_X3, KNOB_Y2, tr( "Envelope length" ), "", "" )
 	
-	makenesled( m_ch2EnabledBtn, KNOB_X1, KNOB_Y2 - 12, tr( "Enable channel 2" ) )
-	makenesled( m_ch2EnvEnabledBtn, KNOB_X3, KNOB_Y2 - 12, tr( "Enable envelope 2" ) )
-	makenesled( m_ch2EnvLoopedBtn, 129, KNOB_Y2 - 12, tr( "Enable envelope 2 loop" ) )
+	makenesled( &m_instrument->m_ch2Enabled, m_ch2EnabledBtn, KNOB_X1, KNOB_Y2 - 12, tr( "Enable channel 2" ) )
+	makenesled( &m_instrument->m_ch2EnvEnabled, m_ch2EnvEnabledBtn, KNOB_X3, KNOB_Y2 - 12, tr( "Enable envelope 2" ) )
+	makenesled( &m_instrument->m_ch2EnvLooped, m_ch2EnvLoopedBtn, 129, KNOB_Y2 - 12, tr( "Enable envelope 2 loop" ) )
 
-	makenesled( m_ch2SweepEnabledBtn, KNOB_X6, KNOB_Y2 - 12, tr( "Enable sweep 2" ) )
-	makeknob( m_ch2SweepAmtKnob, KNOB_X6, KNOB_Y2, tr( "Sweep amount" ), "", "" )
-	makeknob( m_ch2SweepRateKnob, KNOB_X7, KNOB_Y2, tr( "Sweep rate" ), "", "" )
+	makenesled( &m_instrument->m_ch2SweepEnabled, m_ch2SweepEnabledBtn, KNOB_X6, KNOB_Y2 - 12, tr( "Enable sweep 2" ) )
+	makeknob( &m_instrument->m_ch2SweepAmt, m_ch2SweepAmtKnob, KNOB_X6, KNOB_Y2, tr( "Sweep amount" ), "", "" )
+	makeknob( &m_instrument->m_ch2SweepRate, m_ch2SweepRateKnob, KNOB_X7, KNOB_Y2, tr( "Sweep rate" ), "", "" )
 
 	dcx = 117;
 	makedcled( ch2_dc1, dcx, 99, tr( "12.5% Duty cycle" ), "nesdc1_on" )
@@ -806,7 +805,7 @@ NesInstrumentView::NesInstrumentView( NesInstrument * instrument,	QWidget * pare
 	dcx += 13;
 	makedcled( ch2_dc4, dcx, 99, tr( "75% Duty cycle" ), "nesdc4_on" )
 		
-	m_ch2DutyCycleGrp = new automatableButtonGroup( this );
+	m_ch2DutyCycleGrp = new automatableButtonGroup( &m_instrument->m_ch2DutyCycle, this );
 	m_ch2DutyCycleGrp -> addButton( ch2_dc1 );
 	m_ch2DutyCycleGrp -> addButton( ch2_dc2 );
 	m_ch2DutyCycleGrp -> addButton( ch2_dc3 );
@@ -815,83 +814,28 @@ NesInstrumentView::NesInstrumentView( NesInstrument * instrument,	QWidget * pare
 
 	
 	//channel 3
-	makenesled( m_ch3EnabledBtn, KNOB_X1, KNOB_Y3 - 12, tr( "Enable channel 3" ) )
-	makeknob( m_ch3VolumeKnob, KNOB_X1, KNOB_Y3, tr( "Volume" ), "", "" )
-	makeknob( m_ch3CrsKnob, KNOB_X2, KNOB_Y3, tr( "Coarse detune" ), "", "" )
-	
+	makenesled( &m_instrument->m_ch3Enabled, m_ch3EnabledBtn, KNOB_X1, KNOB_Y3 - 12, tr( "Enable channel 3" ) )
+	makeknob( &m_instrument->m_ch3Volume, m_ch3VolumeKnob, KNOB_X1, KNOB_Y3, tr( "Volume" ), "", "" )
+	makeknob( &m_instrument->m_ch3Crs, m_ch3CrsKnob, KNOB_X2, KNOB_Y3, tr( "Coarse detune" ), "", "" )	
 
 	//channel 4
-	makeknob( m_ch4VolumeKnob, KNOB_X1, KNOB_Y4, tr( "Volume" ), "", "" )
-	makeknob( m_ch4NoiseFreqKnob, KNOB_X2, KNOB_Y4, tr( "Noise Frequency" ), "", "" )
-	makeknob( m_ch4EnvLenKnob, KNOB_X3, KNOB_Y4, tr( "Envelope length" ), "", "" )
-	makeknob( m_ch4SweepKnob, KNOB_X4, KNOB_Y4, tr( "Frequency sweep" ), "", "" )
+	makeknob( &m_instrument->m_ch4Volume, m_ch4VolumeKnob, KNOB_X1, KNOB_Y4, tr( "Volume" ), "", "" )
+	makeknob( &m_instrument->m_ch4NoiseFreq, m_ch4NoiseFreqKnob, KNOB_X2, KNOB_Y4, tr( "Noise Frequency" ), "", "" )
+	makeknob( &m_instrument->m_ch4EnvLen, m_ch4EnvLenKnob, KNOB_X3, KNOB_Y4, tr( "Envelope length" ), "", "" )
+	makeknob( &m_instrument->m_ch4Sweep, m_ch4SweepKnob, KNOB_X4, KNOB_Y4, tr( "Frequency sweep" ), "", "" )
 	
-	makenesled( m_ch4EnabledBtn, KNOB_X1, KNOB_Y4 - 12, tr( "Enable channel 4" ) )
-	makenesled( m_ch4EnvEnabledBtn, KNOB_X3, KNOB_Y4 - 12, tr( "Enable envelope 4" ) )
-	makenesled( m_ch4EnvLoopedBtn, 129, KNOB_Y4 - 12, tr( "Enable envelope 4 loop" ) )
+	makenesled( &m_instrument->m_ch4Enabled, m_ch4EnabledBtn, KNOB_X1, KNOB_Y4 - 12, tr( "Enable channel 4" ) )
+	makenesled( &m_instrument->m_ch4EnvEnabled, m_ch4EnvEnabledBtn, KNOB_X3, KNOB_Y4 - 12, tr( "Enable envelope 4" ) )
+	makenesled( &m_instrument->m_ch4EnvLooped, m_ch4EnvLoopedBtn, 129, KNOB_Y4 - 12, tr( "Enable envelope 4 loop" ) )
 
-	makenesled( m_ch4NoiseQuantizeBtn, 162, KNOB_Y4 - 12, tr( "Quantize noise frequency when using note frequency" ) )
+	makenesled( &m_instrument->m_ch4NoiseQuantize, m_ch4NoiseQuantizeBtn, 162, KNOB_Y4 - 12, tr( "Quantize noise frequency when using note frequency" ) )
 	
-	makenesled( m_ch4NoiseFreqModeBtn,  148, 203, tr( "Use note frequency for noise" ) )
-	makenesled( m_ch4NoiseModeBtn, 148, 224, tr( "Noise mode" ) )
-
+	makenesled( &m_instrument->m_ch4NoiseFreqMode, m_ch4NoiseFreqModeBtn,  148, 203, tr( "Use note frequency for noise" ) )
+	makenesled( &m_instrument->m_ch4NoiseMode, m_ch4NoiseModeBtn, 148, 224, tr( "Noise mode" ) )
 	
 	//master
-	makeknob( m_masterVolKnob, KNOB_X4, KNOB_Y3, tr( "Master volume" ), "", "" )
-	makeknob( m_vibratoKnob, KNOB_X5, KNOB_Y3, tr( "Vibrato" ), "", "" )
-
-	m_ch1EnabledBtn->setModel( &m_instrument->m_ch1Enabled );
-	m_ch1CrsKnob->setModel( &m_instrument->m_ch1Crs );
-	m_ch1VolumeKnob->setModel( &m_instrument->m_ch1Volume );
-
-	m_ch1EnvEnabledBtn->setModel( &m_instrument->m_ch1EnvEnabled );
-	m_ch1EnvLoopedBtn->setModel( &m_instrument->m_ch1EnvLooped );
-	m_ch1EnvLenKnob->setModel( &m_instrument->m_ch1EnvLen );
-
-	m_ch1DutyCycleGrp->setModel( &m_instrument->m_ch1DutyCycle );
-
-	m_ch1SweepEnabledBtn->setModel( &m_instrument->m_ch1SweepEnabled );
-	m_ch1SweepAmtKnob->setModel( &m_instrument->m_ch1SweepAmt );
-	m_ch1SweepRateKnob->setModel( &m_instrument->m_ch1SweepRate );
-
-	// channel 2
-	m_ch2EnabledBtn->setModel( &m_instrument->m_ch2Enabled );
-	m_ch2CrsKnob->setModel( &m_instrument->m_ch2Crs );
-	m_ch2VolumeKnob->setModel( &m_instrument->m_ch2Volume );
-
-	m_ch2EnvEnabledBtn->setModel( &m_instrument->m_ch2EnvEnabled );
-	m_ch2EnvLoopedBtn->setModel( &m_instrument->m_ch2EnvLooped );
-	m_ch2EnvLenKnob->setModel( &m_instrument->m_ch2EnvLen );
-
-	m_ch2DutyCycleGrp->setModel( &m_instrument->m_ch2DutyCycle );
-
-	m_ch2SweepEnabledBtn->setModel( &m_instrument->m_ch2SweepEnabled );
-	m_ch2SweepAmtKnob->setModel( &m_instrument->m_ch2SweepAmt );
-	m_ch2SweepRateKnob->setModel( &m_instrument->m_ch2SweepRate );
-
-	//channel 3
-	m_ch3EnabledBtn->setModel( &m_instrument->m_ch3Enabled );
-	m_ch3CrsKnob->setModel( &m_instrument->m_ch3Crs );
-	m_ch3VolumeKnob->setModel( &m_instrument->m_ch3Volume );
-
-	//channel 4
-	m_ch4EnabledBtn->setModel( &m_instrument->m_ch4Enabled );
-	m_ch4VolumeKnob->setModel( &m_instrument->m_ch4Volume );
-
-	m_ch4EnvEnabledBtn->setModel( &m_instrument->m_ch4EnvEnabled );
-	m_ch4EnvLoopedBtn->setModel( &m_instrument->m_ch4EnvLooped );
-	m_ch4EnvLenKnob->setModel( &m_instrument->m_ch4EnvLen );
-
-	m_ch4NoiseModeBtn->setModel( &m_instrument->m_ch4NoiseMode );
-	m_ch4NoiseFreqModeBtn->setModel( &m_instrument->m_ch4NoiseFreqMode );
-	m_ch4NoiseFreqKnob->setModel( &m_instrument->m_ch4NoiseFreq );
-
-	m_ch4SweepKnob->setModel( &m_instrument->m_ch4Sweep );
-	m_ch4NoiseQuantizeBtn->setModel( &m_instrument->m_ch4NoiseQuantize );
-
-	//master
-	m_masterVolKnob->setModel( &m_instrument->m_masterVol );
-	m_vibratoKnob->setModel( &m_instrument->m_vibrato );	
+	makeknob( &m_instrument->m_masterVol, m_masterVolKnob, KNOB_X4, KNOB_Y3, tr( "Master volume" ), "", "" )
+	makeknob( &m_instrument->m_vibrato, m_vibratoKnob, KNOB_X5, KNOB_Y3, tr( "Vibrato" ), "", "" )
 }
 
 } // namespace gui

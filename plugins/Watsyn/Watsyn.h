@@ -41,15 +41,15 @@ namespace lmms
 {
 
 
-#define makeknob( name, x, y, hint, unit, oname ) 		\
-	name = new Knob( knobStyled, this ); 				\
+#define makeknob( model, name, x, y, hint, unit, oname ) 		\
+	name = new Knob( knobStyled, model, this ); 				\
 	name ->move( x, y );								\
 	name ->setHintText( hint, unit );		\
 	name ->setObjectName( oname );						\
 	name ->setFixedSize( 19, 19 );
 
-#define maketsknob( name, x, y, hint, unit, oname ) 		\
-	name = new TempoSyncKnob( knobStyled, this ); 				\
+#define maketsknob( model, name, x, y, hint, unit, oname ) 		\
+	name = new TempoSyncKnob( knobStyled, model, this ); 				\
 	name ->move( x, y );								\
 	name ->setHintText( hint, unit );		\
 	name ->setObjectName( oname );						\
@@ -273,10 +273,10 @@ private:
 	FloatModel b1_rtune;
 	FloatModel b2_rtune;
 
-	graphModel a1_graph;
-	graphModel a2_graph;
-	graphModel b1_graph;
-	graphModel b2_graph;
+	gui::graphModel a1_graph;
+	gui::graphModel a2_graph;
+	gui::graphModel b1_graph;
+	gui::graphModel b2_graph;
 
 	FloatModel m_abmix;
 

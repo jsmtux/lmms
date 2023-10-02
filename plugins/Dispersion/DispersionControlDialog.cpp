@@ -45,36 +45,31 @@ DispersionControlDialog::DispersionControlDialog(DispersionControls* controls) :
 	setPalette(pal);
 	setFixedSize(207, 50);
 
-	LcdSpinBox * m_amountBox = new LcdSpinBox(3, this, "Amount");
-	m_amountBox->setModel(&controls->m_amountModel);
+	LcdSpinBox * m_amountBox = new LcdSpinBox(3, &controls->m_amountModel, this, "Amount");
 	m_amountBox->move(5, 10);
 	m_amountBox->setLabel(tr("AMOUNT"));
 	m_amountBox->setToolTip(tr("Number of all-pass filters"));
 	
-	Knob * freqKnob = new Knob(knobBright_26, this);
+	Knob * freqKnob = new Knob(knobBright_26, &controls->m_freqModel, this);
 	freqKnob->move(59, 8);
-	freqKnob->setModel(&controls->m_freqModel);
 	freqKnob->setLabel(tr("FREQ"));
 	freqKnob->setHintText(tr("Frequency:") , " Hz");
 	
-	Knob * resoKnob = new Knob(knobBright_26, this);
+	Knob * resoKnob = new Knob(knobBright_26, &controls->m_resoModel, this);
 	resoKnob->move(99, 8);
-	resoKnob->setModel(&controls->m_resoModel);
 	resoKnob->setLabel(tr("RESO"));
 	resoKnob->setHintText(tr("Resonance:") , " octaves");
 	
-	Knob * feedbackKnob = new Knob(knobBright_26, this);
+	Knob * feedbackKnob = new Knob(knobBright_26, &controls->m_feedbackModel, this);
 	feedbackKnob->move(139, 8);
-	feedbackKnob->setModel(&controls->m_feedbackModel);
 	feedbackKnob->setLabel(tr("FEED"));
 	feedbackKnob->setHintText(tr("Feedback:") , "");
 	
-	PixmapButton * dcButton = new PixmapButton(this, tr("DC Offset Removal"));
+	PixmapButton * dcButton = new PixmapButton(this, &controls->m_dcModel, tr("DC Offset Removal"));
 	dcButton->move(176, 16);
 	dcButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("dc_active"));
 	dcButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("dc_inactive"));
 	dcButton->setCheckable(true);
-	dcButton->setModel(&controls->m_dcModel);
 	dcButton->setToolTip(tr("Remove DC Offset"));
 }
 

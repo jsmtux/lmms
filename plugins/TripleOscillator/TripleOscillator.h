@@ -165,47 +165,6 @@ public:
 private:
 	automatableButtonGroup * m_mod1BtnGrp;
 	automatableButtonGroup * m_mod2BtnGrp;
-
-	struct OscillatorKnobs
-	{
-		MM_OPERATORS
-		OscillatorKnobs( Knob * v,
-					Knob * p,
-					Knob * c,
-					Knob * fl,
-					Knob * fr,
-					Knob * po,
-					Knob * spd,
-					PixmapButton * uwb,
-					automatableButtonGroup * wsbg,
-					PixmapButton * wt) :
-			m_volKnob( v ),
-			m_panKnob( p ),
-			m_coarseKnob( c ),
-			m_fineLeftKnob( fl ),
-			m_fineRightKnob( fr ),
-			m_phaseOffsetKnob( po ),
-			m_stereoPhaseDetuningKnob( spd ),
-			m_userWaveButton( uwb ),
-			m_waveShapeBtnGrp( wsbg ),
-			m_multiBandWaveTableButton( wt )
-		{
-		}
-		OscillatorKnobs() = default;
-		Knob * m_volKnob;
-		Knob * m_panKnob;
-		Knob * m_coarseKnob;
-		Knob * m_fineLeftKnob;
-		Knob * m_fineRightKnob;
-		Knob * m_phaseOffsetKnob;
-		Knob * m_stereoPhaseDetuningKnob;
-		PixmapButton * m_userWaveButton;
-		automatableButtonGroup * m_waveShapeBtnGrp;
-		PixmapButton * m_multiBandWaveTableButton;
-
-	} ;
-
-	OscillatorKnobs m_oscKnobs[NUM_OF_OSCILLATORS];
 } ;
 
 

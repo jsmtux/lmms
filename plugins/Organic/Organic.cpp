@@ -410,8 +410,8 @@ namespace gui
 class OrganicKnob : public Knob
 {
 public:
-	OrganicKnob( QWidget * _parent ) :
-		Knob( knobStyled, _parent )
+	OrganicKnob( FloatModel* _model, QWidget * _parent ) :
+		Knob( knobStyled, _model, _parent )
 	{
 		setFixedSize( 21, 21 );
 	}
@@ -431,14 +431,14 @@ OrganicInstrumentView::OrganicInstrumentView( OrganicInstrument * _instrument,
 	setPalette( pal );
 
 	// setup knob for FX1
-	m_fx1Knob = new OrganicKnob( this );
+	m_fx1Knob = new OrganicKnob( &m_instrument->m_fx1Model, this );
 	m_fx1Knob->move( 15, 201 );
 	m_fx1Knob->setFixedSize( 37, 47 );
 	m_fx1Knob->setHintText( tr( "Distortion:" ), QString() );
 	m_fx1Knob->setObjectName( "fx1Knob" );
 
 	// setup volume-knob
-	m_volKnob = new OrganicKnob( this );
+	m_volKnob = new OrganicKnob( &m_instrument->m_volModel, this );
 	m_volKnob->setVolumeKnob( true );
 	m_volKnob->move( 60, 201 );
 	m_volKnob->setFixedSize( 37, 47 );
@@ -446,7 +446,7 @@ OrganicInstrumentView::OrganicInstrumentView( OrganicInstrument * _instrument,
 	m_volKnob->setObjectName( "volKnob" );
 
 	// randomise
-	m_randBtn = new PixmapButton( this, tr( "Randomise" ) );
+	m_randBtn = new PixmapButton( this, new BoolModel(false, this), tr( "Randomise" ) );
 	m_randBtn->move( 148, 224 );
 	m_randBtn->setActiveGraphic( PLUGIN_NAME::getIconPixmap(
 							"randomise_pressed" ) );
@@ -471,9 +471,6 @@ OrganicInstrumentView::OrganicInstrumentView( OrganicInstrument * _instrument,
 
 	m_numOscillators = m_instrument->m_numOscillators;
 
-	m_fx1Knob->setModel( &m_instrument->m_fx1Model );
-	m_volKnob->setModel( &m_instrument->m_volModel );
-
 	if( m_oscKnobs != nullptr )
 	{
 		delete[] m_oscKnobs;
@@ -485,14 +482,14 @@ OrganicInstrumentView::OrganicInstrumentView( OrganicInstrument * _instrument,
 	for( int i = 0; i < m_numOscillators; ++i )
 	{
 		// setup harmonic knob
-		Knob * harmKnob = new OrganicKnob( this );
+		Knob * harmKnob = new OrganicKnob( &m_instrument->m_osc[i]->m_harmModel, this );
 		harmKnob->move( x + i * colWidth, y - rowHeight );
 		harmKnob->setObjectName( "harmKnob" );
 		connect( &m_instrument->m_osc[i]->m_harmModel, SIGNAL( dataChanged() ),
 			this, SLOT( updateKnobHint() ) );
 
 		// setup waveform-knob
-		Knob * oscKnob = new OrganicKnob( this );
+		Knob * oscKnob = new OrganicKnob( &m_instrument->m_osc[i]->m_oscModel, this );
 		oscKnob->move( x + i * colWidth, y );
 		connect( &m_instrument->m_osc[i]->m_oscModel, SIGNAL( dataChanged() ),
 			this, SLOT( updateKnobHint() ) );
@@ -500,7 +497,7 @@ OrganicInstrumentView::OrganicInstrumentView( OrganicInstrument * _instrument,
 		oscKnob->setHintText( tr( "Osc %1 waveform:" ).arg( i + 1 ), QString() );
 
 		// setup volume-knob
-		auto volKnob = new Knob(knobStyled, this);
+		auto volKnob = new Knob(knobStyled, &m_instrument->m_osc[i]->m_volModel, this);
 		volKnob->setVolumeKnob( true );
 		volKnob->move( x + i * colWidth, y + rowHeight*1 );
 		volKnob->setFixedSize( 21, 21 );
@@ -508,26 +505,19 @@ OrganicInstrumentView::OrganicInstrumentView( OrganicInstrument * _instrument,
 								i + 1 ), "%" );
 
 		// setup panning-knob
-		Knob * panKnob = new OrganicKnob( this );
+		Knob * panKnob = new OrganicKnob( &m_instrument->m_osc[i]->m_panModel, this );
 		panKnob->move( x + i  * colWidth, y + rowHeight*2 );
 		panKnob->setHintText( tr("Osc %1 panning:").arg(
 								i + 1 ), "" );
 
 		// setup knob for fine-detuning
-		Knob * detuneKnob = new OrganicKnob( this );
+		Knob * detuneKnob = new OrganicKnob( &m_instrument->m_osc[i]->m_detuneModel, this );
 		detuneKnob->move( x + i * colWidth, y + rowHeight*3 );
 		detuneKnob->setHintText( tr( "Osc %1 stereo detuning" ).arg( i + 1 )
 							, " " +
 							tr( "cents" ) );
 
 		m_oscKnobs[i] = OscillatorKnobs( harmKnob, volKnob, oscKnob, panKnob, detuneKnob );
-
-		// Attach to models
-		m_oscKnobs[i].m_harmKnob->setModel( &m_instrument->m_osc[i]->m_harmModel );
-		m_oscKnobs[i].m_volKnob->setModel( &m_instrument->m_osc[i]->m_volModel );
-		m_oscKnobs[i].m_oscKnob->setModel( &m_instrument->m_osc[i]->m_oscModel );
-		m_oscKnobs[i].m_panKnob->setModel( &m_instrument->m_osc[i]->m_panModel );
-		m_oscKnobs[i].m_detuneKnob->setModel( &m_instrument->m_osc[i]->m_detuneModel );
 	}
 	updateKnobHint();
 }

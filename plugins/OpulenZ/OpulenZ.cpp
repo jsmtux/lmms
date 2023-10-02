@@ -685,8 +685,8 @@ OpulenzInstrumentView::OpulenzInstrumentView( OpulenzInstrument * _instrument,
         InstrumentViewImpl( _instrument, _parent, true )
 {
 
-#define KNOB_GEN(knobname, hinttext, hintunit,xpos,ypos) \
-	knobname = new Knob( knobStyled, this );\
+#define KNOB_GEN(model, knobname, hinttext, hintunit,xpos,ypos) \
+	knobname = new Knob( knobStyled, model, this );\
 	knobname->setHintText( tr(hinttext), hintunit );\
 	knobname->setFixedSize(22,22);\
 	knobname->setCenterPointX(11.0);\
@@ -694,8 +694,8 @@ OpulenzInstrumentView::OpulenzInstrumentView( OpulenzInstrument * _instrument,
 	knobname->setTotalAngle(270.0);\
 	knobname->move(xpos,ypos);
 
-#define BUTTON_GEN(buttname, tooltip, xpos, ypos) \
-	buttname = new PixmapButton( this, nullptr );\
+#define BUTTON_GEN(model, buttname, tooltip, xpos, ypos) \
+	buttname = new PixmapButton( this, model );\
         buttname->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "led_on" ) );\
         buttname->setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "led_off" ) );\
 	buttname->setCheckable( true );\
@@ -703,58 +703,57 @@ OpulenzInstrumentView::OpulenzInstrumentView( OpulenzInstrument * _instrument,
         buttname->move( xpos, ypos );
 
 #define WAVEBUTTON_GEN(buttname, tooltip, xpos, ypos, icon_on, icon_off, buttgroup) \
-	buttname = new PixmapButton( this, nullptr );\
+	buttname = new PixmapButton( this, new BoolModel(false, this) );\
         buttname->setActiveGraphic( PLUGIN_NAME::getIconPixmap( icon_on ) ); \
         buttname->setInactiveGraphic( PLUGIN_NAME::getIconPixmap( icon_off ) ); \
         buttname->setToolTip(tr(tooltip));\
         buttname->move( xpos, ypos );\
 	buttgroup->addButton(buttname);
 
+	// m_patch->setModel( &m->m_patchModel );
 
 	// OP1 knobs & buttons...
-	KNOB_GEN(op1_a_kn, "Attack", "", 6, 48);
-	KNOB_GEN(op1_d_kn, "Decay", "", 34, 48);
-	KNOB_GEN(op1_s_kn, "Sustain", "", 62, 48);
-	KNOB_GEN(op1_r_kn, "Release", "", 90, 48);
-	KNOB_GEN(op1_lvl_kn, "Level", "", 166, 48);
-	KNOB_GEN(op1_scale_kn, "Scale", "", 194, 48);
-	KNOB_GEN(op1_mul_kn, "Frequency multiplier", "", 222, 48);
-	BUTTON_GEN(op1_ksr_btn, "Keyboard scaling rate", 9, 87);
-	BUTTON_GEN(op1_perc_btn, "Percussive envelope", 36, 87);
-	BUTTON_GEN(op1_trem_btn, "Tremolo", 65, 87);
-	BUTTON_GEN(op1_vib_btn, "Vibrato", 93, 87);
-	KNOB_GEN(feedback_kn, "Feedback", "", 128, 48);
+	KNOB_GEN(&m_instrument->op1_a_mdl, op1_a_kn, "Attack", "", 6, 48);
+	KNOB_GEN(&m_instrument->op1_d_mdl, op1_d_kn, "Decay", "", 34, 48);
+	KNOB_GEN(&m_instrument->op1_s_mdl, op1_s_kn, "Sustain", "", 62, 48);
+	KNOB_GEN(&m_instrument->op1_r_mdl, op1_r_kn, "Release", "", 90, 48);
+	KNOB_GEN(&m_instrument->op1_lvl_mdl, op1_lvl_kn, "Level", "", 166, 48);
+	KNOB_GEN(&m_instrument->op1_scale_mdl, op1_scale_kn, "Scale", "", 194, 48);
+	KNOB_GEN(&m_instrument->op1_mul_mdl, op1_mul_kn, "Frequency multiplier", "", 222, 48);
+	BUTTON_GEN(&m_instrument->op1_ksr_mdl, op1_ksr_btn, "Keyboard scaling rate", 9, 87);
+	BUTTON_GEN(&m_instrument->op1_perc_mdl, op1_perc_btn, "Percussive envelope", 36, 87);
+	BUTTON_GEN(&m_instrument->op1_trem_mdl, op1_trem_btn, "Tremolo", 65, 87);
+	BUTTON_GEN(&m_instrument->op1_vib_mdl, op1_vib_btn, "Vibrato", 93, 87);
+	KNOB_GEN(&m_instrument->feedback_mdl, feedback_kn, "Feedback", "", 128, 48);
 
-	op1_waveform = new automatableButtonGroup( this );
+	op1_waveform = new automatableButtonGroup( &m_instrument->op1_waveform_mdl, this );
 	WAVEBUTTON_GEN(op1_w0_btn,"Sine", 154, 86, "wave1_on", "wave1_off", op1_waveform);
 	WAVEBUTTON_GEN(op1_w1_btn,"Half sine", 178, 86, "wave2_on", "wave2_off", op1_waveform);
 	WAVEBUTTON_GEN(op1_w2_btn,"Absolute sine", 199, 86, "wave3_on", "wave3_off", op1_waveform);
 	WAVEBUTTON_GEN(op1_w3_btn,"Quarter sine", 220, 86, "wave4_on", "wave4_off", op1_waveform);
 
-
 	// And the same for OP2
-	KNOB_GEN(op2_a_kn, "Attack", "", 6, 138);
-	KNOB_GEN(op2_d_kn, "Decay", "", 34, 138);
-	KNOB_GEN(op2_s_kn, "Sustain", "", 62, 138);
-	KNOB_GEN(op2_r_kn, "Release", "", 90, 138);
-	KNOB_GEN(op2_lvl_kn, "Level", "", 166, 138);
-	KNOB_GEN(op2_scale_kn, "Scale", "", 194, 138);
-	KNOB_GEN(op2_mul_kn, "Frequency multiplier", "", 222, 138);
-	BUTTON_GEN(op2_ksr_btn, "Keyboard scaling rate", 9, 177);
-	BUTTON_GEN(op2_perc_btn, "Percussive envelope", 36, 177);
-	BUTTON_GEN(op2_trem_btn, "Tremolo", 65, 177);
-	BUTTON_GEN(op2_vib_btn, "Vibrato", 93, 177);
+	KNOB_GEN(&m_instrument->op2_a_mdl, op2_a_kn, "Attack", "", 6, 138);
+	KNOB_GEN(&m_instrument->op2_d_mdl, op2_d_kn, "Decay", "", 34, 138);
+	KNOB_GEN(&m_instrument->op2_s_mdl, op2_s_kn, "Sustain", "", 62, 138);
+	KNOB_GEN(&m_instrument->op2_r_mdl, op2_r_kn, "Release", "", 90, 138);
+	KNOB_GEN(&m_instrument->op2_lvl_mdl, op2_lvl_kn, "Level", "", 166, 138);
+	KNOB_GEN(&m_instrument->op2_scale_mdl, op2_scale_kn, "Scale", "", 194, 138);
+	KNOB_GEN(&m_instrument->op2_mul_mdl, op2_mul_kn, "Frequency multiplier", "", 222, 138);
+	BUTTON_GEN(&m_instrument->op2_ksr_mdl, op2_ksr_btn, "Keyboard scaling rate", 9, 177);
+	BUTTON_GEN(&m_instrument->op2_perc_mdl, op2_perc_btn, "Percussive envelope", 36, 177);
+	BUTTON_GEN(&m_instrument->op2_trem_mdl, op2_trem_btn, "Tremolo", 65, 177);
+	BUTTON_GEN(&m_instrument->op2_vib_mdl, op2_vib_btn, "Vibrato", 93, 177);
 
-	op2_waveform = new automatableButtonGroup( this );
+	op2_waveform = new automatableButtonGroup( &m_instrument->op2_waveform_mdl , this );
 	WAVEBUTTON_GEN(op2_w0_btn,"Sine", 154, 176, "wave1_on", "wave1_off", op2_waveform);
 	WAVEBUTTON_GEN(op2_w1_btn,"Half sine", 178, 176, "wave2_on", "wave2_off", op2_waveform);
 	WAVEBUTTON_GEN(op2_w2_btn,"Absolute sine", 199, 176, "wave3_on", "wave3_off", op2_waveform);
 	WAVEBUTTON_GEN(op2_w3_btn,"Quarter Sine", 220, 176, "wave4_on", "wave4_off", op2_waveform);
 
-	BUTTON_GEN(fm_btn, "FM", 9, 220);
-	BUTTON_GEN(vib_depth_btn, "Vibrato depth", 65, 220);
-	BUTTON_GEN(trem_depth_btn, "Tremolo depth", 93, 220);
-
+	BUTTON_GEN(&m_instrument->fm_mdl, fm_btn, "FM", 9, 220);
+	BUTTON_GEN(&m_instrument->vib_depth_mdl, vib_depth_btn, "Vibrato depth", 65, 220);
+	BUTTON_GEN(&m_instrument->trem_depth_mdl, trem_depth_btn, "Tremolo depth", 93, 220);
 
 	setAutoFillBackground( true );
         QPalette pal;
@@ -815,40 +814,6 @@ void OpulenzInstrumentView::updateKnobHints()
 			       " (" + QString::number(fmultipliers[(int)m_instrument->op1_mul_mdl.value()]) + " semitones)");
 	op2_mul_kn->setHintText( tr( "Frequency multiplier" ),
 			       " (" + QString::number(fmultipliers[(int)m_instrument->op2_mul_mdl.value()]) + " semitones)");
-
-	// m_patch->setModel( &m->m_patchModel );
-
-	op1_a_kn->setModel( &m_instrument->op1_a_mdl );
-	op1_d_kn->setModel( &m_instrument->op1_d_mdl );
-	op1_s_kn->setModel( &m_instrument->op1_s_mdl );
-	op1_r_kn->setModel( &m_instrument->op1_r_mdl );
-	op1_lvl_kn->setModel( &m_instrument->op1_lvl_mdl );
-	op1_scale_kn->setModel( &m_instrument->op1_scale_mdl );
-	op1_mul_kn->setModel( &m_instrument->op1_mul_mdl );
-	feedback_kn->setModel( &m_instrument->feedback_mdl );
-	op1_ksr_btn->setModel( &m_instrument->op1_ksr_mdl );
-	op1_perc_btn->setModel( &m_instrument->op1_perc_mdl );
-	op1_trem_btn->setModel( &m_instrument->op1_trem_mdl );
-	op1_vib_btn->setModel( &m_instrument->op1_vib_mdl );
-	op1_waveform->setModel( &m_instrument->op1_waveform_mdl );
-
-
-	op2_a_kn->setModel( &m_instrument->op2_a_mdl );
-	op2_d_kn->setModel( &m_instrument->op2_d_mdl );
-	op2_s_kn->setModel( &m_instrument->op2_s_mdl );
-	op2_r_kn->setModel( &m_instrument->op2_r_mdl );
-	op2_lvl_kn->setModel( &m_instrument->op2_lvl_mdl );
-	op2_scale_kn->setModel( &m_instrument->op2_scale_mdl );
-	op2_mul_kn->setModel( &m_instrument->op2_mul_mdl );
-	op2_ksr_btn->setModel( &m_instrument->op2_ksr_mdl );
-	op2_perc_btn->setModel( &m_instrument->op2_perc_mdl );
-	op2_trem_btn->setModel( &m_instrument->op2_trem_mdl );
-	op2_vib_btn->setModel( &m_instrument->op2_vib_mdl );
-	op2_waveform->setModel( &m_instrument->op2_waveform_mdl );
-
-	fm_btn->setModel( &m_instrument->fm_mdl );
-	vib_depth_btn->setModel( &m_instrument->vib_depth_mdl );
-	trem_depth_btn->setModel( &m_instrument->trem_depth_mdl );
 
 
 	// All knobs needing a user friendly unit

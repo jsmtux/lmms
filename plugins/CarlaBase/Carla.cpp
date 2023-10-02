@@ -1012,14 +1012,13 @@ void CarlaParamsView::refreshKnobs()
 	for (uint32_t i=0; i < m_carlaInstrument->m_paramModels.count(); ++i)
 	{
 		bool enabled = m_carlaInstrument->m_paramModels[i]->enabled();
-		m_knobs.push_back(new Knob(knobDark_28, m_inputScrollAreaWidgetContent));
+		m_knobs.push_back(new Knob(knobDark_28, m_carlaInstrument->m_paramModels[i], m_inputScrollAreaWidgetContent));
 		QString name = (*m_carlaInstrument->m_paramModels[i]).displayName();
 		m_knobs[i]->setHintText(name, "");
 		m_knobs[i]->setLabel(name);
 		m_knobs[i]->setObjectName(name); // this is being used for filtering the knobs.
 
 		// Set the newly created model to the knob.
-		m_knobs[i]->setModel(m_carlaInstrument->m_paramModels[i]);
 		m_knobs[i]->setEnabled(enabled);
 
 		if (enabled)

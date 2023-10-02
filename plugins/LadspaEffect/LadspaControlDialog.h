@@ -60,6 +60,7 @@ private slots:
 private:
 	QHBoxLayout * m_effectLayout;
 	LedCheckBox * m_stereoLink;
+	QHBoxLayout * m_centerLayout;
 
 } ;
 

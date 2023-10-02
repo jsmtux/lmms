@@ -228,8 +228,8 @@ namespace gui
 class KickerKnob : public Knob
 {
 public:
-	KickerKnob( QWidget * _parent ) :
-			Knob( knobStyled, _parent )
+	KickerKnob( FloatModel* _model, QWidget * _parent ) :
+			Knob( knobStyled, _model, _parent )
 	{
 		setFixedSize( 29, 29 );
 		setObjectName( "smallKnob" );
@@ -240,8 +240,8 @@ public:
 class KickerEnvKnob : public TempoSyncKnob
 {
 public:
-	KickerEnvKnob( QWidget * _parent ) :
-			TempoSyncKnob( knobStyled, _parent )
+	KickerEnvKnob( TempoSyncKnobModel* _model, QWidget * _parent ) :
+			TempoSyncKnob( knobStyled, _model, _parent )
 	{
 		setFixedSize( 29, 29 );
 		setObjectName( "smallKnob" );
@@ -252,8 +252,8 @@ public:
 class KickerLargeKnob : public Knob
 {
 public:
-	KickerLargeKnob( QWidget * _parent ) :
-			Knob( knobStyled, _parent )
+	KickerLargeKnob( FloatModel* _model, QWidget * _parent ) :
+			Knob( knobStyled, _model, _parent )
 	{
 		setFixedSize( 34, 34 );
 		setObjectName( "largeKnob" );
@@ -278,69 +278,56 @@ KickerInstrumentView::KickerInstrumentView( KickerInstrument * _instrument,
 	const int COL5 = COL4 + 41;
 	const int END_COL = COL1 + 48;
 	
-	m_startFreqKnob = new KickerLargeKnob( this );
+	m_startFreqKnob = new KickerLargeKnob(  &m_instrument->m_startFreqModel, this );
 	m_startFreqKnob->setHintText( tr( "Start frequency:" ), "Hz" );
 	m_startFreqKnob->move( COL1, ROW1 );
 
-	m_endFreqKnob = new KickerLargeKnob( this );
+	m_endFreqKnob = new KickerLargeKnob( &m_instrument->m_endFreqModel, this );
 	m_endFreqKnob->setHintText( tr( "End frequency:" ), "Hz" );
 	m_endFreqKnob->move( END_COL, ROW1 );
 
-	m_slopeKnob = new KickerKnob( this );
+	m_slopeKnob = new KickerKnob( &m_instrument->m_slopeModel, this );
 	m_slopeKnob->setHintText( tr( "Frequency slope:" ), "" );
 	m_slopeKnob->move( COL3, ROW1 );
 
-	m_gainKnob = new KickerKnob( this );
+	m_gainKnob = new KickerKnob( &m_instrument->m_gainModel, this );
 	m_gainKnob->setHintText( tr( "Gain:" ), "" );
 	m_gainKnob->move( COL1, ROW3 );
 
-	m_decayKnob = new KickerEnvKnob( this );
+	m_decayKnob = new KickerEnvKnob( &m_instrument->m_decayModel, this );
 	m_decayKnob->setHintText( tr( "Envelope length:" ), "ms" );
 	m_decayKnob->move( COL2, ROW3 );
 
-	m_envKnob = new KickerKnob( this );
+	m_envKnob = new KickerKnob( &m_instrument->m_envModel, this );
 	m_envKnob->setHintText( tr( "Envelope slope:" ), "" );
 	m_envKnob->move( COL3, ROW3 );
 
-	m_clickKnob = new KickerKnob( this );
+	m_clickKnob = new KickerKnob( &m_instrument->m_clickModel, this );
 	m_clickKnob->setHintText( tr( "Click:" ), "" );
 	m_clickKnob->move( COL5, ROW1 );
 
-	m_noiseKnob = new KickerKnob( this );
+	m_noiseKnob = new KickerKnob( &m_instrument->m_noiseModel, this );
 	m_noiseKnob->setHintText( tr( "Noise:" ), "" );
 	m_noiseKnob->move( COL5, ROW3 );
 
-	m_distKnob = new KickerKnob( this );
+	m_distKnob = new KickerKnob( &m_instrument->m_distModel, this );
 	m_distKnob->setHintText( tr( "Start distortion:" ), "" );
 	m_distKnob->move( COL4, ROW2 );
 
-	m_distEndKnob = new KickerKnob( this );
+	m_distEndKnob = new KickerKnob( &m_instrument->m_distEndModel, this );
 	m_distEndKnob->setHintText( tr( "End distortion:" ), "" );
 	m_distEndKnob->move( COL5, ROW2 );
 
-	m_startNoteToggle = new LedCheckBox( "", this, "", LedCheckBox::Green );
+	m_startNoteToggle = new LedCheckBox( "", &m_instrument->m_startNoteModel, this, "", LedCheckBox::Green );
 	m_startNoteToggle->move( COL1 + 8, LED_ROW );
 
-	m_endNoteToggle = new LedCheckBox( "", this, "", LedCheckBox::Green );
+	m_endNoteToggle = new LedCheckBox( "", &m_instrument->m_endNoteModel, this, "", LedCheckBox::Green );
 	m_endNoteToggle->move( END_COL + 8, LED_ROW );
 
 	setAutoFillBackground( true );
 	QPalette pal;
 	pal.setBrush( backgroundRole(), PLUGIN_NAME::getIconPixmap( "artwork" ) );
 	setPalette( pal );
-
-	m_startFreqKnob->setModel( &m_instrument->m_startFreqModel );
-	m_endFreqKnob->setModel( &m_instrument->m_endFreqModel );
-	m_decayKnob->setModel( &m_instrument->m_decayModel );
-	m_distKnob->setModel( &m_instrument->m_distModel );
-	m_distEndKnob->setModel( &m_instrument->m_distEndModel );
-	m_gainKnob->setModel( &m_instrument->m_gainModel );
-	m_envKnob->setModel( &m_instrument->m_envModel );
-	m_noiseKnob->setModel( &m_instrument->m_noiseModel );
-	m_clickKnob->setModel( &m_instrument->m_clickModel );
-	m_slopeKnob->setModel( &m_instrument->m_slopeModel );
-	m_startNoteToggle->setModel( &m_instrument->m_startNoteModel );
-	m_endNoteToggle->setModel( &m_instrument->m_endNoteModel );
 }
 
 

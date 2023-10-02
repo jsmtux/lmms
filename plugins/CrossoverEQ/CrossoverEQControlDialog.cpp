@@ -47,21 +47,18 @@ CrossoverEQControlDialog::CrossoverEQControlDialog( CrossoverEQControls * contro
 	setFixedSize( 167, 178 );
 	
 	// knobs
-	auto xover12 = new Knob(knobBright_26, this);
+	auto xover12 = new Knob(knobBright_26, & controls->m_xover12, this);
 	xover12->move( 29, 11 );
-	xover12->setModel( & controls->m_xover12 );
 	xover12->setLabel( "1/2" );
 	xover12->setHintText( tr( "Band 1/2 crossover:" ), " Hz" );
 
-	auto xover23 = new Knob(knobBright_26, this);
+	auto xover23 = new Knob(knobBright_26, & controls->m_xover23, this);
 	xover23->move( 69, 11 );
-	xover23->setModel( & controls->m_xover23 );
 	xover23->setLabel( "2/3" );
 	xover23->setHintText( tr( "Band 2/3 crossover:" ), " Hz" );
 
-	auto xover34 = new Knob(knobBright_26, this);
+	auto xover34 = new Knob(knobBright_26, & controls->m_xover34, this);
 	xover34->move( 109, 11 );
-	xover34->setModel( & controls->m_xover34 );
 	xover34->setLabel( "3/4" );
 	xover34->setHintText( tr( "Band 3/4 crossover:" ), " Hz" );
 	
@@ -91,24 +88,20 @@ CrossoverEQControlDialog::CrossoverEQControlDialog( CrossoverEQControls * contro
 	gain4->setHintText( tr( "Band 4 gain:" ), " dBFS" );
 	
 	// leds
-	auto mute1 = new LedCheckBox("", this, tr("Band 1 mute"), LedCheckBox::Green);
+	auto mute1 = new LedCheckBox("", & controls->m_mute1,this, tr("Band 1 mute"), LedCheckBox::Green);
 	mute1->move( 15, 154 );
-	mute1->setModel( & controls->m_mute1 );
 	mute1->setToolTip(tr("Mute band 1"));
 
-	auto mute2 = new LedCheckBox("", this, tr("Band 2 mute"), LedCheckBox::Green);
+	auto mute2 = new LedCheckBox("", & controls->m_mute2,this, tr("Band 2 mute"), LedCheckBox::Green);
 	mute2->move( 55, 154 );
-	mute2->setModel( & controls->m_mute2 );
 	mute2->setToolTip(tr("Mute band 2"));
 
-	auto mute3 = new LedCheckBox("", this, tr("Band 3 mute"), LedCheckBox::Green);
+	auto mute3 = new LedCheckBox("", & controls->m_mute3,this, tr("Band 3 mute"), LedCheckBox::Green);
 	mute3->move( 95, 154 );
-	mute3->setModel( & controls->m_mute3 );
 	mute3->setToolTip(tr("Mute band 3"));
 
-	auto mute4 = new LedCheckBox("", this, tr("Band 4 mute"), LedCheckBox::Green);
+	auto mute4 = new LedCheckBox("", & controls->m_mute4,this, tr("Band 4 mute"), LedCheckBox::Green);
 	mute4->move( 135, 154 );
-	mute4->setModel( & controls->m_mute4 );
 	mute4->setToolTip(tr("Mute band 4"));
 }
 
