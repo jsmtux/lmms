@@ -778,8 +778,7 @@ void FileBrowserTreeWidget::handleFile(FileItem * f, InstrumentTrack * it)
 			break;
 		}
 		case FileItem::ImportAsProject:
-			ImportFilter::import( f->fullName(),
-							Engine::getSong() );
+			ImportFilter::import( f->fullName(), &Engine::getSong()->trackContainer() );
 			break;
 
 		case FileItem::NotSupported:
@@ -809,7 +808,7 @@ void FileBrowserTreeWidget::activateListItem(QTreeWidgetItem * item,
 	}
 	else if( f->handling() != FileItem::NotSupported )
 	{
-		auto it = dynamic_cast<InstrumentTrack*>(Track::create(Track::InstrumentTrack, Engine::patternStore()));
+		auto it = dynamic_cast<InstrumentTrack*>(Track::create(Track::InstrumentTrack, &Engine::patternStore()->trackContainer()));
 		handleFile( f, it );
 	}
 }
@@ -832,8 +831,15 @@ void FileBrowserTreeWidget::openInNewInstrumentTrack(TrackContainer* tc, FileIte
 void FileBrowserTreeWidget::openInNewInstrumentTrack(FileItem* item, bool songEditor)
 {
 	// Get the correct TrackContainer. Ternary doesn't compile here
-	TrackContainer* tc = Engine::getSong();
-	if (!songEditor) { tc = Engine::patternStore(); }
+	TrackContainer* tc;
+	if (songEditor)
+	{
+		tc = &Engine::getSong()->trackContainer();
+	}
+	else
+	{
+		tc = &Engine::patternStore()->trackContainer();
+	}
 	openInNewInstrumentTrack(tc, item);
 }
 
@@ -846,7 +852,7 @@ bool FileBrowserTreeWidget::openInNewSampleTrack(FileItem* item)
 	if (item->type() != FileItem::SampleFile) { return false; }
 
 	// Create a new sample track for this sample
-	auto sampleTrack = static_cast<SampleTrack*>(Track::create(Track::SampleTrack, Engine::getSong()));
+	auto sampleTrack = static_cast<SampleTrack*>(Track::create(Track::SampleTrack, &Engine::getSong()->trackContainer()));
 
 	// Add the sample clip to the track
 	Engine::audioEngine()->requestChangeInModel();

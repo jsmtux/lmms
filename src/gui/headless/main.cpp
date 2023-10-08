@@ -790,7 +790,7 @@ int main( int argc, char * * argv )
 
 		printf( "Loading project...\n" );
 		Engine::getSong()->loadProject( fileToLoad );
-		if( Engine::getSong()->isEmpty() )
+		if( Engine::getSong()->trackContainer().isEmpty() )
 		{
 			printf("The project %s is empty, aborting!\n", fileToLoad.toUtf8().constData() );
 			exit( EXIT_FAILURE );

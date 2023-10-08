@@ -89,7 +89,7 @@ bool SampleTrack::play( const TimePos & _start, const fpp_t _frames,
 			return false;
 		}
 		clips.push_back( getClip( _clip_num ) );
-		if (trackContainer() == Engine::patternStore())
+		if (trackContainer() == &Engine::patternStore()->trackContainer())
 		{
 			pattern_track = PatternTrack::findPatternTrack(_clip_num);
 			setPlaying(true);

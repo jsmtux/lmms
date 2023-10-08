@@ -31,6 +31,7 @@
 #include "lmmsconfig.h"
 #include "lmms_export.h"
 #include "lmms_basics.h"
+#include "TrackContainer.h"
 
 namespace lmms
 {
@@ -41,6 +42,7 @@ class PatternStore;
 class ProjectJournal;
 class Song;
 class Ladspa2LMMS;
+class AutomationTrack;
 
 namespace gui
 {
@@ -115,6 +117,9 @@ public:
 
 	static void setDndPluginKey(void* newKey);
 	static void* pickDndPluginKey();
+
+	static TrackList getTracks(bool includeGlobalAutomation = false);
+	static AutomationTrack* getGlobalAutomationTrack();
 
 signals:
 	void initProgress(const QString &msg);

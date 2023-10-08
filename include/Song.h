@@ -61,7 +61,7 @@ const bpm_t MaxTempo = 999;
 const tick_t MaxSongLength = 9999 * DefaultTicksPerBar;
 
 
-class LMMS_EXPORT Song : public TrackContainer
+class LMMS_EXPORT Song : public QObject, public TrackContainerCb
 {
 	Q_OBJECT
 	mapPropertyFromModel( int,getTempo,setTempo,m_tempoModel );
@@ -356,6 +356,17 @@ public:
 		return m_tempoModel;
 	}
 
+	int numOfPatterns() const
+	{
+		return m_trackContainer.countTracks(Track::PatternTrack);
+	}
+
+	void setUpPatternStoreTrack() {
+		if (numOfPatterns() == 0 && !isLoadingProject()) {
+			addPatternTrack();
+		}
+	}
+
 	void exportProjectMidi(QString const & exportFileName) const;
 
 	inline void setLoadOnLaunch(bool value) { m_loadOnLaunch = value; }
@@ -371,6 +382,15 @@ public:
 	void setKeymap(unsigned int index, std::shared_ptr<Keymap> newMap);
 
 	const std::string& syncKey() const noexcept { return m_vstSyncController.sharedMemoryKey(); }
+
+	const TrackContainer& trackContainer() const
+	{
+		return m_trackContainer;
+	}
+	TrackContainer& trackContainer()
+	{
+		return m_trackContainer;
+	}
 
 public slots:
 	void playSong();
@@ -391,6 +411,18 @@ public slots:
 
 	void addPatternTrack();
 
+	// now update all track-labels (the current one has to become white, the others gray)
+	void updatePatternTracks()
+	{
+		for (Track * t : m_trackContainer.tracks())
+		{
+			if (t->type() == Track::PatternTrack)
+			{
+				t->dataChanged();
+			}
+		}
+	}
+
 
 private slots:
 	void insertBar();
@@ -407,13 +439,12 @@ private slots:
 
 	void updateFramesPerTick();
 
-
-
 private:
 	Song();
 	Song( const Song & );
-	~Song() override;
+	virtual ~Song() override;
 
+	TrackContainer m_trackContainer;
 
 	inline bar_t currentBar() const
 	{

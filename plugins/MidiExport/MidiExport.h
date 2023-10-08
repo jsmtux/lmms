@@ -68,8 +68,8 @@ public:
 		return nullptr;
 	}
 
-	bool tryExport(const TrackContainer::TrackList &tracks,
-				const TrackContainer::TrackList &patternTracks,
+	bool tryExport(const TrackList &tracks,
+				const TrackList &patternTracks,
 				int tempo, int masterPitch, const QString &filename) override;
 	
 private:

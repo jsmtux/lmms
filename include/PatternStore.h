@@ -61,17 +61,15 @@ namespace gui
  * - PatternTracks are used in the Song Editor. Each one reference a "pattern" in the PatternStore.
  * - PatternClips are stored inside PatternTracks. They are just empty placeholders.
  */
-class LMMS_EXPORT PatternStore : public TrackContainer
+class LMMS_EXPORT PatternStore : public QObject, public TrackContainerCb
 {
 	Q_OBJECT
 	mapPropertyFromModel(int, currentPattern, setCurrentPattern, m_patternComboBoxModel);
 public:
 	PatternStore();
-	~PatternStore() override = default;
+	virtual ~PatternStore() = default;
 
 	virtual bool play(TimePos start, const fpp_t frames, const f_cnt_t frameBase, int clipNum = -1);
-
-	void updateAfterTrackAdd() override;
 
 	inline QString nodeName() const override
 	{
@@ -83,7 +81,6 @@ public:
 	{
 		return lengthOfPattern(currentPattern());
 	}
-	int numOfPatterns() const;
 	void removePattern(int pattern);
 
 	void swapPattern(int p1, int p2);
@@ -94,14 +91,19 @@ public:
 
 	AutomatedValueMap automatedValuesAt(TimePos time, int clipNum) const override;
 
+	TrackContainer& trackContainer()
+	{
+		return m_trackContainer;
+	}
+
 public slots:
 	void play();
 	void stop();
 	void updateComboBox();
-	void currentPatternChanged();
-
 
 private:
+	TrackContainer m_trackContainer;
+
 	ComboBoxModel m_patternComboBoxModel;
 
 

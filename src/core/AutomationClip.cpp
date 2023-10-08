@@ -28,11 +28,11 @@
 
 #include "AutomationNode.h"
 #include "AutomationTrack.h"
+#include "Engine.h"
 #include "LocaleHelper.h"
 #include "Note.h"
-#include "PatternStore.h"
 #include "ProjectJournal.h"
-#include "Song.h"
+#include "TrackContainer.h"
 
 #include <cmath>
 
@@ -59,18 +59,19 @@ AutomationClip::AutomationClip( AutomationTrack * _auto_track ) :
 	changeLength( TimePos( 1, 0 ) );
 	if( getTrack() )
 	{
-		switch( getTrack()->trackContainer()->type() )
-		{
-			case TrackContainer::PatternContainer:
-				setAutoResize( true );
-				break;
+		setAutoResize(getTrack()->trackContainer()->allowAutoResizeClip());
+		// switch( getTrack()->trackContainer()->type() )
+		// {
+		// 	case TrackContainer::PatternContainer:
+		// 		setAutoResize( true );
+		// 		break;
 
-			case TrackContainer::SongContainer:
-				// move down
-			default:
-				setAutoResize( false );
-				break;
-		}
+		// 	case TrackContainer::SongContainer:
+		// 		// move down
+		// 	default:
+		// 		setAutoResize( false );
+		// 		break;
+		// }
 	}
 }
 
@@ -99,18 +100,20 @@ AutomationClip::AutomationClip( const AutomationClip & _clip_to_copy ) :
 		m_timeMap[POS(it)].setClip(this);
 	}
 	if (!getTrack()){ return; }
-	switch( getTrack()->trackContainer()->type() )
-	{
-		case TrackContainer::PatternContainer:
-			setAutoResize( true );
-			break;
 
-		case TrackContainer::SongContainer:
-			// move down
-		default:
-			setAutoResize( false );
-			break;
-	}
+	setAutoResize(getTrack()->trackContainer()->allowAutoResizeClip());
+	// switch( getTrack()->trackContainer()->type() )
+	// {
+	// 	case TrackContainer::PatternContainer:
+	// 		setAutoResize( true );
+	// 		break;
+
+	// 	case TrackContainer::SongContainer:
+	// 		// move down
+	// 	default:
+	// 		setAutoResize( false );
+	// 		break;
+	// }
 }
 
 bool AutomationClip::addObject( AutomatableModel * _obj, bool _search_dup )
@@ -869,12 +872,7 @@ QString AutomationClip::name() const
 
 bool AutomationClip::isAutomated( const AutomatableModel * _m )
 {
-	TrackContainer::TrackList l;
-	l += Engine::getSong()->tracks();
-	l += Engine::patternStore()->tracks();
-	l += Engine::getSong()->globalAutomationTrack();
-
-	for (const auto& track : l)
+	for (const auto& track : Engine::getTracks(true))
 	{
 		if (track->type() == Track::AutomationTrack || track->type() == Track::HiddenAutomationTrack)
 		{
@@ -905,13 +903,8 @@ bool AutomationClip::isAutomated( const AutomatableModel * _m )
 QVector<AutomationClip *> AutomationClip::clipsForModel( const AutomatableModel * _m )
 {
 	QVector<AutomationClip*> clips;
-	TrackContainer::TrackList tracks;
-	tracks += Engine::getSong()->tracks();
-	tracks += Engine::patternStore()->tracks();
-	tracks += Engine::getSong()->globalAutomationTrack();
-
 	// go through all tracks...
-	for (const auto& track : tracks)
+	for (const auto& track : Engine::getTracks(true))
 	{
 		// we want only automation tracks...
 		if (track->type() == Track::AutomationTrack || track->type() == Track::HiddenAutomationTrack )
@@ -947,7 +940,7 @@ QVector<AutomationClip *> AutomationClip::clipsForModel( const AutomatableModel 
 AutomationClip * AutomationClip::globalAutomationClip(
 							AutomatableModel * _m )
 {
-	AutomationTrack * t = Engine::getSong()->globalAutomationTrack();
+	auto* t = Engine::getGlobalAutomationTrack();
 	for (const auto& clip : t->getClips())
 	{
 		auto a = dynamic_cast<AutomationClip*>(clip);
@@ -970,10 +963,7 @@ AutomationClip * AutomationClip::globalAutomationClip(
 
 void AutomationClip::resolveAllIDs()
 {
-	TrackContainer::TrackList l = Engine::getSong()->tracks() +
-				Engine::patternStore()->tracks();
-	l += Engine::getSong()->globalAutomationTrack();
-	for (const auto& track : l)
+	for (const auto& track : Engine::getTracks(true))
 	{
 		if (track->type() == Track::AutomationTrack || track->type() == Track::HiddenAutomationTrack)
 		{

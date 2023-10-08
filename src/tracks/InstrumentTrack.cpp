@@ -697,7 +697,7 @@ bool InstrumentTrack::play( const TimePos & _start, const fpp_t _frames,
 	{
 		Clip * clip = getClip( _clip_num );
 		clips.push_back( clip );
-		if (trackContainer() == Engine::patternStore())
+		if (trackContainer() == &Engine::patternStore()->trackContainer())
 		{
 			pattern_track = PatternTrack::findPatternTrack(_clip_num);
 		}

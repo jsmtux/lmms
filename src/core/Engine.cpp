@@ -36,6 +36,7 @@
 #include "Song.h"
 #include "BandLimitedWave.h"
 #include "Oscillator.h"
+#include "AutomationTrack.h"
 
 namespace lmms
 {
@@ -166,6 +167,22 @@ void *Engine::pickDndPluginKey()
 	return s_dndPluginKey;
 }
 
+
+TrackList Engine::getTracks(bool includeGlobalAutomation)
+{
+  TrackList ret;
+  ret += s_song->trackContainer().tracks();
+  ret += s_patternStore->trackContainer().tracks();
+  if (includeGlobalAutomation) {
+	ret.append(s_song->globalAutomationTrack());
+  }
+  return ret;
+}
+
+AutomationTrack* Engine::getGlobalAutomationTrack()
+{
+	return s_song->globalAutomationTrack();
+}
 
 
 

@@ -32,7 +32,7 @@ namespace lmms
 {
 
 
-MidiController::MidiController( Model * _parent ) :
+MidiController::MidiController( QObject * _parent ) :
 	Controller( Controller::MidiController, _parent, tr( "MIDI Controller" ) ),
 	MidiEventProcessor(),
 	m_midiPort( tr( "unnamed_midi_controller" ), Engine::audioEngine()->midiClient(), this, this, MidiPort::Input ),

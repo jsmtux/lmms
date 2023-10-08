@@ -28,6 +28,7 @@
 #include <QDomElement>
 #include <QWriteLocker>
 
+#include <iostream>
 #include "AutomationClip.h"
 #include "embed.h"
 #include "TrackContainer.h"
@@ -43,11 +44,12 @@ namespace lmms
 {
 
 
-TrackContainer::TrackContainer() :
+TrackContainer::TrackContainer(TrackContainerCb* _trackContainerCb) :
 	Model( nullptr ),
 	JournallingObject(),
 	m_tracksMutex(),
-	m_tracks()
+	m_tracks(),
+	m_trackContainerCb(_trackContainerCb)
 {
 }
 
@@ -151,7 +153,10 @@ void TrackContainer::loadSettings( const QDomElement & _this )
 }
 
 
-
+bool TrackContainer::allowAutoResizeClip()
+{
+	return m_trackContainerCb == Engine::patternStore();
+}
 
 int TrackContainer::countTracks( Track::TrackTypes _tt ) const
 {
@@ -212,14 +217,6 @@ void TrackContainer::removeTrack( Track * _track )
 
 
 
-
-void TrackContainer::updateAfterTrackAdd()
-{
-}
-
-
-
-
 void TrackContainer::clearAllTracks()
 {
 	//m_tracksMutex.lockForWrite();
@@ -245,19 +242,15 @@ bool TrackContainer::isEmpty() const
 	return true;
 }
 
-
-
-AutomatedValueMap TrackContainer::automatedValuesAt(TimePos time, int clipNum) const
+AutomatedValueMap TrackContainer::automatedValuesFromAllTracks(TimePos time, int clipNum, Track* addTrack) const
 {
-	return automatedValuesFromTracks(tracks(), time, clipNum);
-}
-
-
-AutomatedValueMap TrackContainer::automatedValuesFromTracks(const TrackList &tracks, TimePos time, int clipNum)
-{
+	TrackList trackList = tracks();
+	if (addTrack) {
+		trackList = TrackList{addTrack} << tracks();
+	}
 	Track::clipVector clips;
 
-	for (Track* track: tracks)
+	for (Track* track: trackList)
 	{
 		if (track->isMuted()) {
 			continue;

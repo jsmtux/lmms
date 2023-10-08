@@ -43,8 +43,8 @@ public:
 	~ExportFilter() override = default;
 
 
-	virtual bool tryExport(const TrackContainer::TrackList &tracks,
-				const TrackContainer::TrackList &patternTracks,
+	virtual bool tryExport(const TrackList &tracks,
+				const TrackList &patternTracks,
 				int tempo, int masterPitch, const QString &filename ) = 0;
 protected:
 

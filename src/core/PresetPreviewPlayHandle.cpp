@@ -39,16 +39,17 @@ namespace lmms
 {
 
 // invisible track-container which is needed as parent for preview-channels
-class PreviewTrackContainer : public TrackContainer
+class PreviewTrackContainer : public TrackContainerCb
 {
 public:
 	PreviewTrackContainer() :
+		m_trackContainer(this),
 		m_previewInstrumentTrack( nullptr ),
 		m_previewNote( nullptr ),
 		m_dataMutex()
 	{
-		setJournalling( false );
-		m_previewInstrumentTrack = dynamic_cast<InstrumentTrack *>( Track::create( Track::InstrumentTrack, this ) );
+		m_trackContainer.setJournalling( false );
+		m_previewInstrumentTrack = dynamic_cast<InstrumentTrack *>( Track::create( Track::InstrumentTrack, &m_trackContainer ) );
 		m_previewInstrumentTrack->setJournalling( false );
 		m_previewInstrumentTrack->setPreviewMode( true );
 	}
@@ -68,6 +69,11 @@ public:
 	NotePlayHandle* previewNote()
 	{
 		return m_previewNote.load(std::memory_order_acquire);
+	}
+
+	AutomatedValueMap automatedValuesAt(TimePos time, int clipNum) const
+	{
+		return m_trackContainer.automatedValuesFromAllTracks(time + (TimePos::ticksPerBar() * clipNum), clipNum);
 	}
 
 	void setPreviewNote( NotePlayHandle * _note )
@@ -105,6 +111,8 @@ private:
 	InstrumentTrack* m_previewInstrumentTrack;
 	std::atomic<NotePlayHandle*> m_previewNote;
 	QMutex m_dataMutex;
+
+	TrackContainer m_trackContainer;
 
 	friend class PresetPreviewPlayHandle;
 

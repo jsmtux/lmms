@@ -44,7 +44,7 @@ MidiClip::MidiClip( InstrumentTrack * _instrument_track ) :
 	m_clipType( BeatClip ),
 	m_steps( TimePos::stepsPerBar() )
 {
-	if (_instrument_track->trackContainer()	== Engine::patternStore())
+	if (_instrument_track->trackContainer()	== &Engine::patternStore()->trackContainer())
 	{
 		resizeToFirstTrack();
 	}
@@ -66,18 +66,7 @@ MidiClip::MidiClip( const MidiClip& other ) :
 	}
 
 	init();
-	switch( getTrack()->trackContainer()->type() )
-	{
-		case TrackContainer::PatternContainer:
-			setAutoResize( true );
-			break;
-
-		case TrackContainer::SongContainer:
-			// move down
-		default:
-			setAutoResize( false );
-			break;
-	}
+	setAutoResize(getTrack()->trackContainer()->allowAutoResizeClip());
 }
 
 
@@ -100,7 +89,7 @@ MidiClip::~MidiClip()
 void MidiClip::resizeToFirstTrack()
 {
 	// Resize this track to be the same as existing tracks in the pattern
-	const TrackContainer::TrackList & tracks =
+	const TrackList & tracks =
 		getTrack()->trackContainer()->tracks();
 	for (const auto& track : tracks)
 	{
@@ -535,7 +524,7 @@ void MidiClip::removeSteps()
 
 void MidiClip::updatePatternTrack()
 {
-	if (getTrack()->trackContainer() == Engine::patternStore())
+	if (getTrack()->trackContainer() == &Engine::patternStore()->trackContainer())
 	{
 		Engine::patternStore()->updatePatternTrack(this);
 	}

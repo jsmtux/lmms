@@ -53,7 +53,7 @@ namespace lmms
 class AutoDetectMidiController : public MidiController
 {
 public:
-	AutoDetectMidiController( Model* parent ) :
+	AutoDetectMidiController( QObject* parent ) :
 		MidiController( parent ),
 		m_detectedMidiChannel( 0 ),
 		m_detectedMidiController( 0 )
@@ -300,7 +300,7 @@ void ControllerConnectionDialog::selectController()
 		if( m_midiControllerSpinBox->model()->value() > 0 )
 		{
 			MidiController * mc;
-			mc = m_midiController->copyToMidiController( Engine::getSong() );
+			mc = m_midiController->copyToMidiController( &Engine::getSong()->trackContainer() );
 	
 			/*
 			if( m_targetModel->getTrack() && 

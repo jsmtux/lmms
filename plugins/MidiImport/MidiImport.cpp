@@ -328,9 +328,9 @@ bool MidiImport::readSMF( TrackContainer* tc )
 	// NOTE: unordered_map::operator[] creates a new element if none exists
 
 	MeterModel & timeSigMM = Engine::getSong()->getTimeSigModel();
-	auto nt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, Engine::getSong()));
+	auto nt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, &Engine::getSong()->trackContainer()));
 	nt->setName(tr("MIDI Time Signature Numerator"));
-	auto dt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, Engine::getSong()));
+	auto dt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, &Engine::getSong()->trackContainer()));
 	dt->setName(tr("MIDI Time Signature Denominator"));
 	auto timeSigNumeratorPat = new AutomationClip(nt);
 	timeSigNumeratorPat->model().setDisplayName(tr("Numerator"));
@@ -358,7 +358,7 @@ bool MidiImport::readSMF( TrackContainer* tc )
 	pd.setValue( 2 );
 
 	// Tempo stuff
-	auto tt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, Engine::getSong()));
+	auto tt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, &Engine::getSong()->trackContainer()));
 	tt->setName(tr("Tempo"));
 	auto tap = new AutomationClip(tt);
 	tap->model().setDisplayName(tr("Tempo"));

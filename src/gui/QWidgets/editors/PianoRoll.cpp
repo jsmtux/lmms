@@ -3974,7 +3974,7 @@ QList<int> PianoRoll::getAllOctavesForKey( int keyToMirror ) const
 
 Song::PlayModes PianoRoll::desiredPlayModeForAccompany() const
 {
-	if (m_midiClip->getTrack()->trackContainer() ==	Engine::patternStore())
+	if (m_midiClip->getTrack()->trackContainer() ==	&Engine::patternStore()->trackContainer())
 	{
 		return Song::Mode_PlayPattern;
 	}
@@ -4038,7 +4038,7 @@ void PianoRoll::recordAccompany()
 	m_midiClip->addJournalCheckPoint();
 	m_recording = true;
 
-	if( m_midiClip->getTrack()->trackContainer() == Engine::getSong() )
+	if( m_midiClip->getTrack()->trackContainer() == &Engine::getSong()->trackContainer() )
 	{
 		Engine::getSong()->playSong();
 	}

@@ -45,10 +45,10 @@ namespace lmms::gui
 
 
 PatternEditor::PatternEditor(PatternStore* ps) :
-	TrackContainerView(ps),
+	TrackContainerView(&ps->trackContainer()),
 	m_ps(ps)
 {
-	setModel(ps);
+	setModel(&ps->trackContainer());
 }
 
 
@@ -69,7 +69,7 @@ void PatternEditor::cloneSteps()
 
 void PatternEditor::removeSteps()
 {
-	TrackContainer::TrackList tl = model()->tracks();
+	TrackList tl = model()->tracks();
 
 	for (const auto& track : tl)
 	{
@@ -135,7 +135,7 @@ void PatternEditor::dropEvent(QDropEvent* de)
 
 		// Ensure pattern clips exist
 		bool hasValidPatternClips = false;
-		if (t->getClips().size() == m_ps->numOfPatterns())
+		if (t->getClips().size() == Engine::getSong()->numOfPatterns())
 		{
 			hasValidPatternClips = true;
 			for (int i = 0; i < t->getClips().size(); ++i)
@@ -150,9 +150,9 @@ void PatternEditor::dropEvent(QDropEvent* de)
 		if (!hasValidPatternClips)
 		{
 			t->deleteClips();
-			t->createClipsForPattern(m_ps->numOfPatterns() - 1);
+			t->createClipsForPattern(Engine::getSong()->numOfPatterns() - 1);
 		}
-		m_ps->updateAfterTrackAdd();
+		Engine::getSong()->setUpPatternStoreTrack();
 
 		de->accept();
 	}
@@ -176,7 +176,7 @@ void PatternEditor::updatePosition()
 
 void PatternEditor::makeSteps( bool clone )
 {
-	TrackContainer::TrackList tl = model()->tracks();
+	TrackList tl = model()->tracks();
 
 	for (const auto& track : tl)
 	{
@@ -199,8 +199,7 @@ void PatternEditor::makeSteps( bool clone )
 void PatternEditor::cloneClip()
 {
 	// Get the current PatternTrack id
-	auto ps = static_cast<PatternStore*>(model());
-	const int currentPattern = ps->currentPattern();
+	const int currentPattern = m_ps->currentPattern();
 
 	PatternTrack* pt = PatternTrack::findPatternTrack(currentPattern);
 
@@ -208,7 +207,7 @@ void PatternEditor::cloneClip()
 	{
 		// Clone the track
 		Track* newTrack = pt->clone();
-		ps->setCurrentPattern(static_cast<PatternTrack*>(newTrack)->patternIndex());
+		m_ps->setCurrentPattern(static_cast<PatternTrack*>(newTrack)->patternIndex());
 
 		// Track still have the clips which is undesirable in this case, clear the track
 		newTrack->lock();

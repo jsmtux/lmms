@@ -25,9 +25,7 @@
 #include <QDir>
 
 #include "RenderManager.h"
-
-#include "PatternStore.h"
-#include "Song.h"
+#include "Engine.h"
 
 
 namespace lmms
@@ -97,23 +95,8 @@ void RenderManager::renderNextTrack()
 // Render the song into individual tracks
 void RenderManager::renderTracks()
 {
-	const TrackContainer::TrackList & tl = Engine::getSong()->tracks();
-
 	// find all currently unnmuted tracks -- we want to render these.
-	for (const auto& tk : tl)
-	{
-		Track::TrackTypes type = tk->type();
-
-		// Don't render automation tracks
-		if ( tk->isMuted() == false &&
-				( type == Track::InstrumentTrack || type == Track::SampleTrack ) )
-		{
-			m_unmuted.push_back(tk);
-		}
-	}
-
-	const TrackContainer::TrackList t2 = Engine::patternStore()->tracks();
-	for (const auto& tk : t2)
+	for (const auto& tk : Engine::getTracks())
 	{
 		Track::TrackTypes type = tk->type();
 

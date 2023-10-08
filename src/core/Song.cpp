@@ -59,10 +59,10 @@ tick_t TimePos::s_ticksPerBar = DefaultTicksPerBar;
 
 
 Song::Song() :
-	TrackContainer(),
+	m_trackContainer(this),
 	m_globalAutomationTrack( dynamic_cast<AutomationTrack *>(
 				Track::create( Track::HiddenAutomationTrack,
-								this ) ) ),
+								&m_trackContainer ) ) ),
 	m_tempoModel( DefaultTempo, MinTempo, MaxTempo, this, tr( "Tempo" ) ),
 	m_timeSigModel( this ),
 	m_oldTicksPerBar( DefaultTicksPerBar ),
@@ -110,8 +110,6 @@ Song::Song() :
 			this, SLOT(masterPitchChanged()));*/
 
 	qRegisterMetaType<lmms::Note>( "lmms::Note" );
-	setType( SongContainer );
-
 	for (auto& scale : m_scales) {scale = std::make_shared<Scale>();}
 	for (auto& keymap : m_keymaps) {keymap = std::make_shared<Keymap>();}
 }
@@ -167,7 +165,7 @@ void Song::setTimeSignature()
 {
 	TimePos::setTicksPerBar( ticksPerBar() );
 	emit timeSignatureChanged( m_oldTicksPerBar, ticksPerBar() );
-	emit dataChanged();
+	emit m_trackContainer.dataChanged();
 	m_oldTicksPerBar = ticksPerBar();
 
 	m_vstSyncController.setTimeSignature(
@@ -210,11 +208,11 @@ void Song::processNextBuffer()
 	switch (m_playMode)
 	{
 		case Mode_PlaySong:
-			trackList = tracks();
+			trackList = m_trackContainer.tracks();
 			break;
 
 		case Mode_PlayPattern:
-			if (Engine::patternStore()->numOfPatterns() > 0)
+			if (numOfPatterns() > 0)
 			{
 				clipNum = Engine::patternStore()->currentPattern();
 				trackList.push_back(PatternTrack::findPatternTrack(clipNum));
@@ -352,31 +350,31 @@ void Song::processNextBuffer()
 void Song::processAutomations(const TrackList &tracklist, TimePos timeStart, fpp_t)
 {
 	AutomatedValueMap values;
+	TrackList tracks;
 
 	QSet<const AutomatableModel*> recordedModels;
 
-	TrackContainer* container = this;
 	int clipNum = -1;
 
 	switch (m_playMode)
 	{
 	case Mode_PlaySong:
+		values = m_trackContainer.automatedValuesFromAllTracks( timeStart, clipNum);
+		tracks = m_trackContainer.tracks();
 		break;
 	case Mode_PlayPattern:
 	{
 		Q_ASSERT(tracklist.size() == 1);
 		Q_ASSERT(tracklist.at(0)->type() == Track::PatternTrack);
 		auto patternTrack = dynamic_cast<PatternTrack*>(tracklist.at(0));
-		container = Engine::patternStore();
 		clipNum = patternTrack->patternIndex();
+		values = Engine::patternStore()->automatedValuesAt(timeStart, clipNum);
+		tracks = Engine::patternStore()->trackContainer().tracks();
 	}
 		break;
 	default:
 		return;
 	}
-
-	values = container->automatedValuesAt(timeStart, clipNum);
-	TrackList tracks = container->tracks();
 
 	Track::clipVector clips;
 	for (Track* track : tracks)
@@ -559,23 +557,7 @@ void Song::playMidiClip( const MidiClip* midiClipToPlay, bool loop )
 
 void Song::updateLength()
 {
-	m_length = 0;
-	m_tracksMutex.lockForRead();
-	for (auto track : tracks())
-	{
-		if (m_exporting && track->isMuted())
-		{
-			continue;
-		}
-
-		const bar_t cur = track->length();
-		if( cur > m_length )
-		{
-			m_length = cur;
-		}
-	}
-	m_tracksMutex.unlock();
-
+	m_length = m_trackContainer.getLargestTrackLength(m_exporting);
 	emit lengthChanged( m_length );
 }
 
@@ -772,14 +754,7 @@ void Song::stopExport()
 
 void Song::insertBar()
 {
-	m_tracksMutex.lockForRead();
-	for (Track* track: tracks())
-	{
-		// FIXME journal batch of tracks instead of each track individually
-		if (track->numOfClips() > 0) { track->addJournalCheckPoint(); }
-		track->insertBar(m_playPos[Mode_PlaySong]);
-	}
-	m_tracksMutex.unlock();
+	m_trackContainer.insertBar(m_playPos[Mode_PlaySong]);
 }
 
 
@@ -787,14 +762,7 @@ void Song::insertBar()
 
 void Song::removeBar()
 {
-	m_tracksMutex.lockForRead();
-	for (Track* track: tracks())
-	{
-		// FIXME journal batch of tracks instead of each track individually
-		if (track->numOfClips() > 0) { track->addJournalCheckPoint(); }
-		track->removeBar(m_playPos[Mode_PlaySong]);
-	}
-	m_tracksMutex.unlock();
+	m_trackContainer.removeBar(m_playPos[Mode_PlaySong]);
 }
 
 
@@ -802,7 +770,7 @@ void Song::removeBar()
 
 void Song::addPatternTrack()
 {
-	Track * t = Track::create(Track::PatternTrack, this);
+	Track * t = Track::create(Track::PatternTrack, &m_trackContainer);
 	Engine::patternStore()->setCurrentPattern(dynamic_cast<PatternTrack*>(t)->patternIndex());
 }
 
@@ -811,7 +779,7 @@ void Song::addPatternTrack()
 
 void Song::addSampleTrack()
 {
-	( void )Track::create( Track::SampleTrack, this );
+	( void )Track::create( Track::SampleTrack, &m_trackContainer );
 }
 
 
@@ -819,7 +787,7 @@ void Song::addSampleTrack()
 
 void Song::addAutomationTrack()
 {
-	( void )Track::create( Track::AutomationTrack, this );
+	( void )Track::create( Track::AutomationTrack, &m_trackContainer );
 }
 
 
@@ -833,7 +801,7 @@ bpm_t Song::getTempo()
 
 AutomatedValueMap Song::automatedValuesAt(TimePos time, int clipNum) const
 {
-	return TrackContainer::automatedValuesFromTracks(TrackList{m_globalAutomationTrack} << tracks(), time, clipNum);
+	return m_trackContainer.automatedValuesFromAllTracks(time, clipNum, m_globalAutomationTrack);
 }
 
 
@@ -881,13 +849,13 @@ void Song::clearProject()
 		getGUIInterface()->clear();
 	}
 
-	Engine::patternStore()->clearAllTracks();
-	clearAllTracks();
+	Engine::patternStore()->trackContainer().clearAllTracks();
+	m_trackContainer.clearAllTracks();
 
 
 	removeAllControllers();
 
-	emit dataChanged();
+	emit m_trackContainer.dataChanged();
 
 	Engine::projectJournal()->clearJournal();
 
@@ -929,15 +897,15 @@ void Song::createNewProject()
 	setProjectFileName("");
 
 	Track * t;
-	t = Track::create( Track::InstrumentTrack, this );
+	t = Track::create( Track::InstrumentTrack, &m_trackContainer );
 	dynamic_cast<InstrumentTrack * >( t )->loadInstrument(
 					"tripleoscillator" );
-	t = Track::create(Track::InstrumentTrack, Engine::patternStore());
+	t = Track::create(Track::InstrumentTrack, &Engine::patternStore()->trackContainer());
 	dynamic_cast<InstrumentTrack * >( t )->loadInstrument(
 						"kicker" );
-	Track::create( Track::SampleTrack, this );
-	Track::create( Track::PatternTrack, this );
-	Track::create( Track::AutomationTrack, this );
+	Track::create( Track::SampleTrack, &m_trackContainer );
+	Track::create( Track::PatternTrack, &m_trackContainer );
+	Track::create( Track::AutomationTrack, &m_trackContainer );
 
 	m_tempoModel.setInitValue( DefaultTempo );
 	m_timeSigModel.reset();
@@ -947,8 +915,10 @@ void Song::createNewProject()
 	QCoreApplication::instance()->processEvents();
 
 	m_loadingProject = false;
-
-	Engine::patternStore()->updateAfterTrackAdd();
+	if (numOfPatterns() == 0)
+	{
+		addPatternTrack();
+	}
 
 	Engine::projectJournal()->setJournalling( true );
 
@@ -1105,7 +1075,7 @@ void Song::loadProject( const QString & fileName )
 		{
 			if( node.nodeName() == "trackcontainer" )
 			{
-				( (JournallingObject *)( this ) )->restoreState( node.toElement() );
+				m_trackContainer.restoreState( node.toElement() );
 			}
 			else if( node.nodeName() == "controllers" )
 			{
@@ -1199,7 +1169,7 @@ bool Song::saveProjectFile(const QString & filename, bool withResources)
 	m_masterVolumeModel.saveSettings( dataFile, dataFile.head(), "mastervol" );
 	m_masterPitchModel.saveSettings( dataFile, dataFile.head(), "masterpitch" );
 
-	saveState( dataFile, dataFile.content() );
+	m_trackContainer.saveState( dataFile, dataFile.content() );
 
 	m_globalAutomationTrack->saveState( dataFile, dataFile.content() );
 	Engine::mixer()->saveState( dataFile, dataFile.content() );
@@ -1314,11 +1284,9 @@ void Song::saveScaleStates(QDomDocument &doc, QDomElement &element)
 	}
 }
 
-
 void Song::restoreScaleStates(const QDomElement &element)
 {
 	QDomNode node = element.firstChild();
-
 	for (int i = 0; i < MaxScaleCount && !node.isNull() && !isCancelled(); i++)
 	{
 		m_scales[i]->restoreState(node.toElement());
@@ -1356,8 +1324,8 @@ void Song::restoreKeymapStates(const QDomElement &element)
 void Song::exportProjectMidi(QString const & exportFileName) const
 {
 	// instantiate midi export plugin
-	TrackContainer::TrackList const & tracks = this->tracks();
-	TrackContainer::TrackList const & patternStoreTracks = Engine::patternStore()->tracks();
+	TrackList const & tracks = m_trackContainer.tracks();
+	TrackList const & patternStoreTracks = Engine::patternStore()->trackContainer().tracks();
 
 	ExportFilter *exf = dynamic_cast<ExportFilter *> (Plugin::instantiate("midiexport", nullptr, nullptr));
 	if (exf)

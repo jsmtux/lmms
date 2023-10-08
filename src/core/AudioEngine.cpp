@@ -477,7 +477,7 @@ void AudioEngine::handleMetronome()
 	}
 
 	// stop crash with metronome if empty project
-	if (song->countTracks() == 0)
+	if (song->trackContainer().countTracks() == 0)
 	{
 		return;
 	}

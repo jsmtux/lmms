@@ -111,18 +111,18 @@ void Scale::saveSettings(QDomDocument &document, QDomElement &element)
 
 void Scale::loadSettings(const QDomElement &element)
 {
-	m_description = element.attribute("description");
+	// m_description = element.attribute("description");
 
-	QDomNode node = element.firstChild();
-	m_intervals.clear();
+	// QDomNode node = element.firstChild();
+	// m_intervals.clear();
 
-	while (!node.isNull())
-	{
-		Interval temp;
-		temp.restoreState(node.toElement());
-		m_intervals.push_back(temp);
-		node = node.nextSibling();
-	}
+	// while (!node.isNull())
+	// {
+	// 	Interval temp;
+	// 	temp.restoreState(node.toElement());
+	// 	m_intervals.push_back(temp);
+	// 	node = node.nextSibling();
+	// }
 }
 
 

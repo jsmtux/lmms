@@ -811,7 +811,7 @@ int main( int argc, char * * argv )
 
 		printf( "Loading project...\n" );
 		Engine::getSong()->loadProject( fileToLoad );
-		if( Engine::getSong()->isEmpty() )
+		if( Engine::getSong()->trackContainer().isEmpty() )
 		{
 			printf("The project %s is empty, aborting!\n", fileToLoad.toUtf8().constData() );
 			exit( EXIT_FAILURE );
@@ -973,7 +973,7 @@ int main( int argc, char * * argv )
 		}
 		else if( !fileToImport.isEmpty() )
 		{
-			ImportFilter::import( fileToImport, Engine::getSong() );
+			ImportFilter::import( fileToImport, &Engine::getSong()->trackContainer() );
 			if( exitAfterImport )
 			{
 				return EXIT_SUCCESS;

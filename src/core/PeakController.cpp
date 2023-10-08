@@ -46,7 +46,7 @@ int PeakController::m_loadCount;
 bool PeakController::m_buggedFile;
 
 
-PeakController::PeakController( Model * _parent,
+PeakController::PeakController( QObject * _parent,
 		PeakControllerEffect * _peak_effect ) :
 	Controller( Controller::PeakController, _parent, tr( "Peak Controller" ) ),
 	m_peakEffect( _peak_effect ),

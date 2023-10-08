@@ -54,7 +54,7 @@ class LfoController : public Controller
 {
 	Q_OBJECT
 public:
-	LfoController( Model * _parent );
+	LfoController( QObject * _parent );
 
 	~LfoController() override;
 

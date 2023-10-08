@@ -27,14 +27,13 @@
 #include "AudioEngine.h"
 #include "AudioEngineWorkerThread.h"
 #include "BufferManager.h"
+#include "Engine.h"
 #include "Mixer.h"
 #include "MixHelpers.h"
-#include "Song.h"
 
 #include "InstrumentTrack.h"
-#include "PatternStore.h"
 #include "SampleTrack.h"
-#include "TrackContainer.h" // For TrackContainer::TrackList typedef
+#include "TrackContainer.h" // For TrackList typedef
 
 namespace lmms
 {
@@ -285,11 +284,7 @@ void Mixer::deleteChannel( int index )
 	Engine::audioEngine()->requestChangeInModel();
 
 	// go through every instrument and adjust for the channel index change
-	TrackContainer::TrackList tracks;
-	tracks += Engine::getSong()->tracks();
-	tracks += Engine::patternStore()->tracks();
-
-	for( Track* t : tracks )
+	for( Track* t : Engine::getTracks() )
 	{
 		if( t->type() == Track::InstrumentTrack )
 		{
@@ -384,38 +379,32 @@ void Mixer::moveChannelLeft( int index )
 	else if (m_lastSoloed == b) { m_lastSoloed = a; }
 
 	// go through every instrument and adjust for the channel index change
-	TrackContainer::TrackList songTrackList = Engine::getSong()->tracks();
-	TrackContainer::TrackList patternTrackList = Engine::patternStore()->tracks();
-
-	for (const auto& trackList : {songTrackList, patternTrackList})
+	for (const auto& track : Engine::getTracks())
 	{
-		for (const auto& track : trackList)
+		if (track->type() == Track::InstrumentTrack)
 		{
-			if (track->type() == Track::InstrumentTrack)
+			auto inst = (InstrumentTrack*)track;
+			int val = inst->mixerChannelModel()->value(0);
+			if( val == a )
 			{
-				auto inst = (InstrumentTrack*)track;
-				int val = inst->mixerChannelModel()->value(0);
-				if( val == a )
-				{
-					inst->mixerChannelModel()->setValue(b);
-				}
-				else if( val == b )
-				{
-					inst->mixerChannelModel()->setValue(a);
-				}
+				inst->mixerChannelModel()->setValue(b);
 			}
-			else if (track->type() == Track::SampleTrack)
+			else if( val == b )
 			{
-				auto strk = (SampleTrack*)track;
-				int val = strk->mixerChannelModel()->value(0);
-				if( val == a )
-				{
-					strk->mixerChannelModel()->setValue(b);
-				}
-				else if( val == b )
-				{
-					strk->mixerChannelModel()->setValue(a);
-				}
+				inst->mixerChannelModel()->setValue(a);
+			}
+		}
+		else if (track->type() == Track::SampleTrack)
+		{
+			auto strk = (SampleTrack*)track;
+			int val = strk->mixerChannelModel()->value(0);
+			if( val == a )
+			{
+				strk->mixerChannelModel()->setValue(b);
+			}
+			else if( val == b )
+			{
+				strk->mixerChannelModel()->setValue(a);
 			}
 		}
 	}
@@ -834,11 +823,7 @@ bool Mixer::isChannelInUse(int index)
 	}
 
 	// check if the destination mixer channel on any instrument or sample track is the index mixer channel
-	TrackContainer::TrackList tracks;
-	tracks += Engine::getSong()->tracks();
-	tracks += Engine::patternStore()->tracks();
-
-	for (const auto t : tracks)
+	for (const auto t : Engine::getTracks())
 	{
 		if (t->type() == Track::InstrumentTrack)
 		{

@@ -64,7 +64,7 @@ public:
 		NumControllerTypes
 	} ;
 
-	Controller( ControllerTypes _type, Model * _parent,
+	Controller( ControllerTypes _type, QObject * _parent,
 						const QString & _display_name );
 
 	~Controller() override;
@@ -112,9 +112,9 @@ public:
 	void loadSettings( const QDomElement & _this ) override;
 	QString nodeName() const override;
 
-	static Controller * create( ControllerTypes _tt, Model * _parent );
+	static Controller * create( ControllerTypes _tt, QObject * _parent );
 	static Controller * create( const QDomElement & _this,
-							Model * _parent );
+							QObject * _parent );
 
 	inline static float fittedValue( float _val )
 	{

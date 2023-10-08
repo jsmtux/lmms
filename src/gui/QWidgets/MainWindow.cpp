@@ -1700,7 +1700,7 @@ void MainWindow::onImportProject()
 		ofd.setFileMode( IFileDialog::ExistingFiles );
 		if( ofd.exec () == QDialog::Accepted && !ofd.selectedFiles().isEmpty() )
 		{
-			ImportFilter::import( ofd.selectedFiles()[0], song );
+			ImportFilter::import( ofd.selectedFiles()[0], &song->trackContainer() );
 		}
 
 		song->setLoadOnLaunch(false);

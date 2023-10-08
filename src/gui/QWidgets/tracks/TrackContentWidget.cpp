@@ -347,7 +347,7 @@ bool TrackContentWidget::canPasteSelection( TimePos clipPos, const QMimeData* md
 	const int initialTrackIndex = tiAttr.value().toInt();
 
 	// Get the current track's index
-	const TrackContainer::TrackList tracks = t->trackContainer()->tracks();
+	const TrackList tracks = t->trackContainer()->tracks();
 	const int currentTrackIndex = tracks.indexOf( t );
 
 	// Don't paste if we're on the same bar and allowSameBar is false
@@ -437,7 +437,7 @@ bool TrackContentWidget::pasteSelection( TimePos clipPos, const QMimeData * md, 
 	TimePos grabbedClipPos = clipPosAttr.value().toInt();
 
 	// Snap the mouse position to the beginning of the dropped bar, in ticks
-	const TrackContainer::TrackList tracks = getTrack()->trackContainer()->tracks();
+	const TrackList tracks = getTrack()->trackContainer()->tracks();
 	const int currentTrackIndex = tracks.indexOf( getTrack() );
 
 	bool wasSelection = m_trackView->trackContainerView()->rubberBand()->selectedObjects().count();

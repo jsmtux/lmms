@@ -110,7 +110,11 @@ Track * Track::create( TrackTypes tt, TrackContainer * tc )
 	switch( tt )
 	{
 		case InstrumentTrack: t = new class InstrumentTrack( tc ); break;
-		case PatternTrack: t = new class PatternTrack( tc ); break;
+		case PatternTrack:
+			t = new class PatternTrack( tc );
+			t->createClipsForPattern(Engine::getSong()->numOfPatterns() - 1);
+			Engine::getSong()->setUpPatternStoreTrack();
+			break;
 		case SampleTrack: t = new class SampleTrack( tc ); break;
 //		case EVENT_TRACK:
 //		case VIDEO_TRACK:
@@ -119,13 +123,6 @@ Track * Track::create( TrackTypes tt, TrackContainer * tc )
 						t = new class AutomationTrack( tc, true ); break;
 		default: break;
 	}
-
-	if (tc == Engine::patternStore() && t)
-	{
-		t->createClipsForPattern(Engine::patternStore()->numOfPatterns() - 1);
-	}
-
-	tc->updateAfterTrackAdd();
 
 	Engine::audioEngine()->doneChangeInModel();
 
@@ -543,7 +540,7 @@ bar_t Track::length() const
  */
 void Track::toggleSolo()
 {
-	const TrackContainer::TrackList & tl = m_trackContainer->tracks();
+	const TrackList & tl = m_trackContainer->tracks();
 
 	bool soloBefore = false;
 	for (const auto& track : tl)

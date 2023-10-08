@@ -1511,7 +1511,7 @@ float AutomationEditor::getLevel(int y )
 
 inline bool AutomationEditor::inPatternEditor()
 {
-	return (validClip() && m_clip->getTrack()->trackContainer() == Engine::patternStore());
+	return (validClip() && m_clip->getTrack()->trackContainer() == &Engine::patternStore()->trackContainer());
 }
 
 

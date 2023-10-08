@@ -66,7 +66,7 @@ const QVector<float> SongEditor::m_zoomLevels =
 		{ 0.125f, 0.25f, 0.5f, 1.0f, 2.0f, 4.0f, 8.0f, 16.0f };
 
 SongEditor::SongEditor( Song * song ) :
-	TrackContainerView( song ),
+	TrackContainerView( &song->trackContainer() ),
 	m_song( song ),
 	m_zoomingModel(new ComboBoxModel()),
 	m_snappingModel(new ComboBoxModel()),

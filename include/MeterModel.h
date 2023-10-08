@@ -37,7 +37,7 @@ class LMMS_EXPORT MeterModel : public Model
 	mapPropertyFromModel(int,getNumerator,setNumerator,m_numeratorModel);
 	mapPropertyFromModel(int,getDenominator,setDenominator,m_denominatorModel);
 public:
-	MeterModel( Model * _parent );
+	MeterModel( QObject * _parent );
 	~MeterModel() override = default;
 
 	void saveSettings( QDomDocument & _doc, QDomElement & _this,

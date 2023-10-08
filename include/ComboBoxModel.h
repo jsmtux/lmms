@@ -40,7 +40,7 @@ class LMMS_EXPORT ComboBoxModel : public IntModel
 	Q_OBJECT
 	MODEL_IS_VISITABLE
 public:
-	ComboBoxModel( Model* parent = nullptr,
+	ComboBoxModel( QObject* parent = nullptr,
 					const QString& displayName = QString(),
 					bool isDefaultConstructed = false ) :
 		IntModel( 0, 0, 0, parent, displayName, isDefaultConstructed )

@@ -44,19 +44,20 @@ class TrackContainerView;
 
 }
 
+class TrackContainerCb {
+public:
+	virtual ~TrackContainerCb() = default;
+	virtual AutomatedValueMap automatedValuesAt(TimePos time, int clipNum = -1) const = 0;
+	virtual QString nodeName() const = 0;
+};
+
+using TrackList = QVector<Track*>;
 
 class LMMS_EXPORT TrackContainer : public Model, public JournallingObject
 {
 	Q_OBJECT
 public:
-	using TrackList = QVector<Track*>;
-	enum TrackContainerTypes
-	{
-		PatternContainer,
-		SongContainer
-	} ;
-
-	TrackContainer();
+	TrackContainer(TrackContainerCb* _trackContainerCb);
 	~TrackContainer() override;
 
 	void saveSettings( QDomDocument & _doc, QDomElement & _parent ) override;
@@ -65,11 +66,13 @@ public:
 
 	int countTracks( Track::TrackTypes _tt = Track::NumTrackTypes ) const;
 
+	QString nodeName() const override
+	{
+		return m_trackContainerCb->nodeName();
+	}
 
 	void addTrack( Track * _track );
 	void removeTrack( Track * _track );
-
-	virtual void updateAfterTrackAdd();
 
 	void clearAllTracks();
 
@@ -85,35 +88,70 @@ public:
 		return "trackcontainer";
 	}
 
-	inline void setType( TrackContainerTypes newType )
+	bool allowAutoResizeClip();
+
+	void insertBar(TimePos position)
 	{
-		m_TrackContainerType = newType;
+		m_tracksMutex.lockForRead();
+		for (Track* track: tracks())
+		{
+			// FIXME journal batch of tracks instead of each track individually
+			if (track->numOfClips() > 0) { track->addJournalCheckPoint(); }
+			track->insertBar(position);
+		}
+		m_tracksMutex.unlock();
 	}
 
-	inline TrackContainerTypes type() const
+	void removeBar(TimePos position)
 	{
-		return m_TrackContainerType;
+		m_tracksMutex.lockForRead();
+		for (Track* track: tracks())
+		{
+			// FIXME journal batch of tracks instead of each track individually
+			if (track->numOfClips() > 0) { track->addJournalCheckPoint(); }
+			track->removeBar(position);
+		}
+		m_tracksMutex.unlock();
 	}
 
-	virtual AutomatedValueMap automatedValuesAt(TimePos time, int clipNum = -1) const;
+	bar_t getLargestTrackLength(bool ignoreMuted = false) const {
+		bar_t ret;
+		m_tracksMutex.lockForRead();
+		for (auto track : tracks())
+		{
+			if (ignoreMuted && track->isMuted())
+			{
+				continue;
+			}
+
+			const bar_t cur = track->length();
+			if( cur > ret )
+			{
+				ret = cur;
+			}
+		}
+		m_tracksMutex.unlock();
+		return ret;
+	}
+
+	AutomatedValueMap automatedValuesAt(TimePos time, int clipNum = -1) const;
+
+	AutomatedValueMap automatedValuesFromAllTracks(TimePos time, int clipNum = -1, Track* addTrack = nullptr) const;
 
 signals:
 	void trackAdded( lmms::Track * _track );
 
 protected:
-	static AutomatedValueMap automatedValuesFromTracks(const TrackList &tracks, TimePos timeStart, int clipNum = -1);
 
 	mutable QReadWriteLock m_tracksMutex;
 
 private:
 	TrackList m_tracks;
 
-	TrackContainerTypes m_TrackContainerType;
-
+	TrackContainerCb* m_trackContainerCb;
 
 	friend class gui::TrackContainerView;
 	friend class Track;
-
 } ;
 
 } // namespace lmms

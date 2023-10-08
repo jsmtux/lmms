@@ -43,7 +43,7 @@ QVector<Controller *> Controller::s_controllers;
 
 
 
-Controller::Controller( ControllerTypes _type, Model * _parent,
+Controller::Controller( ControllerTypes _type, QObject * _parent,
 					const QString & _display_name ) :
 	Model( _parent, _display_name ),
 	JournallingObject(),
@@ -181,7 +181,7 @@ void Controller::resetFrameCounter()
 
 
 
-Controller * Controller::create( ControllerTypes _ct, Model * _parent )
+Controller * Controller::create( ControllerTypes _ct, QObject * _parent )
 {
 	static Controller * dummy = nullptr;
 	Controller * c = nullptr;
@@ -217,7 +217,7 @@ Controller * Controller::create( ControllerTypes _ct, Model * _parent )
 
 
 
-Controller * Controller::create( const QDomElement & _this, Model * _parent )
+Controller * Controller::create( const QDomElement & _this, QObject * _parent )
 {
 	Controller * c;
 	if( _this.attribute( "type" ).toInt() == Controller::PeakController )
