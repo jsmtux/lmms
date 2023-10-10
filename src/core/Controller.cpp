@@ -220,7 +220,7 @@ Controller * Controller::create( ControllerTypes _ct, QObject * _parent )
 Controller * Controller::create( const QDomElement & _this, QObject * _parent )
 {
 	Controller * c;
-	if( _this.attribute( "type" ).toInt() == Controller::PeakController )
+	if( _this.attribute( "type" ).toInt() == ControllerTypes::PeakController )
 	{
 		c = PeakController::getControllerBySetting( _this );
 	}

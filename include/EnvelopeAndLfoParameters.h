@@ -73,7 +73,7 @@ public:
 	} ;
 
 	EnvelopeAndLfoParameters( float _value_for_zero_amount,
-							Model * _parent );
+							QObject * _parent );
 	~EnvelopeAndLfoParameters() override;
 
 	static inline float expKnobVal( float _val )

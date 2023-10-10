@@ -25,8 +25,6 @@
 #ifndef LMMS_INSTRUMENT_FUNCTION_VIEWS_H
 #define LMMS_INSTRUMENT_FUNCTION_VIEWS_H
 
-#include "ModelView.h"
-
 #include <QWidget>
 
 class QLabel;
@@ -45,7 +43,7 @@ class GroupBox;
 class Knob;
 class TempoSyncKnob;
 
-class InstrumentFunctionNoteStackingView : public QWidget, public ModelView
+class InstrumentFunctionNoteStackingView : public QWidget
 {
 	Q_OBJECT
 public:
@@ -54,8 +52,6 @@ public:
 
 
 private:
-	void modelChanged() override;
-
 	InstrumentFunctionNoteStacking * m_cc;
 
 	GroupBox * m_chordsGroupBox;
@@ -68,7 +64,7 @@ private:
 
 
 
-class InstrumentFunctionArpeggioView : public QWidget, public ModelView
+class InstrumentFunctionArpeggioView : public QWidget
 {
 	Q_OBJECT
 public:
@@ -77,8 +73,6 @@ public:
 
 
 private:
-	void modelChanged() override;
-
 	InstrumentFunctionArpeggio * m_a;
 	GroupBox * m_arpGroupBox;
 	ComboBox * m_arpComboBox;

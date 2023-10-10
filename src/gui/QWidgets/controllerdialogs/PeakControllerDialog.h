@@ -16,7 +16,6 @@ public:
 protected:
 	void contextMenuEvent( QContextMenuEvent * _me ) override;
 	void paintEvent( QPaintEvent * _pe ) override;
-	void modelChanged() override;
 
 	PeakController * m_peakController;
 

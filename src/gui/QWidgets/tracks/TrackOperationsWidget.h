@@ -26,6 +26,7 @@
 #define LMMS_GUI_TRACK_OPERATIONS_WIDGET_H
 
 #include <QWidget>
+#include "AutomatableModel.h"
 
 class QPushButton;
 
@@ -39,7 +40,7 @@ class TrackOperationsWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	TrackOperationsWidget( TrackView * parent );
+	TrackOperationsWidget( TrackView * parent, BoolModel* muteModel, BoolModel* soloModel );
 	~TrackOperationsWidget() override = default;
 
 

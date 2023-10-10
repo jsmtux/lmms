@@ -34,11 +34,13 @@ namespace lmms::gui
 
 EffectControlDialog::EffectControlDialog( EffectControls * _controls ) :
 	QWidget( nullptr ),
-	ModelView( _controls, this ),
 	m_effectControls( _controls )
 {
 	setWindowTitle( m_effectControls->effect()->model()->displayName() );
 	setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
+	QObject::connect( m_effectControls, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_effectControls, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	update();
 }
 
 

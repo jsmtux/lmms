@@ -22,7 +22,6 @@ SET(LMMS_UI_SRCS
 	MidiSetupWidget.cpp
 	MixerLine.cpp
 	MixerView.cpp
-	ModelView.cpp
 	PluginBrowser.cpp
 	ProjectNotes.cpp
 	RowTableView.cpp

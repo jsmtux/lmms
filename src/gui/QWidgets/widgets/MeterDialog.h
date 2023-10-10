@@ -26,8 +26,6 @@
 #ifndef LMMS_GUI_METER_DIALOG_H
 #define LMMS_GUI_METER_DIALOG_H
 
-#include "ModelView.h"
-
 #include <QWidget>
 
 namespace lmms::gui
@@ -36,14 +34,12 @@ namespace lmms::gui
 class LcdSpinBox;
 
 
-class MeterDialog : public QWidget, public ModelView
+class MeterDialog : public QWidget
 {
 	Q_OBJECT
 public:
-	MeterDialog( QWidget * _parent, bool _simple = false );
+	MeterDialog( MeterModel* mm, QWidget * _parent, bool _simple = false );
 	~MeterDialog() override = default;
-
-	void modelChanged() override;
 
 
 private:

@@ -39,7 +39,9 @@ class LMMS_EXPORT AutomatableButton : public QPushButton, public BoolModelView
 {
 	Q_OBJECT
 public:
-	AutomatableButton( QWidget * _parent, const QString & _name
+	// AutomatableButton( QWidget * _parent, const QString & _name
+	// 		= QString() );
+	AutomatableButton( QWidget * _parent, BoolModel* model, const QString & _name
 			= QString() );
 	~AutomatableButton() override;
 
@@ -48,8 +50,6 @@ public:
 		QPushButton::setCheckable( _on );
 		model()->setJournalling( _on );
 	}
-
-	void modelChanged() override;
 
 
 public slots:
@@ -84,7 +84,7 @@ class LMMS_EXPORT automatableButtonGroup : public QWidget, public IntModelView
 {
 	Q_OBJECT
 public:
-	automatableButtonGroup( QWidget * _parent, const QString & _name
+	automatableButtonGroup( IntModel* _model, QWidget * _parent, const QString & _name
 			= QString() );
 	~automatableButtonGroup() override;
 
@@ -92,9 +92,6 @@ public:
 	void removeButton( AutomatableButton * _btn );
 
 	void activateButton( AutomatableButton * _btn );
-
-	void modelChanged() override;
-
 
 private slots:
 	void updateButtons();

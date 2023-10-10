@@ -10,13 +10,12 @@ class LfoControllerDialog : public ControllerDialog
 {
 	Q_OBJECT
 public:
-	LfoControllerDialog( Controller * _controller, QWidget * _parent );
+	LfoControllerDialog( LfoController * _controller, QWidget * _parent );
 	~LfoControllerDialog() override;
 
 
 protected:
 	void contextMenuEvent( QContextMenuEvent * _me ) override;
-	void modelChanged() override;
 
 	LfoController * m_lfo;
 

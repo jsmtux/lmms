@@ -42,33 +42,23 @@ void KnobControl::setText(const QString &text) { m_knob->setLabel(text); }
 
 QWidget *KnobControl::topWidget() { return m_knob; }
 
-void KnobControl::setModel(AutomatableModel *model)
-{
-	m_knob->setModel(model->dynamicCast<FloatModel>(true));
-}
-
 FloatModel *KnobControl::model() { return m_knob->model(); }
 
 AutomatableModelView* KnobControl::modelView() { return m_knob; }
 
-KnobControl::KnobControl(QWidget *parent) :
-	m_knob(new Knob(parent)) {}
+KnobControl::KnobControl(FloatModel* _model, QWidget *parent) :
+	m_knob(new Knob(_model, parent)) {}
 
 
 void ComboControl::setText(const QString &text) { m_label->setText(text); }
-
-void ComboControl::setModel(AutomatableModel *model)
-{
-	m_combo->setModel(model->dynamicCast<ComboBoxModel>(true));
-}
 
 ComboBoxModel *ComboControl::model() { return m_combo->model(); }
 
 AutomatableModelView* ComboControl::modelView() { return m_combo; }
 
-ComboControl::ComboControl(QWidget *parent) :
+ComboControl::ComboControl(ComboBoxModel* _model, QWidget *parent) :
 	m_widget(new QWidget(parent)),
-	m_combo(new ComboBox(nullptr)),
+	m_combo(new ComboBox(_model, parent)),
 	m_label(new QLabel(m_widget))
 {
 	m_combo->setFixedSize(64, ComboBox::DEFAULT_HEIGHT);
@@ -84,18 +74,13 @@ void CheckControl::setText(const QString &text) { m_label->setText(text); }
 
 QWidget *CheckControl::topWidget() { return m_widget; }
 
-void CheckControl::setModel(AutomatableModel *model)
-{
-	m_checkBox->setModel(model->dynamicCast<BoolModel>(true));
-}
-
 BoolModel *CheckControl::model() { return m_checkBox->model(); }
 
 AutomatableModelView* CheckControl::modelView() { return m_checkBox; }
 
-CheckControl::CheckControl(QWidget *parent) :
+CheckControl::CheckControl(BoolModel* _model, QWidget *parent) :
 	m_widget(new QWidget(parent)),
-	m_checkBox(new LedCheckBox(nullptr, QString(), LedCheckBox::Green)),
+	m_checkBox(new LedCheckBox(_model, parent, QString(), LedCheckBox::Green)),
 	m_label(new QLabel(m_widget))
 {
 	auto vbox = new QVBoxLayout(m_widget);
@@ -110,17 +95,12 @@ void LcdControl::setText(const QString &text) { m_lcd->setLabel(text); }
 
 QWidget *LcdControl::topWidget() { return m_lcd; }
 
-void LcdControl::setModel(AutomatableModel *model)
-{
-	m_lcd->setModel(model->dynamicCast<IntModel>(true));
-}
-
 IntModel *LcdControl::model() { return m_lcd->model(); }
 
 AutomatableModelView* LcdControl::modelView() { return m_lcd; }
 
-LcdControl::LcdControl(int numDigits, QWidget *parent) :
-	m_lcd(new LcdSpinBox(numDigits, parent))
+LcdControl::LcdControl(int numDigits, IntModel* _model, QWidget *parent) :
+	m_lcd(new LcdSpinBox(numDigits, _model, parent))
 {
 }
 

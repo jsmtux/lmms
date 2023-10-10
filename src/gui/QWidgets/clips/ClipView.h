@@ -28,7 +28,6 @@
 
 #include <QVector>
 
-#include "ModelView.h"
 #include "editors/Rubberband.h"
 #include "Clip.h"
 

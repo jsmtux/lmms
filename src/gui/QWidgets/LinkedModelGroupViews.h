@@ -70,9 +70,6 @@ public:
 		std::size_t colNum);
 	~LinkedModelGroupView() override = default;
 
-	//! Reconnect models if model changed
-	void modelChanged(LinkedModelGroup* linkedModelGroup);
-
 protected:
 	//! Add a control to this widget
 	//! @warning This widget will own this control, do not free it
@@ -103,9 +100,6 @@ class LinkedModelGroupsView
 {
 protected:
 	~LinkedModelGroupsView() = default;
-
-	//! Reconnect models if model changed; to be called by child virtuals
-	void modelChanged(LinkedModelGroups* ctrlBase);
 
 private:
 	//! The base class must return the addressed group view,

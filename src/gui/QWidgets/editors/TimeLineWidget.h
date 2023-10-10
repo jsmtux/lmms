@@ -260,34 +260,34 @@ public:
 		connect(&timeLineWidget, &TimeLineWidget::positionChanged, this, &ITimeLineWidgetImpl::positionChanged);
 	}
 
-    void savePos( const TimePos & pos ) {
+    void savePos( const TimePos & pos ) override {
 		timeLineWidget.savePos(pos);
 	}
-    const TimePos & loopBegin() const {
+    const TimePos & loopBegin() const override {
 		return timeLineWidget.loopBegin();
 	}
-    const TimePos & loopEnd() const {
+    const TimePos & loopEnd() const override {
 		return timeLineWidget.loopEnd();
 	}
-    TimeLineBehaviourAtStopStates behaviourAtStop() const {
+    TimeLineBehaviourAtStopStates behaviourAtStop() const override {
 		return timeLineWidget.behaviourAtStop();
 	}
-    const TimePos & savedPos() const {
+    const TimePos & savedPos() const override {
 		return timeLineWidget.savedPos();
 	}
-    void toggleLoopPoints( int _n ) {
+    void toggleLoopPoints( int _n ) override {
 		timeLineWidget.toggleLoopPoints(_n);
 	}
-    bool loopPointsEnabled() const {
+    bool loopPointsEnabled() const override {
 		return timeLineWidget.loopPointsEnabled();
 	}
-    QDomElement saveState( QDomDocument & _doc, QDomElement & _parent ) {
+    QDomElement saveState( QDomDocument & _doc, QDomElement & _parent ) override {
 		return timeLineWidget.saveState(_doc, _parent);
 	}
-    void restoreState( const QDomElement & _this ) {
+    void restoreState( const QDomElement & _this ) override {
 		timeLineWidget.restoreState(_this);
 	}
-    QString nodeName() const {
+    QString nodeName() const override {
 		return timeLineWidget.nodeName();
 	}
 	void setPixelsPerBar( float ppb ) override {

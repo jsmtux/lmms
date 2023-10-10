@@ -87,10 +87,9 @@ QPixmap * EnvelopeAndLfoView::s_lfoGraph = nullptr;
 
 
 
-EnvelopeAndLfoView::EnvelopeAndLfoView( QWidget * _parent ) :
+EnvelopeAndLfoView::EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidget * _parent ) :
 	QWidget( _parent ),
-	ModelView( nullptr, this ),
-	m_params( nullptr )
+	m_params( params )
 {
 	if( s_envGraph == nullptr )
 	{
@@ -101,102 +100,108 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( QWidget * _parent ) :
 		s_lfoGraph = new QPixmap( embed::getIconPixmap( "lfo_graph" ) );
 	}
 
-	m_predelayKnob = new Knob( knobBright_26, this );
+	QObject::connect( m_params, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_params, SIGNAL(propertiesChanged()), this, SLOT(update()));
+
+	m_predelayKnob = new Knob( knobBright_26, &m_params->m_predelayModel, this );
 	m_predelayKnob->setLabel( tr( "DEL" ) );
 	m_predelayKnob->move( PREDELAY_KNOB_X, ENV_KNOBS_Y );
 	m_predelayKnob->setHintText( tr( "Pre-delay:" ), "" );
 
 
-	m_attackKnob = new Knob( knobBright_26, this );
+	m_attackKnob = new Knob( knobBright_26, &m_params->m_attackModel, this );
 	m_attackKnob->setLabel( tr( "ATT" ) );
 	m_attackKnob->move( ATTACK_KNOB_X, ENV_KNOBS_Y );
 	m_attackKnob->setHintText( tr( "Attack:" ), "" );
 
 
-	m_holdKnob = new Knob( knobBright_26, this );
+	m_holdKnob = new Knob( knobBright_26, &m_params->m_holdModel, this );
 	m_holdKnob->setLabel( tr( "HOLD" ) );
 	m_holdKnob->move( HOLD_KNOB_X, ENV_KNOBS_Y );
 	m_holdKnob->setHintText( tr( "Hold:" ), "" );
 
 
-	m_decayKnob = new Knob( knobBright_26, this );
+	m_decayKnob = new Knob( knobBright_26, &m_params->m_decayModel, this );
 	m_decayKnob->setLabel( tr( "DEC" ) );
 	m_decayKnob->move( DECAY_KNOB_X, ENV_KNOBS_Y );
 	m_decayKnob->setHintText( tr( "Decay:" ), "" );
 
 
-	m_sustainKnob = new Knob( knobBright_26, this );
+	m_sustainKnob = new Knob( knobBright_26, &m_params->m_sustainModel, this );
 	m_sustainKnob->setLabel( tr( "SUST" ) );
 	m_sustainKnob->move( SUSTAIN_KNOB_X, ENV_KNOBS_Y );
 	m_sustainKnob->setHintText( tr( "Sustain:" ), "" );
 
 
-	m_releaseKnob = new Knob( knobBright_26, this );
+	m_releaseKnob = new Knob( knobBright_26, &m_params->m_releaseModel, this );
 	m_releaseKnob->setLabel( tr( "REL" ) );
 	m_releaseKnob->move( RELEASE_KNOB_X, ENV_KNOBS_Y );
     m_releaseKnob->setHintText( tr( "Release:" ), "" );
 
 
-	m_amountKnob = new Knob( knobBright_26, this );
+	m_amountKnob = new Knob( knobBright_26, &m_params->m_amountModel, this );
 	m_amountKnob->setLabel( tr( "AMT" ) );
 	m_amountKnob->move( AMOUNT_KNOB_X, ENV_GRAPH_Y );
 	m_amountKnob->setHintText( tr( "Modulation amount:" ), "" );
 
 
-
-
-	m_lfoPredelayKnob = new Knob( knobBright_26, this );
+	m_lfoPredelayKnob = new Knob( knobBright_26, &m_params->m_lfoPredelayModel, this );
 	m_lfoPredelayKnob->setLabel( tr( "DEL" ) );
 	m_lfoPredelayKnob->move( LFO_PREDELAY_KNOB_X, LFO_KNOB_Y );
 	m_lfoPredelayKnob->setHintText( tr( "Pre-delay:" ), "" );
 
 
-	m_lfoAttackKnob = new Knob( knobBright_26, this );
+	m_lfoAttackKnob = new Knob( knobBright_26, &m_params->m_lfoAttackModel, this );
 	m_lfoAttackKnob->setLabel( tr( "ATT" ) );
 	m_lfoAttackKnob->move( LFO_ATTACK_KNOB_X, LFO_KNOB_Y );
 	m_lfoAttackKnob->setHintText( tr( "Attack:" ), "" );
 
 
-	m_lfoSpeedKnob = new TempoSyncKnob( knobBright_26, this );
+	m_lfoSpeedKnob = new TempoSyncKnob( knobBright_26, &m_params->m_lfoSpeedModel, this );
 	m_lfoSpeedKnob->setLabel( tr( "SPD" ) );
 	m_lfoSpeedKnob->move( LFO_SPEED_KNOB_X, LFO_KNOB_Y );
 	m_lfoSpeedKnob->setHintText( tr( "Frequency:" ), "" );
 
 
-	m_lfoAmountKnob = new Knob( knobBright_26, this );
+	m_lfoAmountKnob = new Knob( knobBright_26, &m_params->m_lfoAmountModel, this );
 	m_lfoAmountKnob->setLabel( tr( "AMT" ) );
 	m_lfoAmountKnob->move( LFO_AMOUNT_KNOB_X, LFO_KNOB_Y );
 	m_lfoAmountKnob->setHintText( tr( "Modulation amount:" ), "" );
 
-	auto sin_lfo_btn = new PixmapButton(this, nullptr);
+	BoolModel* sin_lfo_btn_model = new BoolModel(false, this);
+	auto sin_lfo_btn = new PixmapButton(this, sin_lfo_btn_model);
 	sin_lfo_btn->move( LFO_SHAPES_X, LFO_SHAPES_Y );
 	sin_lfo_btn->setActiveGraphic( embed::getIconPixmap(
 							"sin_wave_active" ) );
 	sin_lfo_btn->setInactiveGraphic( embed::getIconPixmap(
 							"sin_wave_inactive" ) );
 
-	auto triangle_lfo_btn = new PixmapButton(this, nullptr);
+	BoolModel* triangle_lfo_btn_model = new BoolModel(false, this);
+	auto triangle_lfo_btn = new PixmapButton(this, triangle_lfo_btn_model);
 	triangle_lfo_btn->move( LFO_SHAPES_X+15, LFO_SHAPES_Y );
 	triangle_lfo_btn->setActiveGraphic( embed::getIconPixmap(
 						"triangle_wave_active" ) );
 	triangle_lfo_btn->setInactiveGraphic( embed::getIconPixmap(
 						"triangle_wave_inactive" ) );
 
-	auto saw_lfo_btn = new PixmapButton(this, nullptr);
+	BoolModel* saw_lfo_btn_model = new BoolModel(false, this);
+	auto saw_lfo_btn = new PixmapButton(this, saw_lfo_btn_model);
 	saw_lfo_btn->move( LFO_SHAPES_X+30, LFO_SHAPES_Y );
 	saw_lfo_btn->setActiveGraphic( embed::getIconPixmap(
 							"saw_wave_active" ) );
 	saw_lfo_btn->setInactiveGraphic( embed::getIconPixmap(
 							"saw_wave_inactive" ) );
 
-	auto sqr_lfo_btn = new PixmapButton(this, nullptr);
+	BoolModel* sqr_lfo_btn_model = new BoolModel(false, this);
+	auto sqr_lfo_btn = new PixmapButton(this, sqr_lfo_btn_model);
 	sqr_lfo_btn->move( LFO_SHAPES_X+45, LFO_SHAPES_Y );
 	sqr_lfo_btn->setActiveGraphic( embed::getIconPixmap(
 						"square_wave_active" ) );
 	sqr_lfo_btn->setInactiveGraphic( embed::getIconPixmap(
 						"square_wave_inactive" ) );
 
-	m_userLfoBtn = new PixmapButton( this, nullptr );
+	BoolModel* m_userLfoBtn_model = new BoolModel(false, this);
+	m_userLfoBtn = new PixmapButton( this, m_userLfoBtn_model);
 	m_userLfoBtn->move( LFO_SHAPES_X+75, LFO_SHAPES_Y );
 	m_userLfoBtn->setActiveGraphic( embed::getIconPixmap(
 							"usr_wave_active" ) );
@@ -206,14 +211,15 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( QWidget * _parent ) :
 	connect( m_userLfoBtn, SIGNAL(toggled(bool)),
 				this, SLOT(lfoUserWaveChanged()));
 
-	auto random_lfo_btn = new PixmapButton(this, nullptr);
+	BoolModel* random_lfo_btn_model = new BoolModel(false, this);
+	auto random_lfo_btn = new PixmapButton(this, random_lfo_btn_model);
 	random_lfo_btn->move( LFO_SHAPES_X+60, LFO_SHAPES_Y );
 	random_lfo_btn->setActiveGraphic( embed::getIconPixmap(
 						"random_wave_active" ) );
 	random_lfo_btn->setInactiveGraphic( embed::getIconPixmap(
 						"random_wave_inactive" ) );
 
-	m_lfoWaveBtnGrp = new automatableButtonGroup( this );
+	m_lfoWaveBtnGrp = new automatableButtonGroup( &m_params->m_lfoWaveModel, this);
 	m_lfoWaveBtnGrp->addButton( sin_lfo_btn );
 	m_lfoWaveBtnGrp->addButton( triangle_lfo_btn );
 	m_lfoWaveBtnGrp->addButton( saw_lfo_btn );
@@ -221,13 +227,13 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( QWidget * _parent ) :
 	m_lfoWaveBtnGrp->addButton( m_userLfoBtn );
 	m_lfoWaveBtnGrp->addButton( random_lfo_btn );
 
-	m_x100Cb = new LedCheckBox( tr( "FREQ x 100" ), this );
+	m_x100Cb = new LedCheckBox( tr( "FREQ x 100" ), &m_params->m_x100Model, this );
 	m_x100Cb->setFont( pointSizeF( m_x100Cb->font(), 6.5 ) );
 	m_x100Cb->move( LFO_PREDELAY_KNOB_X, LFO_GRAPH_Y + 36 );
 	m_x100Cb->setToolTip(tr("Multiply LFO frequency by 100"));
 
 
-	m_controlEnvAmountCb = new LedCheckBox( tr( "MODULATE ENV AMOUNT" ),
+	m_controlEnvAmountCb = new LedCheckBox( tr( "MODULATE ENV AMOUNT" ), &m_params->m_controlEnvAmountModel,
 			this );
 	m_controlEnvAmountCb->move( LFO_PREDELAY_KNOB_X, LFO_GRAPH_Y + 54 );
 	m_controlEnvAmountCb->setFont( pointSizeF( m_controlEnvAmountCb->font(), 6.5 ) );
@@ -236,6 +242,7 @@ EnvelopeAndLfoView::EnvelopeAndLfoView( QWidget * _parent ) :
 
 
 	setAcceptDrops( true );
+	update();
 
 }
 
@@ -246,29 +253,6 @@ EnvelopeAndLfoView::~EnvelopeAndLfoView()
 {
 	delete m_lfoWaveBtnGrp;
 }
-
-
-
-
-void EnvelopeAndLfoView::modelChanged()
-{
-	m_params = castModel<EnvelopeAndLfoParameters>();
-	m_predelayKnob->setModel( &m_params->m_predelayModel );
-	m_attackKnob->setModel( &m_params->m_attackModel );
-	m_holdKnob->setModel( &m_params->m_holdModel );
-	m_decayKnob->setModel( &m_params->m_decayModel );
-	m_sustainKnob->setModel( &m_params->m_sustainModel );
-	m_releaseKnob->setModel( &m_params->m_releaseModel );
-	m_amountKnob->setModel( &m_params->m_amountModel );
-	m_lfoPredelayKnob->setModel( &m_params->m_lfoPredelayModel );
-	m_lfoAttackKnob->setModel( &m_params->m_lfoAttackModel );
-	m_lfoSpeedKnob->setModel( &m_params->m_lfoSpeedModel );
-	m_lfoAmountKnob->setModel( &m_params->m_lfoAmountModel );
-	m_lfoWaveBtnGrp->setModel( &m_params->m_lfoWaveModel );
-	m_x100Cb->setModel( &m_params->m_x100Model );
-	m_controlEnvAmountCb->setModel( &m_params->m_controlEnvAmountModel );
-}
-
 
 
 

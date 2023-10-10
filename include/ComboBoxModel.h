@@ -41,9 +41,8 @@ class LMMS_EXPORT ComboBoxModel : public IntModel
 	MODEL_IS_VISITABLE
 public:
 	ComboBoxModel( QObject* parent = nullptr,
-					const QString& displayName = QString(),
-					bool isDefaultConstructed = false ) :
-		IntModel( 0, 0, 0, parent, displayName, isDefaultConstructed )
+					const QString& displayName = QString()) :
+		IntModel( 0, 0, 0, parent, displayName )
 	{
 	}
 

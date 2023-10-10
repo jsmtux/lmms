@@ -204,7 +204,7 @@ const InstrumentFunctionNoteStacking::Chord & InstrumentFunctionNoteStacking::Ch
 
 
 
-InstrumentFunctionNoteStacking::InstrumentFunctionNoteStacking( Model * _parent ) :
+InstrumentFunctionNoteStacking::InstrumentFunctionNoteStacking( QObject * _parent ) :
 	Model( _parent, tr( "Chords" ) ),
 	m_chordsEnabledModel( false, this ),
 	m_chordsModel( this, tr( "Chord type" ) ),
@@ -294,7 +294,7 @@ void InstrumentFunctionNoteStacking::loadSettings( const QDomElement & _this )
 
 
 
-InstrumentFunctionArpeggio::InstrumentFunctionArpeggio( Model * _parent ) :
+InstrumentFunctionArpeggio::InstrumentFunctionArpeggio( QObject * _parent ) :
 	Model( _parent, tr( "Arpeggio" ) ),
 	m_arpEnabledModel( false ),
 	m_arpModel( this, tr( "Arpeggio type" ) ),

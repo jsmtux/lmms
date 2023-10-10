@@ -48,7 +48,7 @@ namespace lmms::gui
 
 ControllerView::ControllerView( Controller * _model, QWidget * _parent ) :
 	QFrame( _parent ),
-	ModelView( _model, this ),
+	m_controller(_model),
 	m_subWindow( nullptr ),
 	m_controllerDlg( nullptr ),
 	m_show( true )
@@ -94,7 +94,10 @@ ControllerView::ControllerView( Controller * _model, QWidget * _parent ) :
 
 	m_subWindow->hide();
 
-	setModel( _model );
+	QObject::connect( m_controller, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_controller, SIGNAL(propertiesChanged()), this, SLOT(update()));
+
+	update();
 }
 
 
@@ -144,14 +147,13 @@ void ControllerView::deleteController()
 void ControllerView::renameController()
 {
 	bool ok;
-	auto c = castModel<Controller>();
 	QString new_name = QInputDialog::getText( this,
 			tr( "Rename controller" ),
 			tr( "Enter the new name for this controller" ),
-			QLineEdit::Normal, c->name() , &ok );
+			QLineEdit::Normal, m_controller->name() , &ok );
 	if( ok && !new_name.isEmpty() )
 	{
-		c->setName( new_name );
+		m_controller->setName( new_name );
 		if( getController()->type() == Controller::LfoController )
 		{
 			m_controllerDlg->setWindowTitle( tr( "LFO" ) + " (" + new_name + ")" );
@@ -167,16 +169,9 @@ void ControllerView::mouseDoubleClickEvent( QMouseEvent * event )
 }
 
 
-
-void ControllerView::modelChanged()
-{
-}
-
-
-
 void ControllerView::contextMenuEvent( QContextMenuEvent * )
 {
-	QPointer<CaptionMenu> contextMenu = new CaptionMenu( model()->displayName(), this );
+	QPointer<CaptionMenu> contextMenu = new CaptionMenu( m_controller->displayName(), this );
 	contextMenu->addAction( embed::getIconPixmap( "cancel" ),
 						tr( "&Remove this controller" ),
 						this, SLOT(deleteController()));

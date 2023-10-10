@@ -35,8 +35,8 @@ namespace lmms::gui
 LeftRightNav::LeftRightNav(QWidget *parent)
  : QWidget(parent),
    m_layout(this),
-   m_leftBtn(this, tr("Previous")),
-   m_rightBtn(this, tr("Next"))
+   m_leftBtn(this, &m_leftBtnModel, tr("Previous")),
+   m_rightBtn(this, &m_rightBtnModel, tr("Next"))
 {
 	m_layout.setContentsMargins(0, 0, 0, 0);
 	m_layout.setSpacing(2);

@@ -26,8 +26,6 @@
 #ifndef LMMS_GUI_ENVELOPE_AND_LFO_VIEW_H
 #define LMMS_GUI_ENVELOPE_AND_LFO_VIEW_H
 
-#include "ModelView.h"
-
 #include <QWidget>
 
 class QPaintEvent;
@@ -49,17 +47,14 @@ class TempoSyncKnob;
 
 
 
-class EnvelopeAndLfoView : public QWidget, public ModelView
+class EnvelopeAndLfoView : public QWidget
 {
 	Q_OBJECT
 public:
-	EnvelopeAndLfoView( QWidget * _parent );
+	EnvelopeAndLfoView( EnvelopeAndLfoParameters* params, QWidget * _parent );
 	~EnvelopeAndLfoView() override;
 
-
 protected:
-	void modelChanged() override;
-
 	void dragEnterEvent( QDragEnterEvent * _dee ) override;
 	void dropEvent( QDropEvent * _de ) override;
 	void mousePressEvent( QMouseEvent * _me ) override;

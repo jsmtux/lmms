@@ -38,17 +38,17 @@ class LMMS_EXPORT ComboBox : public QWidget, public IntModelView
 {
 	Q_OBJECT
 public:
-	ComboBox( QWidget* parent = nullptr, const QString& name = QString() );
+	ComboBox( IntModel* _model, QWidget* parent = nullptr, const QString& name = QString() );
 	~ComboBox() override = default;
 
 	ComboBoxModel* model()
 	{
-		return castModel<ComboBoxModel>();
+		return static_cast<ComboBoxModel*>(m_model);
 	}
 
 	const ComboBoxModel* model() const
 	{
-		return castModel<ComboBoxModel>();
+		return static_cast<ComboBoxModel*>(m_model);
 	}
 
 	static constexpr int DEFAULT_HEIGHT = 22;

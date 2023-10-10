@@ -29,8 +29,7 @@ AudioJackSetupWidget::AudioJackSetupWidget( QWidget * _parent ) :
 	m->setValue( ConfigManager::inst()->value( "audiojack",
 							"channels" ).toInt() );
 
-	m_channels = new gui::LcdSpinBox( 1, this );
-	m_channels->setModel( m );
+	m_channels = new gui::LcdSpinBox( 1, m, this );
 	m_channels->setLabel( tr( "Channels" ) );
 	m_channels->move( 180, 20 );
 

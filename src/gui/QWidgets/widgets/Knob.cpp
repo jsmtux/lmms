@@ -57,10 +57,11 @@ SimpleTextFloat * Knob::s_textFloat = nullptr;
 
 
 
-
-Knob::Knob( knobTypes _knob_num, QWidget * _parent, const QString & _name ) :
+//default impl for model would be
+// new FloatModel( 0, 0, 0, 1, nullptr, _name, true )
+Knob::Knob( knobTypes _knob_num, FloatModel* _model, QWidget * _parent, const QString & _name ) :
 	QWidget( _parent ),
-	FloatModelView( new FloatModel( 0, 0, 0, 1, nullptr, _name, true ), this ),
+	FloatModelView( _model, this ),
 	m_label( "" ),
 	m_isHtmlLabel(false),
 	m_tdRenderer(nullptr),
@@ -75,8 +76,8 @@ Knob::Knob( knobTypes _knob_num, QWidget * _parent, const QString & _name ) :
 	initUi( _name );
 }
 
-Knob::Knob( QWidget * _parent, const QString & _name ) :
-	Knob( knobBright_26, _parent, _name )
+Knob::Knob( FloatModel* _model, QWidget * _parent, const QString & _name ) :
+	Knob( knobBright_26, _model, _parent, _name )
 {
 }
 
@@ -125,7 +126,11 @@ void Knob::initUi( const QString & _name )
 		break;
 	}
 
-	doConnections();
+	QObject::connect( model(), SIGNAL(dataChanged()),
+				this, SLOT(friendlyUpdate()));
+
+	QObject::connect( model(), SIGNAL(propertiesChanged()),
+					this, SLOT(update()));
 }
 
 
@@ -820,22 +825,6 @@ QString Knob::displayValue() const
 	return m_description.trimmed() + QString( " %1" ).
 					arg( model()->getRoundedValue() ) + m_unit;
 }
-
-
-
-
-void Knob::doConnections()
-{
-	if( model() != nullptr )
-	{
-		QObject::connect( model(), SIGNAL(dataChanged()),
-					this, SLOT(friendlyUpdate()));
-
-		QObject::connect( model(), SIGNAL(propertiesChanged()),
-						this, SLOT(update()));
-	}
-}
-
 
 void Knob::changeEvent(QEvent * ev)
 {

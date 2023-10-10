@@ -47,8 +47,7 @@ InstrumentMiscView::InstrumentMiscView(InstrumentTrack *it, QWidget *parent) :
 	layout->setContentsMargins(5, 5, 5, 5);
 
 	// Master pitch toggle
-	m_pitchGroupBox = new GroupBox(tr("GLOBAL TRANSPOSITION"));
-	m_pitchGroupBox->setModel(&it->m_useMasterPitchModel);
+	m_pitchGroupBox = new GroupBox(tr("GLOBAL TRANSPOSITION"), &it->m_useMasterPitchModel);
 	layout->addWidget(m_pitchGroupBox);
 
 	auto masterPitchLayout = new QHBoxLayout(m_pitchGroupBox);
@@ -60,8 +59,7 @@ InstrumentMiscView::InstrumentMiscView(InstrumentTrack *it, QWidget *parent) :
 	masterPitchLayout->addWidget(tlabel);
 
 	// Microtuner settings
-	m_microtunerGroupBox = new GroupBox(tr("MICROTUNER"));
-	m_microtunerGroupBox->setModel(it->m_microtuner.enabledModel());
+	m_microtunerGroupBox = new GroupBox(tr("MICROTUNER"), it->m_microtuner.enabledModel());
 	layout->addWidget(m_microtunerGroupBox);
 
 	auto microtunerLayout = new QVBoxLayout(m_microtunerGroupBox);
@@ -70,19 +68,16 @@ InstrumentMiscView::InstrumentMiscView(InstrumentTrack *it, QWidget *parent) :
 	auto scaleLabel = new QLabel(tr("Active scale:"));
 	microtunerLayout->addWidget(scaleLabel);
 
-	m_scaleCombo = new ComboBox();
-	m_scaleCombo->setModel(it->m_microtuner.scaleModel());
+	m_scaleCombo = new ComboBox(it->m_microtuner.scaleModel());
 	microtunerLayout->addWidget(m_scaleCombo);
 
 	auto keymapLabel = new QLabel(tr("Active keymap:"));
 	microtunerLayout->addWidget(keymapLabel);
 
-	m_keymapCombo = new ComboBox();
-	m_keymapCombo->setModel(it->m_microtuner.keymapModel());
+	m_keymapCombo = new ComboBox(it->m_microtuner.keymapModel());
 	microtunerLayout->addWidget(m_keymapCombo);
 
-	m_rangeImportCheckbox = new LedCheckBox(tr("Import note ranges from keymap"), this);
-	m_rangeImportCheckbox->setModel(it->m_microtuner.keyRangeImportModel());
+	m_rangeImportCheckbox = new LedCheckBox(tr("Import note ranges from keymap"), it->m_microtuner.keyRangeImportModel(), this);
 	m_rangeImportCheckbox->setToolTip(tr("When enabled, the first, last and base notes of this instrument will be overwritten with values specified by the selected keymap."));
 	m_rangeImportCheckbox->setCheckable(true);
 	microtunerLayout->addWidget(m_rangeImportCheckbox);

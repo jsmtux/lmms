@@ -31,7 +31,6 @@
 #include <QThread>
 
 #include "JournallingObject.h"
-#include "ModelView.h"
 #include "Rubberband.h"
 #include "TimePos.h"
 
@@ -64,7 +63,7 @@ namespace gui
 
 class TrackView;
 
-class TrackContainerView : public QWidget, public ModelView,
+class TrackContainerView : public QWidget,
 						public JournallingObject,
 						public SerializingObjectHook
 {

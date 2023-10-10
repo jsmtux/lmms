@@ -55,6 +55,7 @@ namespace lmms::gui
 
 InstrumentTrackView::InstrumentTrackView( InstrumentTrack * _it, TrackContainerView* tcv ) :
 	TrackView( _it, tcv ),
+	m_instrumentTrack(_it),
 	m_window( nullptr ),
 	m_lastPos( -1, -1 )
 {
@@ -88,18 +89,16 @@ InstrumentTrackView::InstrumentTrackView( InstrumentTrack * _it, TrackContainerV
 		widgetWidth = DEFAULT_SETTINGS_WIDGET_WIDTH;
 	}
 
-	m_volumeKnob = new Knob( knobSmall_17, getTrackSettingsWidget(),
+	m_volumeKnob = new Knob( knobSmall_17,  &_it->m_volumeModel, getTrackSettingsWidget(),
 							tr( "Volume" ) );
 	m_volumeKnob->setVolumeKnob( true );
-	m_volumeKnob->setModel( &_it->m_volumeModel );
 	m_volumeKnob->setHintText( tr( "Volume:" ), "%" );
 	m_volumeKnob->move( widgetWidth-2*24, 2 );
 	m_volumeKnob->setLabel( tr( "VOL" ) );
 	m_volumeKnob->show();
 
-	m_panningKnob = new Knob( knobSmall_17, getTrackSettingsWidget(),
+	m_panningKnob = new Knob( knobSmall_17, &_it->m_panningModel, getTrackSettingsWidget(),
 							tr( "Panning" ) );
-	m_panningKnob->setModel( &_it->m_panningModel );
 	m_panningKnob->setHintText(tr("Panning:"), "%");
 	m_panningKnob->move( widgetWidth-24, 2 );
 	m_panningKnob->setLabel( tr( "PAN" ) );
@@ -111,13 +110,9 @@ InstrumentTrackView::InstrumentTrackView( InstrumentTrack * _it, TrackContainerV
 	if( !Engine::audioEngine()->midiClient()->isRaw() )
 	{
 		_it->m_midiPort.m_readablePortsMenu = new MidiPortMenu(
-							MidiPort::Input );
+							MidiPort::Input, &_it->m_midiPort );
 		_it->m_midiPort.m_writablePortsMenu = new MidiPortMenu(
-							MidiPort::Output );
-		_it->m_midiPort.m_readablePortsMenu->setModel(
-							&_it->m_midiPort );
-		_it->m_midiPort.m_writablePortsMenu->setModel(
-							&_it->m_midiPort );
+							MidiPort::Output, &_it->m_midiPort );
 		m_midiInputAction = m_midiMenu->addMenu(
 					_it->m_midiPort.m_readablePortsMenu );
 		m_midiOutputAction = m_midiMenu->addMenu(
@@ -163,8 +158,6 @@ InstrumentTrackView::InstrumentTrackView( InstrumentTrack * _it, TrackContainerV
 			 m_activityIndicator, SLOT(activate()));
 	connect( _it, SIGNAL(endNote()),
 	 		m_activityIndicator, SLOT(noteEnd()));
-
-	setModel( _it );
 }
 
 

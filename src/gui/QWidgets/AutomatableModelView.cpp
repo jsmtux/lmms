@@ -45,12 +45,18 @@ namespace lmms::gui
 
 static float floatFromClipboard(bool* ok=nullptr);
 
-AutomatableModelView::AutomatableModelView( Model* model, QWidget* _this ) :
-	ModelView( model, _this ),
+AutomatableModelView::AutomatableModelView( AutomatableModel* model, QWidget* _this ) :
+	m_model( model ),
+	m_widget(_this),
 	m_conversionFactor( 1.0 )
 {
-	widget()->setAcceptDrops( true );
-	widget()->setCursor( QCursor( embed::getIconPixmap( "hand" ), 3, 3 ) );
+	m_widget->setAcceptDrops( true );
+	m_widget->setCursor( QCursor( embed::getIconPixmap( "hand" ), 3, 3 ) );
+
+	// QObject::connect( m_model, &Model::dataChanged, m_widget, &QWidget::update);
+	// QObject::connect( m_model, &Model::propertiesChanged, m_widget, &QWidget::update);
+
+	m_widget->update();
 }
 
 void AutomatableModelView::addDefaultActions( QMenu* menu )
@@ -136,46 +142,11 @@ void AutomatableModelView::addDefaultActions( QMenu* menu )
 }
 
 
-
-
-void AutomatableModelView::setModel( Model* model, bool isOldModelValid )
-{
-	ModelView::setModel( model, isOldModelValid );
-}
-
-
-
-
-// Unsets the current model by setting a dummy empty model. The dummy model is marked as
-// "defaultConstructed", so the next call to setModel will delete it.
-void AutomatableModelView::unsetModel()
-{
-	if (dynamic_cast<FloatModelView*>(this))
-	{
-		setModel(new FloatModel(0, 0, 0, 1, nullptr, QString(), true));
-	}
-	else if (dynamic_cast<IntModelView*>(this))
-	{
-		setModel(new IntModel(0, 0, 0, nullptr, QString(), true));
-	}
-	else if (dynamic_cast<BoolModelView*>(this))
-	{
-		setModel(new BoolModel(false, nullptr, QString(), true));
-	}
-	else
-	{
-		ModelView::unsetModel();
-	}
-}
-
-
-
-
 void AutomatableModelView::mousePressEvent( QMouseEvent* event )
 {
 	if( event->button() == Qt::LeftButton && event->modifiers() & Qt::ControlModifier )
 	{
-		new gui::StringPairDrag( "automatable_model", QString::number( modelUntyped()->id() ), QPixmap(), widget() );
+		new gui::StringPairDrag( "automatable_model", QString::number( modelUntyped()->id() ), QPixmap(), m_widget );
 		event->accept();
 	}
 	else if( event->button() == Qt::MiddleButton )

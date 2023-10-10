@@ -143,7 +143,8 @@ void Fader::init(FloatModel * model, QString const & name)
 	setMinimumSize( backgroundSize );
 	setMaximumSize( backgroundSize );
 	resize( backgroundSize );
-	setModel( model );
+	QObject::connect( model, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( model, SIGNAL(propertiesChanged()), this, SLOT(update()));
 	setHintText( "Volume:","%");
 }
 

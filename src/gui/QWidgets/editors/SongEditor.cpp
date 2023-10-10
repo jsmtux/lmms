@@ -124,8 +124,7 @@ SongEditor::SongEditor( Song * song ) :
 
 	getGUI()->mainWindow()->addSpacingToToolBar( 40 );
 
-	m_tempoSpinBox = new LcdSpinBox( 3, tb, tr( "Tempo" ) );
-	m_tempoSpinBox->setModel( &m_song->m_tempoModel );
+	m_tempoSpinBox = new LcdSpinBox( 3, &m_song->m_tempoModel, tb, tr( "Tempo" ) );
 	m_tempoSpinBox->setLabel( tr( "TEMPO" ) );
 	m_tempoSpinBox->setToolTip(tr("Tempo in BPM"));
 
@@ -146,8 +145,7 @@ SongEditor::SongEditor( Song * song ) :
 
 	getGUI()->mainWindow()->addSpacingToToolBar( 10 );
 
-	m_timeSigDisplay = new MeterDialog( this, true );
-	m_timeSigDisplay->setModel( &m_song->m_timeSigModel );
+	m_timeSigDisplay = new MeterDialog( &m_song->m_timeSigModel, this, true );
 	getGUI()->mainWindow()->addWidgetToToolBar( m_timeSigDisplay );
 
 	getGUI()->mainWindow()->addSpacingToToolBar( 10 );
@@ -155,9 +153,8 @@ SongEditor::SongEditor( Song * song ) :
 	auto master_vol_lbl = new QLabel(tb);
 	master_vol_lbl->setPixmap( embed::getIconPixmap( "master_volume" ) );
 
-	m_masterVolumeSlider = new AutomatableSlider( tb,
+	m_masterVolumeSlider = new AutomatableSlider( &m_song->m_masterVolumeModel, tb,
 							tr( "Master volume" ) );
-	m_masterVolumeSlider->setModel( &m_song->m_masterVolumeModel );
 	m_masterVolumeSlider->setOrientation( Qt::Vertical );
 	m_masterVolumeSlider->setPageStep( 1 );
 	m_masterVolumeSlider->setTickPosition( QSlider::TicksLeft );
@@ -188,8 +185,7 @@ SongEditor::SongEditor( Song * song ) :
 	master_pitch_lbl->setPixmap( embed::getIconPixmap( "master_pitch" ) );
 	master_pitch_lbl->setFixedHeight( 64 );
 
-	m_masterPitchSlider = new AutomatableSlider( tb, tr( "Global transposition" ) );
-	m_masterPitchSlider->setModel( &m_song->m_masterPitchModel );
+	m_masterPitchSlider = new AutomatableSlider( &m_song->m_masterPitchModel, tb, tr( "Global transposition" ) );
 	m_masterPitchSlider->setOrientation( Qt::Vertical );
 	m_masterPitchSlider->setPageStep( 1 );
 	m_masterPitchSlider->setTickPosition( QSlider::TicksLeft );
@@ -996,10 +992,9 @@ SongEditorWindow::SongEditorWindow(Song* song) :
 	zoom_lbl->setPixmap( embed::getIconPixmap( "zoom" ) );
 
 	//Set up zooming-stuff
-	m_zoomingComboBox = new ComboBox( m_toolBar );
+	m_zoomingComboBox = new ComboBox( m_editor->m_zoomingModel, m_toolBar );
 	m_zoomingComboBox->setFixedSize( 80, ComboBox::DEFAULT_HEIGHT );
 	m_zoomingComboBox->move( 580, 4 );
-	m_zoomingComboBox->setModel(m_editor->m_zoomingModel);
 	m_zoomingComboBox->setToolTip(tr("Horizontal zooming"));
 	connect(m_editor->zoomingModel(), SIGNAL(dataChanged()), this, SLOT(updateSnapLabel()));
 
@@ -1011,9 +1006,8 @@ SongEditorWindow::SongEditorWindow(Song* song) :
 	snap_lbl->setPixmap( embed::getIconPixmap( "quantize" ) );
 
 	//Set up quantization/snapping selector
-	m_snappingComboBox = new ComboBox( m_toolBar );
+	m_snappingComboBox = new ComboBox( m_editor->m_snappingModel, m_toolBar );
 	m_snappingComboBox->setFixedSize( 80, ComboBox::DEFAULT_HEIGHT );
-	m_snappingComboBox->setModel(m_editor->m_snappingModel);
 	m_snappingComboBox->setToolTip(tr("Clip snapping size"));
 	connect(m_editor->snappingModel(), SIGNAL(dataChanged()), this, SLOT(updateSnapLabel()));
 

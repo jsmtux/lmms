@@ -52,7 +52,6 @@ namespace lmms::gui
 
 SampleTrackWindow::SampleTrackWindow(SampleTrackView * tv) :
 	QWidget(),
-	ModelView(nullptr, this),
 	m_track(tv->model()),
 	m_stv(tv)
 {
@@ -96,7 +95,7 @@ SampleTrackWindow::SampleTrackWindow(SampleTrackView * tv) :
 	Qt::Alignment widgetAlignment = Qt::AlignHCenter | Qt::AlignCenter;
 
 	// set up volume knob
-	m_volumeKnob = new Knob(knobBright_26, nullptr, tr("Sample volume"));
+	m_volumeKnob = new Knob(knobBright_26, &m_track->m_volumeModel, nullptr, tr("Sample volume"));
 	m_volumeKnob->setVolumeKnob(true);
 	m_volumeKnob->setHintText(tr("Volume:"), "%");
 
@@ -110,7 +109,7 @@ SampleTrackWindow::SampleTrackWindow(SampleTrackView * tv) :
 
 
 	// set up panning knob
-	m_panningKnob = new Knob(knobBright_26, nullptr, tr("Panning"));
+	m_panningKnob = new Knob(knobBright_26, &m_track->m_panningModel, nullptr, tr("Panning"));
 	m_panningKnob->setHintText(tr("Panning:"), "");
 
 	basicControlsLayout->addWidget(m_panningKnob, 0, 1);
@@ -126,7 +125,7 @@ SampleTrackWindow::SampleTrackWindow(SampleTrackView * tv) :
 
 
 	// setup spinbox for selecting Mixer-channel
-	m_mixerChannelNumber = new MixerLineLcdSpinBox(2, nullptr, tr("Mixer channel"), m_stv);
+	m_mixerChannelNumber = new MixerLineLcdSpinBox(2, &m_track->m_mixerChannelModel, nullptr, tr("Mixer channel"), m_stv);
 
 	basicControlsLayout->addWidget(m_mixerChannelNumber, 0, 3);
 	basicControlsLayout->setAlignment(m_mixerChannelNumber, widgetAlignment);
@@ -144,8 +143,17 @@ SampleTrackWindow::SampleTrackWindow(SampleTrackView * tv) :
 	vlayout->addWidget(generalSettingsWidget);
 	vlayout->addWidget(m_effectRack);
 
+	QObject::connect( m_track, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_track, SIGNAL(propertiesChanged()), this, SLOT(update()));
 
-	setModel(tv->model());
+	update();
+
+	m_nameLineEdit->setText(m_track->name());
+
+	connect(m_track, SIGNAL(nameChanged()),
+			this, SLOT(updateName()));
+
+	updateName();
 
 	QMdiSubWindow * subWin = getGUI()->mainWindow()->addWindowedWidget(this);
 	Qt::WindowFlags flags = subWin->windowFlags();
@@ -173,26 +181,6 @@ void SampleTrackWindow::setSampleTrackView(SampleTrackView* tv)
 	}
 
 	m_stv = tv;
-}
-
-
-
-void SampleTrackWindow::modelChanged()
-{
-	m_track = castModel<SampleTrack>();
-
-	m_nameLineEdit->setText(m_track->name());
-
-	m_track->disconnect(SIGNAL(nameChanged()), this);
-
-	connect(m_track, SIGNAL(nameChanged()),
-			this, SLOT(updateName()));
-
-	m_volumeKnob->setModel(&m_track->m_volumeModel);
-	m_panningKnob->setModel(&m_track->m_panningModel);
-	m_mixerChannelNumber->setModel(&m_track->m_mixerChannelModel);
-
-	updateName();
 }
 
 

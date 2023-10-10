@@ -34,7 +34,7 @@ namespace lmms
 {
 
 
-LadspaControl::LadspaControl( Model * _parent, port_desc_t * _port,
+LadspaControl::LadspaControl( QObject * _parent, port_desc_t * _port,
 								bool _link ) :
 	Model( _parent ),
 	m_link( _link ),

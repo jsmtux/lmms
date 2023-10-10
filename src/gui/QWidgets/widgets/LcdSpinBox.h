@@ -35,17 +35,11 @@ class LMMS_EXPORT LcdSpinBox : public LcdWidget, public IntModelView
 {
 	Q_OBJECT
 public:
-	LcdSpinBox( int numDigits, QWidget* parent, const QString& name = QString() );
+	LcdSpinBox( int numDigits, IntModel* _model, QWidget* parent, const QString& name = QString() );
 
-	LcdSpinBox( int numDigits, const QString& style, QWidget* parent, const QString& name = QString() );
+	LcdSpinBox( int numDigits, const QString& style, IntModel* _model, QWidget* parent, const QString& name = QString() );
 
 	~LcdSpinBox() override = default;
-
-	void modelChanged() override
-	{
-		ModelView::modelChanged();
-		update();
-	}
 
 	/*! Sets an offset which is always added to value of model so we can
 	    display values in a user-friendly way if they internally start at 0 */

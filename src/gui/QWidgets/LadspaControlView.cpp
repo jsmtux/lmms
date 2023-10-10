@@ -39,7 +39,6 @@ namespace lmms::gui
 LadspaControlView::LadspaControlView( QWidget * _parent,
 						LadspaControl * _ctl ) :
 	QWidget( _parent ),
-	ModelView( _ctl, this ),
 	m_ctl( _ctl )
 {
 	auto layout = new QHBoxLayout(this);
@@ -50,8 +49,7 @@ LadspaControlView::LadspaControlView( QWidget * _parent,
 
 	if( m_ctl->m_link )
 	{
-		link = new LedCheckBox( "", this );
-		link->setModel( &m_ctl->m_linkEnabledModel );
+		link = new LedCheckBox( "", &m_ctl->m_linkEnabledModel, this );
 		link->setToolTip(tr("Link channels"));
 		layout->addWidget( link );
 	}
@@ -62,8 +60,7 @@ LadspaControlView::LadspaControlView( QWidget * _parent,
 	{
 		case TOGGLED:
 		{
-			auto toggle = new LedCheckBox(m_ctl->port()->name, this, QString(), LedCheckBox::Green);
-			toggle->setModel( m_ctl->toggledModel() );
+			auto toggle = new LedCheckBox(m_ctl->port()->name, m_ctl->toggledModel(), this, QString(), LedCheckBox::Green);
 			layout->addWidget( toggle );
 			if( link != nullptr )
 			{
@@ -81,11 +78,11 @@ LadspaControlView::LadspaControlView( QWidget * _parent,
 		case INTEGER:
 		case ENUM:
 		case FLOATING:
-			knb = new Knob( knobBright_26, this, m_ctl->port()->name );
+			knb = new Knob( knobBright_26, m_ctl->knobModel(), this, m_ctl->port()->name );
 			break;
 
 		case TIME:
-			knb = new TempoSyncKnob( knobBright_26, this, m_ctl->port()->name );
+			knb = new TempoSyncKnob( knobBright_26, m_ctl->tempoSyncKnobModel(), this, m_ctl->port()->name );
 			break;
 
 		default:
@@ -94,14 +91,6 @@ LadspaControlView::LadspaControlView( QWidget * _parent,
 
 	if( knb != nullptr )
 	{
-		if( m_ctl->port()->data_type != TIME )
-		{
-			knb->setModel( m_ctl->knobModel() );
-		}
-		else
-		{
-			knb->setModel( m_ctl->tempoSyncKnobModel() );
-		}
 		knb->setLabel( m_ctl->port()->name );
 		knb->setHintText( tr( "Value:" ), "" );
 		layout->addWidget( knb );
@@ -115,6 +104,9 @@ LadspaControlView::LadspaControlView( QWidget * _parent,
 			setFixedSize( knb->width(), knb->height() );
 		}
 	}
+	QObject::connect( m_ctl, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_ctl, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	update();
 }
 
 

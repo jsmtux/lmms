@@ -220,7 +220,8 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 
 	auto addLedCheckBox = [&XDelta, &YDelta, this](const QString& ledText, TabWidget* tw, int& counter,
 							  bool initialState, const char* toggledSlot, bool showRestartWarning) {
-		auto checkBox = new LedCheckBox(ledText, tw);
+		auto checkBoxModel = new BoolModel(false, this);
+		auto checkBox = new LedCheckBox(ledText, checkBoxModel, tw);
 		counter++;
 		checkBox->move(XDelta, YDelta * counter);
 		checkBox->setChecked(initialState);
@@ -382,14 +383,14 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 	setAutoSaveInterval(m_saveIntervalSlider->value());
 
 	m_autoSave = new LedCheckBox(
-			tr("Enable autosave"), auto_save_tw);
+			tr("Enable autosave"), &m_autoSaveModel, auto_save_tw);
 	m_autoSave->move(10, 70);
 	m_autoSave->setChecked(m_enableAutoSave);
 	connect(m_autoSave, SIGNAL(toggled(bool)),
 			this, SLOT(toggleAutoSave(bool)));
 
 	m_runningAutoSave = new LedCheckBox(
-			tr("Allow autosave while playing"), auto_save_tw);
+			tr("Allow autosave while playing"), &m_runningAutoSaveModel, auto_save_tw);
 	m_runningAutoSave->move(20, 88);
 	m_runningAutoSave->setChecked(m_enableRunningAutoSave);
 	connect(m_runningAutoSave, SIGNAL(toggled(bool)),
@@ -450,7 +451,7 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 	counter += 2;
 
 	m_vstAlwaysOnTopCheckBox = new LedCheckBox(
-			tr("Keep plugin windows on top when not embedded"), plugins_tw);
+			tr("Keep plugin windows on top when not embedded"), &m_vstAlwaysOnTopCheckBoxModel, plugins_tw);
 	m_vstAlwaysOnTopCheckBox->move(20, 66);
 	m_vstAlwaysOnTopCheckBox->setChecked(m_vstAlwaysOnTop);
 	m_vstAlwaysOnTopCheckBox->setVisible(m_vstEmbedMethod == "none");
@@ -569,14 +570,14 @@ SetupDialog::SetupDialog(ConfigTabs tab_to_open) :
 			this, SLOT(audioInterfaceChanged(const QString&)));
 
 	// Advanced setting, hidden for now
-	if(false)
-	{
-		auto useNaNHandler = new LedCheckBox(tr("Use built-in NaN handler"), audio_w);
-		useNaNHandler->setChecked(m_NaNHandler);
-	}
+	// if(false)
+	// {
+	// 	auto useNaNHandler = new LedCheckBox(tr("Use built-in NaN handler"), audio_w);
+	// 	useNaNHandler->setChecked(m_NaNHandler);
+	// }
 
 	// HQ mode LED.
-	auto hqaudio = new LedCheckBox(tr("HQ mode for output audio device"), audio_w);
+	auto hqaudio = new LedCheckBox(tr("HQ mode for output audio device"), &hqaudioModel, audio_w);
 	hqaudio->move(10, 0);
 	hqaudio->setChecked(m_hqAudioDev);
 	connect(hqaudio, SIGNAL(toggled(bool)),

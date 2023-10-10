@@ -61,13 +61,13 @@ public:
 #endif
 
 	MainWindow* mainWindow() { return m_mainWindow; }
-	IMainWindow* mainWindowInterface() { return m_mainWindow; }
+	IMainWindow* mainWindowInterface() override { return m_mainWindow; }
 	MixerView* mixerView() { return m_mixerView; }
-	IMixerView* mixerViewInterface() { return m_mixerView; }
+	IMixerView* mixerViewInterface() override { return m_mixerView; }
 	SongEditorWindow* songEditor() { return m_songEditor; }
 	PatternEditorWindow* patternEditor() { return m_patternEditor; }
 	PianoRollWindow* pianoRoll() { return m_pianoRoll; }
-	IPianoRollWindow* pianoRollInterface() { return m_pianoRoll; }
+	IPianoRollWindow* pianoRollInterface() override { return m_pianoRoll; }
 	ProjectNotes* getProjectNotes() { return m_projectNotes; }
 	MicrotunerConfig* getMicrotunerConfig() { return m_microtunerConfig; }
 	AutomationEditorWindow* automationEditor() { return m_automationEditor; }

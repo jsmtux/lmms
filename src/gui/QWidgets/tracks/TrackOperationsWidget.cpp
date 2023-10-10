@@ -59,7 +59,7 @@ namespace lmms::gui
  *
  * \param parent the trackView to contain this widget
  */
-TrackOperationsWidget::TrackOperationsWidget( TrackView * parent ) :
+TrackOperationsWidget::TrackOperationsWidget( TrackView * parent, BoolModel* muteModel, BoolModel* soloModel ) :
 	QWidget( parent ),             /*!< The parent widget */
 	m_trackView( parent )          /*!< The parent track view */
 {
@@ -81,12 +81,12 @@ TrackOperationsWidget::TrackOperationsWidget( TrackView * parent ) :
 	m_trackOps->setToolTip(tr("Actions"));
 
 
-	m_muteBtn = new PixmapButton( this, tr( "Mute" ) );
+	m_muteBtn = new PixmapButton( this, muteModel, tr( "Mute" ) );
 	m_muteBtn->setActiveGraphic( embed::getIconPixmap( "led_off" ) );
 	m_muteBtn->setInactiveGraphic( embed::getIconPixmap( "led_green" ) );
 	m_muteBtn->setCheckable( true );
 
-	m_soloBtn = new PixmapButton( this, tr( "Solo" ) );
+	m_soloBtn = new PixmapButton( this, soloModel, tr( "Solo" ) );
 	m_soloBtn->setActiveGraphic( embed::getIconPixmap( "led_red" ) );
 	m_soloBtn->setInactiveGraphic( embed::getIconPixmap( "led_off" ) );
 	m_soloBtn->setCheckable( true );

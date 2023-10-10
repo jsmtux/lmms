@@ -171,24 +171,16 @@ void PatternStore::stop()
 
 void PatternStore::updateComboBox()
 {
-	std::cout << "Getting current pattern\n";
 	const int curPattern = currentPattern();
-	std::cout << "Current pattern is " << curPattern << std::endl;
 
 	m_patternComboBoxModel.clear();
-	std::cout << "clearing combobox model" << std::endl;
 
 	for (int i = 0; i < Engine::getSong()->numOfPatterns(); ++i)
 	{
-		std::cout << "Getting pattern " << i << std::endl;
 		PatternTrack* pt = PatternTrack::findPatternTrack(i);
-		std::cout << "Pointer is " << pt << std::endl;
 		m_patternComboBoxModel.addItem(pt->name());
-		std::cout << "Adding item" << std::endl;
 	}
-	std::cout << "Setting pattern" << std::endl;
 	setCurrentPattern(curPattern);
-	std::cout << "Pattern set!" << std::endl;
 }
 
 void PatternStore::createClipsForPattern(int pattern)

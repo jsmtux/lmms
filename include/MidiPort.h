@@ -81,7 +81,7 @@ public:
 	MidiPort( const QString& name,
 			MidiClient* client,
 			MidiEventProcessor* eventProcessor,
-			Model* parent = nullptr,
+			QObject* parent = nullptr,
 			Mode mode = Disabled );
 	~MidiPort() override;
 

@@ -50,7 +50,8 @@ PeakControllerDialog::PeakControllerDialog( Controller * _model, QWidget * _pare
 	l->setText( "Use FX's controls" );
 	l->move(10, 10);
 
-	setModel( _model );
+	QObject::connect( m_model, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_model, SIGNAL(propertiesChanged()), this, SLOT(update()));
 }
 
 
@@ -75,13 +76,6 @@ void PeakControllerDialog::contextMenuEvent( QContextMenuEvent * )
 void PeakControllerDialog::paintEvent( QPaintEvent * )
 {
 	QPainter p( this );
-}
-
-
-
-void PeakControllerDialog::modelChanged()
-{
-	m_peakController = castModel<PeakController>();
 }
 
 

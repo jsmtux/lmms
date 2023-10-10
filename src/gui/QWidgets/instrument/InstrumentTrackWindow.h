@@ -26,7 +26,6 @@
 #define LMMS_GUI_INSTRUMENT_TRACK_WINDOW_H
 
 #include "InstrumentTrack.h"
-#include "ModelView.h"
 #include "SerializingObject.h"
 
 #include <QWidget>
@@ -60,8 +59,7 @@ class PluginView;
 class TabWidget;
 
 
-class InstrumentTrackWindow : public QWidget, public ModelView,
-								public SerializingObjectHook
+class InstrumentTrackWindow : public QWidget, public SerializingObjectHook
 {
 	Q_OBJECT
 public:
@@ -76,12 +74,12 @@ public:
 
 	InstrumentTrack * model()
 	{
-		return castModel<InstrumentTrack>();
+		return m_track;
 	}
 
 	const InstrumentTrack * model() const
 	{
-		return castModel<InstrumentTrack>();
+		return m_track;
 	}
 
 	void setInstrumentTrackView( InstrumentTrackView * _tv );
@@ -125,7 +123,6 @@ protected slots:
 	void viewPrevInstrument();
 
 private:
-	void modelChanged() override;
 	void viewInstrumentInDirection(int d);
 	//! adjust size of any child widget of the main tab
 	//! required to keep the old look when using a variable sized tab widget

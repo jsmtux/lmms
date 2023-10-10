@@ -92,9 +92,9 @@ const int LABEL_TEXT_SIZE = 7;      /*!< The height of the key label text */
  *  \param _parent the parent instrument plugin window
  *  \todo are the descriptions of the m_startkey and m_lastkey properties correct?
  */
-PianoView::PianoView(QWidget *parent) :
+PianoView::PianoView(Piano* piano, QWidget *parent) :
 	QWidget(parent),                 /*!< Our parent */
-	m_piano(nullptr),                /*!< Our piano Model */
+	m_piano(piano),                /*!< Our piano Model */
 	m_startKey(Key_C + Octave_3*KeysPerOctave), /*!< The first key displayed? */
 	m_lastKey(-1),                   /*!< The last key displayed? */
 	m_movedNoteModel(nullptr)        /*!< Key marker which is being moved */
@@ -153,6 +153,16 @@ PianoView::PianoView(QWidget *parent) :
 
 	// trigger a redraw if keymap definitions change (different keys may become disabled)
 	connect(Engine::getSong(), SIGNAL(keymapListChanged(int)), this, SLOT(update()));
+	if (m_piano != nullptr)
+	{
+		connect(m_piano->instrumentTrack()->baseNoteModel(), SIGNAL(dataChanged()), this, SLOT(update()));
+		connect(m_piano->instrumentTrack()->firstKeyModel(), SIGNAL(dataChanged()), this, SLOT(update()));
+		connect(m_piano->instrumentTrack()->lastKeyModel(), SIGNAL(dataChanged()), this, SLOT(update()));
+		connect(m_piano->instrumentTrack()->microtuner()->enabledModel(), SIGNAL(dataChanged()), this, SLOT(update()));
+		connect(m_piano->instrumentTrack()->microtuner()->keymapModel(), SIGNAL(dataChanged()), this, SLOT(update()));
+		connect(m_piano->instrumentTrack()->microtuner()->keyRangeImportModel(), SIGNAL(dataChanged()),
+				this, SLOT(update()));
+	}
 }
 
 /*! \brief Map a keyboard key being pressed to a note in our keyboard view
@@ -295,27 +305,6 @@ int PianoView::getKeyFromKeyEvent( QKeyEvent * _ke )
 #endif // LMMS_BUILD_APPLE
 
 	return -100;
-}
-
-
-
-
-/*! \brief Register a change to this piano display view
- *
- */
-void PianoView::setPiano(Piano* piano)
-{
-	m_piano = piano;
-	if (m_piano != nullptr)
-	{
-		connect(m_piano->instrumentTrack()->baseNoteModel(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->firstKeyModel(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->lastKeyModel(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->microtuner()->enabledModel(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->microtuner()->keymapModel(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->microtuner()->keyRangeImportModel(), SIGNAL(dataChanged()),
-				this, SLOT(update()));
-	}
 }
 
 

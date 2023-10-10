@@ -43,8 +43,8 @@ long AutomatableModel::s_periodCounter = 0;
 
 AutomatableModel::AutomatableModel(
 						const float val, const float min, const float max, const float step,
-						QObject* parent, const QString & displayName, bool defaultConstructed ) :
-	Model( parent, displayName, defaultConstructed ),
+						QObject* parent, const QString & displayName ) :
+	Model( parent, displayName ),
 	m_scaleType( Linear ),
 	m_minValue( min ),
 	m_maxValue( max ),

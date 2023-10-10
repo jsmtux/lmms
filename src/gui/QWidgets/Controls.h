@@ -60,7 +60,6 @@ public:
 	virtual QWidget* topWidget() = 0;
 	virtual void setText(const QString& text) = 0;
 
-	virtual void setModel(AutomatableModel* model) = 0;
 	virtual AutomatableModel* model() = 0;
 	virtual AutomatableModelView* modelView() = 0;
 
@@ -76,11 +75,10 @@ public:
 	void setText(const QString& text) override;
 	QWidget* topWidget() override;
 
-	void setModel(AutomatableModel* model) override;
 	FloatModel* model() override;
 	AutomatableModelView* modelView() override;
 
-	KnobControl(QWidget* parent = nullptr);
+	KnobControl(FloatModel* _model, QWidget* parent = nullptr);
 	~KnobControl() override = default;
 };
 
@@ -95,11 +93,10 @@ public:
 	void setText(const QString& text) override;
 	QWidget* topWidget() override { return m_widget; }
 
-	void setModel(AutomatableModel* model) override;
 	ComboBoxModel* model() override;
 	AutomatableModelView* modelView() override;
 
-	ComboControl(QWidget* parent = nullptr);
+	ComboControl(ComboBoxModel* _model, QWidget* parent = nullptr);
 	~ComboControl() override = default;
 };
 
@@ -112,11 +109,11 @@ public:
 	void setText(const QString& text) override;
 	QWidget* topWidget() override;
 
-	void setModel(AutomatableModel* model) override;
+	// void setModel(AutomatableModel* model) override;
 	IntModel* model() override;
 	AutomatableModelView* modelView() override;
 
-	LcdControl(int numDigits, QWidget* parent = nullptr);
+	LcdControl(int numDigits, IntModel* _model, QWidget* parent = nullptr);
 	~LcdControl() override = default;
 };
 
@@ -131,11 +128,11 @@ public:
 	void setText(const QString& text) override;
 	QWidget* topWidget() override;
 
-	void setModel(AutomatableModel* model) override;
+	// void setModel(AutomatableModel* model) override;
 	BoolModel* model() override;
 	AutomatableModelView* modelView() override;
 
-	CheckControl(QWidget* parent = nullptr);
+	CheckControl(BoolModel* _model, QWidget* parent = nullptr);
 	~CheckControl() override = default;
 };
 

@@ -46,7 +46,8 @@ AutomationTrackView::AutomationTrackView( AutomationTrack * _at, TrackContainerV
 		tlb->setIcon(embed::getIconPixmap("automation_track"));
 		tlb->move(3, 1);
 		tlb->show();
-		setModel(_at);
+		QObject::connect( _at, SIGNAL(dataChanged()), this, SLOT(update()));
+		QObject::connect( _at, SIGNAL(propertiesChanged()), this, SLOT(update()));
 }
 
 void AutomationTrackView::dragEnterEvent( QDragEnterEvent * _dee )

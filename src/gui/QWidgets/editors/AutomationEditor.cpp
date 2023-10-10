@@ -220,7 +220,7 @@ void AutomationEditor::setCurrentClip(AutomationClip * new_clip )
 
 	if (m_clip != nullptr)
 	{
-		connect(m_clip, SIGNAL(dataChanged()), this, SLOT(update()));
+		connect(&m_clip->model(), &Model::dataChanged, this, &AutomationEditor::update);
 	}
 
 	emit currentClipChanged();
@@ -1878,8 +1878,7 @@ AutomationEditorWindow::AutomationEditorWindow() :
 	connect(progression_type_group, SIGNAL(triggered(int)), m_editor, SLOT(setProgressionType(int)));
 
 	// setup tension-stuff
-	m_tensionKnob = new Knob( knobSmall_17, this, "Tension" );
-	m_tensionKnob->setModel(m_editor->m_tensionModel);
+	m_tensionKnob = new Knob( knobSmall_17, m_editor->m_tensionModel, this, "Tension" );
 	m_tensionKnob->setToolTip(tr("Tension value for spline"));
 
 	connect(m_cubicHermiteAction, SIGNAL(toggled(bool)), m_tensionKnob, SLOT(setEnabled(bool)));
@@ -1902,7 +1901,7 @@ AutomationEditorWindow::AutomationEditorWindow() :
 	auto zoom_x_label = new QLabel(zoomToolBar);
 	zoom_x_label->setPixmap( embed::getIconPixmap( "zoom_x" ) );
 
-	m_zoomingXComboBox = new ComboBox( zoomToolBar );
+	m_zoomingXComboBox = new ComboBox( &m_editor->m_zoomingXModel, zoomToolBar );
 	m_zoomingXComboBox->setFixedSize( 80, ComboBox::DEFAULT_HEIGHT );
 	m_zoomingXComboBox->setToolTip( tr( "Horizontal zooming" ) );
 
@@ -1912,15 +1911,13 @@ AutomationEditorWindow::AutomationEditorWindow() :
 	}
 	m_editor->m_zoomingXModel.setValue( m_editor->m_zoomingXModel.findText( "100%" ) );
 
-	m_zoomingXComboBox->setModel( &m_editor->m_zoomingXModel );
-
 	connect( &m_editor->m_zoomingXModel, SIGNAL(dataChanged()),
 			m_editor, SLOT(zoomingXChanged()));
 
 	auto zoom_y_label = new QLabel(zoomToolBar);
 	zoom_y_label->setPixmap( embed::getIconPixmap( "zoom_y" ) );
 
-	m_zoomingYComboBox = new ComboBox( zoomToolBar );
+	m_zoomingYComboBox = new ComboBox( &m_editor->m_zoomingYModel, zoomToolBar );
 	m_zoomingYComboBox->setFixedSize( 80, ComboBox::DEFAULT_HEIGHT );
 	m_zoomingYComboBox->setToolTip( tr( "Vertical zooming" ) );
 
@@ -1930,8 +1927,6 @@ AutomationEditorWindow::AutomationEditorWindow() :
 		m_editor->m_zoomingYModel.addItem( QString::number( 25 << i ) + "%" );
 	}
 	m_editor->m_zoomingYModel.setValue( m_editor->m_zoomingYModel.findText( "Auto" ) );
-
-	m_zoomingYComboBox->setModel( &m_editor->m_zoomingYModel );
 
 	connect( &m_editor->m_zoomingYModel, SIGNAL(dataChanged()),
 			m_editor, SLOT(zoomingYChanged()));
@@ -1948,11 +1943,9 @@ AutomationEditorWindow::AutomationEditorWindow() :
 	auto quantize_lbl = new QLabel(m_toolBar);
 	quantize_lbl->setPixmap( embed::getIconPixmap( "quantize" ) );
 
-	m_quantizeComboBox = new ComboBox( m_toolBar );
+	m_quantizeComboBox = new ComboBox( &m_editor->m_quantizeModel, m_toolBar );
 	m_quantizeComboBox->setFixedSize( 60, ComboBox::DEFAULT_HEIGHT );
 	m_quantizeComboBox->setToolTip( tr( "Quantization" ) );
-
-	m_quantizeComboBox->setModel( &m_editor->m_quantizeModel );
 
 	quantizationActionsToolBar->addWidget( quantize_lbl );
 	quantizationActionsToolBar->addWidget( m_quantizeComboBox );
@@ -2007,8 +2000,8 @@ void AutomationEditorWindow::setCurrentClip(AutomationClip* clip)
 	// Connect new clip
 	if (clip)
 	{
-		connect(clip, SIGNAL(dataChanged()), this, SLOT(update()));
-		connect( clip, SIGNAL(dataChanged()), this, SLOT(updateWindowTitle()));
+		connect(&clip->model(), &Model::dataChanged, m_editor, &AutomationEditor::update);
+		connect(&clip->model(), &Model::dataChanged, this, &AutomationEditorWindow::updateWindowTitle);
 		connect(clip, SIGNAL(destroyed()), this, SLOT(clearCurrentClip()));
 
 		connect(m_flipXAction, SIGNAL(triggered()), clip, SLOT(flipX()));

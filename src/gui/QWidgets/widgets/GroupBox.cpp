@@ -39,21 +39,22 @@ namespace lmms::gui
 {
 
 
-GroupBox::GroupBox( const QString & _caption, QWidget * _parent ) :
+GroupBox::GroupBox( const QString & _caption, BoolModel* model, QWidget * _parent ) :
 	QWidget( _parent ),
-	BoolModelView( nullptr, this ),
+	BoolModelView( model, this ),
 	m_caption( _caption ),
 	m_titleBarHeight( 11 )
 {
-	m_led = new PixmapButton( this, _caption );
+	m_led = new PixmapButton( this, model, _caption );
 	m_led->setCheckable( true );
 	m_led->move( 3, 0 );
 	m_led->setActiveGraphic( embed::getIconPixmap( "led_green" ) );
 	m_led->setInactiveGraphic( embed::getIconPixmap( "led_off" ) );
 
-	setModel( new BoolModel( false, nullptr, _caption, true ) );
 	setAutoFillBackground( true );
 	unsetCursor();
+	QObject::connect( model, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( model, SIGNAL(propertiesChanged()), this, SLOT(update()));
 }
 
 
@@ -62,14 +63,6 @@ GroupBox::GroupBox( const QString & _caption, QWidget * _parent ) :
 GroupBox::~GroupBox()
 {
 	delete m_led;
-}
-
-
-
-
-void GroupBox::modelChanged()
-{
-	m_led->setModel( model() );
 }
 
 

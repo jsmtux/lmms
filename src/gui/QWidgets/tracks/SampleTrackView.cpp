@@ -48,7 +48,8 @@ namespace lmms::gui
 
 
 SampleTrackView::SampleTrackView( SampleTrack * _t, TrackContainerView* tcv ) :
-	TrackView( _t, tcv )
+	TrackView( _t, tcv ),
+	m_sampleTrack(_t)
 {
 	setFixedHeight( 32 );
 
@@ -60,10 +61,9 @@ SampleTrackView::SampleTrackView( SampleTrack * _t, TrackContainerView* tcv ) :
 	m_tlb->move(3, 1);
 	m_tlb->show();
 
-	m_volumeKnob = new Knob( knobSmall_17, getTrackSettingsWidget(),
+	m_volumeKnob = new Knob( knobSmall_17, &_t->m_volumeModel, getTrackSettingsWidget(),
 						    tr( "Track volume" ) );
 	m_volumeKnob->setVolumeKnob( true );
-	m_volumeKnob->setModel( &_t->m_volumeModel );
 	m_volumeKnob->setHintText( tr( "Channel volume:" ), "%" );
 
 	int settingsWidgetWidth = ConfigManager::inst()->
@@ -74,9 +74,8 @@ SampleTrackView::SampleTrackView( SampleTrack * _t, TrackContainerView* tcv ) :
 	m_volumeKnob->setLabel( tr( "VOL" ) );
 	m_volumeKnob->show();
 
-	m_panningKnob = new Knob( knobSmall_17, getTrackSettingsWidget(),
+	m_panningKnob = new Knob( knobSmall_17, &_t->m_panningModel, getTrackSettingsWidget(),
 							tr( "Panning" ) );
-	m_panningKnob->setModel( &_t->m_panningModel );
 	m_panningKnob->setHintText( tr( "Panning:" ), "%" );
 	m_panningKnob->move( settingsWidgetWidth - 24, 2 );
 	m_panningKnob->setLabel( tr( "PAN" ) );
@@ -92,7 +91,8 @@ SampleTrackView::SampleTrackView( SampleTrack * _t, TrackContainerView* tcv ) :
 	m_activityIndicator->show();
 	connect(_t, SIGNAL(playingChanged()), this, SLOT(updateIndicator()));
 
-	setModel( _t );
+	QObject::connect( m_sampleTrack, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_sampleTrack, SIGNAL(propertiesChanged()), this, SLOT(update()));
 
 	m_window = new SampleTrackWindow(this);
 	m_window->toggleVisibility(false);
@@ -164,17 +164,6 @@ void SampleTrackView::showEffects()
 {
 	m_window->toggleVisibility(m_window->parentWidget()->isHidden());
 }
-
-
-
-void SampleTrackView::modelChanged()
-{
-	auto st = castModel<SampleTrack>();
-	m_volumeKnob->setModel(&st->m_volumeModel);
-
-	TrackView::modelChanged();
-}
-
 
 
 

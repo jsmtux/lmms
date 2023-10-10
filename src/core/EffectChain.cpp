@@ -36,7 +36,7 @@ namespace lmms
 {
 
 
-EffectChain::EffectChain( Model * _parent ) :
+EffectChain::EffectChain( QObject * _parent ) :
 	Model( _parent ),
 	SerializingObject(),
 	m_enabledModel( false, nullptr, tr( "Effects enabled" ) )

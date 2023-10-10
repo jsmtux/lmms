@@ -26,9 +26,9 @@
 #ifndef LMMS_GUI_EFFECT_CONTROL_DIALOG_H
 #define LMMS_GUI_EFFECT_CONTROL_DIALOG_H
 
-#include "ModelView.h"
-
 #include <QWidget>
+
+#include "lmms_export.h"
 
 namespace lmms
 {
@@ -39,7 +39,7 @@ class EffectControls;
 namespace gui
 {
 
-class LMMS_EXPORT EffectControlDialog : public QWidget, public ModelView
+class LMMS_EXPORT EffectControlDialog : public QWidget
 {
 	Q_OBJECT
 public:

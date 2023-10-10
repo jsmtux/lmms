@@ -83,8 +83,7 @@ MicrotunerConfig::MicrotunerConfig() :
 	{
 		m_scaleComboModel.addItem(QString::number(i) + ": " + Engine::getSong()->getScale(i)->getDescription());
 	}
-	auto scaleCombo = new ComboBox();
-	scaleCombo->setModel(&m_scaleComboModel);
+	auto scaleCombo = new ComboBox(&m_scaleComboModel);
 	microtunerLayout->addWidget(scaleCombo, 1, 0, 1, 2);
 	connect(&m_scaleComboModel, &ComboBoxModel::dataChanged, [=] {updateScaleForm();});
 
@@ -118,8 +117,7 @@ MicrotunerConfig::MicrotunerConfig() :
 	{
 		m_keymapComboModel.addItem(QString::number(i) + ": " + Engine::getSong()->getKeymap(i)->getDescription());
 	}
-	auto keymapCombo = new ComboBox();
-	keymapCombo->setModel(&m_keymapComboModel);
+	auto keymapCombo = new ComboBox(&m_keymapComboModel);
 	microtunerLayout->addWidget(keymapCombo, 1, 2, 1, 2);
 	connect(&m_keymapComboModel, &ComboBoxModel::dataChanged, [=] {updateKeymapForm();});
 
@@ -143,33 +141,28 @@ MicrotunerConfig::MicrotunerConfig() :
 	auto keymapRangeLayout = new QGridLayout();
 	microtunerLayout->addLayout(keymapRangeLayout, 5, 2, 1, 2, Qt::AlignCenter | Qt::AlignTop);
 
-	auto firstKeySpin = new LcdSpinBox(3, nullptr, tr("First key"));
+	auto firstKeySpin = new LcdSpinBox(3, &m_firstKeyModel, nullptr, tr("First key"));
 	firstKeySpin->setLabel(tr("FIRST"));
 	firstKeySpin->setToolTip(tr("First MIDI key that will be mapped"));
-	firstKeySpin->setModel(&m_firstKeyModel);
 	keymapRangeLayout->addWidget(firstKeySpin, 0, 0);
 
-	auto lastKeySpin = new LcdSpinBox(3, nullptr, tr("Last key"));
+	auto lastKeySpin = new LcdSpinBox(3, &m_lastKeyModel, nullptr, tr("Last key"));
 	lastKeySpin->setLabel(tr("LAST"));
 	lastKeySpin->setToolTip(tr("Last MIDI key that will be mapped"));
-	lastKeySpin->setModel(&m_lastKeyModel);
 	keymapRangeLayout->addWidget(lastKeySpin, 0, 1);
 
-	auto middleKeySpin = new LcdSpinBox(3, nullptr, tr("Middle key"));
+	auto middleKeySpin = new LcdSpinBox(3, &m_middleKeyModel, nullptr, tr("Middle key"));
 	middleKeySpin->setLabel(tr("MIDDLE"));
 	middleKeySpin->setToolTip(tr("First line in the keymap refers to this MIDI key"));
-	middleKeySpin->setModel(&m_middleKeyModel);
 	keymapRangeLayout->addWidget(middleKeySpin, 0, 2);
 
-	auto baseKeySpin = new LcdSpinBox(3, nullptr, tr("Base key"));
+	auto baseKeySpin = new LcdSpinBox(3, &m_baseKeyModel, nullptr, tr("Base key"));
 	baseKeySpin->setLabel(tr("BASE N."));
 	baseKeySpin->setToolTip(tr("Base note frequency will be assigned to this MIDI key"));
-	baseKeySpin->setModel(&m_baseKeyModel);
 	keymapRangeLayout->addWidget(baseKeySpin, 1, 0);
 
-	auto baseFreqSpin = new LcdFloatSpinBox(4, 3, tr("Base note frequency"));
+	auto baseFreqSpin = new LcdFloatSpinBox(4, 3, &m_baseFreqModel, tr("Base note frequency"));
 	baseFreqSpin->setLabel(tr("BASE NOTE FREQ"));
-	baseFreqSpin->setModel(&m_baseFreqModel);
 	baseFreqSpin->setToolTip(tr("Base note frequency"));
 	keymapRangeLayout->addWidget(baseFreqSpin, 1, 1, 1, 2);
 

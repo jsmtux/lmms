@@ -27,7 +27,6 @@
 #define LMMS_GUI_AUTOMATABLE_MODEL_VIEW_H
 
 #include "AutomatableModel.h"
-#include "ModelView.h"
 
 class QMenu;
 class QMouseEvent;
@@ -35,25 +34,22 @@ class QMouseEvent;
 namespace lmms::gui
 {
 
-class LMMS_EXPORT AutomatableModelView : public ModelView
+class LMMS_EXPORT AutomatableModelView
 {
 public:
-	AutomatableModelView( Model* model, QWidget* _this );
-	~AutomatableModelView() override = default;
+	AutomatableModelView( AutomatableModel* model, QWidget* _this );
+	virtual ~AutomatableModelView() = default;
 
 	// some basic functions for convenience
 	AutomatableModel* modelUntyped()
 	{
-		return castModel<AutomatableModel>();
+		return m_model;
 	}
 
 	const AutomatableModel* modelUntyped() const
 	{
-		return castModel<AutomatableModel>();
+		return m_model;
 	}
-
-	void setModel( Model* model, bool isOldModelValid = true ) override;
-	void unsetModel() override;
 
 	template<typename T>
 	inline T value() const
@@ -80,6 +76,8 @@ public:
 protected:
 	virtual void mousePressEvent( QMouseEvent* event );
 
+	AutomatableModel* m_model;
+	QWidget* m_widget;
 	QString m_description;
 	QString m_unit;
 	float m_conversionFactor; // Factor to be applied when the m_model->value is displayed
@@ -117,17 +115,17 @@ protected:
 template <typename ModelType> class LMMS_EXPORT TypedModelView : public AutomatableModelView
 {
 public:
-	TypedModelView( Model* model, QWidget* _this) :
+	TypedModelView( AutomatableModel* model, QWidget* _this) :
 		AutomatableModelView( model, _this )
 	{}
 
 	ModelType* model()
 	{
-		return castModel<ModelType>();
+		return static_cast<ModelType*>(m_model);
 	}
 	const ModelType* model() const
 	{
-		return castModel<ModelType>();
+		return static_cast<const ModelType*>(m_model);
 	}
 };
 

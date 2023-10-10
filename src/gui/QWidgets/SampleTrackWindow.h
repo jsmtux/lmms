@@ -25,7 +25,6 @@
 #ifndef LMMS_GUI_SAMPLE_TRACK_WINDOW_H
 #define LMMS_GUI_SAMPLE_TRACK_WINDOW_H
 
-#include "ModelView.h"
 #include "SampleTrack.h"
 #include "SerializingObject.h"
 
@@ -42,7 +41,7 @@ class MixerLineLcdSpinBox;
 class SampleTrackView;
 
 
-class SampleTrackWindow : public QWidget, public ModelView, public SerializingObjectHook
+class SampleTrackWindow : public QWidget, public SerializingObjectHook
 {
 	Q_OBJECT
 public:
@@ -51,12 +50,12 @@ public:
 
 	SampleTrack * model()
 	{
-		return castModel<SampleTrack>();
+		return m_track;
 	}
 
 	const SampleTrack * model() const
 	{
-		return castModel<SampleTrack>();
+		return m_track;
 	}
 
 	void setSampleTrackView(SampleTrackView * tv);
@@ -81,8 +80,6 @@ protected:
 	void loadSettings(const QDomElement & element) override;
 
 private:
-	void modelChanged() override;
-
 	SampleTrack * m_track;
 	SampleTrackView * m_stv;
 

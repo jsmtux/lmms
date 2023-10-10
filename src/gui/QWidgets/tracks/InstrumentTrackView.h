@@ -50,12 +50,12 @@ public:
 
 	InstrumentTrack * model()
 	{
-		return castModel<InstrumentTrack>();
+		return m_instrumentTrack;
 	}
 
 	const InstrumentTrack * model() const
 	{
-		return castModel<InstrumentTrack>();
+		return m_instrumentTrack;
 	}
 
 	static InstrumentTrackWindow * topLevelInstrumentTrackWindow();
@@ -91,6 +91,7 @@ private slots:
 
 
 private:
+	InstrumentTrack* m_instrumentTrack;
 	InstrumentTrackWindow * m_window;
 
 	// widgets in track-settings-widget

@@ -26,7 +26,6 @@
 #ifndef LMMS_GUI_MIDI_PORT_MENU_H
 #define LMMS_GUI_MIDI_PORT_MENU_H
 
-#include "ModelView.h"
 #include "MidiPort.h"
 
 #include <QMenu>
@@ -36,13 +35,12 @@ class QAction;
 namespace lmms::gui
 {
 
-class MidiPortMenu : public QMenu, public ModelView
+class MidiPortMenu : public QMenu
 {
 	Q_OBJECT
 public:
-	MidiPortMenu( MidiPort::Modes _mode );
+	MidiPortMenu( MidiPort::Modes _mode, MidiPort* _midiPort );
 	~MidiPortMenu() override = default;
-
 
 public slots:
 	void updateMenu();
@@ -53,8 +51,7 @@ protected slots:
 
 
 private:
-	void modelChanged() override;
-
+	MidiPort* m_midiPort;
 	MidiPort::Modes m_mode;
 
 } ;

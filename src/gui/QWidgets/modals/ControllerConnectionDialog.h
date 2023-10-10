@@ -81,6 +81,9 @@ protected slots:
 
 
 private:
+	BoolModel m_midiGroupBoxEnabled;
+	BoolModel m_userGroupBoxEnabled;
+	IntModel m_userControllerIndex;
 	// Midi
 	GroupBox * m_midiGroupBox;
 	LcdSpinBox * m_midiChannelSpinBox;

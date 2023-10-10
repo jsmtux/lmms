@@ -29,7 +29,6 @@
 #include "embed.h"
 #include "Engine.h"
 #include "IMixerView.h"
-#include "ModelView.h"
 #include "SampleTrack.h"
 
 #include "widgets/Fader.h"

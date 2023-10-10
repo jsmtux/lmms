@@ -49,7 +49,9 @@ PatternTrackView::PatternTrackView(PatternTrack* pt, TrackContainerView* tcv) :
 	m_trackLabel->show();
 	connect( m_trackLabel, SIGNAL(clicked(bool)),
 			this, SLOT(clickedTrackLabel()));
-	setModel(pt);
+
+	QObject::connect( pt, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( pt, SIGNAL(propertiesChanged()), this, SLOT(update()));
 }
 
 

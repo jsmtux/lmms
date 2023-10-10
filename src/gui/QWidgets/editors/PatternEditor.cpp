@@ -48,7 +48,6 @@ PatternEditor::PatternEditor(PatternStore* ps) :
 	TrackContainerView(&ps->trackContainer()),
 	m_ps(ps)
 {
-	setModel(&ps->trackContainer());
 }
 
 
@@ -249,9 +248,8 @@ PatternEditorWindow::PatternEditorWindow(PatternStore* ps) :
 	// Pattern selector
 	DropToolBar* patternSelectionToolBar = addDropToolBarToTop(tr("Pattern selector"));
 
-	m_patternComboBox = new ComboBox(m_toolBar);
+	m_patternComboBox = new ComboBox(&ps->m_patternComboBoxModel, m_toolBar);
 	m_patternComboBox->setFixedSize(200, ComboBox::DEFAULT_HEIGHT);
-	m_patternComboBox->setModel(&ps->m_patternComboBoxModel);
 
 	patternSelectionToolBar->addWidget(m_patternComboBox);
 

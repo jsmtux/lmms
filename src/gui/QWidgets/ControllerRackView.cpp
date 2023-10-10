@@ -68,8 +68,8 @@ ControllerRackView::ControllerRackView() :
 			this, SLOT(addController()));
 
 	Song * song = Engine::getSong();
-	connect( song, SIGNAL(controllerAdded(lmms::Controller*)), SLOT(onControllerAdded(lmms::Controller*)));
-	connect( song, SIGNAL(controllerRemoved(lmms::Controller*)), SLOT(onControllerRemoved(lmms::Controller*)));
+	connect( song, &Song::controllerAdded, this, &ControllerRackView::onControllerAdded);
+	connect( song, &Song::controllerRemoved, this, &ControllerRackView::onControllerRemoved);
 
 	auto layout = new QVBoxLayout();
 	layout->addWidget( m_scrollArea );

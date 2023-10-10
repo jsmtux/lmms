@@ -26,7 +26,6 @@
 #define LMMS_GUI_PIANO_VIEW_H
 
 #include "AutomatableModel.h"
-#include "ModelView.h"
 
 #include <QPixmap>
 #include <QScrollBar>
@@ -43,7 +42,7 @@ class PianoView : public QWidget
 {
 	Q_OBJECT
 public:
-	PianoView( QWidget * _parent );
+	PianoView( Piano* piano, QWidget * _parent );
 	~PianoView() override = default;
 
 	static int getKeyFromKeyEvent( QKeyEvent * _ke );
@@ -51,8 +50,6 @@ public:
 public:
 	void keyPressEvent( QKeyEvent * ke ) override;
 	void keyReleaseEvent( QKeyEvent * ke ) override;
-
-	void setPiano(Piano* piano);
 
 
 protected:

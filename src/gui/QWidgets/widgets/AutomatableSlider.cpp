@@ -34,10 +34,10 @@ namespace lmms::gui
 {
 
 
-AutomatableSlider::AutomatableSlider( QWidget * _parent,
+AutomatableSlider::AutomatableSlider( IntModel* _model, QWidget * _parent,
 						const QString & _name ) :
 	QSlider( _parent ),
-	IntModelView( new IntModel( 0, 0, 0, nullptr, _name, true ), this ),
+	IntModelView( _model, this ),
 	m_showStatus( false )
 {
 	setWindowTitle( _name );
@@ -46,6 +46,15 @@ AutomatableSlider::AutomatableSlider( QWidget * _parent,
 					this, SLOT(changeValue(int)));
 	connect( this, SIGNAL(sliderMoved(int)),
 					this, SLOT(moveSlider(int)));
+
+	QObject::connect( m_model, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_model, SIGNAL(propertiesChanged()), this, SLOT(update()));
+
+	QSlider::setRange( model()->minValue(), model()->maxValue() );
+	updateSlider();
+	connect( model(), SIGNAL(dataChanged()),
+				this, SLOT(updateSlider()));
+	update();
 }
 
 
@@ -97,18 +106,6 @@ void AutomatableSlider::wheelEvent( QWheelEvent * _me )
 	QSlider::wheelEvent( _me );
 	m_showStatus = old_status;
 }
-
-
-
-
-void AutomatableSlider::modelChanged()
-{
-	QSlider::setRange( model()->minValue(), model()->maxValue() );
-	updateSlider();
-	connect( model(), SIGNAL(dataChanged()),
-				this, SLOT(updateSlider()));
-}
-
 
 
 

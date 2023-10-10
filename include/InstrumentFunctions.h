@@ -58,7 +58,7 @@ private:
 	using ChordSemiTones = std::array<int8_t, MAX_CHORD_POLYPHONY>;
 
 public:
-	InstrumentFunctionNoteStacking( Model * _parent );
+	InstrumentFunctionNoteStacking( QObject * _parent );
 	~InstrumentFunctionNoteStacking() override = default;
 
 	void processNote( NotePlayHandle* n );
@@ -180,7 +180,7 @@ public:
 		NumArpDirections
 	} ;
 
-	InstrumentFunctionArpeggio( Model * _parent );
+	InstrumentFunctionArpeggio( QObject * _parent );
 	~InstrumentFunctionArpeggio() override = default;
 
 	void processNote( NotePlayHandle* n );

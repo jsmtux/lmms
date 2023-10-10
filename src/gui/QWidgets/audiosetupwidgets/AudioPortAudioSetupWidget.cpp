@@ -94,14 +94,14 @@ AudioPortAudioSetupWidget::AudioPortAudioSetupWidget( QWidget * _parent ) :
 {
 	using gui::ComboBox;
 
-	m_backend = new ComboBox( this, "BACKEND" );
+	m_backend = new ComboBox( &m_setupUtil.m_backendModel, this, "BACKEND" );
 	m_backend->setGeometry( 64, 15, 260, ComboBox::DEFAULT_HEIGHT );
 
 	auto backend_lbl = new QLabel(tr("Backend"), this);
 	backend_lbl->setFont( pointSize<7>( backend_lbl->font() ) );
 	backend_lbl->move( 8, 18 );
 
-	m_device = new ComboBox( this, "DEVICE" );
+	m_device = new ComboBox( &m_setupUtil.m_deviceModel, this, "DEVICE" );
 	m_device->setGeometry( 64, 35, 260, ComboBox::DEFAULT_HEIGHT );
 
 	auto dev_lbl = new QLabel(tr("Device"), this);
@@ -124,9 +124,6 @@ AudioPortAudioSetupWidget::AudioPortAudioSetupWidget( QWidget * _parent ) :
 			
 	connect( &m_setupUtil.m_deviceModel, SIGNAL(dataChanged()),
 			&m_setupUtil, SLOT(updateChannels()));
-			
-	m_backend->setModel( &m_setupUtil.m_backendModel );
-	m_device->setModel( &m_setupUtil.m_deviceModel );
 }
 
 

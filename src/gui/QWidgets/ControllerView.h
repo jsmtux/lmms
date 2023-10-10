@@ -27,7 +27,6 @@
 
 #include "AutomatableModel.h"
 #include "Controller.h"
-#include "ModelView.h"
 
 #include <QFrame>
 
@@ -43,7 +42,7 @@ namespace lmms::gui
 class LedCheckBox;
 
 
-class ControllerView : public QFrame, public ModelView
+class ControllerView : public QFrame
 {
 	Q_OBJECT
 public:
@@ -52,12 +51,12 @@ public:
 
 	inline Controller * getController()
 	{
-		return( castModel<Controller>() );
+		return m_controller;
 	}
 
 	inline const Controller * getController() const
 	{
-		return( castModel<Controller>() );
+		return m_controller;
 	}
 
 
@@ -73,11 +72,11 @@ signals:
 
 protected:
 	void contextMenuEvent( QContextMenuEvent * _me ) override;
-	void modelChanged() override;
 	void mouseDoubleClickEvent( QMouseEvent * event ) override;
 
 
 private:
+	Controller* m_controller;
 	QMdiSubWindow * m_subWindow;
 	ControllerDialog * m_controllerDlg;
 	QLabel * m_nameLabel;

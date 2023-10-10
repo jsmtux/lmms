@@ -68,7 +68,8 @@ MidiCCRackView::MidiCCRackView(InstrumentTrack * track) :
 	auto mainLayout = new QVBoxLayout(this);
 
 	// Knobs GroupBox - Here we have the MIDI CC controller knobs for the selected track
-	m_midiCCGroupBox = new GroupBox(tr("MIDI CC Knobs:"));
+	// Set the LED button to enable/disable the track midi cc
+	m_midiCCGroupBox = new GroupBox(tr("MIDI CC Knobs:"), m_track->m_midiCCEnable.get());
 
 	// Layout to keep scrollable area under the GroupBox header
 	auto knobsGroupBoxLayout = new QVBoxLayout();
@@ -90,19 +91,9 @@ MidiCCRackView::MidiCCRackView(InstrumentTrack * track) :
 	// Adds the controller knobs
 	for (int i = 0; i < MidiControllerCount; ++i)
 	{
-		m_controllerKnob[i] = new Knob(knobBright_26);
+		m_controllerKnob[i] = new Knob(knobBright_26, m_track->m_midiCCModel[i].get());
 		m_controllerKnob[i]->setLabel(tr("CC %1").arg(i));
 		knobsAreaLayout->addWidget(m_controllerKnob[i], i/4, i%4);
-	}
-
-	// Set all the models
-	// Set the LED button to enable/disable the track midi cc
-	m_midiCCGroupBox->setModel(m_track->m_midiCCEnable.get());
-
-	// Set the model for each Knob
-	for (int i = 0; i < MidiControllerCount; ++i)
-	{
-		m_controllerKnob[i]->setModel(m_track->m_midiCCModel[i].get());
 	}
 
 	// Connection to update the name of the track on the label

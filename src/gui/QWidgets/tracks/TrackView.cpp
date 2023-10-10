@@ -62,10 +62,9 @@ namespace lmms::gui
  */
 TrackView::TrackView( Track * track, TrackContainerView * tcv ) :
 	QWidget( tcv->contentWidget() ),   /*!< The Track Container View's content widget. */
-	ModelView( nullptr, this ),            /*!< The model view of this track */
 	m_track( track ),                  /*!< The track we're displaying */
 	m_trackContainerView( tcv ),       /*!< The track Container View we're displayed in */
-	m_trackOperationsWidget( this ),    /*!< Our trackOperationsWidget */
+	m_trackOperationsWidget( this,  &m_track->m_mutedModel,  &m_track->m_soloModel ),    /*!< Our trackOperationsWidget */
 	m_trackSettingsWidget( this ),      /*!< Our trackSettingsWidget */
 	m_trackContentWidget( this ),       /*!< Our trackContentWidget */
 	m_action( NoAction )                /*!< The action we're currently performing */
@@ -113,6 +112,17 @@ TrackView::TrackView( Track * track, TrackContainerView * tcv ) :
 	}
 
 	m_trackContainerView->addTrackView( this );
+
+
+	Q_ASSERT( m_track != nullptr );
+	connect( m_track, SIGNAL(destroyedTrack()), this, SLOT(close()));
+
+	QObject::connect( m_track, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_track, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	
+	update();
+
+	setFixedHeight( m_track->getHeight() );
 }
 
 
@@ -182,24 +192,6 @@ bool TrackView::close()
 	m_trackContainerView->removeTrackView( this );
 	return QWidget::close();
 }
-
-
-
-
-/*! \brief Register that the model of this track View has changed.
- *
- */
-void TrackView::modelChanged()
-{
-	m_track = castModel<Track>();
-	Q_ASSERT( m_track != nullptr );
-	connect( m_track, SIGNAL(destroyedTrack()), this, SLOT(close()));
-	m_trackOperationsWidget.m_muteBtn->setModel( &m_track->m_mutedModel );
-	m_trackOperationsWidget.m_soloBtn->setModel( &m_track->m_soloModel );
-	ModelView::modelChanged();
-	setFixedHeight( m_track->getHeight() );
-}
-
 
 
 

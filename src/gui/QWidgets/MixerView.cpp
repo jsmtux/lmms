@@ -283,8 +283,7 @@ MixerView::MixerChannelView::MixerChannelView(QWidget * _parent, MixerView * _mv
 					m_mixerLine->height()-
 					m_fader->height()-5 );
 
-	m_muteBtn = new PixmapButton( m_mixerLine, tr( "Mute" ) );
-	m_muteBtn->setModel( &mixerChannel->m_muteModel );
+	m_muteBtn = new PixmapButton( m_mixerLine, &mixerChannel->m_muteModel, tr( "Mute" ) );
 	m_muteBtn->setActiveGraphic(
 				embed::getIconPixmap( "led_off" ) );
 	m_muteBtn->setInactiveGraphic(
@@ -293,8 +292,7 @@ MixerView::MixerChannelView::MixerChannelView(QWidget * _parent, MixerView * _mv
 	m_muteBtn->move( 9,  m_fader->y()-11);
 	m_muteBtn->setToolTip(tr("Mute this channel"));
 
-	m_soloBtn = new PixmapButton( m_mixerLine, tr( "Solo" ) );
-	m_soloBtn->setModel( &mixerChannel->m_soloModel );
+	m_soloBtn = new PixmapButton( m_mixerLine, &mixerChannel->m_soloModel, tr( "Solo" ) );
 	m_soloBtn->setActiveGraphic(
 				embed::getIconPixmap( "led_red" ) );
 	m_soloBtn->setInactiveGraphic(
@@ -315,10 +313,10 @@ void MixerView::MixerChannelView::setChannelIndex( int index )
 {
 	MixerChannel* mixerChannel = Engine::mixer()->mixerChannel( index );
 
-	m_fader->setModel( &mixerChannel->m_volumeModel );
-	m_muteBtn->setModel( &mixerChannel->m_muteModel );
-	m_soloBtn->setModel( &mixerChannel->m_soloModel );
-	m_rackView->setModel( &mixerChannel->m_fxChain );
+	// m_fader->setModel( &mixerChannel->m_volumeModel );
+	// m_muteBtn->setModel( &mixerChannel->m_muteModel );
+	// m_soloBtn->setModel( &mixerChannel->m_soloModel );
+	// m_rackView->setModel( &mixerChannel->m_fxChain );
 }
 
 
@@ -353,17 +351,7 @@ void MixerView::updateMixerLine(int index)
 	thisLine->setToolTip( Engine::mixer()->mixerChannel( index )->m_name );
 
 	FloatModel * sendModel = mix->channelSendModel(selIndex, index);
-	if( sendModel == nullptr )
-	{
-		// does not send, hide send knob
-		thisLine->m_sendKnob->setVisible(false);
-	}
-	else
-	{
-		// it does send, show knob and connect
-		thisLine->m_sendKnob->setVisible(true);
-		thisLine->m_sendKnob->setModel(sendModel);
-	}
+	thisLine->setSendModel(sendModel);
 
 	// disable the send button if it would cause an infinite loop
 	thisLine->m_sendBtn->setVisible(! mix->isInfiniteLoop(selIndex, index));
@@ -444,7 +432,7 @@ bool MixerView::confirmRemoval(int index)
 	QString messageTitleRemoveTrack = tr("Confirm removal");
 	QString askAgainText = tr("Don't ask again");
 	auto askAgainCheckBox = new QCheckBox(askAgainText, nullptr);
-	connect(askAgainCheckBox, &QCheckBox::stateChanged, [this](int state) {
+	connect(askAgainCheckBox, &QCheckBox::stateChanged, [](int state) {
 		// Invert button state, if it's checked we *shouldn't* ask again
 		ConfigManager::inst()->setValue("ui", "mixerchanneldeletionwarning", state ? "0" : "1");
 	});

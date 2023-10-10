@@ -41,7 +41,7 @@ Graph::Graph( QWidget * _parent, graphStyle _style, int _width,
 		int _height ) :
 	QWidget( _parent ),
 	/* TODO: size, background? */
-	ModelView( new graphModel( -1.0, 1.0, 128, nullptr, true ), this ),
+	m_gModel( -1.0, 1.0, 128, nullptr ),
 	m_graphStyle( _style )
 {
 	m_mouseDown = false;
@@ -51,13 +51,13 @@ Graph::Graph( QWidget * _parent, graphStyle _style, int _width,
 	setAcceptDrops( true );
 	setCursor( Qt::CrossCursor );
 
-	auto gModel = castModel<graphModel>();
-
-	QObject::connect( gModel, SIGNAL(samplesChanged(int,int)),
+	QObject::connect( &m_gModel, SIGNAL(samplesChanged(int,int)),
 			this, SLOT(updateGraph(int,int)));
 
-	QObject::connect( gModel, SIGNAL(lengthChanged()),
+	QObject::connect( &m_gModel, SIGNAL(lengthChanged()),
 			this, SLOT(updateGraph()));
+	QObject::connect( &m_gModel, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( &m_gModel, SIGNAL(propertiesChanged()), this, SLOT(update()));
 }
 
 void Graph::setForeground( const QPixmap &_pixmap )
@@ -431,19 +431,6 @@ void Graph::dragEnterEvent( QDragEnterEvent * _dee )
 }
 
 
-
-void Graph::modelChanged()
-{
-	auto gModel = castModel<graphModel>();
-
-	QObject::connect( gModel, SIGNAL(samplesChanged(int,int)),
-			this, SLOT(updateGraph(int,int)));
-
-	QObject::connect( gModel, SIGNAL(lengthChanged()),
-			this, SLOT(updateGraph()));
-}
-
-
 void Graph::updateGraph( int _startPos, int _endPos )
 {
 	// Can optimize by only drawing changed position
@@ -456,12 +443,9 @@ void Graph::updateGraph()
     updateGraph( 0, model()->length() - 1 );
 }
 
-
-} // namespace gui
-
 graphModel::graphModel( float _min, float _max, int _length,
-			Model* _parent, bool _default_constructed,  float _step ) :
-	Model( _parent, tr( "Graph" ), _default_constructed ),
+			QObject* _parent, float _step ) :
+	Model( _parent, tr( "Graph" )),
 	m_samples( _length ),
 	m_length( _length ),
 	m_minValue( _min ),
@@ -752,4 +736,5 @@ void graphModel::drawSampleAt( int x, float val )
 }
 
 
+} // namespace gui
 } // namespace lmms

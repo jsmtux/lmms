@@ -56,12 +56,12 @@ public:
 
 	SampleTrack * model()
 	{
-		return castModel<SampleTrack>();
+		return m_sampleTrack;
 	}
 
 	const SampleTrack * model() const
 	{
-		return castModel<SampleTrack>();
+		return m_sampleTrack;
 	}
 
 
@@ -74,7 +74,6 @@ public slots:
 
 
 protected:
-	void modelChanged() override;
 	QString nodeName() const override
 	{
 		return "SampleTrackView";
@@ -89,6 +88,7 @@ private slots:
 
 
 private:
+	SampleTrack* m_sampleTrack;
 	SampleTrackWindow * m_window;
 	Knob * m_volumeKnob;
 	Knob * m_panningKnob;

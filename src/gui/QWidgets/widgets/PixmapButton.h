@@ -37,7 +37,7 @@ class LMMS_EXPORT PixmapButton : public AutomatableButton
 {
 	Q_OBJECT
 public:
-	PixmapButton( QWidget * _parent,
+	PixmapButton( QWidget * _parent, BoolModel* _model,
 					const QString & _name = QString() );
 	~PixmapButton() override = default;
 

@@ -90,7 +90,7 @@ void EnvelopeAndLfoParameters::LfoInstances::remove( EnvelopeAndLfoParameters * 
 
 EnvelopeAndLfoParameters::EnvelopeAndLfoParameters(
 					float _value_for_zero_amount,
-							Model * _parent ) :
+							QObject * _parent ) :
 	Model( _parent ),
 	m_used( false ),
 	m_predelayModel( 0.0, 0.0, 2.0, 0.001, this, tr( "Env pre-delay" ) ),

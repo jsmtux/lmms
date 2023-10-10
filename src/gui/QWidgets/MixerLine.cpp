@@ -76,6 +76,7 @@ QPixmap * MixerLine::s_receiveBgArrow = nullptr;
 MixerLine::MixerLine( QWidget * _parent, MixerView * _mv, int _channelIndex ) :
 	QWidget( _parent ),
 	m_mv( _mv ),
+	m_sendKnob(nullptr),
 	m_channelIndex( _channelIndex ),
 	m_backgroundActive( Qt::SolidPattern ),
 	m_strokeOuterActive( 0, 0, 0 ),
@@ -96,11 +97,6 @@ MixerLine::MixerLine( QWidget * _parent, MixerView * _mv, int _channelIndex ) :
 	setFixedSize( 33, MixerLineHeight );
 	setAttribute( Qt::WA_OpaquePaintEvent, true );
 	setCursor( QCursor( embed::getIconPixmap( "hand" ), 3, 3 ) );
-
-	// mixer sends knob
-	m_sendKnob = new Knob( knobBright_26, this, tr( "Channel send amount" ) );
-	m_sendKnob->move( 3, 22 );
-	m_sendKnob->setVisible( false );
 
 	// send button indicator
 	m_sendBtn = new SendButtonIndicator( this, this, m_mv );
@@ -160,6 +156,17 @@ void MixerLine::setChannelIndex( int index )
 	m_lcd->update();
 }
 
+void MixerLine::setSendModel(FloatModel* model)
+{
+	if (model == nullptr) {
+		delete m_sendKnob;
+		m_sendKnob = nullptr;
+	} else {
+		// mixer sends knob
+		m_sendKnob = new Knob( knobBright_26, model, this, tr( "Channel send amount" ) );
+		m_sendKnob->move( 3, 22 );
+	}
+}
 
 
 void MixerLine::drawMixerLine( QPainter* p, const MixerLine *mixerLine, bool isActive, bool sendToThis, bool receiveFromThis )

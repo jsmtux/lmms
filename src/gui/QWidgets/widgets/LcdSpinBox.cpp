@@ -35,9 +35,9 @@
 namespace lmms::gui
 {
 
-LcdSpinBox::LcdSpinBox( int numDigits, QWidget* parent, const QString& name ) :
+LcdSpinBox::LcdSpinBox( int numDigits, IntModel* _model, QWidget* parent, const QString& name ) :
 	LcdWidget( numDigits, parent, name ),
-	IntModelView( new IntModel( 0, 0, 0, nullptr, name, true ), this ),
+	IntModelView( _model, this ),
 	m_remainder( 0.f ),
 	m_mouseMoving( false ),
 	m_lastMousePos(),
@@ -48,9 +48,9 @@ LcdSpinBox::LcdSpinBox( int numDigits, QWidget* parent, const QString& name ) :
 
 
 
-LcdSpinBox::LcdSpinBox( int numDigits, const QString& style, QWidget* parent, const QString& name ) :
+LcdSpinBox::LcdSpinBox( int numDigits, const QString& style, IntModel* _model, QWidget* parent, const QString& name ) :
 	LcdWidget( numDigits, style, parent, name ),
-	IntModelView( new IntModel( 0, 0, 0, nullptr, name, true ), this ),
+	IntModelView( _model, this ),
 	m_remainder( 0.f ),
 	m_mouseMoving( false ),
 	m_lastMousePos(),

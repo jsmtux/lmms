@@ -54,34 +54,6 @@ LinkedModelGroupView::LinkedModelGroupView(QWidget* parent,
 }
 
 
-
-
-void LinkedModelGroupView::modelChanged(LinkedModelGroup *group)
-{
-	// reconnect models
-	group->foreach_model([this](const std::string& str,
-		const LinkedModelGroup::ModelInfo& minf)
-	{
-		auto itr = m_widgets.find(str);
-		// in case there are new or deleted widgets, the subclass has already
-		// modified m_widgets, so this will go into the else case
-		if (itr == m_widgets.end())
-		{
-			// no widget? this can happen when the whole view is being destroyed
-			// (for some strange reasons)
-		}
-		else
-		{
-			itr->second->setModel(minf.m_model);
-		}
-	});
-
-	m_model = group;
-}
-
-
-
-
 void LinkedModelGroupView::addControl(Control* ctrl, const std::string& id,
 	const std::string &display, bool removable)
 {
@@ -149,22 +121,6 @@ void LinkedModelGroupView::removeControl(const QString& key)
 void LinkedModelGroupView::removeFocusFromSearchBar()
 {
 	m_layout->removeFocusFromSearchBar();
-}
-
-
-/*
-	LinkedModelGroupsViewBase
-*/
-
-
-void LinkedModelGroupsView::modelChanged(LinkedModelGroups *groups)
-{
-	LinkedModelGroupView* groupView = getGroupView();
-	LinkedModelGroup* group0 = groups->getGroup(0);
-	if (group0 && groupView)
-	{
-		groupView->modelChanged(group0);
-	}
 }
 
 

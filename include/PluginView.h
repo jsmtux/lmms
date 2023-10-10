@@ -28,7 +28,6 @@
 #include <QWidget>
 
 #include "Plugin.h"
-#include "ModelView.h"
 
 namespace lmms::gui
 {

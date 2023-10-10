@@ -26,7 +26,6 @@
 #define LMMS_GUI_INSTRUMENT_SOUND_SHAPING_VIEW_H
 
 #include "InstrumentSoundShaping.h"
-#include "ModelView.h"
 
 #include <QWidget>
 
@@ -42,20 +41,15 @@ class Knob;
 class TabWidget;
 
 
-class InstrumentSoundShapingView : public QWidget, public ModelView
+class InstrumentSoundShapingView : public QWidget
 {
 	Q_OBJECT
 public:
-	InstrumentSoundShapingView( QWidget * _parent );
+	InstrumentSoundShapingView( InstrumentSoundShaping* m_ss, QWidget * _parent );
 	~InstrumentSoundShapingView() override;
 
 	void setFunctionsHidden( bool hidden );
-
-
 private:
-	void modelChanged() override;
-
-
 	InstrumentSoundShaping * m_ss;
 	TabWidget * m_targetsTabWidget;
 	EnvelopeAndLfoView * m_envLfoViews[InstrumentSoundShaping::NumTargets];

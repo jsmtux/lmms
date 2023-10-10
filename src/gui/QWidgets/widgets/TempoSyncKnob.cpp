@@ -42,13 +42,19 @@ namespace lmms::gui
 
 
 
-TempoSyncKnob::TempoSyncKnob( knobTypes _knob_num, QWidget * _parent,
+TempoSyncKnob::TempoSyncKnob( knobTypes _knob_num, TempoSyncKnobModel* _model, QWidget * _parent,
 						const QString & _name ) :
-	Knob( _knob_num, _parent, _name ),
+	Knob( _knob_num, _model, _parent, _name ),
 	m_tempoSyncIcon( embed::getIconPixmap( "tempo_sync" ) ),
 	m_tempoSyncDescription( tr( "Tempo Sync" ) ),
-	m_custom( nullptr )
+	m_custom( nullptr ),
+	m_tempoSyncKnobModel(_model)
 {
+	connect( model(), SIGNAL(syncModeChanged(lmms::TempoSyncKnobModel::TempoSyncMode)),
+			this, SLOT(updateDescAndIcon()));
+	connect( this, SIGNAL(sliderMoved(float)),
+			model(), SLOT(disableSync()));
+	updateDescAndIcon();
 }
 
 
@@ -61,27 +67,6 @@ TempoSyncKnob::~TempoSyncKnob()
 		delete m_custom->parentWidget();
 	}
 }
-
-
-
-
-void TempoSyncKnob::modelChanged()
-{
-	if( model() == nullptr )
-	{
-		qWarning( "no TempoSyncKnobModel has been set!" );
-	}
-	if( m_custom != nullptr )
-	{
-		m_custom->setModel( &model()->m_custom );
-	}
-	connect( model(), SIGNAL(syncModeChanged(lmms::TempoSyncKnobModel::TempoSyncMode)),
-			this, SLOT(updateDescAndIcon()));
-	connect( this, SIGNAL(sliderMoved(float)),
-			model(), SLOT(disableSync()));
-	updateDescAndIcon();
-}
-
 
 
 
@@ -295,14 +280,13 @@ void TempoSyncKnob::showCustom()
 {
 	if( m_custom == nullptr )
 	{
-		m_custom = new MeterDialog( getGUI()->mainWindow()->workspace() );
+		m_custom = new MeterDialog( &model()->m_custom, getGUI()->mainWindow()->workspace() );
 		QMdiSubWindow * subWindow = getGUI()->mainWindow()->addWindowedWidget( m_custom );
 		Qt::WindowFlags flags = subWindow->windowFlags();
 		flags &= ~Qt::WindowMaximizeButtonHint;
 		subWindow->setWindowFlags( flags );
 		subWindow->setFixedSize( subWindow->size() );
 		m_custom->setWindowTitle( "Meter" );
-		m_custom->setModel( &model()->m_custom );
 	}
 	m_custom->parentWidget()->show();
 	model()->setTempoSync( TempoSyncKnobModel::SyncCustom );

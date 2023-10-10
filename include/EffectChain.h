@@ -47,7 +47,7 @@ class LMMS_EXPORT EffectChain : public Model, public SerializingObject
 {
 	Q_OBJECT
 public:
-	EffectChain( Model * _parent );
+	EffectChain( QObject * _parent );
 	~EffectChain() override;
 
 	void saveSettings( QDomDocument & _doc, QDomElement & _parent ) override;

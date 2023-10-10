@@ -44,7 +44,7 @@ static MidiDummy s_dummyClient;
 MidiPort::MidiPort( const QString& name,
 					MidiClient* client,
 					MidiEventProcessor* eventProcessor,
-					Model* parent,
+					QObject* parent,
 					Mode mode ) :
 	Model( parent ),
 	m_readablePortsMenu( nullptr ),

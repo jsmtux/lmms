@@ -26,7 +26,6 @@
 #define LMMS_GUI_TRACK_VIEW_H
 
 #include "JournallingObject.h"
-#include "ModelView.h"
 #include "TrackContentWidget.h"
 #include "TrackOperationsWidget.h"
 
@@ -56,7 +55,7 @@ const int DEFAULT_SETTINGS_WIDGET_WIDTH_COMPACT = 96;
 const int TRACK_OP_WIDTH_COMPACT = 62;
 
 
-class TrackView : public QWidget, public ModelView, public JournallingObject
+class TrackView : public QWidget, public JournallingObject
 {
 	Q_OBJECT
 public:
@@ -110,8 +109,6 @@ public slots:
 
 
 protected:
-	void modelChanged() override;
-
 	void saveSettings( QDomDocument& doc, QDomElement& element ) override
 	{
 		Q_UNUSED(doc)

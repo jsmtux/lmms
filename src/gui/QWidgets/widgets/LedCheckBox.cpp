@@ -44,9 +44,9 @@ static const auto names = std::array<QString, 3>
 
 
 
-LedCheckBox::LedCheckBox( const QString & _text, QWidget * _parent,
+LedCheckBox::LedCheckBox( const QString & _text, BoolModel* _model, QWidget * _parent,
 				const QString & _name, LedColors _color ) :
-	AutomatableButton( _parent, _name ),
+	AutomatableButton( _parent, _model, _name ),
 	m_text( _text )
 {
 	initUi( _color );
@@ -55,9 +55,9 @@ LedCheckBox::LedCheckBox( const QString & _text, QWidget * _parent,
 
 
 
-LedCheckBox::LedCheckBox( QWidget * _parent,
+LedCheckBox::LedCheckBox( BoolModel* _model, QWidget * _parent,
 				const QString & _name, LedColors _color ) :
-	LedCheckBox( QString(), _parent, _name, _color )
+	LedCheckBox( QString(), _model, _parent, _name, _color )
 {
 }
 

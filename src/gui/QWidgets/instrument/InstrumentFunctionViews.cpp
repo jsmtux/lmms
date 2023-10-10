@@ -41,11 +41,10 @@ namespace lmms::gui
 
 InstrumentFunctionNoteStackingView::InstrumentFunctionNoteStackingView( InstrumentFunctionNoteStacking* cc, QWidget* parent ) :
 	QWidget( parent ),
-	ModelView( nullptr, this ),
 	m_cc( cc ),
-	m_chordsGroupBox( new GroupBox( tr( "STACKING" ) ) ),
-	m_chordsComboBox( new ComboBox() ),
-	m_chordRangeKnob( new Knob( knobBright_26 ) )
+	m_chordsGroupBox( new GroupBox( tr( "STACKING" ), &m_cc->m_chordsEnabledModel ) ),
+	m_chordsComboBox( new ComboBox(&m_cc->m_chordsModel) ),
+	m_chordRangeKnob( new Knob( knobBright_26, &m_cc->m_chordRangeModel ) )
 {
 	auto topLayout = new QHBoxLayout(this);
 	topLayout->setContentsMargins(0, 0, 0, 0);
@@ -66,6 +65,11 @@ InstrumentFunctionNoteStackingView::InstrumentFunctionNoteStackingView( Instrume
 	mainLayout->addWidget( chordLabel, 0, 0 );
 	mainLayout->addWidget( m_chordsComboBox, 1, 0 );
 	mainLayout->addWidget( m_chordRangeKnob, 0, 1, 2, 1, Qt::AlignHCenter );
+
+	QObject::connect( m_cc, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_cc, SIGNAL(propertiesChanged()), this, SLOT(update()));
+
+	update();
 }
 
 
@@ -79,35 +83,20 @@ InstrumentFunctionNoteStackingView::~InstrumentFunctionNoteStackingView()
 
 
 
-void InstrumentFunctionNoteStackingView::modelChanged()
-{
-	m_cc = castModel<InstrumentFunctionNoteStacking>();
-	m_chordsGroupBox->setModel( &m_cc->m_chordsEnabledModel );
-	m_chordsComboBox->setModel( &m_cc->m_chordsModel );
-	m_chordRangeKnob->setModel( &m_cc->m_chordRangeModel );
-}
-
-
-
-
-
-
-
 InstrumentFunctionArpeggioView::InstrumentFunctionArpeggioView( InstrumentFunctionArpeggio* arp, QWidget* parent ) :
 	QWidget( parent ),
-	ModelView( nullptr, this ),
 	m_a( arp ),
-	m_arpGroupBox( new GroupBox( tr( "ARPEGGIO" ) ) ),
-	m_arpComboBox( new ComboBox() ),
-	m_arpRangeKnob( new Knob( knobBright_26 ) ),
-	m_arpRepeatsKnob( new Knob( knobBright_26 ) ),
-	m_arpCycleKnob( new Knob( knobBright_26 ) ),
-	m_arpSkipKnob( new Knob( knobBright_26 ) ),
-	m_arpMissKnob( new Knob( knobBright_26 ) ),
-	m_arpTimeKnob( new TempoSyncKnob( knobBright_26 ) ),
-	m_arpGateKnob( new Knob( knobBright_26 ) ),
-	m_arpDirectionComboBox( new ComboBox() ),
-	m_arpModeComboBox( new ComboBox() )
+	m_arpGroupBox( new GroupBox( tr( "ARPEGGIO" ), &m_a->m_arpEnabledModel ) ),
+	m_arpComboBox( new ComboBox(&m_a->m_arpModel) ),
+	m_arpRangeKnob( new Knob( knobBright_26, &m_a->m_arpRangeModel ) ),
+	m_arpRepeatsKnob( new Knob( knobBright_26, &m_a->m_arpRepeatsModel ) ),
+	m_arpCycleKnob( new Knob( knobBright_26, &m_a->m_arpCycleModel ) ),
+	m_arpSkipKnob( new Knob( knobBright_26, &m_a->m_arpSkipModel ) ),
+	m_arpMissKnob( new Knob( knobBright_26, &m_a->m_arpMissModel ) ),
+	m_arpTimeKnob( new TempoSyncKnob( knobBright_26, &m_a->m_arpTimeModel ) ),
+	m_arpGateKnob( new Knob( knobBright_26, &m_a->m_arpGateModel ) ),
+	m_arpDirectionComboBox( new ComboBox(&m_a->m_arpDirectionModel) ),
+	m_arpModeComboBox( new ComboBox(&m_a->m_arpModeModel) )
 {
 	auto topLayout = new QHBoxLayout(this);
 	topLayout->setContentsMargins(0, 0, 0, 0);
@@ -172,6 +161,10 @@ InstrumentFunctionArpeggioView::InstrumentFunctionArpeggioView( InstrumentFuncti
 
 	mainLayout->setRowMinimumHeight( 2, 10 );
 	mainLayout->setRowMinimumHeight( 5, 10 );
+
+	QObject::connect( m_a, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_a, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	update();
 }
 
 
@@ -181,26 +174,6 @@ InstrumentFunctionArpeggioView::~InstrumentFunctionArpeggioView()
 {
 	delete m_arpGroupBox;
 }
-
-
-
-
-void InstrumentFunctionArpeggioView::modelChanged()
-{
-	m_a = castModel<InstrumentFunctionArpeggio>();
-	m_arpGroupBox->setModel( &m_a->m_arpEnabledModel );
-	m_arpComboBox->setModel( &m_a->m_arpModel );
-	m_arpRangeKnob->setModel( &m_a->m_arpRangeModel );
-	m_arpRepeatsKnob->setModel( &m_a->m_arpRepeatsModel );
-	m_arpCycleKnob->setModel( &m_a->m_arpCycleModel );
-	m_arpSkipKnob->setModel( &m_a->m_arpSkipModel );
-	m_arpMissKnob->setModel( &m_a->m_arpMissModel );
-	m_arpTimeKnob->setModel( &m_a->m_arpTimeModel );
-	m_arpGateKnob->setModel( &m_a->m_arpGateModel );
-	m_arpDirectionComboBox->setModel( &m_a->m_arpDirectionModel );
-	m_arpModeComboBox->setModel( &m_a->m_arpModeModel );
-}
-
 
 
 

@@ -51,10 +51,9 @@ const int FILTER_GROUPBOX_HEIGHT = 245-FILTER_GROUPBOX_Y;
 
 
 
-InstrumentSoundShapingView::InstrumentSoundShapingView( QWidget * _parent ) :
+InstrumentSoundShapingView::InstrumentSoundShapingView( InstrumentSoundShaping* m_ss, QWidget * _parent ) :
 	QWidget( _parent ),
-	ModelView( nullptr, this ),
-	m_ss( nullptr )
+	m_ss( m_ss )
 {
 	m_targetsTabWidget = new TabWidget( tr( "TARGET" ), this );
 	m_targetsTabWidget->setGeometry( TARGETS_TABWIDGET_X,
@@ -64,31 +63,31 @@ InstrumentSoundShapingView::InstrumentSoundShapingView( QWidget * _parent ) :
 
 	for( int i = 0; i < InstrumentSoundShaping::NumTargets; ++i )
 	{
-		m_envLfoViews[i] = new EnvelopeAndLfoView( m_targetsTabWidget );
+		m_envLfoViews[i] = new EnvelopeAndLfoView(m_ss->m_envLfoParameters[i], m_targetsTabWidget);
 		m_targetsTabWidget->addTab( m_envLfoViews[i],
 						tr( InstrumentSoundShaping::targetNames[i][0] ), 
                                                 nullptr );
 	}
 
 
-	m_filterGroupBox = new GroupBox( tr( "FILTER" ), this );
+	m_filterGroupBox = new GroupBox( tr( "FILTER" ), &m_ss->m_filterEnabledModel, this );
 	m_filterGroupBox->setGeometry( FILTER_GROUPBOX_X, FILTER_GROUPBOX_Y,
 						FILTER_GROUPBOX_WIDTH,
 						FILTER_GROUPBOX_HEIGHT );
 
 
-	m_filterComboBox = new ComboBox( m_filterGroupBox );
+	m_filterComboBox = new ComboBox( &m_ss->m_filterModel, m_filterGroupBox );
 	m_filterComboBox->setGeometry( 14, 22, 120, ComboBox::DEFAULT_HEIGHT );
 	m_filterComboBox->setFont( pointSize<8>( m_filterComboBox->font() ) );
 
 
-	m_filterCutKnob = new Knob( knobBright_26, m_filterGroupBox );
+	m_filterCutKnob = new Knob( knobBright_26, &m_ss->m_filterCutModel, m_filterGroupBox );
 	m_filterCutKnob->setLabel( tr( "FREQ" ) );
 	m_filterCutKnob->move( 140, 18 );
 	m_filterCutKnob->setHintText( tr( "Cutoff frequency:" ), " " + tr( "Hz" ) );
 
 
-	m_filterResKnob = new Knob( knobBright_26, m_filterGroupBox );
+	m_filterResKnob = new Knob( knobBright_26, &m_ss->m_filterResModel, m_filterGroupBox );
 	m_filterResKnob->setLabel( tr( "Q/RESO" ) );
 	m_filterResKnob->move( 196, 18 );
 	m_filterResKnob->setHintText( tr( "Q/Resonance:" ), "" );
@@ -102,6 +101,11 @@ InstrumentSoundShapingView::InstrumentSoundShapingView( QWidget * _parent ) :
 						TARGETS_TABWIDGET_Y,
 						TARGETS_TABWIDGET_WIDTH,
 						TARGETS_TABWIDGET_HEIGTH );
+
+	QObject::connect( m_ss, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_ss, SIGNAL(propertiesChanged()), this, SLOT(update()));
+
+	update();
 }
 
 
@@ -120,22 +124,6 @@ void InstrumentSoundShapingView::setFunctionsHidden( bool hidden )
 	m_filterGroupBox->setHidden( hidden );
 	m_singleStreamInfoLabel->setHidden( !hidden );
 }
-
-
-
-void InstrumentSoundShapingView::modelChanged()
-{
-	m_ss = castModel<InstrumentSoundShaping>();
-	m_filterGroupBox->setModel( &m_ss->m_filterEnabledModel );
-	m_filterComboBox->setModel( &m_ss->m_filterModel );
-	m_filterCutKnob->setModel( &m_ss->m_filterCutModel );
-	m_filterResKnob->setModel( &m_ss->m_filterResModel );
-	for( int i = 0; i < InstrumentSoundShaping::NumTargets; ++i )
-	{
-		m_envLfoViews[i]->setModel( m_ss->m_envLfoParameters[i] );
-	}
-}
-
 
 
 

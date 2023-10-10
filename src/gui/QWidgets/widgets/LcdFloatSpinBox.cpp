@@ -48,8 +48,8 @@ namespace lmms::gui
 {
 
 
-LcdFloatSpinBox::LcdFloatSpinBox(int numWhole, int numFrac, const QString& name, QWidget* parent) :
-	FloatModelView(new FloatModel(0, 0, 0, 0, nullptr, name, true), this),
+LcdFloatSpinBox::LcdFloatSpinBox(int numWhole, int numFrac, FloatModel* _model, const QString& name, QWidget* parent) :
+	FloatModelView(_model, this),
 	m_wholeDisplay(numWhole, parent, name, false),
 	m_fractionDisplay(numFrac, parent, name, true),
 	m_mouseMoving(false),
@@ -61,8 +61,8 @@ LcdFloatSpinBox::LcdFloatSpinBox(int numWhole, int numFrac, const QString& name,
 }
 
 
-LcdFloatSpinBox::LcdFloatSpinBox(int numWhole, int numFrac, const QString& style, const QString& name, QWidget* parent) :
-	FloatModelView(new FloatModel(0, 0, 0, 0, nullptr, name, true), this),
+LcdFloatSpinBox::LcdFloatSpinBox(int numWhole, int numFrac, const QString& style, const QString& name, FloatModel* _model, QWidget* parent) :
+	FloatModelView(_model, this),
 	m_wholeDisplay(numWhole, style, parent, name, false),
 	m_fractionDisplay(numFrac, style, parent, name, true),
 	m_mouseMoving(false),
@@ -101,6 +101,10 @@ void LcdFloatSpinBox::layoutSetup(const QString &style)
 	outerLayout->setContentsMargins(0, 0, 0, 0);
 	outerLayout->setSizeConstraint(QLayout::SetFixedSize);
 	this->setLayout(outerLayout);
+
+	QObject::connect( m_model, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_model, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	update();
 }
 
 

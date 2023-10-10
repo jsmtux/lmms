@@ -31,35 +31,29 @@ namespace lmms::gui
 {
 
 
-MidiPortMenu::MidiPortMenu( MidiPort::Modes _mode ) :
-	ModelView( nullptr, this ),
+MidiPortMenu::MidiPortMenu( MidiPort::Modes _mode, MidiPort* _midiPort ) :
+	m_midiPort(_midiPort),
 	m_mode( _mode )
 {
 	setFont( pointSize<9>( font() ) );
 	connect( this, SIGNAL(triggered(QAction*)),
 			this, SLOT(activatedPort(QAction*)));
-}
-
-
-
-
-
-void MidiPortMenu::modelChanged()
-{
-	auto mp = castModel<MidiPort>();
 	if( m_mode == MidiPort::Input )
 	{
-		connect( mp, SIGNAL(readablePortsChanged()),
+		connect( m_midiPort, SIGNAL(readablePortsChanged()),
 				this, SLOT(updateMenu()));
 	}
 	else if( m_mode == MidiPort::Output )
 	{
-		connect( mp, SIGNAL(writablePortsChanged()),
+		connect( m_midiPort, SIGNAL(writablePortsChanged()),
 				this, SLOT(updateMenu()));
 	}
 	updateMenu();
+	
+	QObject::connect( m_midiPort, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_midiPort, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	update();
 }
-
 
 
 
@@ -67,12 +61,12 @@ void MidiPortMenu::activatedPort( QAction * _item )
 {
 	if( m_mode == MidiPort::Input )
 	{
-		castModel<MidiPort>()->subscribeReadablePort( _item->text(),
+		m_midiPort->subscribeReadablePort( _item->text(),
 							_item->isChecked() );
 	}
 	else if( m_mode == MidiPort::Output )
 	{
-		castModel<MidiPort>()->subscribeWritablePort( _item->text(),
+		m_midiPort->subscribeWritablePort( _item->text(),
 							_item->isChecked() );
 	}
 }
@@ -82,9 +76,8 @@ void MidiPortMenu::activatedPort( QAction * _item )
 
 void MidiPortMenu::updateMenu()
 {
-	auto mp = castModel<MidiPort>();
 	const MidiPort::Map & map = ( m_mode == MidiPort::Input ) ?
-				mp->readablePorts() : mp->writablePorts();
+				m_midiPort->readablePorts() : m_midiPort->writablePorts();
 	clear();
 	for( MidiPort::Map::ConstIterator it = map.begin();
 							it != map.end(); ++it )

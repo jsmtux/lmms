@@ -28,7 +28,6 @@
 
 #include "EffectChain.h"
 #include "lmms_basics.h"
-#include "ModelView.h"
 
 #include <QWidget>
 
@@ -42,11 +41,11 @@ class EffectView;
 class GroupBox;
 
 
-class EffectRackView : public QWidget, public ModelView
+class EffectRackView : public QWidget
 {
 	Q_OBJECT
 public:
-	EffectRackView( EffectChain* model, QWidget* parent = nullptr );
+	EffectRackView( EffectChain* _fxChain, QWidget* parent = nullptr );
 	~EffectRackView() override;
 
 	static constexpr int DEFAULT_WIDTH = 245;
@@ -64,18 +63,7 @@ private slots:
 
 
 private:
-	void modelChanged() override;
-
-	inline EffectChain* fxChain()
-	{
-		return castModel<EffectChain>();
-	}
-
-	inline const EffectChain* fxChain() const
-	{
-		return castModel<EffectChain>();
-	}
-
+	EffectChain* m_fxChain;
 
 	QVector<EffectView *> m_effectViews;
 

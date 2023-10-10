@@ -59,7 +59,7 @@ public:
 
 	TempoSyncKnobModel( const float _val, const float _min,
 				const float _max, const float _step,
-				const float _scale, Model * _parent,
+				const float _scale, QObject * _parent,
 				const QString & _display_name = QString() );
 	~TempoSyncKnobModel() override = default;
 

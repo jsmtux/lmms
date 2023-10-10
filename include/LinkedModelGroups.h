@@ -58,7 +58,7 @@ public:
 		Initialization
 	*/
 	//! @param parent model of the LinkedModelGroups class
-	LinkedModelGroup(Model* parent) : Model(parent) {}
+	LinkedModelGroup(QObject* parent) : Model(parent) {}
 
 	/*
 		Linking (initially only)

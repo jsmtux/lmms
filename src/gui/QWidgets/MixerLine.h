@@ -31,6 +31,8 @@ class QLineEdit;
 
 #include <QWidget>
 
+#include "AutomatableModel.h"
+
 namespace lmms::gui
 {
 
@@ -60,7 +62,7 @@ public:
 	inline int channelIndex() { return m_channelIndex; }
 	void setChannelIndex(int index);
 
-	Knob * m_sendKnob;
+	void setSendModel(FloatModel* model);
 	SendButtonIndicator * m_sendBtn;
 
 	QBrush backgroundActive() const;
@@ -87,6 +89,7 @@ private:
 	QString elideName( const QString & name );
 
 	MixerView * m_mv;
+	Knob * m_sendKnob;
 	LcdWidget* m_lcd;
 	int m_channelIndex;
 	QBrush m_backgroundActive;

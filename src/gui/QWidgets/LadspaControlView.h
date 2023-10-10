@@ -26,8 +26,6 @@
 #ifndef LMMS_GUI_LADSPA_CONTROL_VIEW_H
 #define LMMS_GUI_LADSPA_CONTROL_VIEW_H
 
-#include "ModelView.h"
-
 #include <QWidget>
 
 namespace lmms
@@ -38,7 +36,7 @@ class LadspaControl;
 namespace gui
 {
 
-class LMMS_EXPORT LadspaControlView : public QWidget, public ModelView
+class LMMS_EXPORT LadspaControlView : public QWidget
 {
 	Q_OBJECT
 public:

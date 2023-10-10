@@ -330,8 +330,7 @@ protected:
 						const float max = 0,
 						const float step = 0,
 						QObject* parent = nullptr,
-						const QString& displayName = QString(),
-						bool defaultConstructed = false );
+						const QString& displayName = QString());
 	//! returns a value which is in range between min() and
 	//! max() and aligned according to the step size (step size 0.05 -> value
 	//! 0.12345 becomes 0.10 etc.). You should always call it at the end after
@@ -460,10 +459,9 @@ class LMMS_EXPORT FloatModel : public TypedAutomatableModel<float>
 	MODEL_IS_VISITABLE
 public:
 	FloatModel( float val = 0, float min = 0, float max = 0, float step = 0,
-				Model * parent = nullptr,
-				const QString& displayName = QString(),
-				bool defaultConstructed = false ) :
-		TypedAutomatableModel( val, min, max, step, parent, displayName, defaultConstructed )
+				QObject * parent = nullptr,
+				const QString& displayName = QString() ) :
+		TypedAutomatableModel( val, min, max, step, parent, displayName )
 	{
 	}
 	float getRoundedValue() const;
@@ -479,9 +477,8 @@ class LMMS_EXPORT IntModel : public TypedAutomatableModel<int>
 public:
 	IntModel( int val = 0, int min = 0, int max = 0,
 				QObject* parent = nullptr,
-				const QString& displayName = QString(),
-				bool defaultConstructed = false ) :
-		TypedAutomatableModel( val, min, max, 1, parent, displayName, defaultConstructed )
+				const QString& displayName = QString()) :
+		TypedAutomatableModel( val, min, max, 1, parent, displayName )
 	{
 	}
 	QString displayValue( const float val ) const override;
@@ -495,9 +492,8 @@ class LMMS_EXPORT BoolModel : public TypedAutomatableModel<bool>
 public:
 	BoolModel( const bool val = false,
 				QObject* parent = nullptr,
-				const QString& displayName = QString(),
-				bool defaultConstructed = false ) :
-		TypedAutomatableModel( val, false, true, 1, parent, displayName, defaultConstructed )
+				const QString& displayName = QString()) :
+		TypedAutomatableModel( val, false, true, 1, parent, displayName )
 	{
 	}
 	QString displayValue( const float val ) const override;

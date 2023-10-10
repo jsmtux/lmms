@@ -27,7 +27,6 @@
 #define LMMS_GUI_GRAPH_H
 
 #include "Model.h"
-#include "ModelView.h"
 #include "lmms_basics.h"
 
 #include <QWidget>
@@ -37,93 +36,10 @@
 namespace lmms
 {
 
-
-class graphModel;
-
 namespace gui
 {
 
-
-class LMMS_EXPORT Graph : public QWidget, public ModelView
-{
-	Q_OBJECT
-public:
-	enum graphStyle
-	{
-		NearestStyle, //!< draw as stairs
-		LinearStyle, //!< connect each 2 samples with a line, with wrapping
-		LinearNonCyclicStyle, //!< LinearStyle without wrapping
-		BarStyle, //!< draw thick bars
-		NumGraphStyles
-	};
-
-	/**
-	 * @brief Constructor
-	 * @param _width Pixel width of widget
-	 * @param _height Pixel height of widget
-	 */
-	Graph( QWidget * _parent, graphStyle _style = Graph::LinearStyle,
-		int _width = 132,
-		int _height = 104
-	);
-	~Graph() override = default;
-
-	void setForeground( const QPixmap & _pixmap );
-
-
-	void setGraphColor( const QColor );
-
-	inline graphModel * model()
-	{
-		return castModel<graphModel>();
-	}
-
-	inline graphStyle getGraphStyle()
-	{
-		return m_graphStyle;
-	}
-
-
-	inline void setGraphStyle( graphStyle _s )
-	{
-		m_graphStyle = _s;
-		update();
-	}
-
-signals:
-	void drawn();
-protected:
-	void paintEvent( QPaintEvent * _pe ) override;
-	void dropEvent( QDropEvent * _de ) override;
-	void dragEnterEvent( QDragEnterEvent * _dee ) override;
-	void mousePressEvent( QMouseEvent * _me ) override;
-	void mouseMoveEvent( QMouseEvent * _me ) override;
-	void mouseReleaseEvent( QMouseEvent * _me ) override;
-
-protected slots:
-	void updateGraph( int _startPos, int _endPos );
-	void updateGraph();
-
-private:
-	void modelChanged() override;
-
-	void changeSampleAt( int _x, int _y );
-	void drawLineAt( int _x, int _y, int _lastx );
-
-
-	QPixmap m_foreground;
-	QColor m_graphColor;
-
-	graphStyle m_graphStyle;
-
-	bool m_mouseDown;
-	int m_lastCursorX;
-
-} ;
-
-
-} // namespace gui
-
+class Graph;
 
 /**
 	@brief 2 dimensional function plot
@@ -146,8 +62,7 @@ public:
 	graphModel( float _min,
 			float _max,
 			int _size,
-			Model * _parent,
-			bool _default_constructed = false,
+			QObject * _parent,
 			float _step = 0.0 );
 
 	~graphModel() override = default;
@@ -223,6 +138,89 @@ private:
 	friend class gui::Graph;
 
 };
+
+
+class LMMS_EXPORT Graph : public QWidget
+{
+	Q_OBJECT
+public:
+	enum graphStyle
+	{
+		NearestStyle, //!< draw as stairs
+		LinearStyle, //!< connect each 2 samples with a line, with wrapping
+		LinearNonCyclicStyle, //!< LinearStyle without wrapping
+		BarStyle, //!< draw thick bars
+		NumGraphStyles
+	};
+
+	/**
+	 * @brief Constructor
+	 * @param _width Pixel width of widget
+	 * @param _height Pixel height of widget
+	 */
+	Graph( QWidget * _parent, graphStyle _style = Graph::LinearStyle,
+		int _width = 132,
+		int _height = 104
+	);
+	~Graph() override = default;
+
+	void setForeground( const QPixmap & _pixmap );
+
+
+	void setGraphColor( const QColor );
+
+	inline graphModel * model()
+	{
+		return &m_gModel;
+	}
+
+	inline graphStyle getGraphStyle()
+	{
+		return m_graphStyle;
+	}
+
+
+	inline void setGraphStyle( graphStyle _s )
+	{
+		m_graphStyle = _s;
+		update();
+	}
+
+signals:
+	void drawn();
+protected:
+	void paintEvent( QPaintEvent * _pe ) override;
+	void dropEvent( QDropEvent * _de ) override;
+	void dragEnterEvent( QDragEnterEvent * _dee ) override;
+	void mousePressEvent( QMouseEvent * _me ) override;
+	void mouseMoveEvent( QMouseEvent * _me ) override;
+	void mouseReleaseEvent( QMouseEvent * _me ) override;
+
+protected slots:
+	void updateGraph( int _startPos, int _endPos );
+	void updateGraph();
+
+private:
+
+	void changeSampleAt( int _x, int _y );
+	void drawLineAt( int _x, int _y, int _lastx );
+
+	graphModel m_gModel;
+
+	QPixmap m_foreground;
+	QColor m_graphColor;
+
+	graphStyle m_graphStyle;
+
+	bool m_mouseDown;
+	int m_lastCursorX;
+
+} ;
+
+
+} // namespace gui
+
+
 
 
 } // namespace lmms

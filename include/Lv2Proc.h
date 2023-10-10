@@ -70,7 +70,7 @@ public:
 	/*
 		ctor/dtor/reload
 	*/
-	Lv2Proc(const LilvPlugin* plugin, Model *parent);
+	Lv2Proc(const LilvPlugin* plugin, QObject *parent);
 	~Lv2Proc() override;
 	void reload();
 	void onSampleRateChanged();

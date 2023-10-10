@@ -41,7 +41,7 @@ class LMMS_EXPORT TempoSyncKnob : public Knob
 {
 	Q_OBJECT
 public:
-	TempoSyncKnob( knobTypes knobNum, QWidget* parent = nullptr, const QString& name = QString() );
+	TempoSyncKnob( knobTypes knobNum, TempoSyncKnobModel* _model, QWidget* parent = nullptr, const QString& name = QString() );
 	~TempoSyncKnob() override;
 
 	const QString & syncDescription();
@@ -52,11 +52,8 @@ public:
 
 	TempoSyncKnobModel * model()
 	{
-		return castModel<TempoSyncKnobModel>();
+		return m_tempoSyncKnobModel;
 	}
-
-	void modelChanged() override;
-
 
 signals:
 	void syncDescriptionChanged( const QString & _new_description );
@@ -77,6 +74,7 @@ private:
 	QString m_tempoSyncDescription;
 
 	QPointer<MeterDialog> m_custom;
+	TempoSyncKnobModel* m_tempoSyncKnobModel;
 
 } ;
 

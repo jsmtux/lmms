@@ -80,7 +80,7 @@ class Knob;
 class CarlaParamFloatModel : public FloatModel
 {
 public:
-	CarlaParamFloatModel(Model * parent):
+	CarlaParamFloatModel(QObject * parent):
 		FloatModel(0.0, 0.0, 1.0, 0.001, parent, "Unused"),
 		m_isOutput(false),
 		m_isEnabled(false)

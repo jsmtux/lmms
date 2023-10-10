@@ -26,8 +26,6 @@
 #ifndef LMMS_GUI_INSTRUMENT_MIDI_IO_VIEW_H
 #define LMMS_GUI_INSTRUMENT_MIDI_IO_VIEW_H
 
-#include "ModelView.h"
-
 #include <QWidget>
 
 class QToolButton;
@@ -36,6 +34,7 @@ namespace lmms
 {
 
 class InstrumentTrack;
+class MidiPort;
 
 namespace gui
 {
@@ -45,17 +44,15 @@ class LcdSpinBox;
 class LedCheckBox;
 
 
-class InstrumentMidiIOView : public QWidget, public ModelView
+class InstrumentMidiIOView : public QWidget
 {
 	Q_OBJECT
 public:
-	InstrumentMidiIOView( QWidget* parent );
+	InstrumentMidiIOView( MidiPort* mp, QWidget* parent );
 	~InstrumentMidiIOView() override = default;
 
-
 private:
-	void modelChanged() override;
-
+	MidiPort* m_model;
 	GroupBox * m_midiInputGroupBox;
 	LcdSpinBox * m_inputChannelSpinBox;
 	LcdSpinBox * m_fixedInputVelocitySpinBox;

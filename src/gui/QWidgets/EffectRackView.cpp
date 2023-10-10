@@ -39,14 +39,14 @@
 namespace lmms::gui
 {
 
-EffectRackView::EffectRackView( EffectChain* model, QWidget* parent ) :
+EffectRackView::EffectRackView( EffectChain* _fxChain, QWidget* parent ) :
 	QWidget( parent ),
-	ModelView( nullptr, this )
+	m_fxChain(_fxChain)
 {
 	auto mainLayout = new QVBoxLayout(this);
 	mainLayout->setContentsMargins(5, 5, 5, 5);
 
-	m_effectsGroupBox = new GroupBox( tr( "EFFECTS CHAIN" ) );
+	m_effectsGroupBox = new GroupBox(tr( "EFFECTS CHAIN" ), &m_fxChain->m_enabledModel );
 	mainLayout->addWidget( m_effectsGroupBox );
 
 	auto effectsLayout = new QVBoxLayout(m_effectsGroupBox);
@@ -72,7 +72,10 @@ EffectRackView::EffectRackView( EffectChain* model, QWidget* parent ) :
 
 	m_lastY = 0;
 
-	setModel( model );
+	QObject::connect( m_fxChain, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( m_fxChain, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	connect( m_fxChain, SIGNAL(aboutToClear()), this, SLOT(clearViews()));
+	update();
 }
 
 
@@ -101,7 +104,7 @@ void EffectRackView::clearViews()
 
 void EffectRackView::moveUp( EffectView* view )
 {
-	fxChain()->moveUp( view->effect() );
+	m_fxChain->moveUp( view->effect() );
 	if( view != m_effectViews.first() )
 	{
 		int i = 0;
@@ -143,7 +146,7 @@ void EffectRackView::deletePlugin( EffectView* view )
 	Effect * e = view->effect();
 	m_effectViews.erase( std::find( m_effectViews.begin(), m_effectViews.end(), view ) );
 	delete view;
-	fxChain()->removeEffect( e );
+	m_fxChain->removeEffect( e );
 	e->deleteLater();
 	update();
 }
@@ -154,10 +157,10 @@ void EffectRackView::deletePlugin( EffectView* view )
 void EffectRackView::update()
 {
 	QWidget * w = m_scrollArea->widget();
-	QVector<bool> view_map( qMax<int>( fxChain()->m_effects.size(),
+	QVector<bool> view_map( qMax<int>( m_fxChain->m_effects.size(),
 						m_effectViews.size() ), false );
 
-	for (const auto& effect : fxChain()->m_effects)
+	for (const auto& effect : m_fxChain->m_effects)
 	{
 		int i = 0;
 		for (const auto& effectView : m_effectViews)
@@ -233,9 +236,9 @@ void EffectRackView::addEffect()
 		return;
 	}
 
-	Effect * fx = esd.instantiateSelectedPlugin( fxChain() );
+	Effect * fx = esd.instantiateSelectedPlugin( m_fxChain );
 
-	fxChain()->appendEffect( fx );
+	m_fxChain->appendEffect( fx );
 	update();
 
 	// Find the effectView, and show the controls
@@ -250,18 +253,6 @@ void EffectRackView::addEffect()
 
 
 }
-
-
-
-
-void EffectRackView::modelChanged()
-{
-	//clearViews();
-	m_effectsGroupBox->setModel( &fxChain()->m_enabledModel );
-	connect( fxChain(), SIGNAL(aboutToClear()), this, SLOT(clearViews()));
-	update();
-}
-
 
 
 

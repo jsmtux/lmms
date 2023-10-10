@@ -28,8 +28,6 @@
 
 #include <QWidget>
 
-#include "ModelView.h"
-
 namespace lmms
 {
 
@@ -38,7 +36,7 @@ class Controller;
 namespace gui
 {
 
-class ControllerDialog : public QWidget, public ModelView
+class ControllerDialog : public QWidget
 {
     Q_OBJECT
 public:
@@ -54,6 +52,7 @@ signals:
 protected:
 	void closeEvent( QCloseEvent * _ce ) override;
 
+	Controller* m_model;
 } ;
 
 

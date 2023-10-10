@@ -33,17 +33,26 @@
 namespace lmms::gui
 {
 
-AutomatableButton::AutomatableButton( QWidget * _parent,
-						const QString & _name ) :
+AutomatableButton::AutomatableButton( QWidget * _parent, BoolModel* _model, const QString & _name ):
 	QPushButton( _parent ),
-	BoolModelView( new BoolModel( false, nullptr, _name, true ), this ),
+	BoolModelView( _model, this ),
 	m_group( nullptr )
 {
 	setWindowTitle( _name );
-	doConnections();
+	QObject::connect( _model, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( _model, SIGNAL(propertiesChanged()), this, SLOT(update()));
 	setFocusPolicy( Qt::NoFocus );
+	if( QPushButton::isChecked() != model()->value() )
+	{
+		QPushButton::setChecked( model()->value() );
+	}
 }
 
+
+// AutomatableButton::AutomatableButton( QWidget * _parent,
+// 						const QString & _name ) :
+// 	AutomatableButton(_parent, new BoolModel( false, nullptr, _name, true ), _name )
+// {}
 
 
 
@@ -54,19 +63,6 @@ AutomatableButton::~AutomatableButton()
 		m_group->removeButton( this );
 	}
 }
-
-
-
-
-void AutomatableButton::modelChanged()
-{
-	if( QPushButton::isChecked() != model()->value() )
-	{
-		QPushButton::setChecked( model()->value() );
-	}
-}
-
-
 
 
 void AutomatableButton::update()
@@ -128,7 +124,7 @@ void AutomatableButton::mousePressEvent( QMouseEvent * _me )
 			auto groupView = (AutomatableModelView*)m_group;
 			new StringPairDrag( "automatable_model",
 					QString::number( groupView->modelUntyped()->id() ),
-					QPixmap(), widget() );
+					QPixmap(), this );
 			// TODO: ^^ Maybe use a predefined icon instead of the button they happened to select
 			_me->accept();
 		}
@@ -177,13 +173,16 @@ void AutomatableButton::toggle()
 
 
 
-automatableButtonGroup::automatableButtonGroup( QWidget * _parent,
+automatableButtonGroup::automatableButtonGroup( IntModel* _model, QWidget * _parent,
 						const QString & _name ) :
 	QWidget( _parent ),
-	IntModelView( new IntModel( 0, 0, 0, nullptr, _name, true ), this )
+	IntModelView( _model, this )
 {
 	hide();
 	setWindowTitle( _name );
+
+	connect( _model, &Model::dataChanged,
+			this, &automatableButtonGroup::updateButtons);
 }
 
 
@@ -238,18 +237,6 @@ void automatableButtonGroup::activateButton( AutomatableButton * _btn )
 		}
 	}
 }
-
-
-
-
-void automatableButtonGroup::modelChanged()
-{
-	connect( model(), SIGNAL(dataChanged()),
-			this, SLOT(updateButtons()));
-	IntModelView::modelChanged();
-	updateButtons();
-}
-
 
 
 

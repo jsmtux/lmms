@@ -54,10 +54,10 @@ AutomationClipView::AutomationClipView( AutomationClip * _clip,
 	m_clip( _clip ),
 	m_paintPixmap()
 {
-	connect( m_clip, SIGNAL(dataChanged()),
-			this, SLOT(update()));
-	connect( getGUI()->automationEditor(), SIGNAL(currentClipChanged()),
-			this, SLOT(update()));
+	connect( &m_clip->model(), &Model::dataChanged,
+			this, &AutomationClipView::update);
+	connect( getGUI()->automationEditor(), &AutomationEditorWindow::currentClipChanged,
+			this, &AutomationClipView::update);
 
 	setAttribute( Qt::WA_OpaquePaintEvent, true );
 

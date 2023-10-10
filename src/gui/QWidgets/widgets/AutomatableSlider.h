@@ -36,7 +36,7 @@ class AutomatableSlider : public QSlider, public IntModelView
 {
 	Q_OBJECT
 public:
-	AutomatableSlider( QWidget * _parent, const QString & _name = QString() );
+	AutomatableSlider( IntModel* _model, QWidget * _parent, const QString & _name = QString() );
 	~AutomatableSlider() override = default;
 
 	bool showStatus()
@@ -55,9 +55,6 @@ protected:
 	void mousePressEvent( QMouseEvent * _me ) override;
 	void mouseReleaseEvent( QMouseEvent * _me ) override;
 	void wheelEvent( QWheelEvent * _me ) override;
-
-	void modelChanged() override;
-
 
 private:
 	bool m_showStatus;

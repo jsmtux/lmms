@@ -4893,16 +4893,14 @@ PianoRollWindow::PianoRollWindow() :
 	auto zoom_lbl = new QLabel(m_toolBar);
 	zoom_lbl->setPixmap( embed::getIconPixmap( "zoom_x" ) );
 
-	m_zoomingComboBox = new ComboBox( m_toolBar );
-	m_zoomingComboBox->setModel( &m_editor->m_zoomingModel );
+	m_zoomingComboBox = new ComboBox(&m_editor->m_zoomingModel, m_toolBar );
 	m_zoomingComboBox->setFixedSize( 64, ComboBox::DEFAULT_HEIGHT );
 	m_zoomingComboBox->setToolTip( tr( "Horizontal zooming") );
 
 	auto zoom_y_lbl = new QLabel(m_toolBar);
 	zoom_y_lbl->setPixmap(embed::getIconPixmap("zoom_y"));
 
-	m_zoomingYComboBox = new ComboBox(m_toolBar);
-	m_zoomingYComboBox->setModel(&m_editor->m_zoomingYModel);
+	m_zoomingYComboBox = new ComboBox(&m_editor->m_zoomingYModel, m_toolBar);
 	m_zoomingYComboBox->setFixedSize(64, ComboBox::DEFAULT_HEIGHT);
 	m_zoomingYComboBox->setToolTip(tr("Vertical zooming"));
 
@@ -4910,8 +4908,7 @@ PianoRollWindow::PianoRollWindow() :
 	auto quantize_lbl = new QLabel(m_toolBar);
 	quantize_lbl->setPixmap( embed::getIconPixmap( "quantize" ) );
 
-	m_quantizeComboBox = new ComboBox( m_toolBar );
-	m_quantizeComboBox->setModel( &m_editor->m_quantizeModel );
+	m_quantizeComboBox = new ComboBox( &m_editor->m_quantizeModel, m_toolBar );
 	m_quantizeComboBox->setFixedSize( 64, ComboBox::DEFAULT_HEIGHT );
 	m_quantizeComboBox->setToolTip( tr( "Quantization") );
 
@@ -4919,14 +4916,12 @@ PianoRollWindow::PianoRollWindow() :
 	auto note_len_lbl = new QLabel(m_toolBar);
 	note_len_lbl->setPixmap( embed::getIconPixmap( "note" ) );
 
-	m_noteLenComboBox = new ComboBox( m_toolBar );
-	m_noteLenComboBox->setModel( &m_editor->m_noteLenModel );
+	m_noteLenComboBox = new ComboBox( &m_editor->m_noteLenModel, m_toolBar );
 	m_noteLenComboBox->setFixedSize( 105, ComboBox::DEFAULT_HEIGHT );
 	m_noteLenComboBox->setToolTip( tr( "Note length") );
 
 	// setup key-stuff
-	m_keyComboBox = new ComboBox(m_toolBar);
-	m_keyComboBox->setModel(&m_editor->m_keyModel);
+	m_keyComboBox = new ComboBox(&m_editor->m_keyModel, m_toolBar);
 	m_keyComboBox->setFixedSize(72, ComboBox::DEFAULT_HEIGHT);
 	m_keyComboBox->setToolTip(tr("Key"));
 
@@ -4934,8 +4929,7 @@ PianoRollWindow::PianoRollWindow() :
 	auto scale_lbl = new QLabel(m_toolBar);
 	scale_lbl->setPixmap( embed::getIconPixmap( "scale" ) );
 
-	m_scaleComboBox = new ComboBox( m_toolBar );
-	m_scaleComboBox->setModel( &m_editor->m_scaleModel );
+	m_scaleComboBox = new ComboBox( &m_editor->m_scaleModel, m_toolBar );
 	m_scaleComboBox->setFixedSize( 105, ComboBox::DEFAULT_HEIGHT );
 	m_scaleComboBox->setToolTip( tr( "Scale") );
 
@@ -4943,8 +4937,7 @@ PianoRollWindow::PianoRollWindow() :
 	auto chord_lbl = new QLabel(m_toolBar);
 	chord_lbl->setPixmap( embed::getIconPixmap( "chord" ) );
 
-	m_chordComboBox = new ComboBox( m_toolBar );
-	m_chordComboBox->setModel( &m_editor->m_chordModel );
+	m_chordComboBox = new ComboBox( &m_editor->m_chordModel, m_toolBar );
 	m_chordComboBox->setFixedSize( 105, ComboBox::DEFAULT_HEIGHT );
 	m_chordComboBox->setToolTip( tr( "Chord" ) );
 
@@ -4952,8 +4945,7 @@ PianoRollWindow::PianoRollWindow() :
 	auto snapLbl = new QLabel(m_toolBar);
 	snapLbl->setPixmap(embed::getIconPixmap("gridmode"));
 
-	m_snapComboBox = new ComboBox(m_toolBar);
-	m_snapComboBox->setModel(&m_editor->m_snapModel);
+	m_snapComboBox = new ComboBox(&m_editor->m_snapModel, m_toolBar);
 	m_snapComboBox->setFixedSize(105, ComboBox::DEFAULT_HEIGHT);
 	m_snapComboBox->setToolTip(tr("Snap mode"));
 

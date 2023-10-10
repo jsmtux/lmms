@@ -46,9 +46,9 @@ QPixmap * ComboBox::s_arrowSelected = nullptr;
 const int CB_ARROW_BTN_WIDTH = 18;
 
 
-ComboBox::ComboBox( QWidget * _parent, const QString & _name ) :
+ComboBox::ComboBox( IntModel* _model, QWidget * _parent, const QString & _name ) :
 	QWidget( _parent ),
-	IntModelView( new ComboBoxModel( nullptr, QString(), true ), this ),
+	IntModelView( new ComboBoxModel( _model, QString() ), this ),
 	m_menu( this ),
 	m_pressed( false )
 {
@@ -76,7 +76,8 @@ ComboBox::ComboBox( QWidget * _parent, const QString & _name ) :
 				this, SLOT(setItem(QAction*)));
 
 	setWindowTitle( _name );
-	doConnections();
+	QObject::connect( _model, SIGNAL(dataChanged()), this, SLOT(update()));
+	QObject::connect( _model, SIGNAL(propertiesChanged()), this, SLOT(update()));
 }
 
 
