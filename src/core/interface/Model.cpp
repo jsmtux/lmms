@@ -27,11 +27,6 @@
 namespace lmms
 {
 
-bool Model::isDefaultConstructed() const
-{
-	return m_defaultConstructed;
-}
-
 Model* Model::parentModel() const
 {
 	return dynamic_cast<Model*>(parent());

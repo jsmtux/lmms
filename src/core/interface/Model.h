@@ -39,14 +39,11 @@ class LMMS_EXPORT Model : public QObject
 public:
 	Model( QObject * _parent, QString _display_name = QString()) :
 		QObject( _parent ),
-		m_displayName( _display_name ),
-		m_defaultConstructed( false )
+		m_displayName( _display_name )
 	{
 	}
 
 	~Model() override = default;
-
-	bool isDefaultConstructed() const;
 
 	Model* parentModel() const;
 
@@ -59,7 +56,6 @@ public:
 
 private:
 	QString m_displayName;
-	bool m_defaultConstructed;
 
 
 signals:
