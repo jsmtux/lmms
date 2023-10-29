@@ -27,18 +27,6 @@
 namespace lmms
 {
 
-Model::Model(Model* parent, QString displayName, bool defaultConstructed) :
-	QObject(parent),
-	m_displayName(displayName),
-	m_defaultConstructed(defaultConstructed)
-{
-}
-
-bool Model::isDefaultConstructed() const
-{
-	return m_defaultConstructed;
-}
-
 Model* Model::parentModel() const
 {
 	return dynamic_cast<Model*>(parent());
