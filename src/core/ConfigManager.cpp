@@ -25,7 +25,6 @@
 
 #include <QDomElement>
 #include <QDir>
-#include <QApplication>
 #include <QStandardPaths>
 #include <QTextStream>
 
@@ -66,7 +65,7 @@ ConfigManager::ConfigManager() :
 	m_version(defaultVersion()),
 	m_configVersion( UPGRADE_METHODS.size() )
 {
-	if (QFileInfo::exists(qApp->applicationDirPath() + PORTABLE_MODE_FILE))
+	if (QFileInfo::exists(gui::getGUIInterface()->applicationDirPath() + PORTABLE_MODE_FILE))
 	{
 		initPortableWorkingDir();
 	}
@@ -86,9 +85,9 @@ ConfigManager::ConfigManager() :
 	initDevelopmentWorkingDir();
 
 #ifdef LMMS_BUILD_WIN32
-	QDir::addSearchPath("data", qApp->applicationDirPath() + "/data/");
+	QDir::addSearchPath("data", gui::getGUIInterface()->applicationDirPath() + "/data/");
 #else
-	QDir::addSearchPath("data", qApp->applicationDirPath().section('/', 0, -2) + "/share/lmms/");
+	QDir::addSearchPath("data", gui::getGUIInterface()->applicationDirPath().section('/', 0, -2) + "/share/lmms/");
 #endif
 
 }
@@ -551,7 +550,7 @@ void ConfigManager::loadConfigFile(const QString & configFile)
 		m_stkDir = m_dataDir + "stk/rawwaves/";
 #else
 		// Look for bundled raw waves first
-		m_stkDir = qApp->applicationDirPath() + "/../share/stk/rawwaves/";
+		m_stkDir = gui::getGUIInterface()->applicationDirPath() + "/../share/stk/rawwaves/";
 		// Try system installations if not exists
 		if (!QDir(m_stkDir).exists())
 		{
@@ -640,7 +639,7 @@ void ConfigManager::saveConfigFile()
 
 void ConfigManager::initPortableWorkingDir()
 {
-	QString applicationPath = qApp->applicationDirPath();
+	QString applicationPath = gui::getGUIInterface()->applicationDirPath();
 	m_workingDir = applicationPath + "/lmms-workspace/";
 	m_lmmsRcFile = applicationPath + "/.lmmsrc.xml";
 }
@@ -658,7 +657,7 @@ void ConfigManager::initDevelopmentWorkingDir()
 {
 	// If we're in development (lmms is not installed) let's get the source and
 	// binary directories by reading the CMake Cache
-	QDir appPath = qApp->applicationDirPath();
+	QDir appPath = gui::getGUIInterface()->applicationDirPath();
 	// If in tests, get parent directory
 	if (appPath.dirName() == "tests") {
 		appPath.cdUp();

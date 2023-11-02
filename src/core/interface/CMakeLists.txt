@@ -29,4 +29,14 @@ ADD_LIBRARY(lmms_core_interface STATIC
     IEnvelopeAndLfoParameters.h
     ITrackContainer.h)
 
+
+find_package(Qt6 REQUIRED COMPONENTS Xml Gui) 
+
+TARGET_LINK_LIBRARIES(lmms_core_interface
+    PRIVATE
+        Qt6::Xml
+        Qt6::Gui
+        lmms_gui_interface
+)
+
 TARGET_INCLUDE_DIRECTORIES(lmms_core_interface PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src/core)

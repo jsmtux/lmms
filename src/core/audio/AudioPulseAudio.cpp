@@ -22,9 +22,6 @@
  *
  */
 
-#include <QLineEdit>
-#include <QLabel>
-
 #include "AudioPulseAudio.h"
 
 #ifdef LMMS_HAVE_PULSEAUDIO

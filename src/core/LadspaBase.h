@@ -28,6 +28,7 @@
 
 #include "LadspaManager.h"
 #include "IPlugin.h"
+#include <QRegularExpression>
 
 namespace lmms
 {
@@ -75,7 +76,7 @@ inline PluginDescriptor::Key ladspaKeyToSubPluginKey(
 {
 	PluginDescriptor::Key::AttributeMap m;
 	QString file = _key.first;
-	m["file"] = file.remove( QRegExp( "\\.so$" ) ).remove( QRegExp( "\\.dll$" ) );
+	m["file"] = file.remove( QRegularExpression( "\\.so$" ) ).remove( QRegularExpression( "\\.dll$" ) );
 	m["plugin"] = _key.second;
 	return PluginDescriptor::Key( _desc, _name, m );
 }

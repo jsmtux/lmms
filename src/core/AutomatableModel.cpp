@@ -24,6 +24,8 @@
 
 #include "AutomatableModel.h"
 
+#include <QRegExp>
+
 #include "lmms_math.h"
 
 #include "tracks/AutomationTrack.h"

@@ -77,6 +77,11 @@ public:
 	AutomationEditorWindow* automationEditor() { return m_automationEditor; }
 	IAutomationEditor* automationEditorInterface() override { return m_automationEditor; }
 	ControllerRackView* getControllerRackView() { return m_controllerRackView; }
+	
+
+	QClipboard& getClipboard() override {
+		return QApplication::clipboard();
+	}
 
 	std::unique_ptr<IFileDialog> createFileDialog(QString title) override;
 

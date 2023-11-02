@@ -25,8 +25,6 @@
 #ifndef LMMS_MIDI_CONTROLLER_H
 #define LMMS_MIDI_CONTROLLER_H
 
-#include <QWidget>
-
 #include "IMidiController.h"
 
 #include "AutomatableModel.h"

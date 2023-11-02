@@ -26,9 +26,6 @@
 
 #ifdef LMMS_HAVE_JACK
 
-#include <QLineEdit>
-#include <QLabel>
-
 #include "AudioEngine.h"
 #include "ConfigManager.h"
 #include "Engine.h"

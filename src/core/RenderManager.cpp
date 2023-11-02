@@ -23,6 +23,7 @@
  */
 
 #include <QDir>
+#include <QRegularExpression>
 
 #include "RenderManager.h"
 #include "Engine.h"
@@ -173,7 +174,7 @@ QString RenderManager::pathForTrack(const ITrack *track, int num)
 	// QString extension = ProjectRenderer::getFileExtensionFromFormat( m_format );
 	QString extension = "TET";
 	QString name = track->name();
-	name = name.remove(QRegExp(FILENAME_FILTER));
+	name = name.remove(QRegularExpression(FILENAME_FILTER));
 	name = QString( "%1_%2%3" ).arg( num ).arg( name ).arg( extension );
 	return QDir(m_outputPath).filePath(name);
 }

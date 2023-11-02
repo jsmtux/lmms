@@ -36,6 +36,9 @@ public:
 	virtual void restoreState(QDomNode& node) = 0;
 	virtual void saveState(IDataFile& dataFile) = 0;
 
+	virtual QClipboard& getClipboard() = 0;
+	virtual QString applicationDirPath() = 0;
+
 	virtual std::unique_ptr<IFileDialog> createFileDialog(QString title) = 0;
 };
 

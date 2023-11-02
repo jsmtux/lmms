@@ -25,8 +25,6 @@
 #ifndef LMMS_LFO_CONTROLLER_H
 #define LMMS_LFO_CONTROLLER_H
 
-#include <QWidget>
-
 #include "Model.h"
 #include "AutomatableModel.h"
 #include "Controller.h"

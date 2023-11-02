@@ -22,9 +22,10 @@
  *
  */
 
-#include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
+
+#include "IGuiApplication.h"
 
 #include "Clipboard.h"
 
@@ -34,7 +35,7 @@ namespace lmms::Clipboard
 
 	const QMimeData * getMimeData()
 	{
-		return QApplication::clipboard()->mimeData( QClipboard::Clipboard );
+		return gui::getGUIInterface()->getClipboard().mimeData( QClipboard::Clipboard );
 	}
 
 
@@ -53,7 +54,7 @@ namespace lmms::Clipboard
 		auto content = new QMimeData;
 
 		content->setData( mimeType( mT ), str.toUtf8() );
-		QApplication::clipboard()->setMimeData( content, QClipboard::Clipboard );
+		gui::getGUIInterface()->getClipboard().setMimeData( content, QClipboard::Clipboard );
 	}
 
 
@@ -73,7 +74,7 @@ namespace lmms::Clipboard
 
 		auto content = new QMimeData;
 		content->setData( mimeType( MimeType::StringPair ), finalString.toUtf8() );
-		QApplication::clipboard()->setMimeData( content, QClipboard::Clipboard );
+		gui::getGUIInterface()->getClipboard().setMimeData( content, QClipboard::Clipboard );
 	}
 
 

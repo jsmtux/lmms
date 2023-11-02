@@ -76,24 +76,26 @@ struct MmAllocator
 };
 
 
-#define MM_OPERATORS								\
-public: 											\
-static void * operator new ( size_t size )		\
-{													\
-	return MemoryManager::alloc( size );			\
-}													\
-static void * operator new[] ( size_t size )		\
-{													\
-	return MemoryManager::alloc( size );			\
-}													\
-static void operator delete ( void * ptr )		\
-{													\
-	MemoryManager::free( ptr );					\
-}													\
-static void operator delete[] ( void * ptr )	\
-{													\
-	MemoryManager::free( ptr );					\
-}
+// #define MM_OPERATORS								\
+// public: 											\
+// static void * operator new ( size_t size )		\
+// {													\
+// 	return MemoryManager::alloc( size );			\
+// }													\
+// static void * operator new[] ( size_t size )		\
+// {													\
+// 	return MemoryManager::alloc( size );			\
+// }													\
+// static void operator delete ( void * ptr )		\
+// {													\
+// 	MemoryManager::free( ptr );					\
+// }													\
+// static void operator delete[] ( void * ptr )	\
+// {													\
+// 	MemoryManager::free( ptr );					\
+// }
+
+#define MM_OPERATORS
 
 // for use in cases where overriding new/delete isn't a possibility
 template<typename T>

@@ -26,8 +26,6 @@
 
 #ifdef LMMS_HAVE_SDL
 
-#include <QLabel>
-#include <QLineEdit>
 #include <SDL.h>
 
 #include "AudioEngine.h"

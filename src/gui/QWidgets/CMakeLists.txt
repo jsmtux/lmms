@@ -147,7 +147,7 @@ FIND_PACKAGE(Samplerate 0.1.8 MODULE REQUIRED)
 
 add_library(lmms_gui STATIC ${LMMS_UI_SRCS} ${LMMS_UI_OUT})
 target_include_directories(lmms_gui PUBLIC ${SAMPLERATE_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/include" "${CMAKE_BINARY_DIR}" "${CMAKE_BINARY_DIR}/src" "${CMAKE_BINARY_DIR}/src/core" "${WEAKJACK_INCLUDE_DIRS}")
-target_link_libraries(lmms_gui PUBLIC lmmsobjs PRIVATE Qt5::Widgets)
+target_link_libraries(lmms_gui PUBLIC lmmsobjs PRIVATE Qt6::Widgets)
 
 add_subdirectory(plugins)
 

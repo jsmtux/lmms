@@ -140,7 +140,7 @@ void EffectChain::removeEffect( IEffect * _effect )
 {
 	IEngine::Instance()->getAudioEngineInterface()->requestChangeInModel();
 
-	IEffect ** found = std::find( m_effects.begin(), m_effects.end(), _effect );
+	auto found = std::find( m_effects.begin(), m_effects.end(), _effect );
 	if( found == m_effects.end() )
 	{
 		IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();

@@ -117,8 +117,8 @@ target_sources(ZynAddSubFxCore INTERFACE
 target_link_libraries(ZynAddSubFxCore INTERFACE
 	${FFTW3F_LIBRARIES}
 	${QT_LIBRARIES}
-	Qt5::Widgets
-	Qt5::Xml
+	Qt6::Widgets
+	Qt6::Xml
 	Threads::Threads
 	ZLIB::ZLIB
 )
@@ -181,7 +181,7 @@ if(LMMS_HAVE_LIBRT)
 endif()
 
 # Support qt_version_tag in Qt 5.6
-TARGET_LINK_LIBRARIES(RemoteZynAddSubFx Qt5::Core)
+TARGET_LINK_LIBRARIES(RemoteZynAddSubFx Qt6::Core)
 
 # link Qt libraries when on win32
 IF(LMMS_BUILD_WIN32)

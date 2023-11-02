@@ -29,6 +29,7 @@
 
 #include "ICoreApplication.h"
 
+#include <QClipboard>
 
 namespace lmms::gui
 {
@@ -146,6 +147,10 @@ public:
 	{
 		return std::make_unique<FileDialog>();
 	}
+	QClipboard& getClipboard() override
+	{
+		return m_clipBoard;
+	}
 	void clear() override
 	{}
 	void restoreState(QDomNode& node) override
@@ -157,6 +162,7 @@ private:
 	MixerView m_mixerView;
 	PianoRollWindow m_pianoRoll;
 	AutomationEditor m_automationEditor;
+	QClipboard m_clipBoard;
 
 	static std::unique_ptr<GuiApplication*> s_instance;
 };
