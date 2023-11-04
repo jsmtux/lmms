@@ -9,3 +9,4 @@ target_include_directories(lmms_gui_interface PUBLIC "${CMAKE_CURRENT_SOURCE_DIR
 
 # add_subdirectory(QWidgets)
 add_subdirectory(headless)
+add_subdirectory(QML)

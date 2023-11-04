@@ -176,6 +176,7 @@ int TrackContainer::countTracks( Track::TrackTypes _tt ) const
 
 void TrackContainer::addTrack( Track * _track )
 {
+	qDebug() << "Adding track!!!\n";
 	if( _track->type() != Track::HiddenAutomationTrack )
 	{
 		_track->lock();

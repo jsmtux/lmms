@@ -25,8 +25,7 @@ namespace gui
 
 class IGuiApplication {
 public:
-	virtual ~IGuiApplication()
-	{}
+	virtual ~IGuiApplication() = default;
 	virtual IMainWindow* mainWindowInterface() = 0;
 	virtual IMixerView* mixerViewInterface() = 0;
 	virtual IPianoRollWindow* pianoRollInterface() = 0;

@@ -6,6 +6,7 @@
 #include "RenderManager.h"
 #include "MixHelpers.h"
 
+#include <iostream>
 namespace lmms {
 
 class CoreApplication: public ICoreApplication

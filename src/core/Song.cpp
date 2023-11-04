@@ -875,19 +875,19 @@ void Song::createNewProject()
 						+ "default.mpt";
 
 
-	if( QFile::exists( defaultTemplate ) )
-	{
-		createNewProjectFromTemplate( defaultTemplate );
-		return;
-	}
+	// if( QFile::exists( defaultTemplate ) )
+	// {
+	// 	createNewProjectFromTemplate( defaultTemplate );
+	// 	return;
+	// }
 
-	defaultTemplate = ConfigManager::inst()->factoryProjectsDir()
-						+ "templates/default.mpt";
-	if( QFile::exists( defaultTemplate ) )
-	{
-		createNewProjectFromTemplate( defaultTemplate );
-		return;
-	}
+	// defaultTemplate = ConfigManager::inst()->factoryProjectsDir()
+	// 					+ "templates/default.mpt";
+	// if( QFile::exists( defaultTemplate ) )
+	// {
+	// 	createNewProjectFromTemplate( defaultTemplate );
+	// 	return;
+	// }
 
 	m_loadingProject = true;
 
@@ -1071,34 +1071,51 @@ void Song::loadProject( const QString & fileName )
 		}
 	}
 
+	getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+				tr("LMMS Error report"), "Getting into meat!");
+
 	while( !node.isNull() && !isCancelled() )
 	{
 		if( node.isElement() )
 		{
-			if( node.nodeName() == "trackcontainer" )
+			if( node.nodeName() == "trackconainer" )
 			{
+				getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+							tr("LMMS Error report"), "A!");
 				m_trackContainer.restoreState( node.toElement() );
 			}
 			else if( node.nodeName() == "controllers" )
 			{
+				getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+							tr("LMMS Error report"), "B!");
 				restoreControllerStates( node.toElement() );
 			}
 			else if (node.nodeName() == "scales")
 			{
+				getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+							tr("LMMS Error report"), "C!");
 				restoreScaleStates(node.toElement());
 			}
 			else if (node.nodeName() == "keymaps")
 			{
+				getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+							tr("LMMS Error report"), "D!");
 				restoreKeymapStates(node.toElement());
 			}
 			else if( getGUIInterface() != nullptr )
 			{
-				if( node.nodeName() == m_playPos[Mode_PlaySong].m_timeLine->nodeName() )
-				{
-					m_playPos[Mode_PlaySong].m_timeLine->restoreState( node.toElement() );
-				}
+				// getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+				// 			tr("LMMS Error report"), "E!" + node.nodeName());
+				// if( node.nodeName() == m_playPos[Mode_PlaySong].m_timeLine->nodeName() )
+				// {
+				// 	getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+				// 				tr("LMMS Error report"), "E1!");
+				// 	m_playPos[Mode_PlaySong].m_timeLine->restoreState( node.toElement() );
+				// }
 
-				getGUIInterface()->restoreState(node);
+				// getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+				// 			tr("LMMS Error report"), "Going to restore state!");
+				// getGUIInterface()->restoreState(node);
 			}
 		}
 		node = node.nextSibling();
