@@ -26,9 +26,8 @@
 #ifndef LMMS_GUI_DUMMY_INSTRUMENT_H
 #define LMMS_GUI_DUMMY_INSTRUMENT_H
 
-#include "AudioEngine.h"
-#include "Engine.h"
-#include "Instrument.h"
+#include "IAudioEngine.h"
+#include "IEngine.h"
 #include "QWidgetInstrumentPlugin.h"
 
 #include "instrument/InstrumentView.h"
@@ -42,17 +41,17 @@ namespace lmms
 class DummyInstrument : public gui::QWidgetInstrumentPlugin
 {
 public:
-	DummyInstrument( InstrumentTrack * _instrument_track ) :
+	DummyInstrument( IInstrumentTrack * _instrument_track ) :
 		gui::QWidgetInstrumentPlugin( _instrument_track, nullptr )
 	{
 	}
 
 	~DummyInstrument() override = default;
 
-	void playNote( NotePlayHandle *, sampleFrame * buffer ) override
+	void playNote( INotePlayHandle *, sampleFrame * buffer ) override
 	{
 		memset( buffer, 0, sizeof( sampleFrame ) *
-			Engine::audioEngine()->framesPerPeriod() );
+			IEngine::Instance()->getAudioEngineInterface()->framesPerPeriod() );
 	}
 
 	void saveSettings( QDomDocument &, QDomElement & ) override

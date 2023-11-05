@@ -803,7 +803,7 @@ int main( int argc, char * * argv )
 		// }
 
 		// create renderer
-		IRenderManager* r = coreApplication->createRenderManager(qs, os, eff, renderOut);
+		std::unique_ptr<IRenderManager> r = createRenderManager(qs, os, eff, renderOut);
 		QCoreApplication::instance()->connect( r,
 				SIGNAL(finished()), SLOT(quit()));
 

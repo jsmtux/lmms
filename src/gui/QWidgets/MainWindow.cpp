@@ -112,8 +112,7 @@ void ProgressModal::updateDescription(QString description) {
 }
 
 
-MainWindow::MainWindow(IProjectRenderer* _renderer) :
-	m_renderer(_renderer),
+MainWindow::MainWindow() :
 	m_workspace( nullptr ),
 	m_toolsMenu( nullptr ),
 	m_autoSaveTimer( this ),
@@ -1576,10 +1575,10 @@ void MainWindow::exportProject(bool multiExport)
 		efd.setFileMode( IFileDialog::AnyFile );
 		int idx = 0;
 		QStringList types;
-		while( m_renderer->getFileEncodeDeviceInterface(idx)->m_fileFormat != IProjectRenderer::NumFileFormats)
+		while( IProjectRenderer::getFileEncodeDeviceInterface(idx)->m_fileFormat != IProjectRenderer::NumFileFormats)
 		{
-			if(m_renderer->getFileEncodeDeviceInterface(idx)->isAvailable()) {
-				types << tr(m_renderer->getFileEncodeDeviceInterface(idx)->m_description);
+			if(IProjectRenderer::getFileEncodeDeviceInterface(idx)->isAvailable()) {
+				types << tr(IProjectRenderer::getFileEncodeDeviceInterface(idx)->m_description);
 			}
 			++idx;
 		}
@@ -1595,7 +1594,7 @@ void MainWindow::exportProject(bool multiExport)
 			efd.setDirectory( IConfigManager::Instance()->userProjectsDir() );
 			baseFilename = tr( "untitled" );
 		}
-		efd.selectFile( baseFilename + m_renderer->getFileEncodeDeviceInterface(0)->m_extension );
+		efd.selectFile( baseFilename + IProjectRenderer::getFileEncodeDeviceInterface(0)->m_extension );
 		efd.setWindowTitle( tr( "Select file for project-export..." ) );
 	}
 
@@ -1635,7 +1634,7 @@ void MainWindow::exportProject(bool multiExport)
 			}
 		}
 
-		ExportProjectDialog epd( exportFileName, getGUI()->mainWindow(), m_renderer, multiExport );
+		ExportProjectDialog epd( exportFileName, getGUI()->mainWindow(), multiExport );
 		epd.exec();
 	}
 }

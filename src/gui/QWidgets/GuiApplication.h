@@ -45,8 +45,6 @@ class QLabel;
 namespace lmms
 {
 
-class IProjectRenderer;
-
 namespace gui
 {
 
@@ -58,7 +56,7 @@ class LMMS_EXPORT GuiApplication : public QObject, public IGuiApplication
 {
 	Q_OBJECT;
 public:
-	explicit GuiApplication(IProjectRenderer* renderer);
+	explicit GuiApplication();
 	~GuiApplication() override;
 
 	static GuiApplication* instance();

@@ -14,6 +14,12 @@ namespace lmms
 {
 
 
+AudioPortAudioSetupUtil::AudioPortAudioSetupUtil()
+	: m_backendModel(MFact::createComboBox(this))
+	, m_deviceModel(MFact::createComboBox(this))
+{}
+
+
 void AudioPortAudioSetupUtil::updateBackends()
 {
 	PaError err = Pa_Initialize();

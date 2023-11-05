@@ -52,7 +52,7 @@ bool AutomationTrack::play( const TimePos & time_start, const fpp_t _frames,
 
 IClip* AutomationTrack::createClip(const TimePos & pos)
 {
-	return static_cast<IClip*>(createClip(pos));
+	return createAutomationClip(pos)->baseClip();
 }
 
 IAutomationClip* AutomationTrack::createAutomationClip(TimePos pos)

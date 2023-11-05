@@ -35,7 +35,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QStyleOptionFrame>
-
+#include <QDebug>
 namespace lmms::gui
 {
 
@@ -50,7 +50,8 @@ ComboBox::ComboBox( IComboBoxModelWrapper* _model, QWidget * _parent, const QStr
 	QWidget( _parent ),
 	IntModelView( _model->wrappedModel(), this ),
 	m_menu( this ),
-	m_pressed( false )
+	m_pressed( false ),
+	m_comboboxModel(_model)
 {
 	setFixedHeight( ComboBox::DEFAULT_HEIGHT );
 

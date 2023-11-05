@@ -42,7 +42,7 @@ class ExportProjectDialog : public QDialog, public Ui::ExportProjectDialog
 {
 	Q_OBJECT
 public:
-	ExportProjectDialog( const QString & _file_name, QWidget * _parent, IProjectRenderer* _project_renderer, bool multi_export = false );
+	ExportProjectDialog( const QString & _file_name, QWidget * _parent, bool multi_export = false );
 
 protected:
 	void reject() override;
@@ -63,7 +63,6 @@ private:
 	QString m_fileExtension;
 	bool m_multiExport;
 
-	IProjectRenderer* m_projectRenderer;
 	IProjectRenderer::ExportFileFormats m_ft;
 	std::unique_ptr<IRenderManager> m_renderManager;
 } ;

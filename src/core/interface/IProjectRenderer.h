@@ -29,7 +29,7 @@ public:
 	} ;
 
     virtual ~IProjectRenderer() = default;
-	virtual const IFileEncodeDevice* getFileEncodeDeviceInterface(std::size_t index) const = 0;
+	static const IFileEncodeDevice* getFileEncodeDeviceInterface(std::size_t index);
 
 	static QString getFileExtensionFromFormat( ExportFileFormats fmt );
 };

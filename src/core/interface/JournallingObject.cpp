@@ -28,6 +28,7 @@
 #include "Model.h"
 #include "IProjectJournal.h"
 #include "ICoreApplication.h"
+#include "IEngine.h"
 
 namespace lmms
 {
@@ -35,7 +36,7 @@ namespace lmms
 
 JournallingObject::JournallingObject() :
 	SerializingObject(),
-	m_id( getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->allocID( this ) ),
+	m_id( IEngine::Instance()->getProjectJournalInterface()->allocID( this ) ),
 	m_journalling( true ),
 	m_journallingStateStack()
 {
@@ -46,9 +47,9 @@ JournallingObject::JournallingObject() :
 
 JournallingObject::~JournallingObject()
 {
-	if( getCoreApplication()->getEngineInteface()->getProjectJournalInterface() )
+	if( IEngine::Instance()->getProjectJournalInterface() )
 	{
-		getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->freeID( id() );
+		IEngine::Instance()->getProjectJournalInterface()->freeID( id() );
 	}
 }
 
@@ -59,7 +60,7 @@ void JournallingObject::addJournalCheckPoint()
 {
 	if( isJournalling() )
 	{
-		getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->addJournalCheckPoint( this );
+		IEngine::Instance()->getProjectJournalInterface()->addJournalCheckPoint( this );
 	}
 }
 
@@ -118,7 +119,7 @@ void JournallingObject::changeID( jo_id_t _id )
 {
 	if( id() != _id )
 	{
-		JournallingObject * jo = getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->
+		JournallingObject * jo = IEngine::Instance()->getProjectJournalInterface()->
 											journallingObject( _id );
 		if( jo != nullptr )
 		{
@@ -135,8 +136,8 @@ void JournallingObject::changeID( jo_id_t _id )
 			return;
 		}
 
-		getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->freeID( m_id );
-		getCoreApplication()->getEngineInteface()->getProjectJournalInterface()->reallocID( _id, this );
+		IEngine::Instance()->getProjectJournalInterface()->freeID( m_id );
+		IEngine::Instance()->getProjectJournalInterface()->reallocID( _id, this );
 		m_id = _id;
 	}
 }

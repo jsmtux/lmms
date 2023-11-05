@@ -41,6 +41,8 @@
 #include <QStyleOption>
 #include <QToolButton>
 
+#include <QDebug>
+
 #ifndef __USE_XOPEN
 #define __USE_XOPEN
 #endif
@@ -167,12 +169,14 @@ PianoRoll::PianoRoll() :
 	m_nemStr( QVector<QString>() ),
 	m_noteEditMenu( nullptr ),
 	m_semiToneMarkerMenu( nullptr ),
-	m_zoomingModel(),
-	m_zoomingYModel(),
-	m_quantizeModel(),
-	m_noteLenModel(),
-	m_scaleModel(),
-	m_chordModel(),
+	m_zoomingModel(MFact::createComboBox(this)),
+	m_zoomingYModel(MFact::createComboBox(this)),
+	m_quantizeModel(MFact::createComboBox(this)),
+	m_noteLenModel(MFact::createComboBox(this)),
+	m_keyModel(MFact::createComboBox(this)),
+	m_scaleModel(MFact::createComboBox(this)),
+	m_chordModel(MFact::createComboBox(this)),
+	m_snapModel(MFact::createComboBox(this)),
 	m_midiClip( nullptr ),
 	m_currentPosition(),
 	m_recording( false ),

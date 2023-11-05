@@ -14,6 +14,8 @@ namespace lmms
 class AudioPortAudioSetupUtil : public QObject
 {
 Q_OBJECT
+public:
+    AudioPortAudioSetupUtil();
 public slots:
 	void updateBackends();
 	void updateDevices();

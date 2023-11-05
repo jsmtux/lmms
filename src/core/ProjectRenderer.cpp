@@ -54,6 +54,11 @@ QString IProjectRenderer::getFileExtensionFromFormat( ExportFileFormats fmt ) {
 	return ProjectRenderer::getFileExtensionFromFormat( fmt );
 }
 
+
+const IProjectRenderer::IFileEncodeDevice* IProjectRenderer::getFileEncodeDeviceInterface(std::size_t index) {
+	return &ProjectRenderer::fileEncodeDevices[index];
+}
+
 const std::array<ProjectRenderer::FileEncodeDevice, 5> ProjectRenderer::fileEncodeDevices
 {
 
