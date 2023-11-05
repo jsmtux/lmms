@@ -46,7 +46,7 @@
 #include "StringPairDrag.h"
 #include "SubWindow.h"
 #include "IMicrotuner.h"
-#include "plugininterfaces/IQWidgetInstrumentPlugin.h"
+#include "plugins/interface/IQWidgetInstrumentPlugin.h"
 
 #include "editors/TrackContainerView.h"
 

@@ -35,14 +35,12 @@
 namespace lmms::gui
 {
 
-ExportProjectDialog::ExportProjectDialog( const QString & _file_name, QWidget * _parent,
-						IProjectRenderer* _project_renderer, bool multi_export ) :
+ExportProjectDialog::ExportProjectDialog( const QString & _file_name, QWidget * _parent, bool multi_export ) :
 	QDialog( _parent ),
 	Ui::ExportProjectDialog(),
 	m_fileName( _file_name ),
 	m_fileExtension(),
 	m_multiExport( multi_export ),
-	m_projectRenderer(_project_renderer),	
 	m_renderManager( nullptr )
 {
 	setupUi( this );
@@ -60,15 +58,15 @@ ExportProjectDialog::ExportProjectDialog( const QString & _file_name, QWidget * 
 	int cbIndex = 0;
 	for( int i = 0; i < IProjectRenderer::NumFileFormats; ++i )
 	{
-		if( _project_renderer->getFileEncodeDeviceInterface(i)->isAvailable() )
+		if( IProjectRenderer::getFileEncodeDeviceInterface(i)->isAvailable() )
 		{
 			// Get the extension of this format.
-			QString renderExt = _project_renderer->getFileEncodeDeviceInterface(i)->m_extension;
+			QString renderExt = IProjectRenderer::getFileEncodeDeviceInterface(i)->m_extension;
 
 			// Add to combo box.
 			fileFormatCB->addItem( QObject::tr(
-				_project_renderer->getFileEncodeDeviceInterface(i)->m_description ),
-				QVariant( _project_renderer->getFileEncodeDeviceInterface(i)->m_fileFormat ) // Format tag; later used for identification.
+				IProjectRenderer::getFileEncodeDeviceInterface(i)->m_description ),
+				QVariant( IProjectRenderer::getFileEncodeDeviceInterface(i)->m_fileFormat ) // Format tag; later used for identification.
 			);
 
 			// If this is our extension, select it.
@@ -275,9 +273,9 @@ void ExportProjectDialog::startBtnClicked()
 	// Find proper file extension.
 	for( int i = 0; i < IProjectRenderer::NumFileFormats; ++i )
 	{
-		if (m_ft == m_projectRenderer->getFileEncodeDeviceInterface(i)->m_fileFormat)
+		if (m_ft == IProjectRenderer::getFileEncodeDeviceInterface(i)->m_fileFormat)
 		{
-			m_fileExtension = QString( QLatin1String( m_projectRenderer->getFileEncodeDeviceInterface(i)->m_extension ) );
+			m_fileExtension = QString( QLatin1String( IProjectRenderer::getFileEncodeDeviceInterface(i)->m_extension ) );
 			break;
 		}
 	}

@@ -71,7 +71,7 @@ class MainWindow : public QMainWindow, public IMainWindow
 {
 	Q_OBJECT
 public:
-	MainWindow(IProjectRenderer* _renderer);
+	MainWindow();
 
 	QMdiArea* workspace()
 	{
@@ -232,8 +232,6 @@ private:
 	void handleSaveResult(QString const & filename, bool songSavedSuccessfully);
 	bool guiSaveProject();
 	bool guiSaveProjectAs( const QString & filename );
-
-	IProjectRenderer* m_renderer;
 
 	QMdiArea * m_workspace;
 

@@ -81,9 +81,9 @@ const QVector<float> AutomationEditor::m_zoomXLevels =
 
 AutomationEditor::AutomationEditor() :
 	QWidget(),
-	m_zoomingXModel(),
-	m_zoomingYModel(),
-	m_quantizeModel(),
+	m_zoomingXModel(MFact::createComboBox(this)),
+	m_zoomingYModel(MFact::createComboBox(this)),
+	m_quantizeModel(MFact::createComboBox(this)),
 	m_clip(nullptr),
 	m_minLevel( 0 ),
 	m_maxLevel( 0 ),

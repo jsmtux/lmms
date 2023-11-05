@@ -59,10 +59,6 @@ public:
 
 	static QString getFileExtensionFromFormat( ExportFileFormats fmt );
 
-	const IFileEncodeDevice* getFileEncodeDeviceInterface(std::size_t index) const override {
-		return &fileEncodeDevices[index];
-	}
-
 	struct FileEncodeDevice : public IFileEncodeDevice
 	{
 		FileEncodeDevice(

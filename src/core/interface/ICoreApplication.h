@@ -18,14 +18,7 @@ public:
     virtual void free() = 0;
 
     virtual IConfigManager* getConfigManager() = 0;
-    virtual IRenderManager* createRenderManager(
-		const IAudioEngine::qualitySettings & qualitySettings,
-		const OutputSettings & outputSettings,
-		IProjectRenderer::ExportFileFormats fmt,
-		QString outputPath) = 0;
     virtual void setNaNHandler( bool use ) = 0;
-    virtual std::unique_ptr<IEngine> createEngine(bool renderOnly) = 0;
-    virtual IEngine* getEngineInteface() = 0;
 };
 
 ICoreApplication* getCoreApplication();

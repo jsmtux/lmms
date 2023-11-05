@@ -28,7 +28,6 @@
 #include "versioninfo.h"
 
 #include "denormals.h"
-#include "ICoreApplication.h"
 
 #include <QDebug>
 #include <QFileInfo>
@@ -58,10 +57,11 @@
 
 #include <csignal>
 
+#include "ICoreApplication.h"
 #include "MainApplication.h"
 #include "IConfigManager.h"
 #include "IDataFile.h"
-#include "IPlayHandle.h"
+// #include "NotePlayHandle.h"
 #include "embed.h"
 #include "IEngine.h"
 #include "GuiApplication.h"
@@ -294,9 +294,11 @@ int main( int argc, char * * argv )
 	// Make Qt's debug message handlers work
 	qInstallMessageHandler(consoleMessageHandler);
 #endif
-	ICoreApplication* coreApplication = getCoreApplication();
-	coreApplication->init();
-	IConfigManager* configManager = coreApplication->getConfigManager();
+
+	// initialize memory managers
+	// NotePlayHandleManager::init();
+	auto lmms_core_application = getCoreApplication();
+	lmms_core_application->init();
 
 	// intialize RNG
 	srand( getpid() + time( 0 ) );
@@ -740,10 +742,10 @@ int main( int argc, char * * argv )
 		fileCheck( fileToImport );
 	}
 
-	configManager->loadConfigFile(configFile);
+	IConfigManager::Instance()->loadConfigFile(configFile);
 
 	// Hidden settings
-	coreApplication->setNaNHandler( configManager->value( "app",
+	lmms_core_application->setNaNHandler( IConfigManager::Instance()->value( "app",
 						"nanhandler", "1" ).toInt() );
 
 	// set language
@@ -803,25 +805,23 @@ int main( int argc, char * * argv )
 
 	bool destroyEngine = false;
 
-	IRenderManager* renderManager = nullptr;
-	auto engine = coreApplication->createEngine(true);
-
 	// if we have an output file for rendering, just render the song
 	// without starting the GUI
 	if( !renderOut.isEmpty() )
 	{
+		InitializeEngine( true );
 		destroyEngine = true;
 
 		printf( "Loading project...\n" );
-		engine->getSongInterface()->loadProject( fileToLoad );
-		if( engine->getSongInterface()->trackContainer().isEmpty() )
+		IEngine::Instance()->getSongInterface()->loadProject( fileToLoad );
+		if( IEngine::Instance()->getSongInterface()->trackContainer().isEmpty() )
 		{
 			printf("The project %s is empty, aborting!\n", fileToLoad.toUtf8().constData() );
 			exit( EXIT_FAILURE );
 		}
 		printf( "Done\n" );
 
-		engine->getSongInterface()->setExportLoop( renderLoop );
+		IEngine::Instance()->getSongInterface()->setExportLoop( renderLoop );
 
 		// when rendering multiple tracks, renderOut is a directory
 		// otherwise, it is a file, so we need to append the file extension
@@ -832,36 +832,37 @@ int main( int argc, char * * argv )
 		}
 
 		// create renderer
-		renderManager = coreApplication->createRenderManager(qs, os, eff, renderOut);
-		QCoreApplication::instance()->connect( renderManager,
+		auto r = createRenderManager(qs, os, eff, renderOut);
+		QCoreApplication::instance()->connect( r.get(),
 				SIGNAL(finished()), SLOT(quit()));
 
 		// timer for progress-updates
-		auto t = new QTimer(renderManager);
-		renderManager->connect( t, SIGNAL(timeout()),
+		auto t = new QTimer(r.get());
+		r->connect( t, SIGNAL(timeout()),
 				SLOT(updateConsoleProgress()));
 		t->start( 200 );
 
 		if( profilerOutputFile.isEmpty() == false )
 		{
-			engine->getAudioEngineInterface()->setProfilerOutputFile( profilerOutputFile );
+			IEngine::Instance()->getAudioEngineInterface()->setProfilerOutputFile( profilerOutputFile );
 		}
 
 		// start now!
 		if ( renderTracks )
 		{
-			renderManager->renderTracks();
+			r->renderTracks();
 		}
 		else
 		{
-			renderManager->renderProject();
+			r->renderProject();
 		}
 	}
 	else // otherwise, start the GUI
 	{
 		using namespace lmms::gui;
+		InitializeEngine(false);
 
-		new GuiApplication(renderManager->getProjectRenderer());
+		new GuiApplication();
 
 		// re-intialize RNG - shared libraries might have srand() or
 		// srandom() calls in their init procedure
@@ -967,16 +968,16 @@ int main( int argc, char * * argv )
 		{
 			if( fileToLoad == recoveryFile )
 			{
-				engine->getSongInterface()->createNewProjectFromTemplate( fileToLoad );
+				IEngine::Instance()->getSongInterface()->createNewProjectFromTemplate( fileToLoad );
 			}
 			else
 			{
-				engine->getSongInterface()->loadProject( fileToLoad );
+				IEngine::Instance()->getSongInterface()->loadProject( fileToLoad );
 			}
 		}
 		else if( !fileToImport.isEmpty() )
 		{
-			importFilterImport( fileToImport, engine->getSongInterface()->trackContainerInterface() );
+			ImportFilter::import( fileToImport, &IEngine::Instance()->getSongInterface()->trackContainer() );
 			if( exitAfterImport )
 			{
 				return EXIT_SUCCESS;
@@ -997,16 +998,16 @@ int main( int argc, char * * argv )
 			if ( recentFile.exists() &&
 				recentFile.suffix().toLower() != "mpt" )
 			{
-				engine->getSongInterface()->loadProject( f );
+				IEngine::Instance()->getSongInterface()->loadProject( f );
 			}
 			else
 			{
-				engine->getSongInterface()->createNewProject();
+				IEngine::Instance()->getSongInterface()->createNewProject();
 			}
 		}
 		else
 		{
-			engine->getSongInterface()->createNewProject();
+			IEngine::Instance()->getSongInterface()->createNewProject();
 		}
 
 		// Finally we start the auto save timer and also trigger the
@@ -1042,8 +1043,7 @@ int main( int argc, char * * argv )
 	}
 #endif
 
-
-	coreApplication->free();
+	lmms_core_application->free();
 
 	return ret;
 }

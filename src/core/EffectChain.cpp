@@ -124,9 +124,9 @@ void EffectChain::loadSettings( const QDomElement & _this )
 
 void EffectChain::appendEffect( IEffect * _effect )
 {
-	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->requestChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->requestChangeInModel();
 	m_effects.append( _effect );
-	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->doneChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 
 	m_enabledModel.setValue( true );
 
@@ -138,17 +138,17 @@ void EffectChain::appendEffect( IEffect * _effect )
 
 void EffectChain::removeEffect( IEffect * _effect )
 {
-	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->requestChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->requestChangeInModel();
 
 	IEffect ** found = std::find( m_effects.begin(), m_effects.end(), _effect );
 	if( found == m_effects.end() )
 	{
-		getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->doneChangeInModel();
+		IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 		return;
 	}
 	m_effects.erase( found );
 
-	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->doneChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 
 	if( m_effects.isEmpty() )
 	{
@@ -230,7 +230,7 @@ void EffectChain::clear()
 {
 	emit aboutToClear();
 
-	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->requestChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->requestChangeInModel();
 
 	while( m_effects.count() )
 	{
@@ -239,7 +239,7 @@ void EffectChain::clear()
 		delete e;
 	}
 
-	getCoreApplication()->getEngineInteface()->getAudioEngineInterface()->doneChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 
 	m_enabledModel.setValue( false );
 }

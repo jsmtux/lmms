@@ -4,6 +4,7 @@
 #include "DataFile.h"
 #include "Engine.h"
 #include "RenderManager.h"
+#include "MixHelpers.h"
 
 namespace lmms {
 
@@ -25,32 +26,12 @@ public:
         return ConfigManager::inst();
     }
 
-    IRenderManager* createRenderManager(
-		const IAudioEngine::qualitySettings & qualitySettings,
-		const OutputSettings & outputSettings,
-		IProjectRenderer::ExportFileFormats fmt,
-		QString outputPath) override
-    {
-        return new RenderManager(qualitySettings, outputSettings, fmt, outputPath);
-    }
-
     void setNaNHandler( bool use ) override
     {
-
-    }
-
-    std::unique_ptr<IEngine> createEngine(bool renderOnly) override
-    {
-        m_enginePointer = new Engine();
-        return std::unique_ptr<IEngine>(m_enginePointer);
-    }
-
-    IEngine* getEngineInteface() override
-    {
-        return m_enginePointer;
+        MixHelpers::setNaNHandler(use);
     }
 private:
-    IEngine* m_enginePointer = nullptr;
+    std::unique_ptr<IEngine> m_enginePointer;
 };
 
 LMMS_EXPORT ICoreApplication* getCoreApplication() {

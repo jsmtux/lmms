@@ -86,7 +86,7 @@ GuiApplication* GuiApplication::instance()
 
 
 
-GuiApplication::GuiApplication(IProjectRenderer* _renderer)
+GuiApplication::GuiApplication()
 {
 	// prompt the user to create the LMMS working directory (e.g. ~/Documents/lmms) if it doesn't exist
 	if ( !IConfigManager::Instance()->hasWorkingDir() &&
@@ -151,7 +151,7 @@ GuiApplication::GuiApplication(IProjectRenderer* _renderer)
 
 	displayInitProgress(tr("Preparing UI"));
 
-	m_mainWindow = new MainWindow(_renderer);
+	m_mainWindow = new MainWindow();
 	connect(m_mainWindow, SIGNAL(destroyed(QObject*)), this, SLOT(childDestroyed(QObject*)));
 	connect(m_mainWindow, SIGNAL(initProgress(const QString&)), 
 		this, SLOT(displayInitProgress(const QString&)));

@@ -2,19 +2,19 @@
 #define Q_WIDGET_INSTRUMENT_PLUGIN_H_
 
 #include "Instrument.h"
-#include "InstrumentTrack.h"
+#include "ITrack.h"
 #include "instrument/InstrumentView.h"
-#include "plugininterfaces/IQWidgetInstrumentPlugin.h"
+#include "interface/IQWidgetInstrumentPlugin.h"
 #include "Plugin.h"
 
 namespace lmms::gui {
 
 class QWidgetInstrumentPlugin : public Instrument, public IQWidgetInstrumentPlugin {
 public:
-    QWidgetInstrumentPlugin(InstrumentTrack * _instrument_track,
-                const Descriptor * _descriptor,
+    QWidgetInstrumentPlugin(IInstrumentTrack * _instrument_track,
+                const PluginDescriptor * _descriptor,
                 const PluginDescriptor::Key * key = nullptr) :
-        Instrument(_instrument_track, _descriptor, key)
+        Instrument(_instrument_track->baseTrack(), _descriptor, key)
     {}
 
     //! Create a view for the model

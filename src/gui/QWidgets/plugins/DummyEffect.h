@@ -110,9 +110,15 @@ public:
 		return true;
 	}
 
+
+	const PluginDescriptor* descriptor() const override {return nullptr;}
+	const PluginDescriptor::Key& key() override {return m_key;}
+	void restoreState(const QDomElement&) override {}
+
 private:
 	DummyEffectControls m_controls;
 	const QDomElement m_originalPluginData;
+	PluginDescriptor::Key m_key;
 	
 	// Parse the display name from the dom
 	virtual void setName()

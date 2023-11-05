@@ -75,6 +75,7 @@ TARGET_LINK_LIBRARIES(lmms
 	PUBLIC
 	lmmsobjs
 	lmms_gui
+	lmms_qwidget_plugins
 	Qt5::Widgets
 )
 
