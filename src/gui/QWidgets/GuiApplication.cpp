@@ -44,7 +44,7 @@
 
 #include "modals/FileDialog.h"
 
-#include "plugins/DummyEffect.h"
+#include "plugins/QWidgetsDummyEffect.h"
 // #include "plugins/DummyInstrument.h"
 
 

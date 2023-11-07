@@ -23,26 +23,22 @@
  *
  */
 
-#ifndef LMMS_GUI_DUMMY_INSTRUMENT_H
-#define LMMS_GUI_DUMMY_INSTRUMENT_H
+#ifndef LMMS_DUMMY_INSTRUMENT_H
+#define LMMS_DUMMY_INSTRUMENT_H
 
 #include "IAudioEngine.h"
 #include "IEngine.h"
-#include "QWidgetInstrumentPlugin.h"
-
-#include "instrument/InstrumentView.h"
-
 #include <cstring>
 
 namespace lmms
 {
 
 
-class DummyInstrument : public gui::QWidgetInstrumentPlugin
+class DummyInstrument  : public Instrument
 {
 public:
-	DummyInstrument( IInstrumentTrack * _instrument_track ) :
-		gui::QWidgetInstrumentPlugin( _instrument_track, nullptr )
+	DummyInstrument( IInstrumentTrack * _instrument_track )
+		: Instrument(_instrument_track->baseTrack(), nullptr)
 	{
 	}
 
@@ -66,14 +62,9 @@ public:
 	{
 		return "dummyinstrument";
 	}
-
-	gui::InstrumentView * instantiateView( QWidget * _parent ) override
-	{
-		return new gui::InstrumentViewImpl<DummyInstrument>( this, _parent, true );
-	}
 } ;
 
 
 } // namespace lmms
 
-#endif // LMMS_GUI_DUMMY_INSTRUMENT_H
+#endif // LMMS_DUMMY_INSTRUMENT_H
