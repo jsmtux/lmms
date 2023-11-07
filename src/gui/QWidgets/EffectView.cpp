@@ -33,7 +33,7 @@
 #include "effectcontroldialogs/EffectControlDialog.h"
 #include "effectcontroldialogs/QWidgetEffectControls.h"
 
-#include "plugins/DummyEffect.h"
+#include "plugins/QWidgetsDummyEffect.h"
 
 #include "widgets/CaptionMenu.h"
 #include "widgets/Knob.h"

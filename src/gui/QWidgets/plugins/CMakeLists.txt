@@ -1,8 +1,8 @@
 set(QWIDGET_PLUGIN_SRCS
-    DummyEffect.cpp
-    DummyEffect.h
-    DummyInstrument.cpp
-    DummyInstrument.h
+    QWidgetsDummyEffect.cpp
+    QWidgetsDummyEffect.h
+    QWidgetDummyInstrument.cpp
+    QWidgetDummyInstrument.h
     DummyPlugin.h
     QWidgetExportFilter.h
     QWidgetImportFilter.h

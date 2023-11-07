@@ -29,54 +29,16 @@
 
 #include "IPlugin.h"
 #include "Effect.h"
-#include "EffectControls.h"
 
 namespace lmms
 {
-
-class DummyEffectControls : public EffectControls
-{
-public:
-	DummyEffectControls( Effect * _eff ) :
-		EffectControls( _eff )
-	{
-	}
-
-	~DummyEffectControls() override = default;
-
-	int controlCount() override
-	{
-		return 0;
-	}
-
-	void saveSettings( QDomDocument &, QDomElement & ) override
-	{
-	}
-
-	void loadSettings( const QDomElement & ) override
-	{
-	}
-
-	QString nodeName() const override
-	{
-		return "DummyControls";
-	}
-
-	gui::EffectControlDialog * createView() override
-	{
-		return nullptr;
-	}
-} ;
-
-
 
 class DummyEffect : public Effect, public IDummyEffect
 {
 	Q_OBJECT
 public:
-	DummyEffect( IEffectChain * _parent, const QDomElement& originalPluginData ) :
+	DummyEffect( IEffectChain * _parent, const QDomElement& originalPluginData) :
 		Effect( nullptr, _parent, nullptr ),
-		m_controls( this ),
 		m_originalPluginData( originalPluginData )
 	{
 		setName();
@@ -86,7 +48,7 @@ public:
 
 	EffectControls * controls() override
 	{
-		return &m_controls;
+		return m_controls;
 	}
 
 	bool processAudioBuffer( sampleFrame *, const fpp_t ) override
@@ -116,7 +78,7 @@ public:
 	void restoreState(const QDomElement&) override {}
 
 private:
-	DummyEffectControls m_controls;
+	EffectControls* m_controls;
 	const QDomElement m_originalPluginData;
 	PluginDescriptor::Key m_key;
 	

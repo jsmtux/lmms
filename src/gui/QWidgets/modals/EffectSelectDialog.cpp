@@ -30,7 +30,7 @@
 
 #include "gui/QWidgets/ui_EffectSelectDialog.h"
 
-#include "plugins/DummyEffect.h"
+#include "plugins/QWidgetsDummyEffect.h"
 
 #include <QLabel>
 
