@@ -114,16 +114,19 @@ Track * Track::create( TrackTypes tt, ITrackContainer * tc )
 	Track * t = nullptr;
 
 	auto* trackContainer = dynamic_cast<TrackContainer*>(tc);
-
 	switch( tt )
 	{
-		case InstrumentTrack: t = new class InstrumentTrack( trackContainer ); break;
+		case InstrumentTrack:
+			t = new class InstrumentTrack( trackContainer );
+			break;
 		case PatternTrack:
 			t = new class PatternTrack( trackContainer );
 			t->createClipsForPattern(Engine::getSong()->numOfPatterns() - 1);
 			Engine::getSong()->setUpPatternStoreTrack();
 			break;
-		case SampleTrack: t = new class SampleTrack( trackContainer ); break;
+		case SampleTrack:
+			t = new class SampleTrack( trackContainer );
+			break;
 //		case EVENT_TRACK:
 //		case VIDEO_TRACK:
 		case AutomationTrack: t = new class AutomationTrack( trackContainer ); break;

@@ -1075,7 +1075,7 @@ void Song::loadProject( const QString & fileName )
 	{
 		if( node.isElement() )
 		{
-			if( node.nodeName() == "trackconainer" )
+			if( node.nodeName() == "trackcontainer" )
 			{
 				m_trackContainer.restoreState( node.toElement() );
 			}
