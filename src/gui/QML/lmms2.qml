@@ -150,41 +150,21 @@ ApplicationWindow {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.minimumWidth: 250
+                    padding: 3
 
                     background: Rectangle {
                         width: parent.width
                         height: parent.height
                         color: Theme.bgColor
                         border.color: Theme.tabBgColorDarker
-                        border.width: 5
-                    }
-
-                    ListModel {
-                        id: trackModel
-                        ListElement {
-                            name: "Apple"
-                            cost: 2.45
-                        }
-                        ListElement {
-                            name: "Orange"
-                            cost: 3.25
-                        }
-                        ListElement {
-                            name: "Banana"
-                            cost: 1.95
-                        }
+                        border.width: 2
                     }
 
                     ListView {
                         anchors.fill: parent
                         model: trackModel
-                        delegate: Row {
-                            required property string name
-                            required property string cost
-                            spacing: 10
-                            Text { text: name }
-                            Text { text: '$' + cost }
-                        }
+                        spacing: 1
+                        delegate: TrackViewDelegate {}
                     }
                 }
             }

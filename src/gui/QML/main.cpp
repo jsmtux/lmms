@@ -40,6 +40,7 @@
 #include <QTimer>
 #include <QTranslator>
 #include <QTextStream>
+#include <QQmlContext>
 
 #ifdef LMMS_BUILD_WIN32
 #include <windows.h>
@@ -62,6 +63,10 @@
 #include "ICoreApplication.h"
 #include "OutputSettings.h"
 #include "GuiApplication.h"
+
+#include "DummyEffect.h"
+#include "Instrument.h"
+#include "DummyInstrument.h"
 
 #ifdef LMMS_DEBUG_FPE
 #include <execinfo.h> // For backtrace and backtrace_symbols_fd
@@ -124,13 +129,13 @@ namespace lmms
 
 IEffect* InstantiateDummyEffect(IEffectChain* _parent, const QDomElement& originalPluginData)
 {
-	return nullptr;
+	return new DummyEffect(_parent, originalPluginData);
 }
 
 
 IInstrument* InstantiateDummyInstrument(ITrack* _instrument_track)
 {
-	return nullptr;
+	return new DummyInstrument(static_cast<IInstrumentTrack*>(_instrument_track->getTrackTypeSpecificInterface()));
 }
 }
 
@@ -245,7 +250,6 @@ int noInputFileError()
 	return usageError( "No input file specified" );
 }
 
-
 int main( int argc, char * * argv )
 {
 	using namespace lmms;
@@ -345,384 +349,9 @@ int main( int argc, char * * argv )
 
     QApplication app(argc, argv);
 
-    QQmlApplicationEngine qCoreApplicationEngine;
-    qCoreApplicationEngine.addImportPath(":/imports");
-    qCoreApplicationEngine.load(QUrl(QStringLiteral("qrc:/lmms2.qml")));
-
 	IAudioEngine::qualitySettings qs( IAudioEngine::qualitySettings::Mode_HighQuality );
 	OutputSettings os( 44100, OutputSettings::BitRateSettings(160, false), OutputSettings::Depth_16Bit, OutputSettings::StereoMode_JointStereo );
 	IProjectRenderer::ExportFileFormats eff = IProjectRenderer::WaveFile;
-
-	// second of two command-line parsing stages
-	for( int i = 1; i < argc; ++i )
-	{
-		QString arg = argv[i];
-
-		if( arg == "--version" || arg == "-v" )
-		{
-			printVersion( argv[0] );
-			return EXIT_SUCCESS;
-		}
-		else if( arg == "--help" || arg  == "-h" )
-		{
-			printHelp();
-			return EXIT_SUCCESS;
-		}
-		else if( arg == "upgrade" || arg == "--upgrade" || arg  == "-u")
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return noInputFileError();
-			}
-
-
-			auto dataFile = createDataFile( QString::fromLocal8Bit( argv[i] ) );
-
-			if( argc > i+1 ) // output file specified
-			{
-				dataFile->writeFile( QString::fromLocal8Bit( argv[i+1] ) );
-			}
-			else // no output file specified; use stdout
-			{
-				QTextStream ts( stdout );
-				dataFile->write( ts );
-				fflush( stdout );
-			}
-
-			return EXIT_SUCCESS;
-		}
-		else if (arg == "makebundle")
-		{
-			++i;
-
-			if (i == argc)
-			{
-				return noInputFileError();
-			}
-
-			auto dataFile = createDataFile(QString::fromLocal8Bit(argv[i]));
-
-			if (argc > i+1) // Project bundle file name given
-			{
-				printf("Making bundle\n");
-				dataFile->writeFile(QString::fromLocal8Bit(argv[i+1]), true);
-				return EXIT_SUCCESS;
-			}
-			else
-			{
-				return usageError("No project bundle name given");
-			}
-		}
-		else if( arg == "--allowroot" )
-		{
-			// Ignore, processed earlier
-#ifdef LMMS_BUILD_WIN32
-			if( allowRoot )
-			{
-				printf( "\nOption \"--allowroot\" will be ignored on this platform.\n\n" );
-			}
-#endif
-
-		}
-		else if( arg == "dump" || arg == "--dump" || arg  == "-d" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return noInputFileError();
-			}
-
-
-			QFile f( QString::fromLocal8Bit( argv[i] ) );
-			f.open( QIODevice::ReadOnly );
-			QString d = qUncompress( f.readAll() );
-			printf( "%s\n", d.toUtf8().constData() );
-
-			return EXIT_SUCCESS;
-		}
-		else if( arg == "compress" || arg == "--compress" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return noInputFileError();
-			}
-
-			QFile f( QString::fromLocal8Bit( argv[i] ) );
-			f.open( QIODevice::ReadOnly );
-			QByteArray d = qCompress( f.readAll() ) ;
-			fwrite( d.constData(), sizeof(char), d.size(), stdout );
-
-			return EXIT_SUCCESS;
-		}
-		else if( arg == "render" || arg == "--render" || arg == "-r" ||
-			arg == "rendertracks" || arg == "--rendertracks" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return noInputFileError();
-			}
-
-
-			fileToLoad = QString::fromLocal8Bit( argv[i] );
-			renderOut = fileToLoad;
-		}
-		else if( arg == "--loop" || arg == "-l" )
-		{
-			renderLoop = true;
-		}
-		else if( arg == "--output" || arg == "-o" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return usageError( "No output file specified" );
-			}
-
-
-			renderOut = QString::fromLocal8Bit( argv[i] );
-		}
-		else if( arg == "--format" || arg == "-f" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return usageError( "No output format specified" );
-			}
-
-
-			const QString ext = QString( argv[i] );
-
-			if( ext == "wav" )
-			{
-				eff = IProjectRenderer::WaveFile;
-			}
-#ifdef LMMS_HAVE_OGGVORBIS
-			else if( ext == "ogg" )
-			{
-				eff = IProjectRenderer::OggFile;
-			}
-#endif
-#ifdef LMMS_HAVE_MP3LAME
-			else if( ext == "mp3" )
-			{
-				eff = IProjectRenderer::MP3File;
-			}
-#endif
-			else if (ext == "flac")
-			{
-				eff = IProjectRenderer::FlacFile;
-			}
-			else
-			{
-				return usageError( QString( "Invalid output format %1" ).arg( argv[i] ) );
-			}
-		}
-		else if( arg == "--samplerate" || arg == "-s" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return usageError( "No samplerate specified" );
-			}
-
-
-			sample_rate_t sr = QString( argv[i] ).toUInt();
-			if( sr >= 44100 && sr <= 192000 )
-			{
-				os.setSampleRate(sr);
-			}
-			else
-			{
-				return usageError( QString( "Invalid samplerate %1" ).arg( argv[i] ) );
-			}
-		}
-		else if( arg == "--bitrate" || arg == "-b" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return usageError( "No bitrate specified" );
-			}
-
-
-			int br = QString( argv[i] ).toUInt();
-
-			if( br >= 64 && br <= 384 )
-			{
-				OutputSettings::BitRateSettings bitRateSettings = os.getBitRateSettings();
-				bitRateSettings.setBitRate(br);
-				os.setBitRateSettings(bitRateSettings);
-			}
-			else
-			{
-				return usageError( QString( "Invalid bitrate %1" ).arg( argv[i] ) );
-			}
-		}
-		else if( arg == "--mode" || arg == "-m" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return usageError( "No stereo mode specified" );
-			}
-
-			QString const mode( argv[i] );
-
-			if( mode == "s" )
-			{
-				os.setStereoMode(OutputSettings::StereoMode_Stereo);
-			}
-			else if( mode == "j" )
-			{
-				os.setStereoMode(OutputSettings::StereoMode_JointStereo);
-			}
-			else if( mode == "m" )
-			{
-				os.setStereoMode(OutputSettings::StereoMode_Mono);
-			}
-			else
-			{
-				return usageError( QString( "Invalid stereo mode %1" ).arg( argv[i] ) );
-			}
-		}
-		else if( arg =="--float" || arg == "-a" )
-		{
-			os.setBitDepth(OutputSettings::Depth_32Bit);
-		}
-		else if( arg == "--interpolation" || arg == "-i" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return usageError( "No interpolation method specified" );
-			}
-
-
-			const QString ip = QString( argv[i] );
-
-			if( ip == "linear" )
-			{
-		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_Linear;
-			}
-			else if( ip == "sincfastest" )
-			{
-		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_SincFastest;
-			}
-			else if( ip == "sincmedium" )
-			{
-		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_SincMedium;
-			}
-			else if( ip == "sincbest" )
-			{
-		qs.interpolation = IAudioEngine::qualitySettings::Interpolation_SincBest;
-			}
-			else
-			{
-				return usageError( QString( "Invalid interpolation method %1" ).arg( argv[i] ) );
-			}
-		}
-		else if( arg == "--oversampling" || arg == "-x" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return usageError( "No oversampling specified" );
-			}
-
-
-			int o = QString( argv[i] ).toUInt();
-
-			switch( o )
-			{
-				case 1:
-		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_None;
-		break;
-				case 2:
-		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_2x;
-		break;
-				case 4:
-		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_4x;
-		break;
-				case 8:
-		qs.oversampling = IAudioEngine::qualitySettings::Oversampling_8x;
-		break;
-				default:
-				return usageError( QString( "Invalid oversampling %1" ).arg( argv[i] ) );
-			}
-		}
-		else if( arg == "--import" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return usageError( "No file specified for importing" );
-			}
-
-			fileToImport = QString::fromLocal8Bit( argv[i] );
-
-			// exit after import? (only for debugging)
-			if( QString( argv[i + 1] ) == "-e" )
-			{
-				++i;
-			}
-		}
-		else if( arg == "--profile" || arg == "-p" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return usageError( "No profile specified" );
-			}
-
-
-			profilerOutputFile = QString::fromLocal8Bit( argv[i] );
-		}
-		else if( arg == "--config" || arg == "-c" )
-		{
-			++i;
-
-			if( i == argc )
-			{
-				return usageError( "No configuration file specified" );
-			}
-
-			configFile = QString::fromLocal8Bit( argv[i] );
-		}
-		else
-		{
-			if( argv[i][0] == '-' )
-			{
-				return usageError( QString( "Invalid option %1" ).arg( argv[i] ) );
-			}
-			fileToLoad = QString::fromLocal8Bit( argv[i] );
-		}
-	}
-
-	// Test file argument before continuing
-	if( !fileToLoad.isEmpty() )
-	{
-		fileCheck( fileToLoad );
-	}
-	else if( !fileToImport.isEmpty() )
-	{
-		fileCheck( fileToImport );
-	}
 
 	configManager->loadConfigFile(configFile);
 
@@ -784,18 +413,31 @@ int main( int argc, char * * argv )
 		fprintf( stderr, "Signal initialization failed.\n" );
 	}
 #endif
-	auto& engine = coreApplication->createEngine(false);
+	// auto& engine = coreApplication->createEngine(false);
 
 	// qDebug() << "Loading projec!t... %s\n" <<  fileToLoad << "\n";
-	// engine->getSongInterface()->loadProject( fileToLoad );
-	// if( engine->getSongInterface()->trackContainerInterface()->isEmpty() )
+	// IEngine::Instance()->getSongInterface()->loadProject( fileToLoad );
+	// if( IEngine::Instance()->getSongInterface()->trackContainerInterface()->isEmpty() )
 	// {
 	// 	printf("The project %s is empty, aborting!\n", fileToLoad.toUtf8().constData() );
 	// 	exit( EXIT_FAILURE );
 	// }
 	// printf( "Done\n" );
 
-	engine->getSongInterface()->setExportLoop( renderLoop );
+	InitializeEngine(false);
+
+    QQmlApplicationEngine qCoreApplicationEngine;
+    qCoreApplicationEngine.addImportPath(":/imports");
+
+	auto qml_context = qCoreApplicationEngine.rootContext();
+
+	lmms::gui::TrackListModel::RegisterInQml();
+	lmms::gui::TrackListModel track_list_model(IEngine::Instance()->getSongInterface()->trackContainerInterface());
+	qml_context->setContextProperty("trackModel", &track_list_model);
+
+    qCoreApplicationEngine.load(QUrl(QStringLiteral("qrc:/lmms2.qml")));
+
+	IEngine::Instance()->getSongInterface()->setExportLoop( renderLoop );
 
 	// when rendering multiple tracks, renderOut is a directory
 	// otherwise, it is a file, so we need to append the file extension
@@ -805,28 +447,27 @@ int main( int argc, char * * argv )
 	// 		ProjectRenderer::getFileExtensionFromFormat(eff);
 	// }
 
+
 	// create renderer
-	IRenderManager* r = coreApplication->createRenderManager(qs, os, eff, renderOut);
-	QCoreApplication::instance()->connect( r,
+	auto r = createRenderManager(qs, os, eff, renderOut);
+	QCoreApplication::instance()->connect( r.get(),
 			SIGNAL(finished()), SLOT(quit()));
 
 	// timer for progress-updates
-	auto t = new QTimer(r);
+	auto t = new QTimer(r.get());
 	r->connect( t, SIGNAL(timeout()),
 			SLOT(updateConsoleProgress()));
 	t->start( 200 );
 
 	if( profilerOutputFile.isEmpty() == false )
 	{
-		engine->getAudioEngineInterface()->setProfilerOutputFile( profilerOutputFile );
+		IEngine::Instance()->getAudioEngineInterface()->setProfilerOutputFile( profilerOutputFile );
 	}
 
 	lmms::gui::GuiApplication guiApplication;
 
-	QObject::connect(&engine->getSongInterface()->trackContainer(), &ITrackContainer::trackAdded, &guiApplication, [](lmms::ITrack * _track){qDebug() << "Track added;alfja;oei\n";});
-
 	// If no recovery file, no macOS request, not last open project, then:
-	engine->getSongInterface()->createNewProject();
+	IEngine::Instance()->getSongInterface()->createNewProject();
 
 	const int ret = app.exec();
 

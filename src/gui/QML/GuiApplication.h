@@ -28,14 +28,141 @@
 #include "IGuiApplication.h"
 
 #include "ICoreApplication.h"
+#include "ITrack.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
+#include <QQmlEngine>
 
 #include <QDebug>
+#include <QAbstractListModel>
 
 namespace lmms::gui
 {
+
+// #define ADD_LMMS_MODEL_AS_PROPERTY(TYPE, MODEL_NAME)
+
+class BaseTrackModel : public QObject {
+	Q_OBJECT
+	Q_PROPERTY(TrackType type READ type CONSTANT)
+	Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+	Q_PROPERTY(bool muted READ muted WRITE setMuted NOTIFY mutedChanged)
+	Q_PROPERTY(bool solo READ solo WRITE setSolo NOTIFY soloChanged)
+	QML_ELEMENT
+public:
+	enum TrackType {
+		Sample,
+		Instrument,
+		Automation,
+		Pattern,
+		Other
+	};
+	Q_ENUM(TrackType)
+	static void RegisterInQml() {
+		qmlRegisterType<BaseTrackModel>("App", 1, 0, "BaseTrackModel");
+		qmlRegisterUncreatableType<TrackType>("App", 1, 0, "TrackType", "Enum type TrackType is not creatable");
+	}
+	BaseTrackModel(ITrack* track, QObject* parent) :
+		QObject(parent),
+		m_track(track)
+	{
+		connect(track, &ITrack::nameChanged, this, &BaseTrackModel::nameChanged);
+		connect(track->getMutedModel()->model(), &Model::dataChanged, this, &BaseTrackModel::mutedChanged);
+	}
+
+	TrackType type() {
+		switch(m_track->type()) {
+			case ITrack::InstrumentTrack:
+				return Instrument;
+			case ITrack::PatternTrack:
+				return Pattern;
+			case ITrack::SampleTrack:
+				return Sample;
+			case ITrack::AutomationTrack:
+				return Automation;
+			default:
+				return Other;
+		}
+	}
+
+	bool muted() {
+		return m_track->getMutedModel()->value();
+	}
+	void setMuted(bool value) {
+		m_track->getMutedModel()->setValue(value);
+	}
+	bool solo() {
+		return m_track->soloModel()->value();
+	}
+	void setSolo(bool value) {
+		m_track->soloModel()->setValue(value);
+	}
+
+	QString name() {
+		return m_track->name();
+	}
+signals:
+	void nameChanged();
+	void mutedChanged();
+	void soloChanged();
+private:
+	ITrack* m_track;
+};
+
+class TrackListModel : public QAbstractListModel {
+		Q_OBJECT
+public:
+	TrackListModel(ITrackContainer* trackContainer)
+	{
+		connect(trackContainer, &ITrackContainer::trackAdded, this, &TrackListModel::trackAdded);
+	}
+
+	enum Roles {
+		TrackRole = Qt::UserRole
+	};
+
+	static void RegisterInQml() {
+		qmlRegisterType<lmms::gui::TrackListModel>("App", 1, 0, "TrackListModel");
+		BaseTrackModel::RegisterInQml();
+	}
+
+	QVariant data(const QModelIndex &index, int role) const override
+    {
+        if (!index.isValid())
+            return QVariant();
+
+        switch (role) {
+			case Qt::DisplayRole:
+			case TrackRole:
+				return QVariant::fromValue(m_trackList[index.row()]);
+        }
+
+        return QVariant();
+    }
+
+    virtual QHash<int, QByteArray> roleNames() const override
+    {
+        QHash<int, QByteArray> tracks;
+        tracks[TrackRole] = "track";
+        return tracks;
+    }
+
+
+    int rowCount(const QModelIndex &/*parent*/ = QModelIndex()) const override
+    {
+        return m_trackList.size();
+    }
+
+private slots:
+	void trackAdded(ITrack* track) {
+		auto index = m_trackList.size();
+        beginInsertRows(QModelIndex(), index, index);
+		m_trackList.append(new BaseTrackModel(track, this));
+		endInsertRows();		
+	}
+private:
+	QList<BaseTrackModel*> m_trackList;
+};
 
 class ProgressModal : public IProgressModal {
 public:

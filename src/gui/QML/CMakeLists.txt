@@ -21,6 +21,7 @@ qt_add_qml_module(lmms2example
     QML_FILES
         "MainForm.ui.qml"
         "lmms2.qml"
+        "TrackViewDelegate.qml"
         "imports/Flat/Button.qml"
         "imports/Flat/HeaderButton.qml"
         "imports/Flat/StatusButton.qml"
@@ -49,6 +50,7 @@ target_link_libraries(lmms2example PUBLIC
     Qt6::Qml
     Qt6::Widgets
     lmmsobjs
+    lmms_core_plugins
 )
 
 install(TARGETS lmms2example
