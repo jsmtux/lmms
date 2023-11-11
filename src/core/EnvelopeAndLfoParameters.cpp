@@ -149,7 +149,7 @@ EnvelopeAndLfoParameters::EnvelopeAndLfoParameters(
 			this, SLOT(updateSampleVars()), Qt::DirectConnection );
 	connect( &m_lfoAttackModel, SIGNAL(dataChanged()),
 			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_lfoSpeedModel, SIGNAL(dataChanged()),
+	connect( m_lfoSpeedModel.wrappedModel()->model(), SIGNAL(dataChanged()),
 			this, SLOT(updateSampleVars()), Qt::DirectConnection );
 	connect( &m_lfoAmountModel, SIGNAL(dataChanged()),
 			this, SLOT(updateSampleVars()), Qt::DirectConnection );
