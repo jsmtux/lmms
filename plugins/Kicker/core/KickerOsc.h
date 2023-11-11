@@ -27,11 +27,11 @@
 #define KICKER_OSC_H
 
 #include "DspEffectLibrary.h"
-#include "Oscillator.h"
+#include "IOscillator.h"
 
 #include "lmms_math.h"
 #include "interpolation.h"
-#include "MemoryManager.h"
+#include "IMemoryManager.h"
 
 namespace lmms
 {
@@ -40,7 +40,7 @@ namespace lmms
 template<class FX = DspEffectLibrary::StereoBypass>
 class KickerOsc
 {
-	MM_OPERATORS
+	I_MM_OPERATORS
 public:
 	KickerOsc( const FX & fx, const float start, const float end, const float noise, const float offset, 
 		const float slope, const float env, const float diststart, const float distend, const float length ) :
@@ -67,7 +67,7 @@ public:
 		for( fpp_t frame = 0; frame < frames; ++frame )
 		{
 			const double gain = ( 1 - fastPow( ( m_counter < m_length ) ? m_counter / m_length : 1, m_env ) );
-			const sample_t s = ( Oscillator::sinSample( m_phase ) * ( 1 - m_noise ) ) + ( Oscillator::noiseSample( 0 ) * gain * gain * m_noise );
+			const sample_t s = ( IOscillator::sinSample( m_phase ) * ( 1 - m_noise ) ) + ( IOscillator::noiseSample( 0 ) * gain * gain * m_noise );
 			buf[frame][0] = s * gain;
 			buf[frame][1] = s * gain;
 			

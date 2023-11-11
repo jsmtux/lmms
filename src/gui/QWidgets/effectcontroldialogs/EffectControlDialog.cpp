@@ -36,7 +36,7 @@ EffectControlDialog::EffectControlDialog( EffectControls * _controls ) :
 	QWidget( nullptr ),
 	m_effectControls( _controls )
 {
-	setWindowTitle( m_effectControls->effect()->model()->displayName() );
+	setWindowTitle( m_effectControls->effect()->model()->model()->displayName() );
 	setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
 	QObject::connect( m_effectControls, SIGNAL(dataChanged()), this, SLOT(update()));
 	QObject::connect( m_effectControls, SIGNAL(propertiesChanged()), this, SLOT(update()));

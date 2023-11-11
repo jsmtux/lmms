@@ -223,11 +223,12 @@ InstrumentTrack::~InstrumentTrack()
 
 
 
-void InstrumentTrack::processAudioBuffer( sampleFrame* buf, const fpp_t frames, NotePlayHandle* n )
+void InstrumentTrack::processAudioBuffer( sampleFrame* buf, const fpp_t frames, INotePlayHandle* n )
 {
+	NotePlayHandle* note = static_cast<NotePlayHandle*>(n);
 	// we must not play the sound if this InstrumentTrack is muted...
 	if( isMuted() || ( Engine::getSong()->playMode() != Song::Mode_PlayMidiClip &&
-				n && n->isPatternTrackMuted() ) || ! m_instrument )
+				note && note->isPatternTrackMuted() ) || ! m_instrument )
 	{
 		return;
 	}
@@ -266,12 +267,12 @@ void InstrumentTrack::processAudioBuffer( sampleFrame* buf, const fpp_t frames, 
 	// instruments using instrument-play-handles will call this method
 	// without any knowledge about notes, so they pass NULL for n, which
 	// is no problem for us since we just bypass the envelopes+LFOs
-	if( m_instrument->flags().testFlag( IInstrument::IsSingleStreamed ) == false && n != nullptr )
+	if( m_instrument->flags().testFlag( IInstrument::IsSingleStreamed ) == false && note != nullptr )
 	{
-		const f_cnt_t offset = n->noteOffset();
-		m_soundShaping.processAudioBuffer( buf + offset, frames - offset, n );
-		const float vol = ( (float) n->getVolume() * DefaultVolumeRatio );
-		const panning_t pan = qBound( PanningLeft, n->getPanning(), PanningRight );
+		const f_cnt_t offset = note->noteOffset();
+		m_soundShaping.processAudioBuffer( buf + offset, frames - offset, note );
+		const float vol = ( (float) note->getVolume() * DefaultVolumeRatio );
+		const panning_t pan = qBound( PanningLeft, note->getPanning(), PanningRight );
 		StereoVolumeVector vv = panningToVolumeVector( pan, vol );
 		for( f_cnt_t f = offset; f < frames; ++f )
 		{

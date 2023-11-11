@@ -24,14 +24,14 @@
  */
 
 
-#ifndef KICKER_H
-#define KICKER_H
+#ifndef KICKER_QEIDGETS_H
+#define KICKER_QEIDGETS_H
 
-#include "AutomatableModel.h"
-#include "TempoSyncKnobModel.h"
+#include "IModels.h"
 
 #include "instrument/InstrumentView.h"
 #include "plugins/QWidgetInstrumentPlugin.h"
+#include "Kicker.h"
 
 
 namespace lmms
@@ -49,61 +49,17 @@ class LedCheckBox;
 class KickerInstrumentView;
 }
 
-
-class KickerInstrument : public gui::QWidgetInstrumentPlugin
-{
-	Q_OBJECT
-public:
-	KickerInstrument( InstrumentTrack * _instrument_track );
-	~KickerInstrument() override = default;
-
-	void playNote( NotePlayHandle * _n,
-						sampleFrame * _working_buffer ) override;
-	void deleteNotePluginData( NotePlayHandle * _n ) override;
-
-	void saveSettings( QDomDocument & _doc, QDomElement & _parent ) override;
-	void loadSettings( const QDomElement & _this ) override;
-
-	QString nodeName() const override;
-
-	Flags flags() const override
-	{
-		return IsNotBendable;
-	}
-
-	f_cnt_t desiredReleaseFrames() const override
-	{
-		return( 512 );
-	}
-
-	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
-
-
-private:
-	FloatModel m_startFreqModel;
-	FloatModel m_endFreqModel;
-	TempoSyncKnobModel m_decayModel;
-	FloatModel m_distModel;
-	FloatModel m_distEndModel;
-	FloatModel m_gainModel;
-	FloatModel m_envModel;
-	FloatModel m_noiseModel;
-	FloatModel m_clickModel;
-	FloatModel m_slopeModel;
-
-	BoolModel m_startNoteModel;
-	BoolModel m_endNoteModel;
-
-	IntModel m_versionModel;
-
-	friend class gui::KickerInstrumentView;
-
-} ;
-
-
 namespace gui
 {
 
+class KickerQWidgetIntrument : public KickerInstrument, public IQWidgetInstrumentPlugin
+{
+public:
+	KickerQWidgetIntrument(IInstrumentTrack * _instrument_track)
+		: KickerInstrument(_instrument_track)
+	{}
+	gui::PluginView * createView( QWidget * parent );
+};
 
 class KickerInstrumentView : public InstrumentViewImpl<KickerInstrument>
 {

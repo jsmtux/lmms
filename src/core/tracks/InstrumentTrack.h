@@ -80,7 +80,7 @@ public:
 	}
 	// used by instrument
 	void processAudioBuffer( sampleFrame * _buf, const fpp_t _frames,
-							NotePlayHandle * _n );
+							INotePlayHandle * _n ) override;
 
 	MidiEvent applyMasterKey( const MidiEvent& event );
 
