@@ -161,13 +161,13 @@ public:
 
 	QString displayName() override
 	{
-		return model()->displayName().isEmpty() // currently always empty
+		return m_instrumentTrack->model()->displayName().isEmpty() // currently always empty
 		? (descriptor()->subPluginFeatures && m_key.isValid())
 			// get from sub plugin
 			? m_key.displayName()
 			// get from plugin
 			: descriptor()->displayName
-		: model()->displayName();
+		: m_instrumentTrack->model()->displayName();
 	}
 
 protected:

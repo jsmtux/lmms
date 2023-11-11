@@ -61,10 +61,8 @@ static PluginDescriptor dummyPluginDescriptor =
 
 
 Plugin::Plugin(const PluginDescriptor * descriptor,
-		Model * _parent,
 		const PluginDescriptor::Key* key) :
 	JournallingObject(),
-	m_model(_parent),
 	m_key(key ? *key : PluginDescriptor::Key(descriptor)),
 	m_descriptor(descriptor)
 {
@@ -108,7 +106,7 @@ AutomatableModel * Plugin::childModel( const QString & )
 
 
 
-Plugin * Plugin::instantiateWithKey(const QString& pluginName, Model * parent,
+Plugin * Plugin::instantiateWithKey(const QString& pluginName, void * parent,
 				const PluginDescriptor::Key *key,
 				bool keyFromDnd)
 {
@@ -134,7 +132,7 @@ Plugin * Plugin::instantiateWithKey(const QString& pluginName, Model * parent,
 
 
 
-Plugin * Plugin::instantiate(const QString& pluginName, Model * parent,
+Plugin * Plugin::instantiate(const QString& pluginName, void * parent,
 								void *data)
 {
 	const PluginFactory::PluginInfo& pi = getPluginFactory()->pluginInfo(pluginName.toUtf8());

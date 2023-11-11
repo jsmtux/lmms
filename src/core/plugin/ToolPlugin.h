@@ -40,10 +40,16 @@ public:
 	ToolPlugin( const PluginDescriptor * _descriptor, Model * _parent );
 	~ToolPlugin() override = default;
 
+	Model* model() {
+		return m_model;
+	}
+
 	// instantiate tool-plugin with given name or return NULL
 	// on failure
 	static ToolPlugin * instantiate( const QString & _plugin_name,
 										Model * _parent );
+private:
+	Model* m_model;
 } ;
 
 

@@ -1,3 +1,2 @@
-INCLUDE(BuildPlugin)
-
-BUILD_PLUGIN(kicker Kicker.cpp Kicker.h MOCFILES Kicker.h EMBEDDED_RESOURCES artwork.png logo.png)
+add_subdirectory(core)
+add_subdirectory(QWidgets)

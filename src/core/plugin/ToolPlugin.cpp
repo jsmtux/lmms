@@ -31,7 +31,8 @@ namespace lmms
 
 
 ToolPlugin::ToolPlugin( const PluginDescriptor * _descriptor, Model * _parent ) :
-	Plugin( _descriptor, _parent )
+	Plugin( _descriptor ),
+	m_model(_parent)
 {
 }
 

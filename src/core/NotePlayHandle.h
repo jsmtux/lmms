@@ -52,6 +52,12 @@ class LMMS_EXPORT NotePlayHandle : public INotePlayHandle, public PlayHandle, pu
 	MM_OPERATORS
 public:
 	void * m_pluginData;
+	void* pluginData() override {
+		return m_pluginData;
+	}
+	void setPluginData(void* data) override {
+		m_pluginData = data;
+	}
 	std::unique_ptr<BasicFilters<>> m_filter;
 
 	// length of the declicking fade in
@@ -100,7 +106,7 @@ public:
 	/*! convenience function that returns offset for the first period and zero otherwise,
 		used by instruments to handle the offset: instruments have to check this property and
 		add the correct number of empty frames in the beginning of the period */
-	f_cnt_t noteOffset() const
+	f_cnt_t noteOffset() const override
 	{
 		return m_totalFramesPlayed == 0
 			? offset()
@@ -111,7 +117,7 @@ public:
 		return PlayHandle::offset();
 	}
 
-	const float& frequency() const
+	const float& frequency() const override
 	{
 		return m_frequency;
 	}
@@ -141,7 +147,7 @@ public:
 	bool isFromTrack( const ITrack* _track ) const override;
 
 	/*! Releases the note (and plays release frames) */
-	void noteOff( const f_cnt_t offset = 0 );
+	void noteOff( const f_cnt_t offset = 0 ) override;
 
 	/*! Returns number of frames to be played until the note is going to be released */
 	f_cnt_t framesBeforeRelease() const
@@ -169,7 +175,7 @@ public:
 	void setFrames( const f_cnt_t _frames );
 
 	/*! Returns whether note was released */
-	bool isReleased() const
+	bool isReleased() const override
 	{
 		return m_released;
 	}
@@ -279,6 +285,11 @@ public:
 	void setFrequencyUpdate()
 	{
 		m_frequencyNeedsUpdate = true;
+	}
+
+	float releaseFramesDone() override
+	{
+		return m_releaseFramesDone;
 	}
 
 private:

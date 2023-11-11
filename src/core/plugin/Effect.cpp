@@ -39,7 +39,8 @@ namespace lmms
 
 IEffect* InstantiateEffect(const QString& pluginName,
 				IEffectChain * _parent,
-				PluginDescriptor::Key * _key) {
+				PluginDescriptor::Key * _key)
+{
 	return Effect::instantiate(pluginName, _parent, _key);
 }
 
@@ -47,7 +48,8 @@ IEffect* InstantiateEffect(const QString& pluginName,
 Effect::Effect( const PluginDescriptor * _desc,
 			IEffectChain * _parent,
 			const PluginDescriptor::Key * _key ) :
-	Plugin( _desc, _parent->model(), _key ),
+	Plugin( _desc, _key ),
+	m_effectChain(_parent),
 	m_parent( _parent ),
 	m_processors( 1 ),
 	m_okay( true ),
@@ -150,7 +152,7 @@ Effect * Effect::instantiate( const QString& pluginName,
 				IEffectChain * _parent,
 				PluginDescriptor::Key * _key )
 {
-	Plugin * p = Plugin::instantiateWithKey( pluginName, _parent->model(), _key );
+	Plugin * p = Plugin::instantiateWithKey( pluginName, _parent, _key );
 	// check whether instantiated plugin is an effect
 	if( dynamic_cast<Effect *>( p ) != nullptr )
 	{

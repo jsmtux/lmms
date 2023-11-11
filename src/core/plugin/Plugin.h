@@ -78,7 +78,6 @@ public:
 	//! @param key Sub plugins must pass a key here, optional otherwise.
 	//!   See the key() function
 	Plugin(const PluginDescriptor * descriptor,
-		Model * _parent,
 		const PluginDescriptor::Key *key = nullptr);
 	~Plugin() override = default;
 
@@ -116,7 +115,7 @@ public:
 	//! Overload if the argument passed to the plugin is a subPluginKey
 	//! If you can not pass the key and are aware that it's stored in
 	//! Engine::pickDndPluginKey(), use this function, too
-	static Plugin * instantiateWithKey(const QString& pluginName, Model * parent,
+	static Plugin * instantiateWithKey(const QString& pluginName, void * parent,
 					const PluginDescriptor::Key *key,
 					bool keyFromDnd = false);
 
@@ -124,18 +123,12 @@ public:
 	//! if specified plugin couldn't be loaded, it creates a dummy-plugin
 	//! @param data Anything the plugin expects. If this is a pointer to a sub plugin key,
 	//!   use instantiateWithKey instead
-	static Plugin * instantiate(const QString& pluginName, Model * parent, void *data);
+	static Plugin * instantiate(const QString& pluginName, void * parent, void *data);
 
 	//! Create a view for the model
 
-	Model* model()
-	{
-		return &m_model;
-	}
 protected:
 	void collectErrorForUI( QString errMsg );
-
-	Model m_model;
 
 	PluginDescriptor::Key m_key;
 
@@ -143,7 +136,7 @@ private:
 	const PluginDescriptor * m_descriptor;
 
 	// pointer to instantiation-function in plugin
-	using InstantiationHook = Plugin* (*)(Model*, void*);
+	using InstantiationHook = Plugin* (*)(void*, void*);
 } ;
 
 

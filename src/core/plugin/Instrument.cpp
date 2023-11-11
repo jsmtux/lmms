@@ -44,7 +44,7 @@ IInstrument* InstantiateInstrument(const QString& pluginName,
 Instrument::Instrument(ITrack * _instrument_track,
 			const PluginDescriptor * _descriptor,
 			const PluginDescriptor::Key *key) :
-	Plugin(_descriptor, _instrument_track->model(), key),
+	Plugin(_descriptor, key),
 	m_instrumentTrack( _instrument_track )
 {
 }

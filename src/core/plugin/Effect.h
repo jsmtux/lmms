@@ -58,8 +58,8 @@ public:
 	void saveSettings( QDomDocument & _doc, QDomElement & _parent ) override;
 	void loadSettings( const QDomElement & _this ) override;
 
-	Model* model() override {
-		return Plugin::model();
+	IEffectChain* model() override {
+		return m_effectChain;
 	}
 
 	inline QString nodeName() const override
@@ -183,7 +183,7 @@ public:
 		return m_autoQuitModel.get();
 	};
 	virtual QString displayName() override {
-		return model()->displayName();
+		return m_parent->model()->displayName();
 	}
 
 	bool autoQuitDisabled() override {
@@ -220,6 +220,8 @@ private:
 					sample_rate_t _src_sr,
 					sampleFrame * _dst_buf, sample_rate_t _dst_sr,
 					const f_cnt_t _frames );
+
+	IEffectChain* m_effectChain;
 
 	ch_cnt_t m_processors;
 

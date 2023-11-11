@@ -124,7 +124,7 @@ public:
 	virtual bool autoQuitDisabled() = 0;
 	virtual EffectControls* controls() = 0;
 	virtual QString displayName() = 0;
-	virtual Model* model() = 0;
+	virtual IEffectChain* model() = 0;
 };
 
 class Model;

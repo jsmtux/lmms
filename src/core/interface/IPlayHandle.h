@@ -65,6 +65,13 @@ public:
     virtual fpp_t fadeInLength() = 0;
     virtual void setFadeInLength(fpp_t len) = 0;
     virtual f_cnt_t framesLeft() const = 0;
+	virtual f_cnt_t noteOffset() const = 0;
+	virtual void* pluginData() = 0;
+	virtual void setPluginData(void* data) = 0;
+	virtual const float& frequency() const = 0;
+	virtual bool isReleased() const = 0;
+	virtual void noteOff( const f_cnt_t offset = 0 ) = 0;
+	virtual float releaseFramesDone() = 0;
 };
 
 INotePlayHandle* createNotePlayHandle(const QString& sampleFile);
