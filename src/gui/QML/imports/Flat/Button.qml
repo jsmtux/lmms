@@ -22,9 +22,13 @@ T.Button {
         implicitWidth: 100
         implicitHeight: 40
         opacity: enabled ? 1 : 0.3
-        border.color: Theme.mainColor
+        border.color: "#282c31"
         border.width: 1
         radius: 2
+        gradient: Gradient {
+            GradientStop {position: 0.0; color: Theme.fgColor}
+            GradientStop {position: 1.0; color: Theme.fgColorDarker}
+        }
 
         states: [
             State {
@@ -47,7 +51,7 @@ T.Button {
 
         font: control.font
         opacity: enabled ? 1.0 : 0.3
-        color: Theme.mainColor
+        color: "#c8d8ea"
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight

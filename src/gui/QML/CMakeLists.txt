@@ -40,6 +40,10 @@ qt_add_qml_module(lmms2example
         "icons/status_button/play.png"
         "icons/big_button/help.png"
         "icons/big_button/save.png"
+        "icons/small_button/m.png"
+        "icons/small_button/s.png"
+        "icons/small_button/gear.png"
+        "icons/small_button/patterntrack.png"
         "qtquickcontrols2.conf"
 )
 

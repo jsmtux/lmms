@@ -1,5 +1,6 @@
-import QtQuick 2.0
+import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 import Theme
 import App 1.0
 import lmms2
@@ -22,50 +23,66 @@ Rectangle {
 
     Component {
         id: sampleTrackType
-        Row {
-            spacing: 10
-            Text { text: "SAMPLE" + control.track.name }
+        SpinBox {
         }
     }
 
     Component {
         id: instrumentTrackType
         Row {
-            spacing: 10
-            Text { text: "INSTRUMENT" + control.track.name }
+            SpinBox {
+                id: spinBoxControl
+                value: control.track.instrumentProperties.volume
+                onValueModified: {
+                    control.track.instrumentProperties.volume = spinBoxControl.value
+                }
+            }
+            SpinBox {
+            }
         }
     }
 
     Component {
         id: automationTrackType
-        Row {
-            spacing: 10
-            Text { text: "AUTOMATION" + control.track.name }
-        }
+        Text { text: "" }
     }
 
     Component {
         id: patternTrackType
-        Row {
-            spacing: 10
-            Text { text: "PATTERN" + control.track.name }
-        }
+        Text { text: "" }
     }
 
     Row {
-        CheckBox {
+        spacing: 10
+        padding: 5
+        Button {
+            width: 30
+            height: 30
             checked: control.track.solo
+            checkable: true
+            down: control.track.solo
             onClicked: {
                 control.track.solo = !control.track.solo
             }
-            text: "Solo"
+            text: "S"
         }
-        CheckBox {
+
+        Button {
+            width: 30
+            height: 30
             checked: control.track.muted
+            down: control.track.muted
+            checkable: true
             onClicked: {
                 control.track.muted = !control.track.muted
             }
-            text: "Muted"
+            text: "M"
+        }
+
+        Button {
+            height: 30
+            width: 150
+            text: control.track.name
         }
 
         Loader {

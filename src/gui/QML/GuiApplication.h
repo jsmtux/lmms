@@ -42,10 +42,23 @@
 namespace lmms::gui
 {
 
+class InstrumentTrackModel : public QObject {
+	Q_OBJECT
+public:
+	InstrumentTrackModel(IInstrumentTrack* _instrumentTrack, QObject* parent) :
+		QObject(parent),
+		m_instrumentTrack(_instrumentTrack) {}
+private:
+	IInstrumentTrack* m_instrumentTrack;
+	IFloatAutomatableModel* trackVolumeModel{m_instrumentTrack->volumeModel()};
+	EXPOSE_LMMS_PROPERTY(float, volume, trackVolumeModel)
+};
+
 class BaseTrackModel : public QObject {
 	Q_OBJECT
 	Q_PROPERTY(TrackType type READ type CONSTANT)
 	Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+	Q_PROPERTY(InstrumentTrackModel* instrumentProperties READ instrumentTrackModel CONSTANT)
 public:
 	enum TrackType {
 		Sample,
@@ -81,17 +94,26 @@ public:
 		}
 	}
 
+	InstrumentTrackModel* instrumentTrackModel() {
+		if (!curInstrumentTrackModel)
+			curInstrumentTrackModel = new InstrumentTrackModel(dynamic_cast<IInstrumentTrack*>(m_track->getTrackTypeSpecificInterface()), this);
+		return curInstrumentTrackModel;
+	}
+
 	QString name() {
 		return m_track->name();
 	}
 signals:
 	void nameChanged();
+	void propertiesChanged();
 private:
 	ITrack* m_track;
 	IBoolAutomatableModel* trackMutedModel{m_track->getMutedModel()};
 	EXPOSE_LMMS_PROPERTY(bool, muted, trackMutedModel)
 	IBoolAutomatableModel* trackSoloModel{m_track->soloModel()};
 	EXPOSE_LMMS_PROPERTY(bool, solo, trackSoloModel)
+
+	InstrumentTrackModel* curInstrumentTrackModel;
 };
 
 class TrackListModel : public QAbstractListModel {
