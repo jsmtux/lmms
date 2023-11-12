@@ -1,4 +1,4 @@
-QT5_WRAP_CPP(kicker_MOC_out Kicker.h)
+# QT5_WRAP_CPP(kicker_MOC_out Kicker.h)
 
 add_library(kicker_core
     Kicker.cpp

@@ -29,10 +29,12 @@
 
 #include "ICoreApplication.h"
 #include "ITrack.h"
+#include "LMMSProperty.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
 #include <QQmlEngine>
+#include <QQmlProperty>
 
 #include <QDebug>
 #include <QAbstractListModel>
@@ -40,15 +42,10 @@
 namespace lmms::gui
 {
 
-// #define ADD_LMMS_MODEL_AS_PROPERTY(TYPE, MODEL_NAME)
-
 class BaseTrackModel : public QObject {
 	Q_OBJECT
 	Q_PROPERTY(TrackType type READ type CONSTANT)
 	Q_PROPERTY(QString name READ name NOTIFY nameChanged)
-	Q_PROPERTY(bool muted READ muted WRITE setMuted NOTIFY mutedChanged)
-	Q_PROPERTY(bool solo READ solo WRITE setSolo NOTIFY soloChanged)
-	QML_ELEMENT
 public:
 	enum TrackType {
 		Sample,
@@ -67,7 +64,6 @@ public:
 		m_track(track)
 	{
 		connect(track, &ITrack::nameChanged, this, &BaseTrackModel::nameChanged);
-		connect(track->getMutedModel()->model(), &Model::dataChanged, this, &BaseTrackModel::mutedChanged);
 	}
 
 	TrackType type() {
@@ -85,28 +81,17 @@ public:
 		}
 	}
 
-	bool muted() {
-		return m_track->getMutedModel()->value();
-	}
-	void setMuted(bool value) {
-		m_track->getMutedModel()->setValue(value);
-	}
-	bool solo() {
-		return m_track->soloModel()->value();
-	}
-	void setSolo(bool value) {
-		m_track->soloModel()->setValue(value);
-	}
-
 	QString name() {
 		return m_track->name();
 	}
 signals:
 	void nameChanged();
-	void mutedChanged();
-	void soloChanged();
 private:
 	ITrack* m_track;
+	IBoolAutomatableModel* trackMutedModel{m_track->getMutedModel()};
+	EXPOSE_LMMS_PROPERTY(bool, muted, trackMutedModel)
+	IBoolAutomatableModel* trackSoloModel{m_track->soloModel()};
+	EXPOSE_LMMS_PROPERTY(bool, solo, trackSoloModel)
 };
 
 class TrackListModel : public QAbstractListModel {

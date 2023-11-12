@@ -13,6 +13,7 @@ qt_add_executable(lmms2example WIN32 MACOSX_BUNDLE
     main.cpp
     GuiApplication.cpp
     GuiApplication.h
+    LMMSProperty.h
 )
 
 qt_add_qml_module(lmms2example
