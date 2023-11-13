@@ -9,10 +9,18 @@ set(INSTALL_EXAMPLEDIR "${INSTALL_EXAMPLESDIR}/quickcontrols/lmms2")
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 Widgets)
 
-qt_add_executable(lmms2example WIN32 MACOSX_BUNDLE
-    main.cpp
+qt_add_library(qmlgui STATIC
     GuiApplication.cpp
     GuiApplication.h
+)
+
+target_link_libraries(qmlgui PUBLIC 
+    lmmsobjs
+    lmms_core_plugins
+)
+
+qt_add_executable(lmms2example WIN32 MACOSX_BUNDLE
+    main.cpp
     LMMSProperty.h
 )
 
@@ -54,8 +62,7 @@ target_link_libraries(lmms2example PUBLIC
     Qt6::QuickControls2
     Qt6::Qml
     Qt6::Widgets
-    lmmsobjs
-    lmms_core_plugins
+    qmlgui
 )
 
 install(TARGETS lmms2example

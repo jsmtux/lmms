@@ -1,5 +1,5 @@
 FIND_PACKAGE(Samplerate 0.1.8 MODULE REQUIRED)
-ADD_LIBRARY(lmms_core_plugins STATIC Effect.cpp ExportFilter.cpp DummyEffect.h DummyInstrument ImportFilter.cpp Instrument.cpp ToolPlugin.cpp Plugin.cpp PluginFactory.cpp)
+ADD_LIBRARY(lmms_core_plugins STATIC Effect.cpp ExportFilter.cpp DummyEffect.h DummyInstrument.h ImportFilter.cpp Instrument.cpp ToolPlugin.cpp Plugin.cpp PluginFactory.cpp)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Xml Gui) 
 

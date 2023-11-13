@@ -51,7 +51,11 @@ IPluginFactory* IPluginFactory::Instance() {
 #ifdef LMMS_BUILD_WIN32
 	QStringList nameFilters("*.dll");
 #else
-	QStringList nameFilters("lib*.so");
+	#ifdef LMMS_BUILD_APPLE
+		QStringList nameFilters("lib*.dylib");
+	#else
+		QStringList nameFilters("lib*.so");
+	#endif
 #endif
 
 std::unique_ptr<PluginFactory> PluginFactory::s_instance;
@@ -157,6 +161,7 @@ void PluginFactory::discoverPlugins()
 	{
 #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
 		auto discoveredPluginList = QDir(searchPath).entryInfoList(nameFilters);
+		qDebug() << "Checking search path " << searchPath << Qt::endl;
 		files.unite(QSet<QFileInfo>(discoveredPluginList.begin(), discoveredPluginList.end()));
 #else
 		files.unite(QDir(searchPath).entryInfoList(nameFilters).toSet());
@@ -167,6 +172,7 @@ void PluginFactory::discoverPlugins()
 	// all libraries twice we ensure that libZynAddSubFxCore is found.
 	for (const QFileInfo& file : files)
 	{
+		qDebug() << "Loading file " << file.absoluteFilePath() << Qt::endl;
 		QLibrary(file.absoluteFilePath()).load();
 	}
 
