@@ -1,5 +1,6 @@
 /build
 /build_qt5
+/build_qt6
 /target
 .*.sw?
 .DS_Store

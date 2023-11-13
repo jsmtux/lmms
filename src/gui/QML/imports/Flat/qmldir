@@ -7,3 +7,4 @@ HeaderButton 1.0 HeaderButton.qml
 StatusButton 1.0 StatusButton.qml
 TabBar 1.0 TabBar.qml
 TabButton 1.0 TabButton.qml
+Dial 1.0 Dial.qml

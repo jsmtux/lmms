@@ -32,6 +32,7 @@ qt_add_qml_module(lmms2example
         "lmms2.qml"
         "TrackViewDelegate.qml"
         "imports/Flat/Button.qml"
+        "imports/Flat/Dial.qml"
         "imports/Flat/HeaderButton.qml"
         "imports/Flat/StatusButton.qml"
         "imports/Flat/CheckBox.qml"
@@ -42,6 +43,7 @@ qt_add_qml_module(lmms2example
     RESOURCES
         "imports/Flat/qmldir"
         "imports/Theme/qmldir"
+        "icons/controls/dial.png"
         "icons/status_button/stop.png"
         "icons/status_button/play_record.png"
         "icons/status_button/record.png"

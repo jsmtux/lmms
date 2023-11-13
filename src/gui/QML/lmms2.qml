@@ -135,6 +135,7 @@ ApplicationWindow {
 
                 TabBar {
                     id: mainAreaBar
+                    z: 10
                     width: parent.width
                     TabButton {
                         text: qsTr("Song Editor")
@@ -160,11 +161,16 @@ ApplicationWindow {
                         border.width: 2
                     }
 
-                    ListView {
+                    Row {
                         anchors.fill: parent
-                        model: trackModel
-                        spacing: 1
-                        delegate: TrackViewDelegate {}
+                        height: parent.height
+                        ListView {
+                            width: 350
+                            height: parent.height
+                            model: trackModel
+                            spacing: 1
+                            delegate: TrackViewDelegate {}
+                        }
                     }
                 }
             }

@@ -29,6 +29,7 @@
 
 #include "ICoreApplication.h"
 #include "ITrack.h"
+#include "IPiano.h"
 #include "LMMSProperty.h"
 
 #include <QGuiApplication>
@@ -48,6 +49,9 @@ public:
 	InstrumentTrackModel(IInstrumentTrack* _instrumentTrack, QObject* parent) :
 		QObject(parent),
 		m_instrumentTrack(_instrumentTrack) {}
+	Q_INVOKABLE void testPlay() {
+		m_instrumentTrack->piano()->handleKeyPress(40);
+	}
 private:
 	IInstrumentTrack* m_instrumentTrack;
 	IFloatAutomatableModel* trackVolumeModel{m_instrumentTrack->volumeModel()};

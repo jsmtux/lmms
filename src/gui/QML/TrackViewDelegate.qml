@@ -11,9 +11,7 @@ Rectangle {
     id: control
 
     height: 40
-    width: 40
-    anchors.left: parent.left
-    anchors.right: parent.right
+    implicitWidth: 350
     gradient: Gradient {
         GradientStop {position: 0.0; color: "#485562"}
         GradientStop {position: 1.0; color: "#485562"}
@@ -23,21 +21,35 @@ Rectangle {
 
     Component {
         id: sampleTrackType
-        SpinBox {
+        Dial {
+            implicitWidth: 30
+            implicitHeight: 30
+            inputMode: Dial.Horizontal
         }
     }
 
     Component {
         id: instrumentTrackType
         Row {
-            SpinBox {
-                id: spinBoxControl
-                value: control.track.instrumentProperties.volume
-                onValueModified: {
-                    control.track.instrumentProperties.volume = spinBoxControl.value
+            spacing: 5
+            Dial {
+                id: volumeDial
+                implicitWidth: 30
+                implicitHeight: 30
+                value: control.track.instrumentProperties.volume / 100.0
+                inputMode: Dial.Horizontal
+                onMoved: {
+                    control.track.instrumentProperties.volume = volumeDial.value * 100
                 }
             }
-            SpinBox {
+            Dial {
+                implicitWidth: 30
+                implicitHeight: 30
+                inputMode: Dial.Horizontal
+            }
+            Button {
+                text: "Test"
+                onClicked: control.track.instrumentProperties.testPlay()
             }
         }
     }

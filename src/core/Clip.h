@@ -194,7 +194,7 @@ class TypedClip: public Clip
 {
 public:
 	TypedClip( TrackType * _track ) :
-		Clip(_track->model()),
+		Clip(_track ? _track->model() : nullptr),
 		m_track(_track)
 	{
 		if( m_track )
