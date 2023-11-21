@@ -67,17 +67,17 @@ public:
 	static void destroyFFTPlans();
 	static void generateAntiAliasUserWaveTable(SampleBuffer* sampleBuffer);
 
-	inline void setUseWaveTable(bool n)
+	inline void setUseWaveTable(bool n) override
 	{
 		m_useWaveTable = n;
 	}
 
-	inline void setUserWave( const SampleBuffer * _wave )
+	inline void setUserWave( const ISampleBuffer * _wave ) override
 	{
 		m_userWave = _wave;
 	}
 
-	void update(sampleFrame* ab, const fpp_t frames, const ch_cnt_t chnl, bool modulator = false);
+	void update(sampleFrame* ab, const fpp_t frames, const ch_cnt_t chnl, bool modulator = false) override;
 
 	static inline sample_t moogSawSample( const float _sample )
 	{
@@ -182,7 +182,7 @@ private:
 	Oscillator * m_subOsc;
 	float m_phaseOffset;
 	float m_phase;
-	const SampleBuffer * m_userWave;
+	const ISampleBuffer * m_userWave;
 	bool m_useWaveTable;
 	// There are many update*() variants; the modulator flag is stored as a member variable to avoid
 	// adding more explicit parameters to all of them. Can be converted to a parameter if needed.

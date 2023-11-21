@@ -2,6 +2,8 @@
 
 #include "lmms_basics.h"
 #include "lmms_math.h"
+#include "IModels.h"
+#include "ISampleBuffer.h"
 
 namespace lmms
 {
@@ -9,6 +11,7 @@ namespace lmms
 class IOscillator
 {
 public:
+	virtual ~IOscillator() = default;
 	enum WaveShapes
 	{
 		SineWave,
@@ -72,6 +75,18 @@ public:
 		// Fast implementation
 		return 1.0f - fast_rand() * 2.0f / FAST_RAND_MAX;
 	}
+
+	virtual void setUseWaveTable(bool n) = 0;
+	virtual void setUserWave( const ISampleBuffer * _wave ) = 0;
+	virtual void update(sampleFrame* ab, const fpp_t frames, const ch_cnt_t chnl, bool modulator = false) = 0;
 };
+
+IOscillator* createOscillator(const IIntAutomatableModel *wave_shape_model,
+			const IIntAutomatableModel *mod_algo_model,
+			const float &freq,
+			const float &detuning_div_samplerate,
+			const float &phase_offset,
+			const float &volume,
+			IOscillator *m_subOsc = nullptr);
 
 } // namespace lmms
