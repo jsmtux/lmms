@@ -26,7 +26,7 @@
 #ifndef _TRIPLE_OSCILLATOR_H
 #define _TRIPLE_OSCILLATOR_H
 
-#include "AutomatableModel.h"
+#include "IModels.h"
 
 #include "instrument/InstrumentView.h"
 
@@ -38,16 +38,8 @@ namespace lmms
 
 class NotePlayHandle;
 class SampleBuffer;
-class Oscillator;
+class IOscillator;
 
-
-namespace gui
-{
-class automatableButtonGroup;
-class Knob;
-class PixmapButton;
-class TripleOscillatorView;
-} // namespace gui
 
 
 const int NUM_OF_OSCILLATORS = 3;
@@ -55,25 +47,22 @@ const int NUM_OF_OSCILLATORS = 3;
 
 class OscillatorObject : public Model
 {
-	MM_OPERATORS
 	Q_OBJECT
 public:
-	OscillatorObject( Model * _parent, int _idx );
+	OscillatorObject( QObject * _parent, int _idx );
 	~OscillatorObject() override;
 
-
-private:
-	FloatModel m_volumeModel;
-	FloatModel m_panModel;
-	FloatModel m_coarseModel;
-	FloatModel m_fineLeftModel;
-	FloatModel m_fineRightModel;
-	FloatModel m_phaseOffsetModel;
-	FloatModel m_stereoPhaseDetuningModel;
-	IntModel m_waveShapeModel;
-	IntModel m_modulationAlgoModel;
-	BoolModel m_useWaveTableModel;
-	SampleBuffer* m_sampleBuffer;
+	IFloatAutomatableModel* m_volumeModel;
+	IFloatAutomatableModel* m_panModel;
+	IFloatAutomatableModel* m_coarseModel;
+	IFloatAutomatableModel* m_fineLeftModel;
+	IFloatAutomatableModel* m_fineRightModel;
+	IFloatAutomatableModel* m_phaseOffsetModel;
+	IFloatAutomatableModel* m_stereoPhaseDetuningModel;
+	IIntAutomatableModel* m_waveShapeModel;
+	IIntAutomatableModel* m_modulationAlgoModel;
+	IBoolAutomatableModel* m_useWaveTableModel;
+	std::unique_ptr<ISampleBuffer> m_sampleBuffer;
 
 	float m_volumeLeft;
 	float m_volumeRight;
@@ -87,7 +76,6 @@ private:
 	bool m_useWaveTable;
 
 	friend class TripleOscillator;
-	friend class gui::TripleOscillatorView;
 
 
 private slots:
@@ -105,16 +93,16 @@ private slots:
 
 
 
-class TripleOscillator : public gui::QWidgetInstrumentPlugin
+class TripleOscillator : public Instrument
 {
 	Q_OBJECT
 public:
-	TripleOscillator( InstrumentTrack * _track );
+	TripleOscillator( IInstrumentTrack * _track );
 	~TripleOscillator() override = default;
 
-	void playNote( NotePlayHandle * _n,
+	void playNote( INotePlayHandle * _n,
 						sampleFrame * _working_buffer ) override;
-	void deleteNotePluginData( NotePlayHandle * _n ) override;
+	void deleteNotePluginData( INotePlayHandle * _n ) override;
 
 
 	void saveSettings( QDomDocument & _doc, QDomElement & _parent ) override;
@@ -127,48 +115,19 @@ public:
 		return( 128 );
 	}
 
-	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
-
-protected slots:
-	void updateAllDetuning();
-
-
-private:
 	OscillatorObject * m_osc[NUM_OF_OSCILLATORS];
 
 	struct oscPtr
 	{
-		MM_OPERATORS
-		Oscillator * oscLeft;
-		Oscillator * oscRight;
+		IOscillator * oscLeft;
+		IOscillator * oscRight;
 	} ;
 
 
-	friend class gui::TripleOscillatorView;
-
+protected slots:
+	void updateAllDetuning();
 } ;
-
-
-namespace gui
-{
-
-
-class TripleOscillatorView : public InstrumentViewImpl<TripleOscillator>
-{
-	Q_OBJECT
-public:
-	TripleOscillatorView( TripleOscillator * _instrument, QWidget * _parent );
-	~TripleOscillatorView() override = default;
-
-
-private:
-	automatableButtonGroup * m_mod1BtnGrp;
-	automatableButtonGroup * m_mod2BtnGrp;
-} ;
-
-
-} // namespace gui
 
 } // namespace lmms
 
