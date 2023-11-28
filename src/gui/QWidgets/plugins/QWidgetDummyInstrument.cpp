@@ -2,9 +2,9 @@
 
 namespace lmms {
 
-IInstrument* InstantiateDummyInstrument(ITrack* _instrument_track)
+IInstrument* InstantiateDummyInstrument(IInstrumentTrack* _instrument_track)
 {
-    return new QWidgetDummyInstrument(dynamic_cast<IInstrumentTrack*>(_instrument_track->getTrackTypeSpecificInterface()));
+    return new QWidgetDummyInstrument(_instrument_track);
 }
 
 }

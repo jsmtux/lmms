@@ -27,17 +27,14 @@
 #define _TRIPLE_OSCILLATOR_H
 
 #include "IModels.h"
-
-#include "instrument/InstrumentView.h"
-
-#include "plugins/QWidgetInstrumentPlugin.h"
+#include "Instrument.h"
 
 namespace lmms
 {
 
 
 class NotePlayHandle;
-class SampleBuffer;
+class ISampleBuffer;
 class IOscillator;
 
 
@@ -123,6 +120,8 @@ public:
 		IOscillator * oscLeft;
 		IOscillator * oscRight;
 	} ;
+
+	static const char* PluginName() { return "TripleOscillator"; }
 
 
 protected slots:

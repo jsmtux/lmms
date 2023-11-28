@@ -68,9 +68,9 @@ public:
 
 	virtual QString name() = 0;
 
-	virtual ITrack* instrumentTrack() const = 0;
+	virtual IInstrumentTrack* instrumentTrack() const = 0;
 	virtual void play(sampleFrame* _working_buffer) = 0;
-	virtual bool isFromTrack(const ITrack* _track) const = 0;
+	virtual bool isFromTrack(const IInstrumentTrack* _track) const = 0;
 	virtual f_cnt_t desiredReleaseFrames() const = 0;
 	virtual Flags flags() const = 0;
 	virtual bool supportsFileType(const QString& extension) const = 0;
@@ -95,10 +95,10 @@ public:
 	virtual bool hasNoteInput() const = 0;
 };
 
-IInstrument* InstantiateDummyInstrument(ITrack* _instrument_track);
+IInstrument* InstantiateDummyInstrument(IInstrumentTrack* _instrument_track);
 
 IInstrument* InstantiateInstrument(
-	const QString& pluginName, ITrack* _parent, const PluginDescriptor::Key* _key, bool keyFromDnd = false);
+	const QString& pluginName, IInstrumentTrack* _parent, const PluginDescriptor::Key* _key, bool keyFromDnd = false);
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(IInstrument::Flags)
 

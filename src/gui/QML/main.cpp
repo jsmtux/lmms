@@ -133,9 +133,9 @@ IEffect* InstantiateDummyEffect(IEffectChain* _parent, const QDomElement& origin
 }
 
 
-IInstrument* InstantiateDummyInstrument(ITrack* _instrument_track)
+IInstrument* InstantiateDummyInstrument(IInstrumentTrack* _instrument_track)
 {
-	return new DummyInstrument(static_cast<IInstrumentTrack*>(_instrument_track->getTrackTypeSpecificInterface()));
+	return new DummyInstrument(_instrument_track);
 }
 }
 

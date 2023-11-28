@@ -41,7 +41,7 @@ namespace lmms
 
 
 KickerInstrument::KickerInstrument( IInstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track->baseTrack(), nullptr ),
+	Instrument( _instrument_track, nullptr ),
 	m_startFreqModel( MFact::create(150.0f, 5.0f, 1000.0f, 1.0f, this, tr( "Start frequency" ) )),
 	m_endFreqModel( MFact::create(40.0f, 5.0f, 1000.0f, 1.0f, this, tr( "End frequency" ) )),
 	m_decayModel( MFact::create(440.0f, 5.0f, 5000.0f, 1.0f, 5000.0f, this, tr( "Length" ) )),

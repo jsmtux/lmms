@@ -125,7 +125,7 @@ IEffect* InstantiateDummyEffect(IEffectChain* _parent, const QDomElement& origin
 }
 
 
-IInstrument* InstantiateDummyInstrument(ITrack* _instrument_track)
+IInstrument* InstantiateDummyInstrument(IInstrumentTrack* _instrument_track)
 {
 	return nullptr;
 }

@@ -96,6 +96,7 @@ public:
 	virtual void insertBar( const TimePos & pos ) = 0;
 	virtual void removeBar( const TimePos & pos ) = 0;
 	virtual bar_t length() const = 0;
+	virtual const TrackTypeSpecificInterface* getTrackTypeSpecificInterface() const = 0;
 	virtual TrackTypeSpecificInterface* getTrackTypeSpecificInterface() = 0;
 	virtual ITrackContainer* trackInterfaceContainer() const = 0;
 	virtual ITrack * clone() = 0;

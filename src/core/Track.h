@@ -173,6 +173,11 @@ public:
 		return &m_model;
 	}
 
+	const TrackTypeSpecificInterface* getTrackTypeSpecificInterface() const override {
+		return dynamic_cast<const TrackTypeSpecificInterface*>(this);
+	}
+
+
 	TrackTypeSpecificInterface* getTrackTypeSpecificInterface() override {
 		return dynamic_cast<TrackTypeSpecificInterface*>(this);
 	}

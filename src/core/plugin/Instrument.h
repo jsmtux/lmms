@@ -49,7 +49,7 @@ class LMMS_EXPORT Instrument : public QObject, public Plugin, public IInstrument
 	Q_OBJECT
 	I_MM_OPERATORS
 public:
-	Instrument(ITrack * _instrument_track,
+	Instrument(IInstrumentTrack * _instrument_track,
 			const PluginDescriptor * _descriptor,
 			const PluginDescriptor::Key * key = nullptr);
 	~Instrument() override = default;
@@ -125,7 +125,7 @@ public:
 	//! instantiate instrument-plugin with given name or return NULL
 	//! on failure
 	static IInstrument * instantiate(const QString & _plugin_name,
-		ITrack * _instrument_track,
+		IInstrumentTrack * _instrument_track,
 		const PluginDescriptor::Key* key,
 		bool keyFromDnd = false);
 
@@ -137,9 +137,9 @@ public:
 		return Plugin::descriptor();
 	}
 
-	virtual bool isFromTrack( const ITrack * _track ) const override;
+	virtual bool isFromTrack( const IInstrumentTrack * _track ) const override;
 
-	inline ITrack * instrumentTrack() const override
+	inline IInstrumentTrack * instrumentTrack() const override
 	{
 		return m_instrumentTrack;
 	}
@@ -179,8 +179,7 @@ protected:
 
 
 private:
-	ITrack * m_instrumentTrack;
-
+	IInstrumentTrack * m_instrumentTrack;
 } ;
 
 

@@ -37,7 +37,6 @@
 #include "IOscillator.h"
 
 #include "embed.h"
-#include "plugin_export.h"
 
 namespace lmms
 {
@@ -46,7 +45,7 @@ namespace lmms
 extern "C"
 {
 
-PluginDescriptor PLUGIN_EXPORT tripleoscillator_plugin_descriptor =
+PluginDescriptor tripleoscillator_plugin_descriptor =
 {
 	LMMS_STRINGIFY( PLUGIN_NAME ),
 	"TripleOscillator",
@@ -221,7 +220,7 @@ void OscillatorObject::updateUseWaveTable()
 
 
 TripleOscillator::TripleOscillator( IInstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track->baseTrack(), &tripleoscillator_plugin_descriptor )
+	Instrument( _instrument_track, &tripleoscillator_plugin_descriptor )
 {
 	for( int i = 0; i < NUM_OF_OSCILLATORS; ++i )
 	{
@@ -379,7 +378,7 @@ void TripleOscillator::playNote( INotePlayHandle * _n,
 	applyFadeIn(_working_buffer, _n);
 	applyRelease( _working_buffer, _n );
 
-	static_cast<IInstrumentTrack*>(instrumentTrack()->getTrackTypeSpecificInterface())->processAudioBuffer( _working_buffer, frames + offset, _n );
+	instrumentTrack()->processAudioBuffer( _working_buffer, frames + offset, _n );
 }
 
 

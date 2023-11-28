@@ -35,13 +35,13 @@ namespace lmms
 {
 
 IInstrument* InstantiateInstrument(const QString& pluginName,
-				ITrack * _parent,
+				IInstrumentTrack * _parent,
 				const PluginDescriptor::Key * _key,
                 bool keyFromDnd) {
 	return Instrument::instantiate(pluginName, _parent, _key, keyFromDnd);
 }
 
-Instrument::Instrument(ITrack * _instrument_track,
+Instrument::Instrument(IInstrumentTrack * _instrument_track,
 			const PluginDescriptor * _descriptor,
 			const PluginDescriptor::Key *key) :
 	Plugin(_descriptor, key),
@@ -72,7 +72,7 @@ f_cnt_t Instrument::beatLen( INotePlayHandle * ) const
 
 
 IInstrument *Instrument::instantiate(const QString &_plugin_name,
-	ITrack *_instrument_track, const PluginDescriptor::Key *key, bool keyFromDnd)
+	IInstrumentTrack *_instrument_track, const PluginDescriptor::Key *key, bool keyFromDnd)
 {
 	if(keyFromDnd)
 		Q_ASSERT(!key);
@@ -87,7 +87,7 @@ IInstrument *Instrument::instantiate(const QString &_plugin_name,
 
 
 
-bool Instrument::isFromTrack( const ITrack * _track ) const
+bool Instrument::isFromTrack( const IInstrumentTrack * _track ) const
 {
 	return( m_instrumentTrack == _track );
 }

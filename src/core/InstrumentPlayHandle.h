@@ -44,7 +44,7 @@ public:
 	void play( sampleFrame * _working_buffer ) override
 	{
 		// ensure that all our nph's have been processed first
-		ConstNotePlayHandleList nphv = NotePlayHandle::nphsOfInstrumentTrack( m_instrument->instrumentTrack(), true );
+		ConstNotePlayHandleList nphv = NotePlayHandle::nphsOfInstrumentTrack( m_instrument->instrumentTrack()->baseTrack(), true );
 		
 		bool nphsLeft;
 		do
@@ -73,7 +73,11 @@ public:
 
 	bool isFromTrack( const ITrack* _track ) const override
 	{
-		return m_instrument->isFromTrack( _track );
+		if (_track->type() == ITrack::InstrumentTrack)
+		{
+			return m_instrument->isFromTrack( static_cast<const IInstrumentTrack*>(_track->getTrackTypeSpecificInterface()) );
+		}
+		return false;
 	}
 
 
