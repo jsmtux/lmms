@@ -116,6 +116,7 @@ public:
 	virtual void setKeymap(unsigned int index, IKeymap* newMap) = 0;
 	virtual const IScale* getScaleInterface(unsigned int index) const = 0;
 	virtual const IKeymap* getKeymapInterface(unsigned int index) const = 0;
+	virtual bar_t length() const = 0;
 	virtual void insertBar() = 0;
 	virtual void removeBar() = 0;
 	virtual tick_t currentTick() const = 0;
@@ -134,6 +135,7 @@ public:
 signals:
 	void controllerAdded( lmms::IController * );
 	void controllerRemoved( lmms::IController * );
+	void lengthChanged( int bars );
 };
 
 }

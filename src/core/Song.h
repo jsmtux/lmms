@@ -243,7 +243,7 @@ public:
 	}
 
 	void updateLength();
-	bar_t length() const
+	bar_t length() const override
 	{
 		return m_length;
 	}
@@ -541,7 +541,6 @@ signals:
 	void projectLoaded();
 	void playbackStateChanged();
 	void playbackPositionChanged();
-	void lengthChanged( int bars );
 	void tempoChanged( lmms::bpm_t newBPM );
 	void timeSignatureChanged( int oldTicksPerBar, int ticksPerBar );
 	void updateSampleTracks();

@@ -435,6 +435,10 @@ int main( int argc, char * * argv )
 	lmms::gui::TrackListModel track_list_model(IEngine::Instance()->getSongInterface()->trackContainerInterface());
 	qml_context->setContextProperty("trackModel", &track_list_model);
 
+	lmms::gui::SongTableModel::RegisterInQml();
+	lmms::gui::SongTableModel song_model(IEngine::Instance()->getSongInterface());
+	qml_context->setContextProperty("songModel", &song_model);
+
     qCoreApplicationEngine.load(QUrl(QStringLiteral("qrc:/lmms2.qml")));
 
 	IEngine::Instance()->getSongInterface()->setExportLoop( renderLoop );
@@ -467,7 +471,8 @@ int main( int argc, char * * argv )
 	lmms::gui::GuiApplication guiApplication;
 
 	// If no recovery file, no macOS request, not last open project, then:
-	IEngine::Instance()->getSongInterface()->createNewProject();
+	// IEngine::Instance()->getSongInterface()->createNewProject();
+	IEngine::Instance()->getSongInterface()->loadProject(configManager->factoryProjectsDir() + "/shorties/sv-Trance-Startup.mmpz");
 
 	const int ret = app.exec();
 

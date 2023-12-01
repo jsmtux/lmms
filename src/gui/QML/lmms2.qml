@@ -5,6 +5,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Theme
+import App 1.0
 
 pragma ComponentBehavior: Bound
 
@@ -161,15 +162,35 @@ ApplicationWindow {
                         border.width: 2
                     }
 
-                    Row {
-                        anchors.fill: parent
+                    RowLayout {
                         height: parent.height
-                        ListView {
+                        VerticalHeaderView {
                             width: 350
-                            height: parent.height
-                            model: trackModel
-                            spacing: 1
+                            syncView: songTableView
+                            resizableRows: false
+                            clip: true
+                            model:trackModel
                             delegate: TrackViewDelegate {}
+                        }
+                        TableView {
+                            id: songTableView
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            Layout.minimumWidth: 850
+                            clip: true
+                            columnSpacing: 1
+                            rowSpacing: 1
+
+                            model:songModel
+
+                            delegate: Rectangle {
+                                required property BaseTrackModel track
+                                id: trackCell
+                                implicitHeight: 50
+                                Text {
+                                    text: trackCell.track.name
+                                }
+                            }
                         }
                     }
                 }

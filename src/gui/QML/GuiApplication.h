@@ -38,7 +38,7 @@
 #include <QQmlProperty>
 
 #include <QDebug>
-#include <QAbstractListModel>
+#include <QAbstractItemModel>
 
 namespace lmms::gui
 {
@@ -125,7 +125,7 @@ class TrackListModel : public QAbstractListModel {
 public:
 	TrackListModel(ITrackContainer* trackContainer)
 	{
-		connect(trackContainer, &ITrackContainer::trackAdded, this, &TrackListModel::trackAdded);
+		connect(trackContainer, &ITrackContainer::trackAdded, this, &TrackListModel::trackAdded, Qt::QueuedConnection);
 	}
 
 	enum Roles {
@@ -139,23 +139,23 @@ public:
 
 	QVariant data(const QModelIndex &index, int role) const override
     {
-        if (!index.isValid())
-            return QVariant();
-
-        switch (role) {
-			case Qt::DisplayRole:
-			case TrackRole:
-				return QVariant::fromValue(m_trackList[index.row()]);
-        }
+        if (index.isValid())
+		{
+			switch (role) {
+				case Qt::DisplayRole:
+				case TrackRole:
+					return QVariant::fromValue(m_trackList[index.row()]);
+			}
+		}
 
         return QVariant();
     }
 
     virtual QHash<int, QByteArray> roleNames() const override
     {
-        QHash<int, QByteArray> tracks;
-        tracks[TrackRole] = "track";
-        return tracks;
+        QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
+        roles[TrackRole] = "track";
+        return roles;
     }
 
 
@@ -168,10 +168,98 @@ private slots:
 	void trackAdded(ITrack* track) {
 		auto index = m_trackList.size();
         beginInsertRows(QModelIndex(), index, index);
-		m_trackList.append(new BaseTrackModel(track, this));
-		endInsertRows();		
+		auto trackModel = new BaseTrackModel(track, this);
+		m_trackList.append(trackModel);
+		endInsertRows();
 	}
 private:
+	QList<BaseTrackModel*> m_trackList;
+};
+
+class SongTableModel : public QAbstractItemModel {
+		Q_OBJECT
+public:
+	SongTableModel(ISong* song) :
+		m_numBars(song->length())
+	{
+		connect(song->trackContainerInterface(),
+			&ITrackContainer::trackAdded, this, &SongTableModel::trackAdded, Qt::QueuedConnection);
+		connect(song, &ISong::lengthChanged, this, [this](int bars){
+			int difference = bars - m_numBars;
+			if (difference > 0) {
+				beginInsertColumns(QModelIndex(), bars, m_numBars);
+				endInsertColumns();
+			} else if (difference < 0) {
+				beginRemoveColumns(QModelIndex(), m_numBars, bars);
+				endRemoveColumns();
+			}
+			m_numBars = bars;
+		});
+	}
+
+	enum Roles {
+		TrackRole = Qt::UserRole
+	};
+
+	static void RegisterInQml() {
+		qmlRegisterType<lmms::gui::SongTableModel>("App", 1, 0, "SongTableModel");
+		BaseTrackModel::RegisterInQml();
+	}
+
+	QVariant data(const QModelIndex &index, int role) const override
+    {
+        if (index.isValid())
+		{
+			switch (role) {
+				case Qt::DisplayRole:
+				case TrackRole:
+					return QVariant::fromValue(m_trackList[index.row()]);
+			}
+		}
+
+        return QVariant();
+    }
+
+	QModelIndex index(int row, int column, const QModelIndex &parent) const override
+	{
+		return hasIndex(row, column, parent) ? createIndex(row, column) : QModelIndex();
+	}
+
+	QModelIndex parent(const QModelIndex &index) const override
+	{
+		return QModelIndex();
+	}
+
+    virtual QHash<int, QByteArray> roleNames() const override
+    {
+        QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
+        roles[TrackRole] = "track";
+        return roles;
+    }
+
+
+    int rowCount(const QModelIndex &/*parent*/ = QModelIndex()) const override
+    {
+        return m_trackList.size();
+    }
+
+
+    int columnCount(const QModelIndex &parent) const override
+    {
+        return parent.isValid() ? 0 : m_numBars;
+    }
+
+private slots:
+	void trackAdded(ITrack* track) {
+		auto index = m_trackList.size();
+        beginInsertRows(QModelIndex(), index, index);
+		auto trackModel = new BaseTrackModel(track, this);
+		m_trackList.append(trackModel);
+		endInsertRows();
+	}
+private:
+	ISong* song;
+	int m_numBars;
 	QList<BaseTrackModel*> m_trackList;
 };
 
