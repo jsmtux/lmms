@@ -46,6 +46,7 @@ public:
 		clipVector::iterator it = std::find( m_clips.begin(), m_clips.end(), clip );
 		if( it != m_clips.end() )
 		{
+			emit clipRemoved( *it );
 			updateSongProperties();
 			m_clips.erase( it );
 		}

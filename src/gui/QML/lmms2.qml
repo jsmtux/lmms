@@ -184,11 +184,12 @@ ApplicationWindow {
                             model:songModel
 
                             delegate: Rectangle {
-                                required property BaseTrackModel track
+                                required property BaseClipModel trackClip
                                 id: trackCell
                                 implicitHeight: 50
+                                implicitWidth: 150
                                 Text {
-                                    text: trackCell.track.name
+                                    text: trackCell.trackClip != null ? trackCell.trackClip.name : "none"
                                 }
                             }
                         }

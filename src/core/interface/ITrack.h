@@ -116,6 +116,7 @@ signals:
 	void colorChanged();
 	void destroyedTrack();
 	void clipAdded(IClip* clip);
+	void clipRemoved( IClip* clip );
 };
 
 ITrack* createTrack( const QDomElement & element, ITrackContainer* tc );

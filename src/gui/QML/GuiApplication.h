@@ -120,6 +120,29 @@ private:
 	InstrumentTrackModel* curInstrumentTrackModel;
 };
 
+class BaseClipModel : public QObject {
+	Q_OBJECT
+	Q_PROPERTY(QString name READ name CONSTANT)
+public:
+	BaseClipModel(IClip* clip)
+		: m_clip(clip)
+	{
+	}
+	static void RegisterInQml() {
+		qmlRegisterType<lmms::gui::BaseClipModel>("App", 1, 0, "BaseClipModel");
+	}
+
+	bool isContainedIn(int x_index) {
+		return m_clip->startPosition().getBar() <= x_index && m_clip->endPosition().nextFullBar() >= x_index;
+	}
+
+	QString name() {
+		return m_clip->name();
+	}
+private:
+	IClip* m_clip;
+};
+
 class TrackListModel : public QAbstractListModel {
 		Q_OBJECT
 public:
@@ -198,12 +221,12 @@ public:
 	}
 
 	enum Roles {
-		TrackRole = Qt::UserRole
+		ClipRole = Qt::UserRole
 	};
 
 	static void RegisterInQml() {
 		qmlRegisterType<lmms::gui::SongTableModel>("App", 1, 0, "SongTableModel");
-		BaseTrackModel::RegisterInQml();
+		BaseClipModel::RegisterInQml();
 	}
 
 	QVariant data(const QModelIndex &index, int role) const override
@@ -212,8 +235,17 @@ public:
 		{
 			switch (role) {
 				case Qt::DisplayRole:
-				case TrackRole:
-					return QVariant::fromValue(m_trackList[index.row()]);
+					break;
+				case ClipRole:
+				{
+					auto clipList = m_trackClips[m_trackClips.keys()[index.row()]];
+					for(const auto& clip: clipList) {
+						if(clip->isContainedIn(index.column())) {
+							return QVariant::fromValue(clip);
+						}
+					}
+					return QVariant();
+				}
 			}
 		}
 
@@ -233,14 +265,14 @@ public:
     virtual QHash<int, QByteArray> roleNames() const override
     {
         QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
-        roles[TrackRole] = "track";
+        roles[ClipRole] = "trackClip";
         return roles;
     }
 
 
     int rowCount(const QModelIndex &/*parent*/ = QModelIndex()) const override
     {
-        return m_trackList.size();
+        return m_trackClips.size();
     }
 
 
@@ -251,16 +283,29 @@ public:
 
 private slots:
 	void trackAdded(ITrack* track) {
-		auto index = m_trackList.size();
+		auto index = m_trackClips.size();
         beginInsertRows(QModelIndex(), index, index);
 		auto trackModel = new BaseTrackModel(track, this);
-		m_trackList.append(trackModel);
+		m_trackClips[trackModel] = QList<BaseClipModel*>();
+		connect(track, &ITrack::clipAdded, this, [this, trackModel](IClip* clip){clipAdded(trackModel, clip);});
+		for (const auto& clip: track->getClips()) {
+			clipAdded(trackModel, clip);
+		}
 		endInsertRows();
+	}
+
+	void clipAdded(BaseTrackModel* track, IClip* clip) {
+		auto index = m_trackClips.keys().indexOf(track);
+		auto startBar = clip->startPosition().getBar();
+		auto endBar = clip->endPosition().nextFullBar();
+		qDebug() << "Sengind clip added signal from " << startBar << " to " << endBar << Qt::endl;
+		m_trackClips[track].push_back(new BaseClipModel(clip));
+		emit dataChanged(createIndex(index, startBar), createIndex(index, endBar));
 	}
 private:
 	ISong* song;
 	int m_numBars;
-	QList<BaseTrackModel*> m_trackList;
+	QMap<BaseTrackModel*, QList<BaseClipModel*>> m_trackClips;
 };
 
 class ProgressModal : public IProgressModal {
