@@ -58,11 +58,11 @@ PeakController::PeakController( QObject * _parent,
 		connect( m_peakEffect->model(), SIGNAL(destroyed()),
 			this, SLOT(handleDestroyedEffect()));
 	}
-	connect( Engine::audioEngine(), SIGNAL(sampleRateChanged()), this, SLOT(updateCoeffs()));
-	connect( m_peakEffect->attackModel()->model(), SIGNAL(dataChanged()),
-			this, SLOT(updateCoeffs()), Qt::DirectConnection );
-	connect( m_peakEffect->decayModel()->model(), SIGNAL(dataChanged()),
-			this, SLOT(updateCoeffs()), Qt::DirectConnection );
+	connect( Engine::audioEngine(), &AudioEngine::sampleRateChanged, this, &PeakController::updateCoeffs);
+	connect( m_peakEffect->attackModel()->model(), &Model::dataChanged,
+			this, &PeakController::updateCoeffs, Qt::DirectConnection );
+	connect( m_peakEffect->decayModel()->model(), &Model::dataChanged,
+			this, &PeakController::updateCoeffs, Qt::DirectConnection );
 	m_coeffNeedsUpdate = true;
 }
 

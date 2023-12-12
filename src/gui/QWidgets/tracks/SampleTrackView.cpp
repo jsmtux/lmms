@@ -91,8 +91,8 @@ SampleTrackView::SampleTrackView( ISampleTrack * _t, TrackContainerView* tcv ) :
 	m_activityIndicator->show();
 	connect(_t->sampleTrackSignals(), SIGNAL(playingChanged()), this, SLOT(updateIndicator()));
 
-	QObject::connect( m_sampleTrack->baseTrack()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_sampleTrack->baseTrack()->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_sampleTrack->baseTrack()->model(), &Model::dataChanged, this, [this](){update();});
+	QObject::connect( m_sampleTrack->baseTrack()->model(), &Model::propertiesChanged, this, [this](){update();});
 
 	m_window = new SampleTrackWindow(this);
 	m_window->toggleVisibility(false);

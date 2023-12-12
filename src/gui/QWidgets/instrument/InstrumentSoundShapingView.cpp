@@ -102,8 +102,8 @@ InstrumentSoundShapingView::InstrumentSoundShapingView( IInstrumentSoundShaping*
 						TARGETS_TABWIDGET_WIDTH,
 						TARGETS_TABWIDGET_HEIGTH );
 
-	QObject::connect( m_ss->model(), SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_ss->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_ss->model(), &Model::dataChanged, this, [this](){update();});
+	QObject::connect( m_ss->model(), &Model::propertiesChanged, this, [this](){update();});
 
 	update();
 }

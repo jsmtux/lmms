@@ -95,21 +95,21 @@ Song::Song() :
 	m_oldAutomatedValues()
 {
 	for (double& millisecondsElapsed : m_elapsedMilliSeconds) { millisecondsElapsed = 0; }
-	connect( &m_tempoModel, SIGNAL(dataChanged()),
-			this, SLOT(setTempo()), Qt::DirectConnection );
-	connect( &m_tempoModel, SIGNAL(dataUnchanged()),
-			this, SLOT(setTempo()), Qt::DirectConnection );
-	connect( &m_timeSigModel, SIGNAL(dataChanged()),
-			this, SLOT(setTimeSignature()), Qt::DirectConnection );
+	connect( &m_tempoModel, &Model::dataChanged,
+			this, &Song::updateTempo, Qt::DirectConnection );
+	connect( &m_tempoModel, &Model::dataUnchanged,
+			this, &Song::updateTempo, Qt::DirectConnection );
+	connect( &m_timeSigModel, &Model::dataChanged,
+			this, &Song::setTimeSignature, Qt::DirectConnection );
 
 
-	connect( Engine::audioEngine(), SIGNAL(sampleRateChanged()), this,
-						SLOT(updateFramesPerTick()));
+	connect( Engine::audioEngine(), &IAudioEngine::sampleRateChanged, this,
+						&Song::updateFramesPerTick);
 
-	connect( &m_masterVolumeModel, SIGNAL(dataChanged()),
-			this, SLOT(masterVolumeChanged()), Qt::DirectConnection );
-/*	connect( &m_masterPitchModel, SIGNAL(dataChanged()),
-			this, SLOT(masterPitchChanged()));*/
+	connect( &m_masterVolumeModel, &Model::dataChanged,
+			this, &Song::masterVolumeChanged, Qt::DirectConnection );
+/*	connect( &m_masterPitchModel, &Model::dataChanged,
+			this, &Song::masterPitchChanged);*/
 
 	qRegisterMetaType<lmms::Note>( "lmms::Note" );
 	for (auto& scale : m_scales) {scale = std::make_unique<Scale>();}
@@ -136,7 +136,7 @@ void Song::masterVolumeChanged()
 
 
 
-void Song::setTempo()
+void Song::updateTempo()
 {
 	Engine::audioEngine()->requestChangeInModel();
 	const auto tempo = (bpm_t)m_tempoModel.value();

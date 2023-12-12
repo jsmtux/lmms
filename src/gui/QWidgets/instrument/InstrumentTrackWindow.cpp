@@ -291,8 +291,8 @@ InstrumentTrackWindow::InstrumentTrackWindow( InstrumentTrackView * _itv ) :
 	vlayout->insertItem(1, new QWidgetItem(m_tabWidget));
 	vlayout->addWidget( m_pianoView );
 	
-	QObject::connect( m_itv->model()->baseTrack()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_itv->model()->baseTrack()->model(), SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_itv->model()->baseTrack()->model(), &Model::dataChanged, this, [this](){update();});
+	QObject::connect( m_itv->model()->baseTrack()->model(), &Model::propertiesChanged, this, [this](){update();});
 	update();
 
 	m_track = m_itv->model();

@@ -72,8 +72,8 @@ EffectRackView::EffectRackView( IEffectChain* _effectChain, QWidget* parent ) :
 
 	m_lastY = 0;
 
-	QObject::connect( m_effectChain, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_effectChain, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_effectChain->model(), &Model::dataChanged, this, [this](){update();});
+	QObject::connect( m_effectChain->model(), &Model::propertiesChanged, this, [this](){update();});
 	connect( m_effectChain, SIGNAL(aboutToClear()), this, SLOT(clearViews()));
 	connect( m_effectChain, SIGNAL(aboutToClear()), this, SLOT(clearViews()));
 	update();

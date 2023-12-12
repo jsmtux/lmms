@@ -105,10 +105,10 @@ InstrumentTrack::InstrumentTrack( TrackContainer* tc ) :
 
 	setName( tr( "Default preset" ) );
 
-	connect(&m_baseNoteModel, SIGNAL(dataChanged()), this, SLOT(updateBaseNote()), Qt::DirectConnection);
-	connect(&m_pitchModel, SIGNAL(dataChanged()), this, SLOT(updatePitch()), Qt::DirectConnection);
-	connect(&m_pitchRangeModel, SIGNAL(dataChanged()), this, SLOT(updatePitchRange()), Qt::DirectConnection);
-	connect(&m_mixerChannelModel, SIGNAL(dataChanged()), this, SLOT(updateMixerChannel()), Qt::DirectConnection);
+	connect(&m_baseNoteModel, &Model::dataChanged, this, &InstrumentTrack::updateBaseNote, Qt::DirectConnection);
+	connect(&m_pitchModel, &Model::dataChanged, this, &InstrumentTrack::updatePitch, Qt::DirectConnection);
+	connect(&m_pitchRangeModel, &Model::dataChanged, this, &InstrumentTrack::updatePitchRange, Qt::DirectConnection);
+	connect(&m_mixerChannelModel, &Model::dataChanged, this, &InstrumentTrack::updateMixerChannel, Qt::DirectConnection);
 }
 
 

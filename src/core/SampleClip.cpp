@@ -73,10 +73,10 @@ SampleClip::SampleClip( SampleTrack * _track ) :
 	connect( Engine::getSong(), &Song::updateSampleTracks,
 			this, &SampleClip::playbackPositionChanged, Qt::DirectConnection );
 	//care about mute Clips
-	connect( this, SIGNAL(dataChanged()), this, SLOT(playbackPositionChanged()));
+	connect( model(), &Model::dataChanged, this, &SampleClip::playbackPositionChanged);
 	//care about mute track
-	connect( getTrack()->getMutedModel()->model(), SIGNAL(dataChanged()),
-			this, SLOT(playbackPositionChanged()), Qt::DirectConnection );
+	connect( getTrack()->getMutedModel()->model(), &Model::dataChanged,
+			this, &SampleClip::playbackPositionChanged, Qt::DirectConnection );
 	//care about Clip position
 	connect( this, SIGNAL(positionChanged()), this, SLOT(updateTrackClips()));
 

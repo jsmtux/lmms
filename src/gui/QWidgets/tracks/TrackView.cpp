@@ -92,8 +92,8 @@ TrackView::TrackView( ITrack * track, TrackContainerView * tcv ) :
 
 	connect( m_track, SIGNAL(destroyedTrack()), this, SLOT(close()));
 	connect( m_track,
-		SIGNAL(clipAdded(lmms::IClip*)),
-			this, SLOT(createClipView(lmms::IClip*)),
+		&ITrack::clipAdded,
+			this, &TrackView::createClipView,
 			Qt::QueuedConnection );
 
 	connect( m_track->getMutedModel()->model(), SIGNAL(dataChanged()),
@@ -117,8 +117,8 @@ TrackView::TrackView( ITrack * track, TrackContainerView * tcv ) :
 	Q_ASSERT( m_track != nullptr );
 	connect( m_track, SIGNAL(destroyedTrack()), this, SLOT(close()));
 
-	QObject::connect( m_track, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_track, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_track->model(), &Model::dataChanged, this, [this](){update();});
+	QObject::connect( m_track->model(), &Model::propertiesChanged, this, [this](){update();});
 	
 	update();
 

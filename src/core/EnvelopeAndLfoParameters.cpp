@@ -130,36 +130,36 @@ EnvelopeAndLfoParameters::EnvelopeAndLfoParameters(
 
 	instances()->add( this );
 
-	connect( &m_predelayModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_attackModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_holdModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_decayModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_sustainModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_releaseModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_amountModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
+	connect( &m_predelayModel, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
+	connect( &m_attackModel, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
+	connect( &m_holdModel, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
+	connect( &m_decayModel, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
+	connect( &m_sustainModel, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
+	connect( &m_releaseModel, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
+	connect( &m_amountModel, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
 
-	connect( &m_lfoPredelayModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_lfoAttackModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_lfoSpeedModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_lfoAmountModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_lfoWaveModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
-	connect( &m_x100Model, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleVars()), Qt::DirectConnection );
+	connect( &m_lfoPredelayModel, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
+	connect( &m_lfoAttackModel, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
+	connect( m_lfoSpeedModel.wrappedModel()->model(), &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
+	connect( &m_lfoAmountModel, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
+	connect( &m_lfoWaveModel, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
+	connect( &m_x100Model, &Model::dataChanged,
+			this, &EnvelopeAndLfoParameters::updateSampleVars, Qt::DirectConnection );
 
-	connect( Engine::audioEngine(), SIGNAL(sampleRateChanged()),
-				this, SLOT(updateSampleVars()));
+	connect( Engine::audioEngine(), &IAudioEngine::sampleRateChanged,
+				this, &EnvelopeAndLfoParameters::updateSampleVars);
 
 
 	m_lfoShapeData =

@@ -113,6 +113,8 @@ public:
 signals:
 	void nameChanged();
 	void colorChanged();
+	void destroyedTrack();
+	void clipAdded(IClip* clip);
 };
 
 ITrack* createTrack( const QDomElement & element, ITrackContainer* tc );

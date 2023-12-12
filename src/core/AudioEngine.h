@@ -273,7 +273,6 @@ public:
 
 signals:
 	void qualitySettingsChanged();
-	void sampleRateChanged();
 
 
 private:

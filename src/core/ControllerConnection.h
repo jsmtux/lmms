@@ -112,12 +112,6 @@ protected:
 	bool m_ownsController;
 
 	static ControllerConnectionVector s_connections;
-
-signals:
-	// The value changed while the audio engine isn't running (i.e: MIDI CC)
-	void valueChanged();
-
-	friend class gui::ControllerConnectionDialog;
 };
 
 

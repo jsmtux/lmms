@@ -95,8 +95,8 @@ ControllerView::ControllerView( IController * _controller, QWidget * _parent ) :
 
 	m_subWindow->hide();
 
-	QObject::connect( m_controller, SIGNAL(dataChanged()), this, SLOT(update()));
-	QObject::connect( m_controller, SIGNAL(propertiesChanged()), this, SLOT(update()));
+	QObject::connect( m_controller->model(), &Model::dataChanged, this, [this](){update();});
+	QObject::connect( m_controller->model(), &Model::propertiesChanged, this, [this](){update();});
 
 	update();
 }

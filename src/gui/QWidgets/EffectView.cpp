@@ -88,7 +88,7 @@ EffectView::EffectView( IEffect * _effect, QWidget * _parent ) :
 	m_gate->setEnabled( isEnabled && !effect()->autoQuitDisabled() );
 	m_gate->setHintText( tr( "Gate:" ), "" );
 
-	if( effect()->controls()->controlCount() > 0 )
+	if( effect()->controls() && effect()->controls()->controlCount() > 0 )
 	{
 		auto ctls_btn = new QPushButton(tr("Controls"), this);
 		QFont f = ctls_btn->font();

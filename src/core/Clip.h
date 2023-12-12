@@ -26,6 +26,7 @@
 #define LMMS_CLIP_H
 
 #include <QColor>
+#include <QDebug>
 
 #include "IClip.h"
 
@@ -198,6 +199,7 @@ public:
 	{
 		if( m_track )
 		{
+			qDebug() << "Adding clip to track" << m_track << Qt::endl;
 			m_track->addClip( this );
 		}
 	}

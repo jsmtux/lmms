@@ -74,6 +74,7 @@ Track::Track( TrackTypes type, TrackContainer * tc ) :
 	m_hasColor( false )
 {
 	m_trackContainer->addTrack( this );
+	qDebug() << "Adding track " << this << Qt::endl;
 	m_height = -1;
 }
 
@@ -371,6 +372,7 @@ IClip * Track::getClip( int clipNum )
 	}
 	printf( "called Track::getClip( %d ), "
 			"but Clip %d doesn't exist\n", clipNum, clipNum );
+	qDebug() << "For track " << this << Qt::endl;
 	return createClip( clipNum * TimePos::ticksPerBar() );
 
 }

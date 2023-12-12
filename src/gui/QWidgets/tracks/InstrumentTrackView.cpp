@@ -71,8 +71,8 @@ InstrumentTrackView::InstrumentTrackView( IInstrumentTrack * _it, TrackContainer
 	connect( m_tlb, SIGNAL(toggled(bool)),
 			this, SLOT(toggleInstrumentWindow(bool)));
 
-	connect( _it->baseTrack()->model(), SIGNAL(nameChanged()),
-			m_tlb, SLOT(update()));
+	connect( _it->baseTrack(), &ITrack::nameChanged,
+			m_tlb, [this](){update();});
 
 	connect(IConfigManager::Instance(), SIGNAL(valueChanged(QString,QString,QString)),
 			this, SLOT(handleConfigChange(QString,QString,QString)));

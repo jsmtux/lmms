@@ -55,13 +55,13 @@ LfoController::LfoController( QObject * _parent ) :
 	m_userDefSampleBuffer( new SampleBuffer )
 {
 	setSampleExact( true );
-	connect( &m_waveModel, SIGNAL(dataChanged()),
-			this, SLOT(updateSampleFunction()), Qt::DirectConnection );
+	connect( &m_waveModel, &Model::dataChanged,
+			this, &LfoController::updateSampleFunction, Qt::DirectConnection );
 
-	connect( &m_speedModel, SIGNAL(dataChanged()),
-			this, SLOT(updateDuration()), Qt::DirectConnection );
-	connect( &m_multiplierModel, SIGNAL(dataChanged()),
-			this, SLOT(updateDuration()), Qt::DirectConnection );
+	connect( m_speedModel.wrappedModel()->model(), &Model::dataChanged,
+			this, &LfoController::updateDuration, Qt::DirectConnection );
+	connect( &m_multiplierModel, &Model::dataChanged,
+			this, &LfoController::updateDuration, Qt::DirectConnection );
 	connect( Engine::audioEngine(), SIGNAL(sampleRateChanged()),
 			this, SLOT(updateDuration()));
 

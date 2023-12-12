@@ -159,13 +159,13 @@ PianoView::PianoView(IPiano* piano, QWidget *parent) :
 	connect(IEngine::Instance()->getSongInterface(), SIGNAL(keymapListChanged(int)), this, SLOT(update()));
 	if (m_piano != nullptr)
 	{
-		connect(m_piano->instrumentTrack()->baseNoteModel()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->firstKeyModel()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->lastKeyModel()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->microtuner()->enabledModel()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->microtuner()->keymapModel()->wrappedModel()->model(), SIGNAL(dataChanged()), this, SLOT(update()));
-		connect(m_piano->instrumentTrack()->microtuner()->keyRangeImportModel()->model(), SIGNAL(dataChanged()),
-				this, SLOT(update()));
+		connect(m_piano->instrumentTrack()->baseNoteModel()->model(), &Model::dataChanged, this, [this](){update();});
+		connect(m_piano->instrumentTrack()->firstKeyModel()->model(), &Model::dataChanged, this, [this](){update();});
+		connect(m_piano->instrumentTrack()->lastKeyModel()->model(), &Model::dataChanged, this, [this](){update();});
+		connect(m_piano->instrumentTrack()->microtuner()->enabledModel()->model(), &Model::dataChanged, this, [this](){update();});
+		connect(m_piano->instrumentTrack()->microtuner()->keymapModel()->wrappedModel()->model(), &Model::dataChanged, this, [this](){update();});
+		connect(m_piano->instrumentTrack()->microtuner()->keyRangeImportModel()->model(), &Model::dataChanged,
+				this, [this](){update();});
 	}
 }
 

@@ -424,7 +424,7 @@ private slots:
 	void addSampleTrack();
 	void addAutomationTrack();
 
-	void setTempo();
+	void updateTempo();
 	void setTimeSignature();
 
 	void masterVolumeChanged();

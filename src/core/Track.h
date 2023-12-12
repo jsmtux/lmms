@@ -229,10 +229,6 @@ private:
 	bool m_hasColor;
 
 	friend class gui::TrackView;
-
-signals:
-	void destroyedTrack();
-	void clipAdded( lmms::Clip * );
 } ;
 
 

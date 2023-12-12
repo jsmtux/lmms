@@ -161,6 +161,7 @@ public:struct qualitySettings
 	}
 signals:
 	void nextAudioBuffer( const lmms::surroundSampleFrame * buffer );
+	void sampleRateChanged();
 };
 
 }

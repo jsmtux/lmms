@@ -40,6 +40,10 @@ public:
     // This is used from AutomatableModel... Wrong
     virtual void saveSettingsInPlace( QDomDocument& doc, QDomElement& element ) = 0;
     virtual void loadSettingsInPlace( const QDomElement& element ) = 0;
+
+signals:
+	// The value changed while the audio engine isn't running (i.e: MIDI CC)
+	void valueChanged();
 };
 
 std::unique_ptr<IControllerConnection> createControllerconnection( IController* controller);
