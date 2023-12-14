@@ -188,6 +188,7 @@ ApplicationWindow {
                                 id: trackCell
                                 implicitHeight: 50
                                 implicitWidth: 150
+                                color: "transparent"
                                 Text {
                                     text: trackCell.trackClip != null ? trackCell.trackClip.name : "none"
                                 }

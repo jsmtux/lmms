@@ -71,13 +71,6 @@ public:
 		return this;
 	}
 
-	void loadSettings( const QDomElement& element ) override {
-		SerializingObject::loadSettings(element);
-	}
-
-	void saveSettings( QDomDocument& doc, QDomElement& element ) override {
-		return SerializingObject::saveSettings(doc, element);
-	}
 	// used by instrument
 	void processAudioBuffer( sampleFrame * _buf, const fpp_t _frames,
 							INotePlayHandle * _n ) override;

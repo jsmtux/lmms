@@ -216,9 +216,6 @@ public:
 	virtual int baseNote() const = 0;
 	virtual void processAudioBuffer( sampleFrame * _buf, const fpp_t _frames,
 							INotePlayHandle * _n )  = 0;
-	// This shouldn't be used, saveState/loadState should be used instead
-	virtual void saveSettings( QDomDocument& doc, QDomElement& element ) = 0;
-	virtual void loadSettings( const QDomElement& element ) = 0;
 };
 
 IInstrumentTrack* createInstrumentTrack(ITrackContainer* tc);

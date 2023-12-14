@@ -1049,8 +1049,6 @@ void Song::loadProject( const QString & fileName )
 		}
 	}
 
-	node = dataFile.content().firstChild();
-
 	QDomNodeList tclist=dataFile.content().elementsByTagName("trackcontainer");
 	m_nLoadingTrack=0;
 	for( int i=0,n=tclist.count(); i<n; ++i )
@@ -1070,6 +1068,8 @@ void Song::loadProject( const QString & fileName )
 			}
 		}
 	}
+
+	node = dataFile.content().firstChild();
 
 	while( !node.isNull() && !isCancelled() )
 	{

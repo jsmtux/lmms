@@ -120,14 +120,42 @@ private:
 	InstrumentTrackModel* curInstrumentTrackModel;
 };
 
+class InstrumentClipModel : public QObject {
+	Q_OBJECT
+	IMidiClip* m_midiClip;
+};
+
+class PatternClipModel : public QObject {
+	Q_OBJECT
+	IPatternClip* m_patternClip;
+};
+
 class BaseClipModel : public QObject {
 	Q_OBJECT
 	Q_PROPERTY(QString name READ name CONSTANT)
+	enum ClipType {
+		None,
+		Pattern,
+		Instrument
+	};
+	Q_PROPERTY(ClipType type READ type CONSTANT)
 public:
 	BaseClipModel(IClip* clip)
 		: m_clip(clip)
 	{
 	}
+
+	ClipType type() {
+		switch(m_clip->getType()) {
+			case lmms::ClipType::Midi:
+				return Instrument;
+			case lmms::ClipType::Pattern:
+				return Pattern;
+			default:
+				return None;
+		}
+	}
+
 	static void RegisterInQml() {
 		qmlRegisterType<lmms::gui::BaseClipModel>("App", 1, 0, "BaseClipModel");
 	}
@@ -298,7 +326,6 @@ private slots:
 		auto index = m_trackClips.keys().indexOf(track);
 		auto startBar = clip->startPosition().getBar();
 		auto endBar = clip->endPosition().nextFullBar();
-		qDebug() << "Sengind clip added signal from " << startBar << " to " << endBar << Qt::endl;
 		m_trackClips[track].push_back(new BaseClipModel(clip));
 		emit dataChanged(createIndex(index, startBar), createIndex(index, endBar));
 	}

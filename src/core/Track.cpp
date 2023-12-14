@@ -31,6 +31,7 @@
 
 #include <QDomElement>
 #include <QVariant>
+#include <QDebug>
 
 #include "AutomationClip.h"
 #include "ConfigManager.h"
@@ -74,7 +75,6 @@ Track::Track( TrackTypes type, TrackContainer * tc ) :
 	m_hasColor( false )
 {
 	m_trackContainer->addTrack( this );
-	qDebug() << "Adding track " << this << Qt::endl;
 	m_height = -1;
 }
 
@@ -154,7 +154,7 @@ Track * Track::create( const QDomElement & element, ITrackContainer * tc )
 
 	Track * t = create(
 		static_cast<TrackTypes>( element.attribute( "type" ).toInt() ),
-									tc );
+								tc );
 	if( t != nullptr )
 	{
 		t->restoreState( element );

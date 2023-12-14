@@ -199,7 +199,6 @@ public:
 	{
 		if( m_track )
 		{
-			qDebug() << "Adding clip to track" << m_track << Qt::endl;
 			m_track->addClip( this );
 		}
 	}
