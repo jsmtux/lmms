@@ -31,6 +31,7 @@ qt_add_qml_module(lmms2example
         "MainForm.ui.qml"
         "lmms2.qml"
         "TrackViewDelegate.qml"
+        "ClipViewDelegate.qml"
         "imports/Flat/Button.qml"
         "imports/Flat/Dial.qml"
         "imports/Flat/HeaderButton.qml"

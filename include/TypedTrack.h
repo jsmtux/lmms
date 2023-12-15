@@ -39,7 +39,6 @@ public:
 	void addClip( TypedClip<SpecialisedTrack> * clip )
 	{
 		m_clips.push_back( clip );
-		emit clipAdded( clip );
 	}
 	void removeClip( TypedClip<SpecialisedTrack> * clip )
 	{

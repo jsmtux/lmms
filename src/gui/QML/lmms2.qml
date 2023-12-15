@@ -183,15 +183,9 @@ ApplicationWindow {
 
                             model:songModel
 
-                            delegate: Rectangle {
-                                required property BaseClipModel trackClip
-                                id: trackCell
-                                implicitHeight: 50
-                                implicitWidth: 150
-                                color: "transparent"
-                                Text {
-                                    text: trackCell.trackClip != null ? trackCell.trackClip.name : "none"
-                                }
+                            delegate: ClipViewDelegate {
+                                implicitHeight: 40
+                                implicitWidth: 80
                             }
                         }
                     }

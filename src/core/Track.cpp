@@ -319,6 +319,8 @@ void Track::loadSettings( const QDomElement & element )
 			{
 				IClip * clip = createClip(
 								TimePos( 0 ) );
+				
+				emit clipAdded( clip );
 				clip->restoreState( node.toElement() );
 			}
 		}

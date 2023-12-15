@@ -133,11 +133,13 @@ class PatternClipModel : public QObject {
 class BaseClipModel : public QObject {
 	Q_OBJECT
 	Q_PROPERTY(QString name READ name CONSTANT)
+public:
 	enum ClipType {
 		None,
 		Pattern,
 		Instrument
 	};
+	Q_ENUM(ClipType)
 	Q_PROPERTY(ClipType type READ type CONSTANT)
 public:
 	BaseClipModel(IClip* clip)
@@ -158,6 +160,7 @@ public:
 
 	static void RegisterInQml() {
 		qmlRegisterType<lmms::gui::BaseClipModel>("App", 1, 0, "BaseClipModel");
+		qmlRegisterUncreatableType<ClipType>("App", 1, 0, "ClipType", "Enum type ClipType is not creatable");
 	}
 
 	bool isContainedIn(int x_index) {
@@ -249,12 +252,23 @@ public:
 	}
 
 	enum Roles {
-		ClipRole = Qt::UserRole
+		ClipType = Qt::UserRole,
+		ClipRole
 	};
 
 	static void RegisterInQml() {
 		qmlRegisterType<lmms::gui::SongTableModel>("App", 1, 0, "SongTableModel");
 		BaseClipModel::RegisterInQml();
+	}
+
+	BaseClipModel* getClipAtPosition(const QModelIndex &index) const {
+		auto clipList = m_trackClips[m_trackClips.keys()[index.row()]];
+		for(const auto& clip: clipList) {
+			if(clip->isContainedIn(index.column())) {
+				return clip;
+			}
+		}
+		return nullptr;
 	}
 
 	QVariant data(const QModelIndex &index, int role) const override
@@ -266,13 +280,16 @@ public:
 					break;
 				case ClipRole:
 				{
-					auto clipList = m_trackClips[m_trackClips.keys()[index.row()]];
-					for(const auto& clip: clipList) {
-						if(clip->isContainedIn(index.column())) {
-							return QVariant::fromValue(clip);
-						}
+					auto clip = getClipAtPosition(index);
+					if (clip) {
+						return QVariant::fromValue(clip);
 					}
 					return QVariant();
+				}
+				case ClipType:
+				{
+					auto clip = getClipAtPosition(index);
+					return clip ? QVariant::fromValue(clip->type()) : QVariant::fromValue(BaseClipModel::None);
 				}
 			}
 		}
@@ -294,6 +311,7 @@ public:
     {
         QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
         roles[ClipRole] = "trackClip";
+        roles[ClipType] = "clipType";
         return roles;
     }
 
