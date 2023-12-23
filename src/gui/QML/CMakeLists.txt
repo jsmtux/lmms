@@ -28,7 +28,6 @@ qt_add_qml_module(lmms2example
     URI lmms2
     NO_RESOURCE_TARGET_PATH
     QML_FILES
-        "MainForm.ui.qml"
         "lmms2.qml"
         "TrackViewDelegate.qml"
         "ClipViewDelegate.qml"

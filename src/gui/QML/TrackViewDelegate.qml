@@ -47,10 +47,6 @@ Rectangle {
                 implicitHeight: 30
                 inputMode: Dial.Horizontal
             }
-            Button {
-                text: "Test"
-                onClicked: control.track.instrumentProperties.testPlay()
-            }
         }
     }
 

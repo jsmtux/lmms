@@ -72,6 +72,7 @@ ApplicationWindow {
                             id: helpButtonTest
                             source: "qrc:/icons/status_button/play.png"
                             focusPolicy: Qt.TabFocus
+                            onClicked: songModel.Play();
                         }
                         StatusButton {
                             id: helpButtonTest3

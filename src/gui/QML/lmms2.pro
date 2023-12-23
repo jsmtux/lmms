@@ -8,7 +8,6 @@ SOURCES += main.cpp
 RESOURCES += \
     qtquickcontrols2.conf \
     lmms2.qml \
-    MainForm.ui.qml \
     imports/Flat/Button.qml \
     imports/Flat/HeaderButton.qml \
     imports/Flat/StatusButton.qml \

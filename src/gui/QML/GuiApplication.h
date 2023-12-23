@@ -234,20 +234,20 @@ class SongTableModel : public QAbstractItemModel {
 		Q_OBJECT
 public:
 	SongTableModel(ISong* song) :
-		m_numBars(song->length())
+		m_song(song)
 	{
+		auto numBars = song->length();
 		connect(song->trackContainerInterface(),
 			&ITrackContainer::trackAdded, this, &SongTableModel::trackAdded, Qt::QueuedConnection);
-		connect(song, &ISong::lengthChanged, this, [this](int bars){
-			int difference = bars - m_numBars;
+		connect(song, &ISong::lengthChanged, this, [this, numBars](int bars){
+			int difference = bars - numBars;
 			if (difference > 0) {
-				beginInsertColumns(QModelIndex(), bars, m_numBars);
+				beginInsertColumns(QModelIndex(), bars, numBars);
 				endInsertColumns();
 			} else if (difference < 0) {
-				beginRemoveColumns(QModelIndex(), m_numBars, bars);
+				beginRemoveColumns(QModelIndex(), numBars, bars);
 				endRemoveColumns();
 			}
-			m_numBars = bars;
 		});
 	}
 
@@ -255,6 +255,10 @@ public:
 		ClipType = Qt::UserRole,
 		ClipRole
 	};
+
+	Q_INVOKABLE void Play() {
+		m_song->playSong();
+	}
 
 	static void RegisterInQml() {
 		qmlRegisterType<lmms::gui::SongTableModel>("App", 1, 0, "SongTableModel");
@@ -324,7 +328,7 @@ public:
 
     int columnCount(const QModelIndex &parent) const override
     {
-        return parent.isValid() ? 0 : m_numBars;
+        return parent.isValid() ? 0 : m_song->length();
     }
 
 private slots:
@@ -348,8 +352,7 @@ private slots:
 		emit dataChanged(createIndex(index, startBar), createIndex(index, endBar));
 	}
 private:
-	ISong* song;
-	int m_numBars;
+	ISong* m_song;
 	QMap<BaseTrackModel*, QList<BaseClipModel*>> m_trackClips;
 };
 
