@@ -198,7 +198,7 @@ public:
 	}
 
 	BaseClipModel* getClipAtPosition(const QModelIndex &index) const {
-		auto clipList = m_trackClips[m_trackClips.keys()[index.row()]];
+		auto clipList = m_trackClips[m_trackList[index.row()]];
 		for(const auto& clip: clipList) {
 			if(clip->isContainedIn(index.column())) {
 				return clip;
@@ -229,7 +229,7 @@ public:
 				}
 				case TrackRole:
 				{
-					return QVariant::fromValue(m_trackClips.keys()[index.row()]);
+					return QVariant::fromValue(m_trackList[index.row()]);
 				}
 			}
 		}
@@ -272,6 +272,7 @@ private slots:
 		auto index = m_trackClips.size();
         beginInsertRows(QModelIndex(), index, index);
 		auto trackModel = CreateTrackModel(track, this);
+		m_trackList.append(trackModel);
 		m_trackClips[trackModel] = QList<BaseClipModel*>();
 		connect(track, &ITrack::clipAdded, this, [this, trackModel](IClip* clip){clipAdded(trackModel, clip);});
 		for (const auto& clip: track->getClips()) {
@@ -290,6 +291,7 @@ private slots:
 private:
 	ISong* m_song;
 	QMap<BaseTrackModel*, QList<BaseClipModel*>> m_trackClips;
+	QList<BaseTrackModel*> m_trackList;
 };
 
 class SongTrackListView : public QAbstractListModel {
