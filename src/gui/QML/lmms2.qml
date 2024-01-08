@@ -170,7 +170,7 @@ ApplicationWindow {
                             syncView: songTableView
                             resizableRows: false
                             clip: true
-                            model:trackModel
+                            model: songModel.trackList
                             delegate: TrackViewDelegate {}
                         }
                         TableView {
@@ -182,7 +182,7 @@ ApplicationWindow {
                             columnSpacing: 1
                             rowSpacing: 1
 
-                            model:songModel
+                            model:songModel.songTable
 
                             delegate: ClipViewDelegate {
                                 implicitHeight: 40

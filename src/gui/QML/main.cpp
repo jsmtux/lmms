@@ -431,12 +431,8 @@ int main( int argc, char * * argv )
 
 	auto qml_context = qCoreApplicationEngine.rootContext();
 
-	lmms::gui::TrackListModel::RegisterInQml();
-	lmms::gui::TrackListModel track_list_model(IEngine::Instance()->getSongInterface()->trackContainerInterface());
-	qml_context->setContextProperty("trackModel", &track_list_model);
-
-	lmms::gui::SongTableModel::RegisterInQml();
-	lmms::gui::SongTableModel song_model(IEngine::Instance()->getSongInterface());
+	lmms::gui::SongModel::RegisterInQml();
+	lmms::gui::SongModel song_model(IEngine::Instance()->getSongInterface());
 	qml_context->setContextProperty("songModel", &song_model);
 
     qCoreApplicationEngine.load(QUrl(QStringLiteral("qrc:/lmms2.qml")));
