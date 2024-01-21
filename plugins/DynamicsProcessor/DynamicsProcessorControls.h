@@ -28,7 +28,8 @@
 
 #include "EffectControls.h"
 #include "DynamicsProcessorControlDialog.h"
-#include "Graph.h"
+
+#include "widgets/Graph.h"
 
 namespace lmms
 {
@@ -88,7 +89,7 @@ private:
 	FloatModel m_outputModel;
 	FloatModel m_attackModel;
 	FloatModel m_releaseModel;
-	graphModel m_wavegraphModel;
+	gui::graphModel m_wavegraphModel;
 	IntModel m_stereomodeModel;
 
 	friend class gui::DynProcControlDialog;

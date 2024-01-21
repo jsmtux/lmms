@@ -44,7 +44,7 @@ class LadspaEffect : public Effect
 	Q_OBJECT
 public:
 	LadspaEffect( Model * _parent,
-			const Descriptor::SubPluginFeatures::Key * _key );
+			const PluginDescriptor::Key * _key );
 	~LadspaEffect() override;
 
 	bool processAudioBuffer( sampleFrame * _buf,

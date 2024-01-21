@@ -49,7 +49,7 @@ Plugin::PluginTypes Lv2ControlBase::check(const LilvPlugin *plugin,
 
 
 
-Lv2ControlBase::Lv2ControlBase(Model* that, const QString &uri) :
+Lv2ControlBase::Lv2ControlBase(QObject* that, const QString &uri) :
 	m_plugin(Engine::getLv2Manager()->getPlugin(uri))
 {
 	if (m_plugin)

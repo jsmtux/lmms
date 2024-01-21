@@ -35,8 +35,6 @@
 #include "ZynAddSubFx.h"
 #include "ConfigManager.h"
 #include "Engine.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
 #include "DataFile.h"
 #include "InstrumentPlayHandle.h"
 #include "InstrumentTrack.h"
@@ -47,6 +45,9 @@
 #include "LocalZynAddSubFx.h"
 #include "AudioEngine.h"
 #include "Clipboard.h"
+
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
 
 #include "embed.h"
 #include "plugin_export.h"
@@ -104,18 +105,18 @@ bool ZynAddSubFxRemotePlugin::processMessage( const message & _m )
 
 ZynAddSubFxInstrument::ZynAddSubFxInstrument(
 									InstrumentTrack * _instrumentTrack ) :
-	Instrument( _instrumentTrack, &zynaddsubfx_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrumentTrack, &zynaddsubfx_plugin_descriptor ),
 	m_hasGUI( false ),
 	m_plugin( nullptr ),
 	m_remotePlugin( nullptr ),
-	m_portamentoModel( 0, 0, 127, 1, this, tr( "Portamento" ) ),
-	m_filterFreqModel( 64, 0, 127, 1, this, tr( "Filter frequency" ) ),
-	m_filterQModel( 64, 0, 127, 1, this, tr( "Filter resonance" ) ),
-	m_bandwidthModel( 64, 0, 127, 1, this, tr( "Bandwidth" ) ),
-	m_fmGainModel( 127, 0, 127, 1, this, tr( "FM gain" ) ),
-	m_resCenterFreqModel( 64, 0, 127, 1, this, tr( "Resonance center frequency" ) ),
-	m_resBandwidthModel( 64, 0, 127, 1, this, tr( "Resonance bandwidth" ) ),
-	m_forwardMidiCcModel( true, this, tr( "Forward MIDI control change events" ) )
+	m_portamentoModel( 0, 0, 127, 1, model(), tr( "Portamento" ) ),
+	m_filterFreqModel( 64, 0, 127, 1, model(), tr( "Filter frequency" ) ),
+	m_filterQModel( 64, 0, 127, 1, model(), tr( "Filter resonance" ) ),
+	m_bandwidthModel( 64, 0, 127, 1, model(), tr( "Bandwidth" ) ),
+	m_fmGainModel( 127, 0, 127, 1, model(), tr( "FM gain" ) ),
+	m_resCenterFreqModel( 64, 0, 127, 1, model(), tr( "Resonance center frequency" ) ),
+	m_resBandwidthModel( 64, 0, 127, 1, model(), tr( "Resonance bandwidth" ) ),
+	m_forwardMidiCcModel( true, model(), tr( "Forward MIDI control change events" ) )
 {
 	initPlugin();
 
@@ -482,7 +483,7 @@ void ZynAddSubFxInstrument::sendControlChange( MidiControllers midiCtl, float va
 
 
 
-gui::PluginView* ZynAddSubFxInstrument::instantiateView( QWidget * _parent )
+gui::InstrumentView* ZynAddSubFxInstrument::instantiateView( QWidget * _parent )
 {
 	return new gui::ZynAddSubFxView( this, _parent );
 }
@@ -494,8 +495,8 @@ namespace gui
 {
 
 
-ZynAddSubFxView::ZynAddSubFxView( Instrument * _instrument, QWidget * _parent ) :
-        InstrumentViewFixedSize( _instrument, _parent )
+ZynAddSubFxView::ZynAddSubFxView( ZynAddSubFxInstrument * _instrument, QWidget * _parent ) :
+        InstrumentViewImpl( _instrument, _parent, true )
 {
 	setAutoFillBackground( true );
 	QPalette pal;
@@ -508,35 +509,35 @@ ZynAddSubFxView::ZynAddSubFxView( Instrument * _instrument, QWidget * _parent ) 
 	l->setVerticalSpacing( 16 );
 	l->setHorizontalSpacing( 10 );
 
-	m_portamento = new Knob( knobBright_26, this );
+	m_portamento = new Knob( knobBright_26, &m_instrument->m_portamentoModel, this );
 	m_portamento->setHintText( tr( "Portamento:" ), "" );
 	m_portamento->setLabel( tr( "PORT" ) );
 
-	m_filterFreq = new Knob( knobBright_26, this );
+	m_filterFreq = new Knob( knobBright_26, &m_instrument->m_filterFreqModel, this );
 	m_filterFreq->setHintText( tr( "Filter frequency:" ), "" );
 	m_filterFreq->setLabel( tr( "FREQ" ) );
 
-	m_filterQ = new Knob( knobBright_26, this );
+	m_filterQ = new Knob( knobBright_26, &m_instrument->m_filterQModel, this );
 	m_filterQ->setHintText( tr( "Filter resonance:" ), "" );
 	m_filterQ->setLabel( tr( "RES" ) );
 
-	m_bandwidth = new Knob( knobBright_26, this );
+	m_bandwidth = new Knob( knobBright_26, &m_instrument->m_bandwidthModel, this );
 	m_bandwidth->setHintText( tr( "Bandwidth:" ), "" );
 	m_bandwidth->setLabel( tr( "BW" ) );
 
-	m_fmGain = new Knob( knobBright_26, this );
+	m_fmGain = new Knob( knobBright_26, &m_instrument->m_fmGainModel, this );
 	m_fmGain->setHintText( tr( "FM gain:" ), "" );
 	m_fmGain->setLabel( tr( "FM GAIN" ) );
 
-	m_resCenterFreq = new Knob( knobBright_26, this );
+	m_resCenterFreq = new Knob( knobBright_26, &m_instrument->m_resCenterFreqModel, this );
 	m_resCenterFreq->setHintText( tr( "Resonance center frequency:" ), "" );
 	m_resCenterFreq->setLabel( tr( "RES CF" ) );
 
-	m_resBandwidth = new Knob( knobBright_26, this );
+	m_resBandwidth = new Knob( knobBright_26, &m_instrument->m_resBandwidthModel, this );
 	m_resBandwidth->setHintText( tr( "Resonance bandwidth:" ), "" );
 	m_resBandwidth->setLabel( tr( "RES BW" ) );
 
-	m_forwardMidiCC = new LedCheckBox( tr( "Forward MIDI control changes" ), this );
+	m_forwardMidiCC = new LedCheckBox( tr( "Forward MIDI control changes" ), &m_instrument->m_forwardMidiCcModel, this );
 
 	m_toggleUIButton = new QPushButton( tr( "Show GUI" ), this );
 	m_toggleUIButton->setCheckable( true );
@@ -561,6 +562,8 @@ ZynAddSubFxView::ZynAddSubFxView( Instrument * _instrument, QWidget * _parent ) 
 	l->setColumnStretch( 4, 10 );
 
 	setAcceptDrops( true );
+
+	m_toggleUIButton->setChecked( m_instrument->m_hasGUI );
 }
 
 
@@ -599,7 +602,7 @@ void ZynAddSubFxView::dropEvent( QDropEvent * _de )
 	const QString value = StringPairDrag::decodeValue( _de );
 	if( type == "pluginpresetfile" )
 	{
-		castModel<ZynAddSubFxInstrument>()->loadFile( value );
+		m_instrument->loadFile( value );
 		_de->accept();
 		return;
 	}
@@ -608,39 +611,16 @@ void ZynAddSubFxView::dropEvent( QDropEvent * _de )
 
 
 
-
-void ZynAddSubFxView::modelChanged()
-{
-	auto m = castModel<ZynAddSubFxInstrument>();
-
-	// set models for controller knobs
-	m_portamento->setModel( &m->m_portamentoModel );
-	m_filterFreq->setModel( &m->m_filterFreqModel );
-	m_filterQ->setModel( &m->m_filterQModel );
-	m_bandwidth->setModel( &m->m_bandwidthModel );
-	m_fmGain->setModel( &m->m_fmGainModel );
-	m_resCenterFreq->setModel( &m->m_resCenterFreqModel );
-	m_resBandwidth->setModel( &m->m_resBandwidthModel );
-
-	m_forwardMidiCC->setModel( &m->m_forwardMidiCcModel );
-
-	m_toggleUIButton->setChecked( m->m_hasGUI );
-}
-
-
-
-
 void ZynAddSubFxView::toggleUI()
 {
-	auto model = castModel<ZynAddSubFxInstrument>();
-	if( model->m_hasGUI != m_toggleUIButton->isChecked() )
+	if( m_instrument->m_hasGUI != m_toggleUIButton->isChecked() )
 	{
-		model->m_hasGUI = m_toggleUIButton->isChecked();
-		model->reloadPlugin();
+		m_instrument->m_hasGUI = m_toggleUIButton->isChecked();
+		m_instrument->reloadPlugin();
 
-		if( model->m_remotePlugin )
+		if( m_instrument->m_remotePlugin )
 		{
-			connect( model->m_remotePlugin, SIGNAL( clickedCloseButton() ),
+			connect( m_instrument->m_remotePlugin, SIGNAL( clickedCloseButton() ),
 						m_toggleUIButton, SLOT( toggle() ) );
 		}
 	}

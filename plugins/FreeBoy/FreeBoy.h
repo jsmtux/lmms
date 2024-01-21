@@ -28,9 +28,10 @@
 
 #include "AutomatableModel.h"
 #include "Blip_Buffer.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
-#include "Graph.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/Graph.h"
 
 namespace lmms
 {
@@ -46,7 +47,7 @@ class Knob;
 }
 
 
-class FreeBoyInstrument : public Instrument
+class FreeBoyInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:
@@ -64,7 +65,7 @@ public:
 
 	f_cnt_t desiredReleaseFrames() const override;
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 /*public slots:
@@ -108,7 +109,7 @@ private:
 	FloatModel m_trebleModel;
 	FloatModel m_bassModel;
 
-	graphModel  m_graphModel;
+	gui::graphModel  m_graphModel;
 
 	friend class gui::FreeBoyInstrumentView;
 };
@@ -118,16 +119,14 @@ namespace gui
 {
 
 
-class FreeBoyInstrumentView : public InstrumentViewFixedSize
+class FreeBoyInstrumentView : public InstrumentViewImpl<FreeBoyInstrument>
 {
 	Q_OBJECT
 public:
-	FreeBoyInstrumentView( Instrument * _instrument, QWidget * _parent );
+	FreeBoyInstrumentView( FreeBoyInstrument * _instrument, QWidget * _parent );
 	~FreeBoyInstrumentView() override = default;
 
 private:
-	void modelChanged() override;
-
 	Knob * m_ch1SweepTimeKnob;
 	PixmapButton * m_ch1SweepDirButton;
 	Knob * m_ch1SweepRtShiftKnob;

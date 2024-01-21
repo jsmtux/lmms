@@ -36,7 +36,7 @@ namespace lmms
 class Vectorscope : public Effect
 {
 public:
-	Vectorscope(Model *parent, const Descriptor::SubPluginFeatures::Key *key);
+	Vectorscope(Model *parent, const PluginDescriptor::Key *key);
 	~Vectorscope() override = default;
 
 	bool processAudioBuffer(sampleFrame *buffer, const fpp_t frame_count) override;

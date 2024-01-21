@@ -60,15 +60,15 @@ Plugin::Descriptor PLUGIN_EXPORT midiexport_plugin_descriptor =
 }
 
 
-MidiExport::MidiExport() : ExportFilter( &midiexport_plugin_descriptor)
+MidiExport::MidiExport() : QWidgetExportFilter( &midiexport_plugin_descriptor)
 {
 }
 
 
 
 
-bool MidiExport::tryExport(const TrackContainer::TrackList &tracks,
-			const TrackContainer::TrackList &patternStoreTracks,
+bool MidiExport::tryExport(const TrackList &tracks,
+			const TrackList &patternStoreTracks,
 			int tempo, int masterPitch, const QString &filename)
 {
 	QFile f(filename);

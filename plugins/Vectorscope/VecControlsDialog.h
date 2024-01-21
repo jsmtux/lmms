@@ -25,7 +25,7 @@
 #ifndef VECCONTROLSDIALOG_H
 #define VECCONTROLSDIALOG_H
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 namespace lmms
 {

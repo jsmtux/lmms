@@ -29,12 +29,15 @@
 
 #include <stk/Instrmnt.h>
 
-#include "ComboBox.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
-#include "Knob.h"
 #include "NotePlayHandle.h"
-#include "LedCheckBox.h"
+
+#include "instrument/InstrumentView.h"
+
+#include "plugins/QWidgetInstrumentPlugin.h"
+
+#include "widgets/ComboBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
 
 // As of Stk 4.4 all classes and types have been moved to the namespace "stk".
 // However in older versions this namespace does not exist, therefore declare it
@@ -155,7 +158,7 @@ protected:
 
 
 
-class MalletsInstrument : public Instrument
+class MalletsInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:
@@ -172,7 +175,7 @@ public:
 
 	QString nodeName() const override;
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 private:
@@ -213,7 +216,7 @@ namespace gui
 {
 
 
-class MalletsInstrumentView: public InstrumentViewFixedSize
+class MalletsInstrumentView: public InstrumentViewImpl<MalletsInstrument>
 {
 	Q_OBJECT
 public:
@@ -225,8 +228,6 @@ public slots:
 	void changePreset();
 
 private:
-	void modelChanged() override;
-
 	void setWidgetBackground( QWidget * _widget, const QString & _pic );
 	QWidget * setupModalBarControls( QWidget * _parent );
 	QWidget * setupTubeBellControls( QWidget * _parent );

@@ -38,7 +38,7 @@ class StereoEnhancerEffect : public Effect
 {
 public:
 	StereoEnhancerEffect( Model * parent,
-	                      const Descriptor::SubPluginFeatures::Key * _key );
+	                      const PluginDescriptor::Key * _key );
 	~StereoEnhancerEffect() override;
 	bool processAudioBuffer( sampleFrame * _buf,
 		                                          const fpp_t _frames ) override;

@@ -27,16 +27,15 @@
 #include <QDomElement>
  
 #include "Engine.h"
-#include "PatternClipView.h"
 #include "PatternStore.h"
-#include "PatternTrack.h"
+#include "tracks/PatternTrack.h"
 
 namespace lmms
 {
 
 
-PatternClip::PatternClip(Track* track) :
-	Clip(track)
+PatternClip::PatternClip(PatternTrack* track) :
+	TypedClip(track)
 {
 	bar_t t = Engine::patternStore()->lengthOfPattern(patternIndex());
 	if( t > 0 )
@@ -110,15 +109,7 @@ void PatternClip::loadSettings(const QDomElement& element)
 
 int PatternClip::patternIndex()
 {
-	return dynamic_cast<PatternTrack*>(getTrack())->patternIndex();
+	return getTrack()->patternIndex();
 }
-
-
-
-gui::ClipView* PatternClip::createView(gui::TrackView* tv)
-{
-	return new gui::PatternClipView(this, tv);
-}
-
 
 } // namespace lmms

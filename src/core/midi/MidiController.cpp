@@ -27,15 +27,16 @@
 
 #include "AudioEngine.h"
 #include "MidiController.h"
+#include "MidiClient.h"
 
 namespace lmms
 {
 
 
-MidiController::MidiController( Model * _parent ) :
+MidiController::MidiController( QObject * _parent ) :
 	Controller( Controller::MidiController, _parent, tr( "MIDI Controller" ) ),
 	MidiEventProcessor(),
-	m_midiPort( tr( "unnamed_midi_controller" ), Engine::audioEngine()->midiClient(), this, this, MidiPort::Input ),
+	m_midiPort( tr( "unnamed_midi_controller" ), Engine::audioEngine()->midiClient(), this, model(), MidiPort::Input ),
 	m_lastValue( 0.0f ),
 	m_previousValue( 0.0f )
 {
@@ -139,14 +140,25 @@ QString MidiController::nodeName() const
 	return( "Midicontroller" );
 }
 
-
-
-
-gui::ControllerDialog* MidiController::createDialog( QWidget * _parent )
-{
-	return nullptr;
+IMidiController* getMidiControllerFromBaseController(IController* controller) {
+	return static_cast<MidiController*>(controller);
 }
 
+void AutoDetectMidiController::processInEvent( const MidiEvent& event, const TimePos& time, f_cnt_t offset )
+{
+	if( event.type() == MidiControlChange &&
+		( m_midiPort.inputChannel() == 0 || m_midiPort.inputChannel() == event.channel() + 1 ) )
+	{
+		m_detectedMidiChannel = event.channel() + 1;
+		m_detectedMidiController = event.controllerNumber() + 1;
+		m_detectedMidiPort = Engine::audioEngine()->midiClient()->sourcePortName( event );
 
+		emit valueChanged();
+	}
+}
+
+std::unique_ptr<IMidiController> createAutoDetectMidiController(ISong* song) {
+	return std::make_unique<AutoDetectMidiController>(song);
+}
 
 } // namespace lmms

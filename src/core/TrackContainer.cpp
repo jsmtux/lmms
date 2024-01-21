@@ -25,31 +25,29 @@
 
 
 #include <QCoreApplication>
-#include <QProgressDialog>
 #include <QDomElement>
 #include <QWriteLocker>
 
+#include <iostream>
 #include "AutomationClip.h"
 #include "embed.h"
 #include "TrackContainer.h"
 #include "PatternClip.h"
 #include "PatternStore.h"
-#include "PatternTrack.h"
 #include "Song.h"
 
-#include "GuiApplication.h"
-#include "MainWindow.h"
-#include "TextFloat.h"
+#include "IGuiApplication.h"
+
+#include "tracks/PatternTrack.h"
 
 namespace lmms
 {
 
 
-TrackContainer::TrackContainer() :
-	Model( nullptr ),
-	JournallingObject(),
+TrackContainer::TrackContainer(TrackContainerCb* _trackContainerCb) :
 	m_tracksMutex(),
-	m_tracks()
+	m_tracks(),
+	m_trackContainerCb(_trackContainerCb)
 {
 }
 
@@ -89,19 +87,17 @@ void TrackContainer::loadSettings( const QDomElement & _this )
 		clearAllTracks();
 	}
 
-	static QProgressDialog * pd = nullptr;
+	static gui::IProgressModal * pd = nullptr;
 	bool was_null = ( pd == nullptr );
-	if (!journalRestore && gui::getGUI() != nullptr)
+	if (!journalRestore && gui::getGUIInterface() != nullptr)
 	{
 		if( pd == nullptr )
 		{
-			pd = new QProgressDialog( tr( "Loading project..." ),
-						tr( "Cancel" ), 0,
-						Engine::getSong()->getLoadingTrackCount(),
-						gui::getGUI()->mainWindow());
-			pd->setWindowModality( Qt::ApplicationModal );
-			pd->setWindowTitle( tr( "Please wait..." ) );
-			pd->show();
+			pd = gui::getGUIInterface()->mainWindowInterface()->ShowProgressMessage(
+				tr( "Loading project..." ),
+				0,
+				Engine::getSong()->getLoadingTrackCount()
+			);
 		}
 	}
 
@@ -115,12 +111,13 @@ void TrackContainer::loadSettings( const QDomElement & _this )
 						QEventLoop::AllEvents, 100 );
 			if( pd->wasCanceled() )
 			{
-				if (gui::getGUI() != nullptr)
+				if (gui::getGUIInterface() != nullptr)
 				{
-					gui::TextFloat::displayMessage( tr( "Loading cancelled" ),
-					tr( "Project loading was cancelled." ),
-					embed::getIconPixmap( "project_file", 24, 24 ),
-					2000 );
+					gui::getGUIInterface()->mainWindowInterface()->ShowTextFloatMessage(
+						tr( "Loading cancelled" ),
+						tr( "Project loading was cancelled." ),
+						embed::getIconPixmap( "project_file", 24, 24 ),
+						2000 );
 				}
 				Engine::getSong()->loadingCancelled();
 				break;
@@ -135,7 +132,7 @@ void TrackContainer::loadSettings( const QDomElement & _this )
 						node.firstChild().toElement().attribute( "name" );
 			if( pd != nullptr )
 			{
-				pd->setLabelText( tr("Loading Track %1 (%2/Total %3)").arg( trackName ).
+				pd->updateDescription( tr("Loading Track %1 (%2/Total %3)").arg( trackName ).
 						  arg( pd->value() + 1 ).arg( Engine::getSong()->getLoadingTrackCount() ) );
 			}
 			Track::create( node.toElement(), this );
@@ -154,7 +151,10 @@ void TrackContainer::loadSettings( const QDomElement & _this )
 }
 
 
-
+bool TrackContainer::allowAutoResizeClip()
+{
+	return m_trackContainerCb == Engine::patternStore();
+}
 
 int TrackContainer::countTracks( Track::TrackTypes _tt ) const
 {
@@ -215,14 +215,6 @@ void TrackContainer::removeTrack( Track * _track )
 
 
 
-
-void TrackContainer::updateAfterTrackAdd()
-{
-}
-
-
-
-
 void TrackContainer::clearAllTracks()
 {
 	//m_tracksMutex.lockForWrite();
@@ -248,19 +240,15 @@ bool TrackContainer::isEmpty() const
 	return true;
 }
 
-
-
-AutomatedValueMap TrackContainer::automatedValuesAt(TimePos time, int clipNum) const
+AutomatedValueMap TrackContainer::automatedValuesFromAllTracks(TimePos time, int clipNum, Track* addTrack) const
 {
-	return automatedValuesFromTracks(tracks(), time, clipNum);
-}
-
-
-AutomatedValueMap TrackContainer::automatedValuesFromTracks(const TrackList &tracks, TimePos time, int clipNum)
-{
+	TrackList trackList = tracks();
+	if (addTrack) {
+		trackList = TrackList{addTrack} << tracks();
+	}
 	Track::clipVector clips;
 
-	for (Track* track: tracks)
+	for (ITrack* track: trackList)
 	{
 		if (track->isMuted()) {
 			continue;
@@ -286,7 +274,7 @@ AutomatedValueMap TrackContainer::automatedValuesFromTracks(const TrackList &tra
 
 	Q_ASSERT(std::is_sorted(clips.begin(), clips.end(), Clip::comparePosition));
 
-	for(Clip* clip : clips)
+	for(IClip* clip : clips)
 	{
 		if (clip->isMuted() || clip->startPosition() > time) {
 			continue;
@@ -303,7 +291,7 @@ AutomatedValueMap TrackContainer::automatedValuesFromTracks(const TrackList &tra
 			}
 			float value = p->valueAt(relTime);
 
-			for (AutomatableModel* model : p->objects())
+			for (auto* model : p->objects())
 			{
 				valueMap[model] = value;
 			}

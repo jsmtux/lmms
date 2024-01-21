@@ -24,14 +24,14 @@
 
 
 #include "InstrumentPlayHandle.h"
-#include "InstrumentTrack.h"
+#include "tracks/InstrumentTrack.h"
 
 namespace lmms
 {
 
 
-InstrumentPlayHandle::InstrumentPlayHandle( Instrument * instrument, InstrumentTrack* instrumentTrack ) :
-		PlayHandle( TypeInstrumentPlayHandle ),
+InstrumentPlayHandle::InstrumentPlayHandle( IInstrument * instrument, InstrumentTrack* instrumentTrack ) :
+		PlayHandle( PlayHandleType::TypeInstrumentPlayHandle ),
 		m_instrument( instrument )
 {
 	setAudioPort( instrumentTrack->audioPort() );

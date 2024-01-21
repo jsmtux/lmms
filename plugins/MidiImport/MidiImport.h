@@ -30,13 +30,13 @@
 #include <QVector>
 
 #include "MidiEvent.h"
-#include "ImportFilter.h"
+#include "plugins/QWidgetImportFilter.h"
 
 namespace lmms
 {
 
 
-class MidiImport : public ImportFilter
+class MidiImport : public QObject, public QWidgetImportFilter
 {
 	Q_OBJECT
 public:

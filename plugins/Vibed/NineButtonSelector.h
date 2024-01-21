@@ -46,7 +46,7 @@ class NineButtonSelector: public QWidget , public IntModelView
 	Q_OBJECT
 			
 public:
-	NineButtonSelector( 	QPixmap _button0_on,
+	NineButtonSelector(QPixmap _button0_on,
 				QPixmap _button0_off,
 				QPixmap _button1_on,
 				QPixmap _button1_off,
@@ -66,6 +66,7 @@ public:
 				QPixmap _button8_off,
 				int _default,
 				int _x, int _y,
+				IntModel* _model,
 				QWidget * _parent);
 	~NineButtonSelector() override;
 	
@@ -92,7 +93,6 @@ signals:
 	void NineButtonSelection( int );
 	
 private:
-	void modelChanged() override;
 	void updateButton( int );
 
 	QList<PixmapButton *> m_buttons;

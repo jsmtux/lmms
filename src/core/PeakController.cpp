@@ -28,11 +28,13 @@
 #include <cmath>
 
 #include <QDomElement>
-#include <QMessageBox>
 
 #include "AudioEngine.h"
 #include "EffectChain.h"
-#include "plugins/PeakControllerEffect/PeakControllerEffect.h"
+#include "IGuiApplication.h"
+#include "IPeakControllerEffect.h"
+
+using lmms::gui::getGUIInterface;
 
 namespace lmms
 {
@@ -44,8 +46,8 @@ int PeakController::m_loadCount;
 bool PeakController::m_buggedFile;
 
 
-PeakController::PeakController( Model * _parent,
-		PeakControllerEffect * _peak_effect ) :
+PeakController::PeakController( QObject * _parent,
+		IPeakControllerEffect * _peak_effect ) :
 	Controller( Controller::PeakController, _parent, tr( "Peak Controller" ) ),
 	m_peakEffect( _peak_effect ),
 	m_currentSample( 0.0f )
@@ -53,13 +55,13 @@ PeakController::PeakController( Model * _parent,
 	setSampleExact( true );
 	if( m_peakEffect )
 	{
-		connect( m_peakEffect, SIGNAL(destroyed()),
+		connect( m_peakEffect->model(), SIGNAL(destroyed()),
 			this, SLOT(handleDestroyedEffect()));
 	}
 	connect( Engine::audioEngine(), SIGNAL(sampleRateChanged()), this, SLOT(updateCoeffs()));
-	connect( m_peakEffect->attackModel(), SIGNAL(dataChanged()),
+	connect( m_peakEffect->attackModel()->model(), SIGNAL(dataChanged()),
 			this, SLOT(updateCoeffs()), Qt::DirectConnection );
-	connect( m_peakEffect->decayModel(), SIGNAL(dataChanged()),
+	connect( m_peakEffect->decayModel()->model(), SIGNAL(dataChanged()),
 			this, SLOT(updateCoeffs()), Qt::DirectConnection );
 	m_coeffNeedsUpdate = true;
 }
@@ -69,9 +71,9 @@ PeakController::PeakController( Model * _parent,
 
 PeakController::~PeakController()
 {
-	if( m_peakEffect != nullptr && m_peakEffect->effectChain() != nullptr )
+	if( m_peakEffect != nullptr )
 	{
-		m_peakEffect->effectChain()->removeEffect( m_peakEffect );
+		m_peakEffect->removeFromEffectChain();
 	}
 }
 
@@ -131,7 +133,7 @@ void PeakController::handleDestroyedEffect()
 {
 	// possible race condition...
 	//printf("disconnecting effect\n");
-	disconnect( m_peakEffect );
+	disconnect( m_peakEffect->model() );
 	m_peakEffect = nullptr;
 	//deleteLater();
 	delete this;
@@ -145,7 +147,7 @@ void PeakController::saveSettings( QDomDocument & _doc, QDomElement & _this )
 	{
 		Controller::saveSettings( _doc, _this );
 
-		_this.setAttribute( "effectId", m_peakEffect->m_effectId );
+		_this.setAttribute( "effectId", m_peakEffect->effectId() );
 	}
 }
 
@@ -164,7 +166,7 @@ void PeakController::loadSettings( const QDomElement & _this )
 	PeakControllerEffectVector::Iterator i;
 	for( i = s_effects.begin(); i != s_effects.end(); ++i )
 	{
-		if( (*i)->m_effectId == effectId )
+		if( (*i)->effectId() == effectId )
 		{
 			m_peakEffect = *i;
 			return;
@@ -193,13 +195,13 @@ PeakController * PeakController::getControllerBySetting(const QDomElement & _thi
 	PeakControllerEffectVector::Iterator i;
 
 	//Backward compatibility for bug in <= 0.4.15 . For >= 1.0.0 ,
-	//foundCount should always be 1 because m_effectId is initialized with rand()
+	//foundCount should always be 1 because effectId() is initialized with rand()
 	int foundCount = 0;
 	if( m_buggedFile == false )
 	{
 		for( i = s_effects.begin(); i != s_effects.end(); ++i )
 		{
-			if( (*i)->m_effectId == effectId )
+			if( (*i)->effectId() == effectId )
 			{
 				foundCount++;
 			}
@@ -210,18 +212,16 @@ PeakController * PeakController::getControllerBySetting(const QDomElement & _thi
 			int newEffectId = 0;
 			for( i = s_effects.begin(); i != s_effects.end(); ++i )
 			{
-				(*i)->m_effectId = newEffectId++;
+				(*i)->setEffectId(newEffectId++);
 			}
-			QMessageBox msgBox;
-			msgBox.setIcon( QMessageBox::Information );
-			msgBox.setWindowTitle( tr("Peak Controller Bug") );
-			msgBox.setText( tr("Due to a bug in older version of LMMS, the peak "
+			getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+				tr("Peak Controller Bug"),
+				tr("Due to a bug in older version of LMMS, the peak "
 							   "controllers may not be connect properly. "
 							   "Please ensure that peak controllers are connected "
 							   "properly and re-save this file. "
-							   "Sorry for any inconvenience caused.") );
-			msgBox.setStandardButtons(QMessageBox::Ok);
-			msgBox.exec();
+							   "Sorry for any inconvenience caused.")
+			);
 		}
 	}
 
@@ -233,9 +233,9 @@ PeakController * PeakController::getControllerBySetting(const QDomElement & _thi
 
 	for( i = s_effects.begin(); i != s_effects.end(); ++i )
 	{
-		if( (*i)->m_effectId == effectId )
+		if( (*i)->effectId() == effectId )
 		{
-			return (*i)->controller();
+			return static_cast<PeakController*>((*i)->controller());
 		}
 	}
 
@@ -247,13 +247,6 @@ PeakController * PeakController::getControllerBySetting(const QDomElement & _thi
 QString PeakController::nodeName() const
 {
 	return( "Peakcontroller" );
-}
-
-
-
-gui::ControllerDialog * PeakController::createDialog( QWidget * _parent )
-{
-	return new gui::PeakControllerDialog( this, _parent );
 }
 
 

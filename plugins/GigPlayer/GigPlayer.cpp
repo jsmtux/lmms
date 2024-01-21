@@ -40,20 +40,22 @@
 #include "ConfigManager.h"
 #include "endian_handling.h"
 #include "Engine.h"
-#include "FileDialog.h"
 #include "InstrumentTrack.h"
 #include "InstrumentPlayHandle.h"
-#include "Knob.h"
 #include "NotePlayHandle.h"
 #include "PathUtil.h"
 #include "SampleBuffer.h"
 #include "Song.h"
 
 #include "PatchesDialog.h"
-#include "LcdSpinBox.h"
 
 #include "embed.h"
 #include "plugin_export.h"
+
+#include "modals/FileDialog.h"
+
+#include "widgets/Knob.h"
+#include "widgets/LcdSpinBox.h"
 
 namespace lmms
 {
@@ -81,7 +83,7 @@ Plugin::Descriptor PLUGIN_EXPORT gigplayer_plugin_descriptor =
 
 
 GigInstrument::GigInstrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &gigplayer_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &gigplayer_plugin_descriptor ),
 	m_instance( nullptr ),
 	m_instrument( nullptr ),
 	m_filename( "" ),
@@ -1038,7 +1040,7 @@ void GigInstrumentView::showFileDialog()
 	auto k = castModel<GigInstrument>();
 
 	FileDialog ofd( nullptr, tr( "Open GIG file" ) );
-	ofd.setFileMode( FileDialog::ExistingFiles );
+	ofd.setFileMode( IFileDialog::ExistingFiles );
 
 	QStringList types;
 	types << tr( "GIG Files (*.gig)" );

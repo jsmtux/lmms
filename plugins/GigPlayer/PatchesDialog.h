@@ -27,7 +27,7 @@
 #define PATCHES_DIALOG_H
 
 #include "ui_PatchesDialog.h"
-#include "LcdSpinBox.h"
+#include "widgets/LcdSpinBox.h"
 #include "GigPlayer.h"
 
 #include <QWidget>

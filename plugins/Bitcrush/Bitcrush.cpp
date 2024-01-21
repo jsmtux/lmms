@@ -56,7 +56,7 @@ Plugin::Descriptor PLUGIN_EXPORT bitcrush_plugin_descriptor =
 
 }
 
-BitcrushEffect::BitcrushEffect( Model * parent, const Descriptor::SubPluginFeatures::Key * key ) :
+BitcrushEffect::BitcrushEffect( Model * parent, const PluginDescriptor::Key * key ) :
 	Effect( &bitcrush_plugin_descriptor, parent, key ),
 	m_controls( this ),
 	m_sampleRate( Engine::audioEngine()->processingSampleRate() ),
@@ -251,7 +251,7 @@ extern "C"
 // necessary for getting instance out of shared lib
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model* parent, void* data )
 {
-	return new BitcrushEffect( parent, static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>( data ) );
+	return new BitcrushEffect( parent, static_cast<const Plugin::PluginDescriptor::Key *>( data ) );
 }
 
 }

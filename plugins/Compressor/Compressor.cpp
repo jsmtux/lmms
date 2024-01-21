@@ -52,7 +52,7 @@ Plugin::Descriptor PLUGIN_EXPORT compressor_plugin_descriptor =
 }
 
 
-CompressorEffect::CompressorEffect(Model* parent, const Descriptor::SubPluginFeatures::Key* key) :
+CompressorEffect::CompressorEffect(Model* parent, const PluginDescriptor::Key* key) :
 	Effect(&compressor_plugin_descriptor, parent, key),
 	m_compressorControls(this)
 {
@@ -656,7 +656,7 @@ extern "C"
 // necessary for getting instance out of shared lib
 PLUGIN_EXPORT Plugin * lmms_plugin_main(Model* parent, void* data)
 {
-	return new CompressorEffect(parent, static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>(data));
+	return new CompressorEffect(parent, static_cast<const Plugin::PluginDescriptor::Key *>(data));
 }
 
 }

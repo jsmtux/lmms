@@ -40,7 +40,7 @@ namespace lmms
 
 
 const LilvPlugin *Lv2SubPluginFeatures::getPlugin(
-	const Plugin::Descriptor::SubPluginFeatures::Key &k)
+	const Plugin::PluginDescriptor::Key &k)
 {
 	const LilvPlugin* result = Engine::getLv2Manager()->
 		getPlugin(k.attributes["uri"]);
@@ -121,7 +121,7 @@ void Lv2SubPluginFeatures::fillDescriptionWidget(QWidget *parent,
 
 
 QString Lv2SubPluginFeatures::additionalFileExtensions(
-	const Plugin::Descriptor::SubPluginFeatures::Key &k) const
+	const Plugin::PluginDescriptor::Key &k) const
 {
 	(void)k;
 	// lv2 only loads .lv2 files
@@ -133,7 +133,7 @@ QString Lv2SubPluginFeatures::additionalFileExtensions(
 
 
 QString Lv2SubPluginFeatures::displayName(
-	const Plugin::Descriptor::SubPluginFeatures::Key &k) const
+	const Plugin::PluginDescriptor::Key &k) const
 {
 	return pluginName(getPlugin(k));
 }
@@ -142,7 +142,7 @@ QString Lv2SubPluginFeatures::displayName(
 
 
 QString Lv2SubPluginFeatures::description(
-	const Plugin::Descriptor::SubPluginFeatures::Key &k) const
+	const Plugin::PluginDescriptor::Key &k) const
 {
 	(void)k;
 	return QString::fromUtf8("description not implemented yet"); // TODO
@@ -152,7 +152,7 @@ QString Lv2SubPluginFeatures::description(
 
 
 const PixmapLoader *Lv2SubPluginFeatures::logo(
-	const Plugin::Descriptor::SubPluginFeatures::Key &k) const
+	const Plugin::PluginDescriptor::Key &k) const
 {
 	(void)k; // TODO
 	return nullptr;
@@ -170,7 +170,7 @@ void Lv2SubPluginFeatures::listSubPluginKeys(const Plugin::Descriptor *desc,
 		if (uriInfoPair.second.type() == m_type && uriInfoPair.second.isValid())
 		{
 			using KeyType =
-				Plugin::Descriptor::SubPluginFeatures::Key;
+				Plugin::PluginDescriptor::Key;
 			KeyType::AttributeMap atm;
 			atm["uri"] = QString::fromUtf8(uriInfoPair.first.c_str());
 			const LilvPlugin* plug = uriInfoPair.second.plugin();

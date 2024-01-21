@@ -31,8 +31,8 @@
 #include "embed.h"
 #include "Engine.h"
 #include "EnvelopeAndLfoParameters.h"
-#include "Instrument.h"
-#include "InstrumentTrack.h"
+#include "IPlugin.h"
+#include "tracks/InstrumentTrack.h"
 
 namespace lmms
 {
@@ -59,7 +59,7 @@ const char *const InstrumentSoundShaping::targetNames[InstrumentSoundShaping::Nu
 
 InstrumentSoundShaping::InstrumentSoundShaping(
 					InstrumentTrack * _instrument_track ) :
-	Model( _instrument_track, tr( "Envelopes/LFOs" ) ),
+	Model( _instrument_track->model(), tr( "Envelopes/LFOs" ) ),
 	m_instrumentTrack( _instrument_track ),
 	m_filterEnabledModel( false, this ),
 	m_filterModel( this, tr( "Filter type" ) ),
@@ -303,7 +303,7 @@ f_cnt_t InstrumentSoundShaping::releaseFrames() const
 
 	f_cnt_t ret_val = m_instrumentTrack->instrument()->desiredReleaseFrames();
 
-	if( m_instrumentTrack->instrument()->flags().testFlag( Instrument::IsSingleStreamed ) )
+	if( m_instrumentTrack->instrument()->flags().testFlag( IInstrument::IsSingleStreamed ) )
 	{
 		return ret_val;
 	}
@@ -328,7 +328,7 @@ f_cnt_t InstrumentSoundShaping::releaseFrames() const
 
 void InstrumentSoundShaping::saveSettings( QDomDocument & _doc, QDomElement & _this )
 {
-	m_filterModel.saveSettings( _doc, _this, "ftype" );
+	m_filterModel.model()->saveSettings( _doc, _this, "ftype" );
 	m_filterCutModel.saveSettings( _doc, _this, "fcut" );
 	m_filterResModel.saveSettings( _doc, _this, "fres" );
 	m_filterEnabledModel.saveSettings( _doc, _this, "fwet" );
@@ -346,7 +346,7 @@ void InstrumentSoundShaping::saveSettings( QDomDocument & _doc, QDomElement & _t
 
 void InstrumentSoundShaping::loadSettings( const QDomElement & _this )
 {
-	m_filterModel.loadSettings( _this, "ftype" );
+	m_filterModel.model()->loadSettings( _this, "ftype" );
 	m_filterCutModel.loadSettings( _this, "fcut" );
 	m_filterResModel.loadSettings( _this, "fres" );
 	m_filterEnabledModel.loadSettings( _this, "fwet" );

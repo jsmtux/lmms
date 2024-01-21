@@ -25,17 +25,22 @@
 #include <QDir>
 
 #include "RenderManager.h"
-
-#include "PatternStore.h"
-#include "Song.h"
+#include "Engine.h"
 
 
 namespace lmms
 {
 
+std::unique_ptr<IRenderManager> createRenderManager(const IAudioEngine::qualitySettings & qualitySettings,
+		const OutputSettings & outputSettings,
+		IProjectRenderer::ExportFileFormats fmt,
+		QString outputPath)
+{
+	return std::make_unique<RenderManager>(qualitySettings, outputSettings, fmt, outputPath);
+}
 
 RenderManager::RenderManager(
-		const AudioEngine::qualitySettings & qualitySettings,
+		const IAudioEngine::qualitySettings & qualitySettings,
 		const OutputSettings & outputSettings,
 		ProjectRenderer::ExportFileFormats fmt,
 		QString outputPath) :
@@ -78,7 +83,7 @@ void RenderManager::renderNextTrack()
 	else
 	{
 		// pop the next track from our rendering queue
-		Track* renderTrack = m_tracksToRender.back();
+		ITrack* renderTrack = m_tracksToRender.back();
 		m_tracksToRender.pop_back();
 
 		// mute everything but the track we are about to render
@@ -97,23 +102,8 @@ void RenderManager::renderNextTrack()
 // Render the song into individual tracks
 void RenderManager::renderTracks()
 {
-	const TrackContainer::TrackList & tl = Engine::getSong()->tracks();
-
 	// find all currently unnmuted tracks -- we want to render these.
-	for (const auto& tk : tl)
-	{
-		Track::TrackTypes type = tk->type();
-
-		// Don't render automation tracks
-		if ( tk->isMuted() == false &&
-				( type == Track::InstrumentTrack || type == Track::SampleTrack ) )
-		{
-			m_unmuted.push_back(tk);
-		}
-	}
-
-	const TrackContainer::TrackList t2 = Engine::patternStore()->tracks();
-	for (const auto& tk : t2)
+	for (const auto& tk : Engine::getTracks())
 	{
 		Track::TrackTypes type = tk->type();
 
@@ -171,16 +161,17 @@ void RenderManager::restoreMutedState()
 {
 	while( !m_unmuted.isEmpty() )
 	{
-		Track* restoreTrack = m_unmuted.back();
+		ITrack* restoreTrack = m_unmuted.back();
 		m_unmuted.pop_back();
 		restoreTrack->setMuted( false );
 	}
 }
 
 // Determine the output path for a track when rendering tracks individually
-QString RenderManager::pathForTrack(const Track *track, int num)
+QString RenderManager::pathForTrack(const ITrack *track, int num)
 {
-	QString extension = ProjectRenderer::getFileExtensionFromFormat( m_format );
+	// QString extension = ProjectRenderer::getFileExtensionFromFormat( m_format );
+	QString extension = "TET";
 	QString name = track->name();
 	name = name.remove(QRegExp(FILENAME_FILTER));
 	name = QString( "%1_%2%3" ).arg( num ).arg( name ).arg( extension );

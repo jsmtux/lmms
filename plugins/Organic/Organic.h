@@ -28,9 +28,10 @@
 
 #include <QString>
 
-#include "Instrument.h"
-#include "InstrumentView.h"
 #include "AutomatableModel.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 class QPixmap;
 
@@ -119,7 +120,7 @@ private slots:
 } ;
 
 
-class OrganicInstrument : public Instrument
+class OrganicInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:
@@ -172,7 +173,7 @@ private:
 	FloatModel  m_fx1Model;
 	FloatModel  m_volModel;
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 private slots:
@@ -185,16 +186,14 @@ namespace gui
 {
 
 
-class OrganicInstrumentView : public InstrumentViewFixedSize
+class OrganicInstrumentView : public InstrumentViewImpl<OrganicInstrument>
 {
 	Q_OBJECT
 public:
-	OrganicInstrumentView( Instrument * _instrument, QWidget * _parent );
+	OrganicInstrumentView( OrganicInstrument * _instrument, QWidget * _parent );
 	~OrganicInstrumentView() override;
 
 private:
-	void modelChanged() override;
-
 	struct OscillatorKnobs
 	{
 		MM_OPERATORS

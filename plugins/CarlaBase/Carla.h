@@ -52,9 +52,10 @@
 
 // lmms/include/
 #include "AutomatableModel.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
 #include "SubWindow.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 class QPushButton;
 class QComboBox;
@@ -79,7 +80,7 @@ class Knob;
 class CarlaParamFloatModel : public FloatModel
 {
 public:
-	CarlaParamFloatModel(Model * parent):
+	CarlaParamFloatModel(QObject * parent):
 		FloatModel(0.0, 0.0, 1.0, 0.001, parent, "Unused"),
 		m_isOutput(false),
 		m_isEnabled(false)
@@ -169,7 +170,7 @@ private:
 
 // -------------------------------------------------------------------
 
-class CARLABASE_EXPORT CarlaInstrument : public Instrument
+class CARLABASE_EXPORT CarlaInstrument : public gui::QWidgetInstrumentPlugin
 {
     Q_OBJECT
 
@@ -195,7 +196,7 @@ public:
     void loadSettings(const QDomElement& elem) override;
     void play(sampleFrame* workingBuffer) override;
     bool handleMidiEvent(const MidiEvent& event, const TimePos& time, f_cnt_t offset) override;
-    gui::PluginView* instantiateView(QWidget* parent) override;
+    gui::InstrumentView* instantiateView(QWidget* parent) override;
 
 signals:
     void uiClosed();
@@ -292,7 +293,7 @@ private:
 
 // -------------------------------------------------------------------
 
-class CarlaInstrumentView : public InstrumentViewFixedSize
+class CarlaInstrumentView : public InstrumentViewImpl<CarlaInstrument>
 {
     Q_OBJECT
 
@@ -307,7 +308,6 @@ private slots:
     void paramsUiClosed();
 
 private:
-    void modelChanged() override;
     void timerEvent(QTimerEvent*) override;
 
     NativePluginHandle fHandle;

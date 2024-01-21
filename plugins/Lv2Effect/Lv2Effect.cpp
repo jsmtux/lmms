@@ -57,7 +57,7 @@ Plugin::Descriptor PLUGIN_EXPORT lv2effect_plugin_descriptor =
 
 
 
-Lv2Effect::Lv2Effect(Model* parent, const Descriptor::SubPluginFeatures::Key *key) :
+Lv2Effect::Lv2Effect(Model* parent, const PluginDescriptor::Key *key) :
 	Effect(&lv2effect_plugin_descriptor, parent, key),
 	m_controls(this, key->attributes["uri"]),
 	m_tmpOutputSmps(Engine::audioEngine()->framesPerPeriod())
@@ -108,7 +108,7 @@ extern "C"
 // necessary for getting instance out of shared lib
 PLUGIN_EXPORT Plugin *lmms_plugin_main(Model *_parent, void *_data)
 {
-	using KeyType = Plugin::Descriptor::SubPluginFeatures::Key;
+	using KeyType = Plugin::PluginDescriptor::Key;
 	auto eff = new Lv2Effect(_parent, static_cast<const KeyType*>(_data));
 	if (!eff->isValid()) { delete eff; eff = nullptr; }
 	return eff;

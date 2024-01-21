@@ -27,14 +27,13 @@
 #include "AudioEngine.h"
 #include "AudioEngineWorkerThread.h"
 #include "BufferManager.h"
+#include "Engine.h"
 #include "Mixer.h"
 #include "MixHelpers.h"
-#include "Song.h"
 
-#include "InstrumentTrack.h"
-#include "PatternStore.h"
-#include "SampleTrack.h"
-#include "TrackContainer.h" // For TrackContainer::TrackList typedef
+#include "tracks/InstrumentTrack.h"
+#include "tracks/SampleTrack.h"
+#include "TrackContainer.h"
 
 namespace lmms
 {
@@ -44,7 +43,7 @@ MixerRoute::MixerRoute( MixerChannel * from, MixerChannel * to, float amount ) :
 	m_from( from ),
 	m_to( to ),
 	m_amount( amount, 0, 1, 0.001, nullptr,
-			tr( "Amount to send from channel %1 to channel %2" ).arg( m_from->m_channelIndex ).arg( m_to->m_channelIndex ) )
+			QObject::tr( "Amount to send from channel %1 to channel %2" ).arg( m_from->m_channelIndex ).arg( m_to->m_channelIndex ) )
 {
 	//qDebug( "created: %d to %d", m_from->m_channelIndex, m_to->m_channelIndex );
 	// create send amount model
@@ -54,7 +53,7 @@ MixerRoute::MixerRoute( MixerChannel * from, MixerChannel * to, float amount ) :
 void MixerRoute::updateName()
 {
 	m_amount.setDisplayName(
-			tr( "Amount to send from channel %1 to channel %2" ).arg( m_from->m_channelIndex ).arg( m_to->m_channelIndex ) );
+			QObject::tr( "Amount to send from channel %1 to channel %2" ).arg( m_from->m_channelIndex ).arg( m_to->m_channelIndex ) );
 }
 
 
@@ -188,8 +187,7 @@ void MixerChannel::doProcessing()
 
 
 Mixer::Mixer() :
-	Model( nullptr ),
-	JournallingObject(),
+	m_mixerModel(nullptr),
 	m_mixerChannels()
 {
 	// create master channel
@@ -219,7 +217,7 @@ int Mixer::createChannel()
 {
 	const int index = m_mixerChannels.size();
 	// create new channel
-	m_mixerChannels.push_back( new MixerChannel( index, this ) );
+	m_mixerChannels.push_back( new MixerChannel( index, model() ) );
 
 	// reset channel state
 	clearChannel( index );
@@ -285,11 +283,7 @@ void Mixer::deleteChannel( int index )
 	Engine::audioEngine()->requestChangeInModel();
 
 	// go through every instrument and adjust for the channel index change
-	TrackContainer::TrackList tracks;
-	tracks += Engine::getSong()->tracks();
-	tracks += Engine::patternStore()->tracks();
-
-	for( Track* t : tracks )
+	for( ITrack* t : Engine::getTracks() )
 	{
 		if( t->type() == Track::InstrumentTrack )
 		{
@@ -384,38 +378,32 @@ void Mixer::moveChannelLeft( int index )
 	else if (m_lastSoloed == b) { m_lastSoloed = a; }
 
 	// go through every instrument and adjust for the channel index change
-	TrackContainer::TrackList songTrackList = Engine::getSong()->tracks();
-	TrackContainer::TrackList patternTrackList = Engine::patternStore()->tracks();
-
-	for (const auto& trackList : {songTrackList, patternTrackList})
+	for (const auto& track : Engine::getTracks())
 	{
-		for (const auto& track : trackList)
+		if (track->type() == Track::InstrumentTrack)
 		{
-			if (track->type() == Track::InstrumentTrack)
+			auto inst = (InstrumentTrack*)track;
+			int val = inst->mixerChannelModel()->value(0);
+			if( val == a )
 			{
-				auto inst = (InstrumentTrack*)track;
-				int val = inst->mixerChannelModel()->value(0);
-				if( val == a )
-				{
-					inst->mixerChannelModel()->setValue(b);
-				}
-				else if( val == b )
-				{
-					inst->mixerChannelModel()->setValue(a);
-				}
+				inst->mixerChannelModel()->setValue(b);
 			}
-			else if (track->type() == Track::SampleTrack)
+			else if( val == b )
 			{
-				auto strk = (SampleTrack*)track;
-				int val = strk->mixerChannelModel()->value(0);
-				if( val == a )
-				{
-					strk->mixerChannelModel()->setValue(b);
-				}
-				else if( val == b )
-				{
-					strk->mixerChannelModel()->setValue(a);
-				}
+				inst->mixerChannelModel()->setValue(a);
+			}
+		}
+		else if (track->type() == Track::SampleTrack)
+		{
+			auto strk = (SampleTrack*)track;
+			int val = strk->mixerChannelModel()->value(0);
+			if( val == a )
+			{
+				strk->mixerChannelModel()->setValue(b);
+			}
+			else if( val == b )
+			{
+				strk->mixerChannelModel()->setValue(a);
 			}
 		}
 	}
@@ -555,7 +543,7 @@ bool Mixer::checkInfiniteLoop( MixerChannel * from, MixerChannel * to )
 
 
 // how much does fromChannel send its output to the input of toChannel?
-FloatModel * Mixer::channelSendModel( mix_ch_t fromChannel, mix_ch_t toChannel )
+IFloatAutomatableModel * Mixer::channelSendModel( mix_ch_t fromChannel, mix_ch_t toChannel )
 {
 	if( fromChannel == toChannel )
 	{
@@ -698,10 +686,10 @@ void Mixer::clearChannel(mix_ch_t index)
 	ch->m_volumeModel.setValue( 1.0f );
 	ch->m_muteModel.setValue( false );
 	ch->m_soloModel.setValue( false );
-	ch->m_name = ( index == 0 ) ? tr( "Master" ) : tr( "Channel %1" ).arg( index );
-	ch->m_volumeModel.setDisplayName( ch->m_name + ">" + tr( "Volume" ) );
-	ch->m_muteModel.setDisplayName( ch->m_name + ">" + tr( "Mute" ) );
-	ch->m_soloModel.setDisplayName( ch->m_name + ">" + tr( "Solo" ) );
+	ch->m_name = ( index == 0 ) ? QObject::tr( "Master" ) : QObject::tr( "Channel %1" ).arg( index );
+	ch->m_volumeModel.setDisplayName( ch->m_name + ">" + QObject::tr( "Volume" ) );
+	ch->m_muteModel.setDisplayName( ch->m_name + ">" + QObject::tr( "Mute" ) );
+	ch->m_soloModel.setDisplayName( ch->m_name + ">" + QObject::tr( "Solo" ) );
 
 	// send only to master
 	if( index > 0)
@@ -813,15 +801,15 @@ void Mixer::loadSettings( const QDomElement & _this )
 		node = node.nextSibling();
 	}
 
-	emit dataChanged();
+	emit model()->dataChanged();
 }
 
 
 void Mixer::validateChannelName( int index, int oldIndex )
 {
-	if( m_mixerChannels[index]->m_name == tr( "Channel %1" ).arg( oldIndex ) )
+	if( m_mixerChannels[index]->m_name == QObject::tr( "Channel %1" ).arg( oldIndex ) )
 	{
-		m_mixerChannels[index]->m_name = tr( "Channel %1" ).arg( index );
+		m_mixerChannels[index]->m_name = QObject::tr( "Channel %1" ).arg( index );
 	}
 }
 
@@ -834,11 +822,7 @@ bool Mixer::isChannelInUse(int index)
 	}
 
 	// check if the destination mixer channel on any instrument or sample track is the index mixer channel
-	TrackContainer::TrackList tracks;
-	tracks += Engine::getSong()->tracks();
-	tracks += Engine::patternStore()->tracks();
-
-	for (const auto t : tracks)
+	for (const auto t : Engine::getTracks())
 	{
 		if (t->type() == Track::InstrumentTrack)
 		{

@@ -29,15 +29,35 @@
 #include "Song.h"
 #include "PerfLog.h"
 
-#include "AudioFileWave.h"
-#include "AudioFileOgg.h"
-#include "AudioFileMP3.h"
-#include "AudioFileFlac.h"
+#include "audio/AudioFileWave.h"
+#include "audio/AudioFileOgg.h"
+#include "audio/AudioFileMP3.h"
+#include "audio/AudioFileFlac.h"
 
 
 namespace lmms
 {
 
+
+std::unique_ptr<IProjectRenderer> createProjectRenderer(const IAudioEngine::qualitySettings & _qs,
+				const OutputSettings & _os,
+				ProjectRenderer::ExportFileFormats _file_format,
+				const QString & _out_file)
+{
+	return std::make_unique<ProjectRenderer>(_qs,
+				_os,
+				_file_format,
+				_out_file);
+}
+
+QString IProjectRenderer::getFileExtensionFromFormat( ExportFileFormats fmt ) {
+	return ProjectRenderer::getFileExtensionFromFormat( fmt );
+}
+
+
+const IProjectRenderer::IFileEncodeDevice* IProjectRenderer::getFileEncodeDeviceInterface(std::size_t index) {
+	return &ProjectRenderer::fileEncodeDevices[index];
+}
 
 const std::array<ProjectRenderer::FileEncodeDevice, 5> ProjectRenderer::fileEncodeDevices
 {
@@ -78,7 +98,7 @@ const std::array<ProjectRenderer::FileEncodeDevice, 5> ProjectRenderer::fileEnco
 
 
 
-ProjectRenderer::ProjectRenderer( const AudioEngine::qualitySettings & qualitySettings,
+ProjectRenderer::ProjectRenderer( const IAudioEngine::qualitySettings & qualitySettings,
 					const OutputSettings & outputSettings,
 					ExportFileFormats exportFileFormat,
 					const QString & outputFilename ) :

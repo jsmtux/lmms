@@ -38,7 +38,7 @@ namespace lmms
 class DualFilterEffect : public Effect
 {
 public:
-	DualFilterEffect( Model* parent, const Descriptor::SubPluginFeatures::Key* key );
+	DualFilterEffect( Model* parent, const PluginDescriptor::Key* key );
 	~DualFilterEffect() override;
 	bool processAudioBuffer( sampleFrame* buf, const fpp_t frames ) override;
 

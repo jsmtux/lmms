@@ -27,9 +27,9 @@
 #include "PresetPreviewPlayHandle.h"
 #include "AudioEngine.h"
 #include "Engine.h"
-#include "Instrument.h"
-#include "InstrumentTrack.h"
-#include "PluginFactory.h"
+#include "IPlugin.h"
+#include "tracks/InstrumentTrack.h"
+#include "IPluginFactory.h"
 #include "ProjectJournal.h"
 #include "TrackContainer.h"
 
@@ -38,17 +38,22 @@
 namespace lmms
 {
 
+IPresetPreviewPlayHandle* createPresetPreviewPlayHandle(const QString& presetFile, bool loadByPlugin, IDataFile* dataFile) {
+	return new PresetPreviewPlayHandle(presetFile, loadByPlugin, dataFile);
+}
+
 // invisible track-container which is needed as parent for preview-channels
-class PreviewTrackContainer : public TrackContainer
+class PreviewTrackContainer : public TrackContainerCb
 {
 public:
 	PreviewTrackContainer() :
 		m_previewInstrumentTrack( nullptr ),
 		m_previewNote( nullptr ),
-		m_dataMutex()
+		m_dataMutex(),
+		m_trackContainer(this)
 	{
-		setJournalling( false );
-		m_previewInstrumentTrack = dynamic_cast<InstrumentTrack *>( Track::create( Track::InstrumentTrack, this ) );
+		m_trackContainer.setJournalling( false );
+		m_previewInstrumentTrack = dynamic_cast<InstrumentTrack *>( Track::create( Track::InstrumentTrack, &m_trackContainer ) );
 		m_previewInstrumentTrack->setJournalling( false );
 		m_previewInstrumentTrack->setPreviewMode( true );
 	}
@@ -68,6 +73,11 @@ public:
 	NotePlayHandle* previewNote()
 	{
 		return m_previewNote.load(std::memory_order_acquire);
+	}
+
+	AutomatedValueMap automatedValuesAt(TimePos time, int clipNum) const override
+	{
+		return m_trackContainer.automatedValuesFromAllTracks(time + (TimePos::ticksPerBar() * clipNum), clipNum);
 	}
 
 	void setPreviewNote( NotePlayHandle * _note )
@@ -106,6 +116,8 @@ private:
 	std::atomic<NotePlayHandle*> m_previewNote;
 	QMutex m_dataMutex;
 
+	TrackContainer m_trackContainer;
+
 	friend class PresetPreviewPlayHandle;
 
 } ;
@@ -115,8 +127,8 @@ PreviewTrackContainer * PresetPreviewPlayHandle::s_previewTC;
 
 
 
-PresetPreviewPlayHandle::PresetPreviewPlayHandle( const QString & _preset_file, bool _load_by_plugin, DataFile *dataFile ) :
-	PlayHandle( TypePresetPreviewHandle ),
+PresetPreviewPlayHandle::PresetPreviewPlayHandle( const QString & _preset_file, bool _load_by_plugin, IDataFile *dataFile ) :
+	PlayHandle( PlayHandleType::TypePresetPreviewHandle ),
 	m_previewNote(nullptr)
 {
 	setUsesBuffer( false );
@@ -133,15 +145,15 @@ PresetPreviewPlayHandle::PresetPreviewPlayHandle( const QString & _preset_file, 
 
 	if( _load_by_plugin )
 	{
-		Instrument * i = s_previewTC->previewInstrumentTrack()->instrument();
+		IInstrument * i = s_previewTC->previewInstrumentTrack()->instrument();
 		const QString ext = QFileInfo( _preset_file ).
 							suffix().toLower();
-		if( i == nullptr || !i->descriptor()->supportsFileType( ext ) )
+		if( i == nullptr || !i->supportsFileType( ext ) )
 		{
-			const PluginFactory::PluginInfoAndKey& infoAndKey =
-				getPluginFactory()->pluginSupportingExtension(ext);
+			const auto& nameAndKey =
+				IPluginFactory::Instance()->pluginSupportingExtension(ext);
 			i = s_previewTC->previewInstrumentTrack()->
-				loadInstrument(infoAndKey.info.name(), &infoAndKey.key);
+				loadInstrument(nameAndKey.name, &nameAndKey.key);
 		}
 		if( i != nullptr )
 		{
@@ -150,22 +162,16 @@ PresetPreviewPlayHandle::PresetPreviewPlayHandle( const QString & _preset_file, 
 	}
 	else
 	{
-		bool dataFileCreated = false;
-		if( dataFile == 0 )
+		if( dataFile == nullptr )
 		{
 			dataFile = new DataFile( _preset_file );
-			dataFileCreated = true;
 		}
 
 		s_previewTC->previewInstrumentTrack()->loadTrackSpecificSettings(
 					dataFile->content().firstChild().toElement());
-
-		if( dataFileCreated )
-		{
-			delete dataFile;
-		}
+		delete dataFile;
 	}
-	dataFile = 0;
+	dataFile = nullptr;
 	// make sure, our preset-preview-track does not appear in any MIDI-
 	// devices list, so just disable receiving/sending MIDI-events at all
 	s_previewTC->previewInstrumentTrack()->
@@ -223,7 +229,7 @@ bool PresetPreviewPlayHandle::isFinished() const
 
 
 
-bool PresetPreviewPlayHandle::isFromTrack( const Track * _track ) const
+bool PresetPreviewPlayHandle::isFromTrack( const ITrack * _track ) const
 {
 	return s_previewTC && s_previewTC->previewInstrumentTrack() == _track;
 }

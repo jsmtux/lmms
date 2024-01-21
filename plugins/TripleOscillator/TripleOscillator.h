@@ -26,9 +26,11 @@
 #ifndef _TRIPLE_OSCILLATOR_H
 #define _TRIPLE_OSCILLATOR_H
 
-#include "Instrument.h"
-#include "InstrumentView.h"
-#include "AutomatableModel.h"
+#include "IModels.h"
+
+#include "instrument/InstrumentView.h"
+
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 namespace lmms
 {
@@ -36,16 +38,8 @@ namespace lmms
 
 class NotePlayHandle;
 class SampleBuffer;
-class Oscillator;
+class IOscillator;
 
-
-namespace gui
-{
-class automatableButtonGroup;
-class Knob;
-class PixmapButton;
-class TripleOscillatorView;
-} // namespace gui
 
 
 const int NUM_OF_OSCILLATORS = 3;
@@ -53,25 +47,22 @@ const int NUM_OF_OSCILLATORS = 3;
 
 class OscillatorObject : public Model
 {
-	MM_OPERATORS
 	Q_OBJECT
 public:
-	OscillatorObject( Model * _parent, int _idx );
+	OscillatorObject( QObject * _parent, int _idx );
 	~OscillatorObject() override;
 
-
-private:
-	FloatModel m_volumeModel;
-	FloatModel m_panModel;
-	FloatModel m_coarseModel;
-	FloatModel m_fineLeftModel;
-	FloatModel m_fineRightModel;
-	FloatModel m_phaseOffsetModel;
-	FloatModel m_stereoPhaseDetuningModel;
-	IntModel m_waveShapeModel;
-	IntModel m_modulationAlgoModel;
-	BoolModel m_useWaveTableModel;
-	SampleBuffer* m_sampleBuffer;
+	IFloatAutomatableModel* m_volumeModel;
+	IFloatAutomatableModel* m_panModel;
+	IFloatAutomatableModel* m_coarseModel;
+	IFloatAutomatableModel* m_fineLeftModel;
+	IFloatAutomatableModel* m_fineRightModel;
+	IFloatAutomatableModel* m_phaseOffsetModel;
+	IFloatAutomatableModel* m_stereoPhaseDetuningModel;
+	IIntAutomatableModel* m_waveShapeModel;
+	IIntAutomatableModel* m_modulationAlgoModel;
+	IBoolAutomatableModel* m_useWaveTableModel;
+	std::unique_ptr<ISampleBuffer> m_sampleBuffer;
 
 	float m_volumeLeft;
 	float m_volumeRight;
@@ -85,7 +76,6 @@ private:
 	bool m_useWaveTable;
 
 	friend class TripleOscillator;
-	friend class gui::TripleOscillatorView;
 
 
 private slots:
@@ -107,12 +97,12 @@ class TripleOscillator : public Instrument
 {
 	Q_OBJECT
 public:
-	TripleOscillator( InstrumentTrack * _track );
+	TripleOscillator( IInstrumentTrack * _track );
 	~TripleOscillator() override = default;
 
-	void playNote( NotePlayHandle * _n,
+	void playNote( INotePlayHandle * _n,
 						sampleFrame * _working_buffer ) override;
-	void deleteNotePluginData( NotePlayHandle * _n ) override;
+	void deleteNotePluginData( INotePlayHandle * _n ) override;
 
 
 	void saveSettings( QDomDocument & _doc, QDomElement & _parent ) override;
@@ -125,91 +115,19 @@ public:
 		return( 128 );
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
 
-
-protected slots:
-	void updateAllDetuning();
-
-
-private:
 	OscillatorObject * m_osc[NUM_OF_OSCILLATORS];
 
 	struct oscPtr
 	{
-		MM_OPERATORS
-		Oscillator * oscLeft;
-		Oscillator * oscRight;
+		IOscillator * oscLeft;
+		IOscillator * oscRight;
 	} ;
 
 
-	friend class gui::TripleOscillatorView;
-
+protected slots:
+	void updateAllDetuning();
 } ;
-
-
-namespace gui
-{
-
-
-class TripleOscillatorView : public InstrumentViewFixedSize
-{
-	Q_OBJECT
-public:
-	TripleOscillatorView( Instrument * _instrument, QWidget * _parent );
-	~TripleOscillatorView() override = default;
-
-
-private:
-	void modelChanged() override;
-
-	automatableButtonGroup * m_mod1BtnGrp;
-	automatableButtonGroup * m_mod2BtnGrp;
-
-	struct OscillatorKnobs
-	{
-		MM_OPERATORS
-		OscillatorKnobs( Knob * v,
-					Knob * p,
-					Knob * c,
-					Knob * fl,
-					Knob * fr,
-					Knob * po,
-					Knob * spd,
-					PixmapButton * uwb,
-					automatableButtonGroup * wsbg,
-					PixmapButton * wt) :
-			m_volKnob( v ),
-			m_panKnob( p ),
-			m_coarseKnob( c ),
-			m_fineLeftKnob( fl ),
-			m_fineRightKnob( fr ),
-			m_phaseOffsetKnob( po ),
-			m_stereoPhaseDetuningKnob( spd ),
-			m_userWaveButton( uwb ),
-			m_waveShapeBtnGrp( wsbg ),
-			m_multiBandWaveTableButton( wt )
-		{
-		}
-		OscillatorKnobs() = default;
-		Knob * m_volKnob;
-		Knob * m_panKnob;
-		Knob * m_coarseKnob;
-		Knob * m_fineLeftKnob;
-		Knob * m_fineRightKnob;
-		Knob * m_phaseOffsetKnob;
-		Knob * m_stereoPhaseDetuningKnob;
-		PixmapButton * m_userWaveButton;
-		automatableButtonGroup * m_waveShapeBtnGrp;
-		PixmapButton * m_multiBandWaveTableButton;
-
-	} ;
-
-	OscillatorKnobs m_oscKnobs[NUM_OF_OSCILLATORS];
-} ;
-
-
-} // namespace gui
 
 } // namespace lmms
 

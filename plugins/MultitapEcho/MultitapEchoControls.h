@@ -28,7 +28,8 @@
 
 #include "EffectControls.h"
 #include "MultitapEchoControlDialog.h"
-#include "Graph.h"
+
+#include "widgets/Graph.h"
 
 namespace lmms
 {
@@ -82,8 +83,8 @@ private:
 	BoolModel m_swapInputs;
 	FloatModel m_stages;
 	
-	graphModel m_ampGraph;
-	graphModel m_lpGraph;
+	gui::graphModel m_ampGraph;
+	gui::graphModel m_lpGraph;
 
 	friend class MultitapEchoEffect;
 	friend class gui::MultitapEchoControlDialog;

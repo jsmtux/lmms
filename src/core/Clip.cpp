@@ -26,15 +26,32 @@
 
 #include <QDomDocument>
 
-#include "AutomationEditor.h"
 #include "AutomationClip.h"
 #include "Engine.h"
-#include "GuiApplication.h"
+#include "IAutomationEditor.h"
+#include "IGuiApplication.h"
 #include "Song.h"
 
 
 namespace lmms
 {
+
+QString ClipTypeToString(const ClipType _type) {
+	switch(_type) {
+		case ClipType::Automation:
+			return "Automation";
+		case ClipType::Midi:
+			return "Midi";
+		case ClipType::Pattern:
+			return "Pattern";
+		case ClipType::Sample:
+			return "Sample";
+	}
+}
+
+std::size_t ClipTypeToId(const ClipType _type) {
+	return static_cast<std::size_t>(_type);
+}
 
 /*! \brief Create a new Clip
  *
@@ -42,20 +59,15 @@ namespace lmms
  *
  * \param _track The track that will contain the new object
  */
-Clip::Clip( Track * track ) :
-	Model( track ),
-	m_track( track ),
+Clip::Clip( Model * track ) :
+	m_clipModel( track ),
 	m_startPosition(),
 	m_length(),
-	m_mutedModel( false, this, tr( "Mute" ) ),
+	m_mutedModel( false, &m_clipModel, QObject::tr( "Mute" ) ),
 	m_selectViewOnCreate( false ),
 	m_color( 128, 128, 128 ),
 	m_useCustomClipColor( false )
 {
-	if( getTrack() )
-	{
-		getTrack()->addClip( this );
-	}
 	setJournalling( false );
 	movePosition( 0 );
 	changeLength( 0 );
@@ -73,11 +85,6 @@ Clip::Clip( Track * track ) :
 Clip::~Clip()
 {
 	emit destroyedClip();
-
-	if( getTrack() )
-	{
-		getTrack()->removeClip( this );
-	}
 }
 
 
@@ -123,7 +130,7 @@ void Clip::changeLength( const TimePos & length )
 
 
 
-bool Clip::comparePosition(const Clip *a, const Clip *b)
+bool Clip::comparePosition(const IClip *a, const IClip *b)
 {
 	return a->startPosition() < b->startPosition();
 }
@@ -135,7 +142,7 @@ bool Clip::comparePosition(const Clip *a, const Clip *b)
  *
  *  This method copies the state of a Clip to another Clip
  */
-void Clip::copyStateTo( Clip *src, Clip *dst )
+void Clip::copyStateTo( IClip *src, IClip *dst )
 {
 	// If the node names match we copy the state
 	if( src->nodeName() == dst->nodeName() ){
@@ -148,7 +155,7 @@ void Clip::copyStateTo( Clip *src, Clip *dst )
 		dst->movePosition( pos );
 
 		AutomationClip::resolveAllIDs();
-		gui::getGUI()->automationEditor()->m_editor->updateAfterClipChange();
+		gui::getGUIInterface()->automationEditorInterface()->updateAfterClipChange();
 	}
 }
 
@@ -166,7 +173,7 @@ void Clip::copyStateTo( Clip *src, Clip *dst )
 void Clip::toggleMute()
 {
 	m_mutedModel.setValue( !m_mutedModel.value() );
-	emit dataChanged();
+	emit m_clipModel.dataChanged();
 }
 
 
@@ -192,12 +199,6 @@ void Clip::useCustomClipColor( bool b )
 	if (b == m_useCustomClipColor) { return; }
 	m_useCustomClipColor = b;
 	emit colorChanged();
-}
-
-
-bool Clip::hasColor()
-{
-	return usesCustomClipColor() || getTrack()->useColor();
 }
 
 } // namespace lmms

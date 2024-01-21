@@ -25,7 +25,7 @@
 #ifndef DELAYCONTROLSDIALOG_H
 #define DELAYCONTROLSDIALOG_H
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 namespace lmms
 {

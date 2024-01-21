@@ -57,7 +57,7 @@ public:
 		initialization
 	*/
 	Lv2Instrument(InstrumentTrack *instrumentTrackArg,
-		 Descriptor::SubPluginFeatures::Key* key);
+		 PluginDescriptor::Key* key);
 	~Lv2Instrument() override;
 	void reload();
 	void onSampleRateChanged();

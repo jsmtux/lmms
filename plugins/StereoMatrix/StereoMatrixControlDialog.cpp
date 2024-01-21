@@ -28,8 +28,9 @@
 #include "StereoMatrixControlDialog.h"
 
 #include "embed.h"
-#include "Knob.h"
 #include "StereoMatrixControls.h"
+
+#include "widgets/Knob.h"
 
 namespace lmms::gui
 {
@@ -48,23 +49,19 @@ StereoMatrixControlDialog::StereoMatrixControlDialog(
 				PLUGIN_NAME::getIconPixmap( "artwork" ) );
 	setPalette( pal );
 
-	auto llKnob = new Knob(knobBright_26, this);
-	llKnob->setModel( &_controls->m_llModel );
+	auto llKnob = new Knob(knobBright_26, &_controls->m_llModel, this);
 	llKnob->setHintText( tr( "Left to Left Vol:" ) , "" );
 	llKnob->move( 10, 79 );
 
-	auto lrKnob = new Knob(knobBright_26, this);
-	lrKnob->setModel( &_controls->m_lrModel );
+	auto lrKnob = new Knob(knobBright_26, &_controls->m_lrModel, this);
 	lrKnob->setHintText( tr( "Left to Right Vol:" ) , "" );
 	lrKnob->move( 48, 79 );
 
-	auto rlKnob = new Knob(knobBright_26, this);
-	rlKnob->setModel( &_controls->m_rlModel );
+	auto rlKnob = new Knob(knobBright_26, &_controls->m_rlModel, this);
 	rlKnob->setHintText( tr( "Right to Left Vol:" ) , "" );
 	rlKnob->move( 85, 79 );
 
-	auto rrKnob = new Knob(knobBright_26, this);
-	rrKnob->setModel( &_controls->m_rrModel );
+	auto rrKnob = new Knob(knobBright_26, &_controls->m_rrModel, this);
 	rrKnob->setHintText( tr( "Right to Right Vol:" ) , "" );
 	rrKnob->move( 123, 79 );
 }

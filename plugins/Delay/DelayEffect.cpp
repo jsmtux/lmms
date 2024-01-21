@@ -53,7 +53,7 @@ Plugin::Descriptor PLUGIN_EXPORT delay_plugin_descriptor =
 
 
 
-DelayEffect::DelayEffect( Model* parent, const Plugin::Descriptor::SubPluginFeatures::Key* key ) :
+DelayEffect::DelayEffect( Model* parent, const Plugin::PluginDescriptor::Key* key ) :
 	Effect( &delay_plugin_descriptor, parent, key ),
 	m_delayControls( this )
 {
@@ -165,7 +165,7 @@ extern "C"
 //needed for getting plugin out of shared lib
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model* parent, void* data )
 {
-	return new DelayEffect( parent , static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>( data ) );
+	return new DelayEffect( parent , static_cast<const Plugin::PluginDescriptor::Key *>( data ) );
 }
 
 }}

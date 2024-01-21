@@ -35,15 +35,19 @@ namespace lmms
 {
 
 
-LfoController::LfoController( Model * _parent ) :
+IController* createLfoController(ISong* song) {
+	return new LfoController(song);
+}
+
+LfoController::LfoController( QObject * _parent ) :
 	Controller( Controller::LfoController, _parent, tr( "LFO Controller" ) ),
-	m_baseModel( 0.5, 0.0, 1.0, 0.001, this, tr( "Base value" ) ),
-	m_speedModel( 2.0, 0.01, 20.0, 0.0001, 20000.0, this, tr( "Oscillator speed" ) ),
-	m_amountModel( 1.0, -1.0, 1.0, 0.005, this, tr( "Oscillator amount" ) ),
-	m_phaseModel( 0.0, 0.0, 360.0, 4.0, this, tr( "Oscillator phase" ) ),
+	m_baseModel( 0.5, 0.0, 1.0, 0.001, model(), tr( "Base value" ) ),
+	m_speedModel( 2.0, 0.01, 20.0, 0.0001, 20000.0, model(), tr( "Oscillator speed" ) ),
+	m_amountModel( 1.0, -1.0, 1.0, 0.005, model(), tr( "Oscillator amount" ) ),
+	m_phaseModel( 0.0, 0.0, 360.0, 4.0, model(), tr( "Oscillator phase" ) ),
 	m_waveModel( Oscillator::SineWave, 0, Oscillator::NumWaveShapes,
-			this, tr( "Oscillator waveform" ) ),
-	m_multiplierModel( 0, 0, 2, this, tr( "Frequency Multiplier" ) ),
+			model(), tr( "Oscillator waveform" ) ),
+	m_multiplierModel( 0, 0, 2, model(), tr( "Frequency Multiplier" ) ),
 	m_duration( 1000 ),
 	m_phaseOffset( 0 ),
 	m_currentPhase( 0 ),
@@ -128,7 +132,7 @@ void LfoController::updatePhase()
 
 void LfoController::updateDuration()
 {
-	float newDurationF = Engine::audioEngine()->processingSampleRate() * m_speedModel.value();
+	float newDurationF = Engine::audioEngine()->processingSampleRate() * m_speedModel.wrappedModel()->value();
 
 	switch(m_multiplierModel.value() )
 	{
@@ -220,13 +224,6 @@ void LfoController::loadSettings( const QDomElement & _this )
 QString LfoController::nodeName() const
 {
 	return( "lfocontroller" );
-}
-
-
-
-gui::ControllerDialog * LfoController::createDialog( QWidget * _parent )
-{
-	return new gui::LfoControllerDialog( this, _parent );
 }
 
 

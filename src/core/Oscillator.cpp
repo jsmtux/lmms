@@ -39,7 +39,16 @@
 
 
 namespace lmms
+{IOscillator* createOscillator(const IIntAutomatableModel *wave_shape_model,
+			const IIntAutomatableModel *mod_algo_model,
+			const float &freq,
+			const float &detuning_div_samplerate,
+			const float &phase_offset,
+			const float &volume,
+			IOscillator *m_subOsc)
 {
+	return new Oscillator(static_cast<const IntModel*>(wave_shape_model), static_cast<const IntModel*>(mod_algo_model), freq, detuning_div_samplerate, phase_offset, volume, static_cast<Oscillator*>(m_subOsc));
+}
 
 
 void Oscillator::waveTableInit()
@@ -808,7 +817,7 @@ inline sample_t Oscillator::getSample<Oscillator::UserDefinedWave>(
 {
 	if (m_useWaveTable && !m_isModulator)
 	{
-		return wtSample(m_userWave->m_userAntiAliasWaveTable, _sample);
+		return wtSample(static_cast<const SampleBuffer*>(m_userWave)->m_userAntiAliasWaveTable, _sample);
 	}
 	else
 	{

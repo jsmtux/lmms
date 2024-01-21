@@ -35,7 +35,7 @@
 #include "gui_templates.h"
 #include "LadspaDescription.h"
 #include "LadspaPortDialog.h"
-#include "TabBar.h"
+#include "widgets/TabBar.h"
 #include "TabButton.h"
 
 #include "embed.h"
@@ -75,7 +75,7 @@ PLUGIN_EXPORT Plugin * lmms_plugin_main( Model * _parent, void * _data )
 
 
 LadspaBrowser::LadspaBrowser() :
-	ToolPlugin( &ladspabrowser_plugin_descriptor, nullptr )
+	QWidgetToolPlugin( &ladspabrowser_plugin_descriptor, nullptr )
 {
 }
 
@@ -94,7 +94,7 @@ namespace gui
 
 
 LadspaBrowserView::LadspaBrowserView( ToolPlugin * _tool ) :
-	ToolPluginView( _tool  )
+	ToolPluginView( _tool, nullptr )
 {
 	auto hlayout = new QHBoxLayout(this);
 	hlayout->setSpacing( 0 );

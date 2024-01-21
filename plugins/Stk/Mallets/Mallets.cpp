@@ -69,26 +69,26 @@ Plugin::Descriptor PLUGIN_EXPORT malletsstk_plugin_descriptor =
 
 
 MalletsInstrument::MalletsInstrument( InstrumentTrack * _instrument_track ):
-	Instrument( _instrument_track, &malletsstk_plugin_descriptor ),
-	m_hardnessModel(64.0f, 0.0f, 128.0f, 0.1f, this, tr( "Hardness" )),
-	m_positionModel(64.0f, 0.0f, 64.0f, 0.1f, this, tr( "Position" )),
-	m_vibratoGainModel(0.0f, 0.0f, 128.0f, 0.1f, this, tr( "Vibrato gain" )),
-	m_vibratoFreqModel(0.0f, 0.0f, 128.0f, 0.1f, this, tr( "Vibrato frequency" )),
-	m_stickModel(0.0f, 0.0f, 128.0f, 0.1f, this, tr( "Stick mix" )),
-	m_modulatorModel(64.0f, 0.0f, 128.0f, 0.1f, this, tr( "Modulator" )),
-	m_crossfadeModel(64.0f, 0.0f, 128.0f, 0.1f, this, tr( "Crossfade" )),
-	m_lfoSpeedModel(64.0f, 0.0f, 128.0f, 0.1f, this, tr( "LFO speed" )),
-	m_lfoDepthModel(64.0f, 0.0f, 128.0f, 0.1f, this, tr( "LFO depth" )),
-	m_adsrModel(64.0f, 0.0f, 128.0f, 0.1f, this, tr( "ADSR" )),
-	m_pressureModel(64.0f, 0.1f, 128.0f, 0.1f, this, tr( "Pressure" )),
-	m_motionModel(64.0f, 0.0f, 128.0f, 0.1f, this, tr( "Motion" )),
+	QWidgetInstrumentPlugin( _instrument_track, &malletsstk_plugin_descriptor ),
+	m_hardnessModel(64.0f, 0.0f, 128.0f, 0.1f, model(), tr( "Hardness" )),
+	m_positionModel(64.0f, 0.0f, 64.0f, 0.1f, model(), tr( "Position" )),
+	m_vibratoGainModel(0.0f, 0.0f, 128.0f, 0.1f, model(), tr( "Vibrato gain" )),
+	m_vibratoFreqModel(0.0f, 0.0f, 128.0f, 0.1f, model(), tr( "Vibrato frequency" )),
+	m_stickModel(0.0f, 0.0f, 128.0f, 0.1f, model(), tr( "Stick mix" )),
+	m_modulatorModel(64.0f, 0.0f, 128.0f, 0.1f, model(), tr( "Modulator" )),
+	m_crossfadeModel(64.0f, 0.0f, 128.0f, 0.1f, model(), tr( "Crossfade" )),
+	m_lfoSpeedModel(64.0f, 0.0f, 128.0f, 0.1f, model(), tr( "LFO speed" )),
+	m_lfoDepthModel(64.0f, 0.0f, 128.0f, 0.1f, model(), tr( "LFO depth" )),
+	m_adsrModel(64.0f, 0.0f, 128.0f, 0.1f, model(), tr( "ADSR" )),
+	m_pressureModel(64.0f, 0.1f, 128.0f, 0.1f, model(), tr( "Pressure" )),
+	m_motionModel(64.0f, 0.0f, 128.0f, 0.1f, model(), tr( "Motion" )),
 //	TODO: m_vibratoModel
-	m_velocityModel(64.0f, 0.1f, 128.0f, 0.1f, this, tr( "Speed" )),
-	m_strikeModel( true, this, tr( "Bowed" ) ),
-	m_presetsModel(this),
-	m_spreadModel(0, 0, 255, 1, this, tr( "Spread" )),
-	m_versionModel( MALLETS_PRESET_VERSION, 0, MALLETS_PRESET_VERSION, this, "" ),
-	m_isOldVersionModel( false, this, "" ),
+	m_velocityModel(64.0f, 0.1f, 128.0f, 0.1f, model(), tr( "Speed" )),
+	m_strikeModel( true, model(), tr( "Bowed" ) ),
+	m_presetsModel(model()),
+	m_spreadModel(0, 0, 255, 1, model(), tr( "Spread" )),
+	m_versionModel( MALLETS_PRESET_VERSION, 0, MALLETS_PRESET_VERSION, model(), "" ),
+	m_isOldVersionModel( false, model(), "" ),
 	m_filesMissing( !QDir( ConfigManager::inst()->stkDir() ).exists() ||
 		!QFileInfo( ConfigManager::inst()->stkDir() + "/sinewave.raw" ).exists() )
 {
@@ -374,7 +374,7 @@ void MalletsInstrument::deleteNotePluginData( NotePlayHandle * _n )
 
 
 
-gui::PluginView * MalletsInstrument::instantiateView( QWidget * _parent )
+gui::InstrumentView * MalletsInstrument::instantiateView( QWidget * _parent )
 {
 	return( new gui::MalletsInstrumentView( this, _parent ) );
 }
@@ -386,7 +386,7 @@ namespace gui
 
 MalletsInstrumentView::MalletsInstrumentView( MalletsInstrument * _instrument,
 							QWidget * _parent ) :
-        InstrumentViewFixedSize( _instrument, _parent )
+        InstrumentViewImpl( _instrument, _parent, true )
 {
 	m_modalBarWidget = setupModalBarControls( this );
 	setWidgetBackground( m_modalBarWidget, "artwork" );
@@ -402,14 +402,14 @@ MalletsInstrumentView::MalletsInstrumentView( MalletsInstrument * _instrument,
 
 	changePreset(); // Show widget
 
-	m_presetsCombo = new ComboBox( this, tr( "Instrument" ) );
+	m_presetsCombo = new ComboBox( &m_instrument->m_presetsModel, this, tr( "Instrument" ) );
 	m_presetsCombo->setGeometry( 140, 50, 99, ComboBox::DEFAULT_HEIGHT );
 	m_presetsCombo->setFont( pointSize<8>( m_presetsCombo->font() ) );
 	
 	connect( &_instrument->m_presetsModel, SIGNAL( dataChanged() ),
 		 this, SLOT( changePreset() ) );
 	
-	m_spreadKnob = new Knob( knobVintage_32, this );
+	m_spreadKnob = new Knob( knobVintage_32, &m_instrument->m_spreadModel, this );
 	m_spreadKnob->setLabel( tr( "Spread" ) );
 	m_spreadKnob->move( 190, 140 );
 	m_spreadKnob->setHintText( tr( "Spread:" ), "" );
@@ -445,27 +445,27 @@ QWidget * MalletsInstrumentView::setupModalBarControls( QWidget * _parent )
 	auto widget = new QWidget(_parent);
 	widget->setFixedSize( 250, 250 );
 		
-	m_hardnessKnob = new Knob( knobVintage_32, widget );
+	m_hardnessKnob = new Knob( knobVintage_32, &m_instrument->m_hardnessModel, widget );
 	m_hardnessKnob->setLabel( tr( "Hardness" ) );
 	m_hardnessKnob->move( 30, 90 );
 	m_hardnessKnob->setHintText( tr( "Hardness:" ), "" );
 
-	m_positionKnob = new Knob( knobVintage_32, widget );
+	m_positionKnob = new Knob( knobVintage_32, &m_instrument->m_positionModel, widget );
 	m_positionKnob->setLabel( tr( "Position" ) );
 	m_positionKnob->move( 110, 90 );
 	m_positionKnob->setHintText( tr( "Position:" ), "" );
 
-	m_vibratoGainKnob = new Knob( knobVintage_32, widget );
+	m_vibratoGainKnob = new Knob( knobVintage_32, &m_instrument->m_vibratoGainModel, widget );
 	m_vibratoGainKnob->setLabel( tr( "Vibrato gain" ) );
 	m_vibratoGainKnob->move( 30, 140 );
 	m_vibratoGainKnob->setHintText( tr( "Vibrato gain:" ), "" );
 
-	m_vibratoFreqKnob = new Knob( knobVintage_32, widget );
+	m_vibratoFreqKnob = new Knob( knobVintage_32, &m_instrument->m_vibratoFreqModel, widget );
 	m_vibratoFreqKnob->setLabel( tr( "Vibrato frequency" ) );
 	m_vibratoFreqKnob->move( 110, 140 );
 	m_vibratoFreqKnob->setHintText( tr( "Vibrato frequency:" ), "" );
 
-	m_stickKnob = new Knob( knobVintage_32, widget );
+	m_stickKnob = new Knob( knobVintage_32, &m_instrument->m_stickModel, widget );
 	m_stickKnob->setLabel( tr( "Stick mix" ) );
 	m_stickKnob->move( 190, 90 );
 	m_stickKnob->setHintText( tr( "Stick mix:" ), "" );
@@ -481,27 +481,27 @@ QWidget * MalletsInstrumentView::setupTubeBellControls( QWidget * _parent )
 	auto widget = new QWidget(_parent);
 	widget->setFixedSize( 250, 250 );
 	
-	m_modulatorKnob = new Knob( knobVintage_32, widget );
+	m_modulatorKnob = new Knob( knobVintage_32, &m_instrument->m_modulatorModel, widget );
 	m_modulatorKnob->setLabel( tr( "Modulator" ) );
 	m_modulatorKnob->move( 30, 90 );
 	m_modulatorKnob->setHintText( tr( "Modulator:" ), "" );
 
-	m_crossfadeKnob = new Knob( knobVintage_32, widget );
+	m_crossfadeKnob = new Knob( knobVintage_32, &m_instrument->m_crossfadeModel, widget );
 	m_crossfadeKnob->setLabel( tr( "Crossfade" ) );
 	m_crossfadeKnob->move( 110, 90 );
 	m_crossfadeKnob->setHintText( tr( "Crossfade:" ), "" );
 	
-	m_lfoSpeedKnob = new Knob( knobVintage_32, widget );
+	m_lfoSpeedKnob = new Knob( knobVintage_32, &m_instrument->m_lfoSpeedModel, widget );
 	m_lfoSpeedKnob->setLabel( tr( "LFO speed" ) );
 	m_lfoSpeedKnob->move( 30, 140 );
 	m_lfoSpeedKnob->setHintText( tr( "LFO speed:" ), "" );
 	
-	m_lfoDepthKnob = new Knob( knobVintage_32, widget );
+	m_lfoDepthKnob = new Knob( knobVintage_32, &m_instrument->m_lfoDepthModel, widget );
 	m_lfoDepthKnob->setLabel( tr( "LFO depth" ) );
 	m_lfoDepthKnob->move( 110, 140 );
 	m_lfoDepthKnob->setHintText( tr( "LFO depth:" ), "" );
 	
-	m_adsrKnob = new Knob( knobVintage_32, widget );
+	m_adsrKnob = new Knob( knobVintage_32, &m_instrument->m_adsrModel, widget );
 	m_adsrKnob->setLabel( tr( "ADSR" ) );
 	m_adsrKnob->move( 190, 90 );
 	m_adsrKnob->setHintText( tr( "ADSR:" ), "" );
@@ -518,25 +518,25 @@ QWidget * MalletsInstrumentView::setupBandedWGControls( QWidget * _parent )
 	auto widget = new QWidget(_parent);
 	widget->setFixedSize( 250, 250 );
 	
-/*	m_strikeLED = new LedCheckBox( tr( "Bowed" ), widget );
+/*	m_strikeLED = new LedCheckBox(  &m_instrument->m_strikeModel,tr( "Bowed" ), widget );
 	m_strikeLED->move( 138, 25 );*/
 
-	m_pressureKnob = new Knob( knobVintage_32, widget );
+	m_pressureKnob = new Knob( knobVintage_32, &m_instrument->m_pressureModel, widget );
 	m_pressureKnob->setLabel( tr( "Pressure" ) );
 	m_pressureKnob->move( 30, 90 );
 	m_pressureKnob->setHintText( tr( "Pressure:" ), "" );
 
-/*	m_motionKnob = new Knob( knobVintage_32, widget );
+/*	m_motionKnob = new Knob(  &m_instrument->m_motionModel,knobVintage_32, widget );
 	m_motionKnob->setLabel( tr( "Motion" ) );
 	m_motionKnob->move( 110, 90 );
 	m_motionKnob->setHintText( tr( "Motion:" ), "" );*/
 
-	m_velocityKnob = new Knob( knobVintage_32, widget );
+	m_velocityKnob = new Knob( knobVintage_32, &m_instrument->m_velocityModel, widget );
 	m_velocityKnob->setLabel( tr( "Speed" ) );
 	m_velocityKnob->move( 30, 140 );
 	m_velocityKnob->setHintText( tr( "Speed:" ), "" );
 	
-/*	m_vibratoKnob = new Knob( knobVintage_32, widget, tr( "Vibrato" ) );
+/*	m_vibratoKnob = new Knob(  &m_instrument->m_vibratoModel,knobVintage_32, widget, tr( "Vibrato" ) );
 	m_vibratoKnob->setLabel( tr( "Vibrato" ) );
 	m_vibratoKnob->move( 110, 140 );
 	m_vibratoKnob->setHintText( tr( "Vibrato:" ), "" );*/
@@ -547,35 +547,9 @@ QWidget * MalletsInstrumentView::setupBandedWGControls( QWidget * _parent )
 
 
 
-void MalletsInstrumentView::modelChanged()
-{
-	auto inst = castModel<MalletsInstrument>();
-	m_hardnessKnob->setModel( &inst->m_hardnessModel );
-	m_positionKnob->setModel( &inst->m_positionModel );
-	m_vibratoGainKnob->setModel( &inst->m_vibratoGainModel );
-	m_vibratoFreqKnob->setModel( &inst->m_vibratoFreqModel );
-	m_stickKnob->setModel( &inst->m_stickModel );
-	m_modulatorKnob->setModel( &inst->m_modulatorModel );
-	m_crossfadeKnob->setModel( &inst->m_crossfadeModel );
-	m_lfoSpeedKnob->setModel( &inst->m_lfoSpeedModel );
-	m_lfoDepthKnob->setModel( &inst->m_lfoDepthModel );
-	m_adsrKnob->setModel( &inst->m_adsrModel );
-	m_pressureKnob->setModel( &inst->m_pressureModel );
-//	m_motionKnob->setModel( &inst->m_motionModel );
-//	m_vibratoKnob->setModel( &inst->m_vibratoModel );
-	m_velocityKnob->setModel( &inst->m_velocityModel );
-//	m_strikeLED->setModel( &inst->m_strikeModel );
-	m_presetsCombo->setModel( &inst->m_presetsModel );
-	m_spreadKnob->setModel( &inst->m_spreadModel );
-}
-
-
-
-
 void MalletsInstrumentView::changePreset()
 {
-	auto inst = castModel<MalletsInstrument>();
-	int _preset = inst->m_presetsModel.value();
+	int _preset = m_instrument->m_presetsModel.value();
 
 	if( _preset < 9 )
 	{

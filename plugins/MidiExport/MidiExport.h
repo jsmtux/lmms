@@ -28,7 +28,7 @@
 
 #include <QString>
 
-#include "ExportFilter.h"
+#include "plugins/QWidgetExportFilter.h"
 #include "MidiFile.hpp"
 
 class QDomNode;
@@ -56,7 +56,7 @@ struct MidiNote
 using MidiNoteVector = std::vector<MidiNote>;
 using MidiNoteIterator = std::vector<MidiNote>::iterator;
 
-class MidiExport: public ExportFilter
+class MidiExport: public QWidgetExportFilter
 {
 // 	Q_OBJECT
 public:
@@ -68,8 +68,8 @@ public:
 		return nullptr;
 	}
 
-	bool tryExport(const TrackContainer::TrackList &tracks,
-				const TrackContainer::TrackList &patternTracks,
+	bool tryExport(const TrackList &tracks,
+				const TrackList &patternTracks,
 				int tempo, int masterPitch, const QString &filename) override;
 	
 private:

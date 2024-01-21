@@ -27,35 +27,30 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
-#include <QMessageBox>
 
 #include <algorithm>
 #include <cmath>
 
-#include "AutomationTrack.h"
-#include "AutomationEditor.h"
+#include "AutomationClip.h"
 #include "ConfigManager.h"
-#include "ControllerRackView.h"
 #include "ControllerConnection.h"
 #include "EnvelopeAndLfoParameters.h"
 #include "Mixer.h"
-#include "MixerView.h"
-#include "GuiApplication.h"
-#include "ExportFilter.h"
-#include "InstrumentTrack.h"
+#include "IAutomationEditor.h"
+#include "IGuiApplication.h"
+#include "ITimeLineWidget.h"
 #include "Keymap.h"
 #include "NotePlayHandle.h"
-#include "MidiClip.h"
-#include "PatternEditor.h"
 #include "PatternStore.h"
-#include "PatternTrack.h"
-#include "PianoRoll.h"
 #include "ProjectJournal.h"
-#include "ProjectNotes.h"
 #include "Scale.h"
-#include "SongEditor.h"
-#include "TimeLineWidget.h"
 #include "PeakController.h"
+
+
+#include "tracks/AutomationTrack.h"
+#include "tracks/InstrumentTrack.h"
+#include "tracks/MidiClip.h"
+#include "tracks/PatternTrack.h"
 
 
 namespace lmms
@@ -66,10 +61,10 @@ tick_t TimePos::s_ticksPerBar = DefaultTicksPerBar;
 
 
 Song::Song() :
-	TrackContainer(),
+	m_trackContainer(this),
 	m_globalAutomationTrack( dynamic_cast<AutomationTrack *>(
 				Track::create( Track::HiddenAutomationTrack,
-								this ) ) ),
+								&m_trackContainer ) ) ),
 	m_tempoModel( DefaultTempo, MinTempo, MaxTempo, this, tr( "Tempo" ) ),
 	m_timeSigModel( this ),
 	m_oldTicksPerBar( DefaultTicksPerBar ),
@@ -117,10 +112,8 @@ Song::Song() :
 			this, SLOT(masterPitchChanged()));*/
 
 	qRegisterMetaType<lmms::Note>( "lmms::Note" );
-	setType( SongContainer );
-
-	for (auto& scale : m_scales) {scale = std::make_shared<Scale>();}
-	for (auto& keymap : m_keymaps) {keymap = std::make_shared<Keymap>();}
+	for (auto& scale : m_scales) {scale = std::make_unique<Scale>();}
+	for (auto& keymap : m_keymaps) {keymap = std::make_unique<Keymap>();}
 }
 
 
@@ -174,7 +167,7 @@ void Song::setTimeSignature()
 {
 	TimePos::setTicksPerBar( ticksPerBar() );
 	emit timeSignatureChanged( m_oldTicksPerBar, ticksPerBar() );
-	emit dataChanged();
+	emit m_trackContainer.dataChanged();
 	m_oldTicksPerBar = ticksPerBar();
 
 	m_vstSyncController.setTimeSignature(
@@ -186,7 +179,7 @@ void Song::setTimeSignature()
 
 void Song::savePos()
 {
-	gui::TimeLineWidget* tl = m_playPos[m_playMode].m_timeLine;
+	gui::ITimeLineWidget* tl = m_playPos[m_playMode].m_timeLine;
 
 	if( tl != nullptr )
 	{
@@ -217,11 +210,11 @@ void Song::processNextBuffer()
 	switch (m_playMode)
 	{
 		case Mode_PlaySong:
-			trackList = tracks();
+			trackList = m_trackContainer.tracks();
 			break;
 
 		case Mode_PlayPattern:
-			if (Engine::patternStore()->numOfPatterns() > 0)
+			if (numOfPatterns() > 0)
 			{
 				clipNum = Engine::patternStore()->currentPattern();
 				trackList.push_back(PatternTrack::findPatternTrack(clipNum));
@@ -359,34 +352,34 @@ void Song::processNextBuffer()
 void Song::processAutomations(const TrackList &tracklist, TimePos timeStart, fpp_t)
 {
 	AutomatedValueMap values;
+	TrackList tracks;
 
-	QSet<const AutomatableModel*> recordedModels;
+	QSet<const IAutomatableModelBase*> recordedModels;
 
-	TrackContainer* container = this;
 	int clipNum = -1;
 
 	switch (m_playMode)
 	{
 	case Mode_PlaySong:
+		values = m_trackContainer.automatedValuesFromAllTracks( timeStart, clipNum);
+		tracks = m_trackContainer.tracks();
 		break;
 	case Mode_PlayPattern:
 	{
 		Q_ASSERT(tracklist.size() == 1);
 		Q_ASSERT(tracklist.at(0)->type() == Track::PatternTrack);
 		auto patternTrack = dynamic_cast<PatternTrack*>(tracklist.at(0));
-		container = Engine::patternStore();
 		clipNum = patternTrack->patternIndex();
+		values = Engine::patternStore()->automatedValuesAt(timeStart, clipNum);
+		tracks = Engine::patternStore()->trackContainer().tracks();
 	}
 		break;
 	default:
 		return;
 	}
 
-	values = container->automatedValuesAt(timeStart, clipNum);
-	TrackList tracks = container->tracks();
-
 	Track::clipVector clips;
-	for (Track* track : tracks)
+	for (ITrack* track : tracks)
 	{
 		if (track->type() == Track::AutomationTrack) {
 			track->getClipsInRange(clips, 0, timeStart);
@@ -394,14 +387,14 @@ void Song::processAutomations(const TrackList &tracklist, TimePos timeStart, fpp
 	}
 
 	// Process recording
-	for (Clip* clip : clips)
+	for (IClip* clip : clips)
 	{
 		auto p = dynamic_cast<AutomationClip *>(clip);
 		TimePos relTime = timeStart - p->startPosition();
 		if (p->isRecording() && relTime >= 0 && relTime < p->length())
 		{
-			const AutomatableModel* recordedModel = p->firstObject();
-			p->recordValue(relTime, recordedModel->value<float>());
+			const auto* recordedModel = p->firstObject();
+			p->recordValue(relTime, recordedModel->valueAsFloat());
 
 			recordedModels << recordedModel;
 		}
@@ -411,7 +404,7 @@ void Song::processAutomations(const TrackList &tracklist, TimePos timeStart, fpp
 	// so we can move the control back to any connected controller again
 	for (auto it = m_oldAutomatedValues.begin(); it != m_oldAutomatedValues.end(); it++)
 	{
-		AutomatableModel * am = it.key();
+		auto* am = it.key();
 		if (am->controllerConnection() && !values.contains(am))
 		{
 			am->setUseControllerValue(true);
@@ -539,14 +532,14 @@ void Song::playPattern()
 
 
 
-void Song::playMidiClip( const MidiClip* midiClipToPlay, bool loop )
+void Song::playMidiClip( const IMidiClip* midiClipToPlay, bool loop )
 {
 	if( isStopped() == false )
 	{
 		stop();
 	}
 
-	m_midiClipToPlay = midiClipToPlay;
+	m_midiClipToPlay = dynamic_cast<const MidiClip*>(midiClipToPlay);
 	m_loopMidiClip = loop;
 
 	if( m_midiClipToPlay != nullptr )
@@ -566,23 +559,7 @@ void Song::playMidiClip( const MidiClip* midiClipToPlay, bool loop )
 
 void Song::updateLength()
 {
-	m_length = 0;
-	m_tracksMutex.lockForRead();
-	for (auto track : tracks())
-	{
-		if (m_exporting && track->isMuted())
-		{
-			continue;
-		}
-
-		const bar_t cur = track->length();
-		if( cur > m_length )
-		{
-			m_length = cur;
-		}
-	}
-	m_tracksMutex.unlock();
-
+	m_length = m_trackContainer.getLargestTrackLength(m_exporting);
 	emit lengthChanged( m_length );
 }
 
@@ -639,12 +616,12 @@ void Song::stop()
 		return;
 	}
 
-	using gui::TimeLineWidget;
+	using gui::ITimeLineWidget;
 
 	// To avoid race conditions with the processing threads
 	Engine::audioEngine()->requestChangeInModel();
 
-	TimeLineWidget * tl = m_playPos[m_playMode].m_timeLine;
+	ITimeLineWidget * tl = m_playPos[m_playMode].m_timeLine;
 	m_paused = false;
 	m_recording = true;
 
@@ -652,12 +629,12 @@ void Song::stop()
 	{
 		switch( tl->behaviourAtStop() )
 		{
-			case TimeLineWidget::BackToZero:
+			case gui::TimeLineBehaviourAtStopStates::BackToZero:
 				m_playPos[m_playMode].setTicks(0);
 				m_elapsedMilliSeconds[m_playMode] = 0;
 				break;
 
-			case TimeLineWidget::BackToStart:
+			case gui::TimeLineBehaviourAtStopStates::BackToStart:
 				if( tl->savedPos() >= 0 )
 				{
 					m_playPos[m_playMode].setTicks(tl->savedPos().getTicks());
@@ -667,7 +644,7 @@ void Song::stop()
 				}
 				break;
 
-			case TimeLineWidget::KeepStopPosition:
+			case gui::TimeLineBehaviourAtStopStates::KeepStopPosition:
 				break;
 		}
 	}
@@ -696,7 +673,7 @@ void Song::stop()
 	// back to their controllers.
 	for (auto it = m_oldAutomatedValues.begin(); it != m_oldAutomatedValues.end(); it++)
 	{
-		AutomatableModel * am = it.key();
+		auto * am = it.key();
 		am->setUseControllerValue(true);
 	}
 	m_oldAutomatedValues.clear();
@@ -779,14 +756,7 @@ void Song::stopExport()
 
 void Song::insertBar()
 {
-	m_tracksMutex.lockForRead();
-	for (Track* track: tracks())
-	{
-		// FIXME journal batch of tracks instead of each track individually
-		if (track->numOfClips() > 0) { track->addJournalCheckPoint(); }
-		track->insertBar(m_playPos[Mode_PlaySong]);
-	}
-	m_tracksMutex.unlock();
+	m_trackContainer.insertBar(m_playPos[Mode_PlaySong]);
 }
 
 
@@ -794,14 +764,7 @@ void Song::insertBar()
 
 void Song::removeBar()
 {
-	m_tracksMutex.lockForRead();
-	for (Track* track: tracks())
-	{
-		// FIXME journal batch of tracks instead of each track individually
-		if (track->numOfClips() > 0) { track->addJournalCheckPoint(); }
-		track->removeBar(m_playPos[Mode_PlaySong]);
-	}
-	m_tracksMutex.unlock();
+	m_trackContainer.removeBar(m_playPos[Mode_PlaySong]);
 }
 
 
@@ -809,7 +772,7 @@ void Song::removeBar()
 
 void Song::addPatternTrack()
 {
-	Track * t = Track::create(Track::PatternTrack, this);
+	ITrack * t = Track::create(Track::PatternTrack, &m_trackContainer);
 	Engine::patternStore()->setCurrentPattern(dynamic_cast<PatternTrack*>(t)->patternIndex());
 }
 
@@ -818,7 +781,7 @@ void Song::addPatternTrack()
 
 void Song::addSampleTrack()
 {
-	( void )Track::create( Track::SampleTrack, this );
+	( void )Track::create( Track::SampleTrack, &m_trackContainer );
 }
 
 
@@ -826,7 +789,7 @@ void Song::addSampleTrack()
 
 void Song::addAutomationTrack()
 {
-	( void )Track::create( Track::AutomationTrack, this );
+	( void )Track::create( Track::AutomationTrack, &m_trackContainer );
 }
 
 
@@ -840,7 +803,7 @@ bpm_t Song::getTempo()
 
 AutomatedValueMap Song::automatedValuesAt(TimePos time, int clipNum) const
 {
-	return TrackContainer::automatedValuesFromTracks(TrackList{m_globalAutomationTrack} << tracks(), time, clipNum);
+	return m_trackContainer.automatedValuesFromAllTracks(time, clipNum, m_globalAutomationTrack);
 }
 
 
@@ -848,7 +811,7 @@ AutomatedValueMap Song::automatedValuesAt(TimePos time, int clipNum) const
 
 void Song::clearProject()
 {
-	using gui::getGUI;
+	using gui::getGUIInterface;
 
 	Engine::projectJournal()->setJournalling( false );
 
@@ -865,33 +828,8 @@ void Song::clearProject()
 
 	Engine::audioEngine()->requestChangeInModel();
 
-	if( getGUI() != nullptr && getGUI()->patternEditor() )
-	{
-		getGUI()->patternEditor()->m_editor->clearAllTracks();
-	}
-	if( getGUI() != nullptr && getGUI()->songEditor() )
-	{
-		getGUI()->songEditor()->m_editor->clearAllTracks();
-	}
-	if( getGUI() != nullptr && getGUI()->mixerView() )
-	{
-		getGUI()->mixerView()->clear();
-	}
 	QCoreApplication::sendPostedEvents();
-	Engine::patternStore()->clearAllTracks();
-	clearAllTracks();
-
 	Engine::mixer()->clear();
-
-	if( getGUI() != nullptr && getGUI()->automationEditor() )
-	{
-		getGUI()->automationEditor()->setCurrentClip( nullptr );
-	}
-
-	if( getGUI() != nullptr && getGUI()->pianoRoll() )
-	{
-		getGUI()->pianoRoll()->reset();
-	}
 
 	m_tempoModel.reset();
 	m_masterVolumeModel.reset();
@@ -909,14 +847,17 @@ void Song::clearProject()
 
 	Engine::audioEngine()->doneChangeInModel();
 
-	if( getGUI() != nullptr && getGUI()->getProjectNotes() )
-	{
-		getGUI()->getProjectNotes()->clear();
+	if(getGUIInterface() != nullptr) {
+		getGUIInterface()->clear();
 	}
+
+	Engine::patternStore()->trackContainer().clearAllTracks();
+	m_trackContainer.clearAllTracks();
+
 
 	removeAllControllers();
 
-	emit dataChanged();
+	emit m_trackContainer.dataChanged();
 
 	Engine::projectJournal()->clearJournal();
 
@@ -957,16 +898,16 @@ void Song::createNewProject()
 	m_oldFileName = "";
 	setProjectFileName("");
 
-	Track * t;
-	t = Track::create( Track::InstrumentTrack, this );
+	ITrack * t;
+	t = Track::create( Track::InstrumentTrack, &m_trackContainer );
 	dynamic_cast<InstrumentTrack * >( t )->loadInstrument(
 					"tripleoscillator" );
-	t = Track::create(Track::InstrumentTrack, Engine::patternStore());
+	t = Track::create(Track::InstrumentTrack, &Engine::patternStore()->trackContainer());
 	dynamic_cast<InstrumentTrack * >( t )->loadInstrument(
 						"kicker" );
-	Track::create( Track::SampleTrack, this );
-	Track::create( Track::PatternTrack, this );
-	Track::create( Track::AutomationTrack, this );
+	Track::create( Track::SampleTrack, &m_trackContainer );
+	Track::create( Track::PatternTrack, &m_trackContainer );
+	Track::create( Track::AutomationTrack, &m_trackContainer );
 
 	m_tempoModel.setInitValue( DefaultTempo );
 	m_timeSigModel.reset();
@@ -976,8 +917,10 @@ void Song::createNewProject()
 	QCoreApplication::instance()->processEvents();
 
 	m_loadingProject = false;
-
-	Engine::patternStore()->updateAfterTrackAdd();
+	if (numOfPatterns() == 0)
+	{
+		addPatternTrack();
+	}
 
 	Engine::projectJournal()->setJournalling( true );
 
@@ -1007,7 +950,7 @@ void Song::createNewProjectFromTemplate( const QString & templ )
 // load given song
 void Song::loadProject( const QString & fileName )
 {
-	using gui::getGUI;
+	using gui::getGUIInterface;
 
 	QDomNode node;
 
@@ -1035,9 +978,10 @@ void Song::loadProject( const QString & fileName )
 		{
 			cantLoadProject = true;
 
-			if (getGUI() != nullptr)
+			if (getGUIInterface() != nullptr)
 			{
-				QMessageBox::critical(nullptr, tr("Aborting project load"),
+				getGUIInterface()->mainWindowInterface()->ShowCriticalMessage(
+					tr("Aborting project load"),
 					tr("Project file contains local paths to plugins, which could be used to "
 						"run malicious code."));
 			}
@@ -1098,10 +1042,10 @@ void Song::loadProject( const QString & fileName )
 	if( !node.isNull() )
 	{
 		Engine::mixer()->restoreState( node.toElement() );
-		if( getGUI() != nullptr )
+		if( getGUIInterface() != nullptr )
 		{
 			// refresh MixerView
-			getGUI()->mixerView()->refreshDisplay();
+			getGUIInterface()->mixerViewInterface()->refreshDisplay();
 		}
 	}
 
@@ -1133,7 +1077,7 @@ void Song::loadProject( const QString & fileName )
 		{
 			if( node.nodeName() == "trackcontainer" )
 			{
-				( (JournallingObject *)( this ) )->restoreState( node.toElement() );
+				m_trackContainer.restoreState( node.toElement() );
 			}
 			else if( node.nodeName() == "controllers" )
 			{
@@ -1147,28 +1091,14 @@ void Song::loadProject( const QString & fileName )
 			{
 				restoreKeymapStates(node.toElement());
 			}
-			else if( getGUI() != nullptr )
+			else if( getGUIInterface() != nullptr )
 			{
-				if( node.nodeName() == getGUI()->getControllerRackView()->nodeName() )
-				{
-					getGUI()->getControllerRackView()->restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == getGUI()->pianoRoll()->nodeName() )
-				{
-					getGUI()->pianoRoll()->restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == getGUI()->automationEditor()->m_editor->nodeName() )
-				{
-					getGUI()->automationEditor()->m_editor->restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == getGUI()->getProjectNotes()->nodeName() )
-				{
-					 getGUI()->getProjectNotes()->SerializingObject::restoreState( node.toElement() );
-				}
-				else if( node.nodeName() == m_playPos[Mode_PlaySong].m_timeLine->nodeName() )
+				if( node.nodeName() == m_playPos[Mode_PlaySong].m_timeLine->nodeName() )
 				{
 					m_playPos[Mode_PlaySong].m_timeLine->restoreState( node.toElement() );
 				}
+
+				getGUIInterface()->restoreState(node);
 			}
 		}
 		node = node.nextSibling();
@@ -1183,7 +1113,7 @@ void Song::loadProject( const QString & fileName )
 
 	// Remove dummy controllers that was added for correct connections
 	m_controllers.erase(std::remove_if(m_controllers.begin(), m_controllers.end(),
-		[](Controller* c){return c->type() == Controller::DummyController;}),
+		[](IController* c){return c->type() == IController::DummyController;}),
 		m_controllers.end());
 
 	// resolve all IDs so that autoModels are automated
@@ -1207,10 +1137,10 @@ void Song::loadProject( const QString & fileName )
 
 	if ( hasErrors())
 	{
-		if ( getGUI() != nullptr )
+		if ( getGUIInterface() != nullptr )
 		{
-			QMessageBox::warning( nullptr, tr("LMMS Error report"), errorSummary(),
-							QMessageBox::Ok );
+			getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+				tr("LMMS Error report"), errorSummary());
 		}
 		else
 		{
@@ -1231,7 +1161,7 @@ void Song::loadProject( const QString & fileName )
 // only save current song as filename and do nothing else
 bool Song::saveProjectFile(const QString & filename, bool withResources)
 {
-	using gui::getGUI;
+	using gui::getGUIInterface;
 
 	DataFile dataFile( DataFile::SongProject );
 	m_savingProject = true;
@@ -1241,16 +1171,13 @@ bool Song::saveProjectFile(const QString & filename, bool withResources)
 	m_masterVolumeModel.saveSettings( dataFile, dataFile.head(), "mastervol" );
 	m_masterPitchModel.saveSettings( dataFile, dataFile.head(), "masterpitch" );
 
-	saveState( dataFile, dataFile.content() );
+	m_trackContainer.saveState( dataFile, dataFile.content() );
 
 	m_globalAutomationTrack->saveState( dataFile, dataFile.content() );
 	Engine::mixer()->saveState( dataFile, dataFile.content() );
-	if( getGUI() != nullptr )
+	if( getGUIInterface() != nullptr )
 	{
-		getGUI()->getControllerRackView()->saveState( dataFile, dataFile.content() );
-		getGUI()->pianoRoll()->saveState( dataFile, dataFile.content() );
-		getGUI()->automationEditor()->m_editor->saveState( dataFile, dataFile.content() );
-		getGUI()->getProjectNotes()->SerializingObject::saveState( dataFile, dataFile.content() );
+		getGUIInterface()->saveState(dataFile);
 		m_playPos[Mode_PlaySong].m_timeLine->saveState( dataFile, dataFile.content() );
 	}
 
@@ -1359,11 +1286,9 @@ void Song::saveScaleStates(QDomDocument &doc, QDomElement &element)
 	}
 }
 
-
 void Song::restoreScaleStates(const QDomElement &element)
 {
 	QDomNode node = element.firstChild();
-
 	for (int i = 0; i < MaxScaleCount && !node.isNull() && !isCancelled(); i++)
 	{
 		m_scales[i]->restoreState(node.toElement());
@@ -1401,10 +1326,10 @@ void Song::restoreKeymapStates(const QDomElement &element)
 void Song::exportProjectMidi(QString const & exportFileName) const
 {
 	// instantiate midi export plugin
-	TrackContainer::TrackList const & tracks = this->tracks();
-	TrackContainer::TrackList const & patternStoreTracks = Engine::patternStore()->tracks();
+	TrackList const & tracks = m_trackContainer.tracks();
+	TrackList const & patternStoreTracks = Engine::patternStore()->trackContainer().tracks();
 
-	ExportFilter *exf = dynamic_cast<ExportFilter *> (Plugin::instantiate("midiexport", nullptr, nullptr));
+	IExportFilter *exf = InstantiateMidiExportFilter();
 	if (exf)
 	{
 		exf->tryExport(tracks, patternStoreTracks, getTempo(), m_masterPitchModel.value(), exportFileName);
@@ -1443,7 +1368,7 @@ void Song::setProjectFileName(QString const & projectFileName)
 
 
 
-void Song::addController( Controller * controller )
+void Song::addController( IController * controller )
 {
 	if( controller && !m_controllers.contains( controller ) )
 	{
@@ -1457,7 +1382,7 @@ void Song::addController( Controller * controller )
 
 
 
-void Song::removeController( Controller * controller )
+void Song::removeController( IController * controller )
 {
 	int index = m_controllers.indexOf( controller );
 	if( index != -1 )
@@ -1523,39 +1448,39 @@ bool Song::isSavingProject() const {
 }
 
 
-std::shared_ptr<const Scale> Song::getScale(unsigned int index) const
+const std::unique_ptr<Scale>& Song::getScale(unsigned int index) const
 {
 	if (index >= MaxScaleCount) {index = 0;}
 
-	return std::atomic_load(&m_scales[index]);
+	return m_scales[index];
 }
 
 
-std::shared_ptr<const Keymap> Song::getKeymap(unsigned int index) const
+const std::unique_ptr<Keymap>& Song::getKeymap(unsigned int index) const
 {
 	if (index >= MaxKeymapCount) {index = 0;}
 
-	return std::atomic_load(&m_keymaps[index]);
+	return m_keymaps[index];
 }
 
 
-void Song::setScale(unsigned int index, std::shared_ptr<Scale> newScale)
+void Song::setScale(unsigned int index, IScale* newScale)
 {
 	if (index >= MaxScaleCount) {index = 0;}
 
 	Engine::audioEngine()->requestChangeInModel();
-	std::atomic_store(&m_scales[index], newScale);
+	m_scales[index].reset(static_cast<Scale*>(newScale));
 	emit scaleListChanged(index);
 	Engine::audioEngine()->doneChangeInModel();
 }
 
 
-void Song::setKeymap(unsigned int index, std::shared_ptr<Keymap> newMap)
+void Song::setKeymap(unsigned int index, IKeymap* newMap)
 {
 	if (index >= MaxKeymapCount) {index = 0;}
 
 	Engine::audioEngine()->requestChangeInModel();
-	std::atomic_store(&m_keymaps[index], newMap);
+	m_keymaps[index].reset(static_cast<Keymap*>(newMap));
 	emit keymapListChanged(index);
 	Engine::audioEngine()->doneChangeInModel();
 }

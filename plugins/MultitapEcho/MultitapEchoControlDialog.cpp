@@ -27,11 +27,12 @@
 #include "MultitapEchoControlDialog.h"
 #include "MultitapEchoControls.h"
 #include "embed.h"
-#include "Graph.h"
-#include "LedCheckBox.h"
-#include "Knob.h"
-#include "TempoSyncKnob.h"
-#include "LcdSpinBox.h"
+
+#include "widgets/Graph.h"
+#include "widgets/Knob.h"
+#include "widgets/LcdSpinBox.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/TempoSyncKnob.h"
 
 namespace lmms::gui
 {
@@ -48,14 +49,11 @@ MultitapEchoControlDialog::MultitapEchoControlDialog( MultitapEchoControls * con
 	
 	// graph widgets
 
-	auto ampGraph = new Graph(this, Graph::BarStyle, 204, 105);
-	auto lpGraph = new Graph(this, Graph::BarStyle, 204, 105);
+	auto ampGraph = new Graph( &controls->m_ampGraph, this, Graph::BarStyle, 204, 105 );
+	auto lpGraph = new Graph( &controls->m_lpGraph, this, Graph::BarStyle, 204, 105 );
 
 	ampGraph->move( 30, 10 );
 	lpGraph->move( 30, 125 );
-	
-	ampGraph->setModel( & controls->m_ampGraph );
-	lpGraph->setModel( & controls->m_lpGraph );
 	
 	pal = QPalette();
 	pal.setBrush( backgroundRole(),	PLUGIN_NAME::getIconPixmap("graph_bg") );
@@ -72,34 +70,29 @@ MultitapEchoControlDialog::MultitapEchoControlDialog( MultitapEchoControls * con
 	
 	// steps spinbox
 
-	auto steps = new LcdSpinBox(2, this, "Steps");
+	auto steps = new LcdSpinBox(2, &controls->m_steps, this, "Steps");
 	steps->move( 20, 245 );
-	steps->setModel( & controls->m_steps );
 	
 	// knobs
 
-	auto stepLength = new TempoSyncKnob(knobBright_26, this);
+	auto stepLength = new TempoSyncKnob(knobBright_26, &controls->m_stepLength, this);
 	stepLength->move( 100, 245 );
-	stepLength->setModel( & controls->m_stepLength );
 	stepLength->setLabel( tr( "Length" ) );
 	stepLength->setHintText( tr( "Step length:" ) , " ms" );
 
-	auto dryGain = new Knob(knobBright_26, this);
+	auto dryGain = new Knob(knobBright_26, &controls->m_dryGain, this);
 	dryGain->move( 150, 245 );
-	dryGain->setModel( & controls->m_dryGain );
 	dryGain->setLabel( tr( "Dry" ) );
 	dryGain->setHintText( tr( "Dry gain:" ) , " dBFS" );
 
-	auto stages = new Knob(knobBright_26, this);
+	auto stages = new Knob(knobBright_26, &controls->m_stages, this);
 	stages->move( 200, 245 );
-	stages->setModel( & controls->m_stages );
 	stages->setLabel( tr( "Stages" ) );
 	stages->setHintText( tr( "Low-pass stages:" ) , "x" );
 	// switch led
 
-	auto swapInputs = new LedCheckBox("Swap inputs", this, tr("Swap inputs"), LedCheckBox::Green);
+	auto swapInputs = new LedCheckBox("Swap inputs", &controls->m_swapInputs, this, tr("Swap inputs"), LedCheckBox::Green);
 	swapInputs->move( 20, 275 );
-	swapInputs->setModel( & controls->m_swapInputs );
 	swapInputs->setToolTip(tr("Swap left and right input channels for reflections"));
 }
 

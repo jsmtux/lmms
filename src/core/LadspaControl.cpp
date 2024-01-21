@@ -34,7 +34,7 @@ namespace lmms
 {
 
 
-LadspaControl::LadspaControl( Model * _parent, port_desc_t * _port,
+LadspaControl::LadspaControl( QObject * _parent, port_desc_t * _port,
 								bool _link ) :
 	Model( _parent ),
 	m_link( _link ),
@@ -123,7 +123,7 @@ LADSPA_Data LadspaControl::value()
 		case FLOATING:
 			return static_cast<LADSPA_Data>( m_knobModel.value() );
 		case TIME:
-			return static_cast<LADSPA_Data>( m_tempoSyncKnobModel.value() );
+			return static_cast<LADSPA_Data>( m_tempoSyncKnobModel.wrappedModel()->value() );
 		default:
 			qWarning( "LadspaControl::value(): BAD BAD BAD\n" );
 			break;
@@ -170,7 +170,7 @@ void LadspaControl::setValue( LADSPA_Data _value )
 			m_knobModel.setValue( static_cast<float>( _value ) );
 			break;
 		case TIME:
-			m_tempoSyncKnobModel.setValue( static_cast<float>(
+			m_tempoSyncKnobModel.wrappedModel()->setValue( static_cast<float>(
 								_value ) );
 			break;
 		default:
@@ -239,7 +239,7 @@ void LadspaControl::loadSettings( const QDomElement& parent, const QString& name
 				m_knobModel.setValue(m_knobModel.initValue());
 				break;
 			case TIME:
-				m_tempoSyncKnobModel.setValue(m_tempoSyncKnobModel.initValue());
+				m_tempoSyncKnobModel.wrappedModel()->setValue(m_tempoSyncKnobModel.initValue());
 				break;
 			default:
 				printf("LadspaControl::loadSettings BAD BAD BAD\n");
@@ -299,8 +299,7 @@ void LadspaControl::linkControls( LadspaControl * _control )
 			FloatModel::linkModels( &m_knobModel, _control->knobModel() );
 			break;
 		case TIME:
-			TempoSyncKnobModel::linkModels( &m_tempoSyncKnobModel,
-					_control->tempoSyncKnobModel() );
+			m_tempoSyncKnobModel.linkModel(_control->tempoSyncKnobModel());
 			break;
 		default:
 			break;
@@ -331,7 +330,7 @@ void LadspaControl::knobChanged()
 void LadspaControl::tempoKnobChanged()
 {
 	emit changed( m_port->port_id, static_cast<LADSPA_Data>(
-					m_tempoSyncKnobModel.value() ) );
+					m_tempoSyncKnobModel.wrappedModel()->value() ) );
 }
 
 
@@ -350,8 +349,7 @@ void LadspaControl::unlinkControls( LadspaControl * _control )
 			FloatModel::unlinkModels( &m_knobModel, _control->knobModel() );
 			break;
 		case TIME:
-			TempoSyncKnobModel::unlinkModels( &m_tempoSyncKnobModel,
-					_control->tempoSyncKnobModel() );
+			m_tempoSyncKnobModel.unlinkModel(_control->tempoSyncKnobModel());
 			break;
 		default:
 			break;

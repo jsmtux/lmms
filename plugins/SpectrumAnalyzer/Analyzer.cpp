@@ -56,7 +56,7 @@ extern "C" {
 }
 
 
-Analyzer::Analyzer(Model *parent, const Plugin::Descriptor::SubPluginFeatures::Key *key) :
+Analyzer::Analyzer(Model *parent, const Plugin::PluginDescriptor::Key *key) :
 	Effect(&analyzer_plugin_descriptor, parent, key),
 	m_processor(&m_controls),
 	m_controls(this),
@@ -115,7 +115,7 @@ extern "C" {
 	// needed for getting plugin out of shared lib
 	PLUGIN_EXPORT Plugin *lmms_plugin_main(Model *parent, void *data)
 	{
-		return new Analyzer(parent, static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>(data));
+		return new Analyzer(parent, static_cast<const Plugin::PluginDescriptor::Key *>(data));
 	}
 }
 

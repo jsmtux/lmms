@@ -27,10 +27,23 @@
 #include <QDomElement>
 
 #include "Note.h"
+#include "lmms_constants.h"
 
 
 namespace lmms
 {
+
+IKeymap* createKeyMap(
+		QString description,
+		std::vector<int> newMap,
+		int newFirst,
+		int newLast,
+		int newMiddle,
+		int newBaseKey,
+		float newBaseFreq)
+{
+	return new Keymap(description, std::move(newMap), newFirst, newLast, newMiddle, newBaseKey, newBaseFreq);
+}
 
 
 Keymap::Keymap() :
@@ -147,7 +160,7 @@ void Keymap::loadSettings(const QDomElement &element)
 	QDomNode node = element.firstChild();
 	m_map.clear();
 
-	for (int i = 0; !node.isNull(); i++)
+	while (!node.isNull())
 	{
 		m_map.push_back(node.toElement().attribute("value").toInt());
 		node = node.nextSibling();

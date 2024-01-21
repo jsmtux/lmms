@@ -27,17 +27,18 @@
 #include <QDomElement>
 
 #include "EffectChain.h"
-#include "Effect.h"
-#include "DummyEffect.h"
+
+#include "AudioEngine.h"
+#include "ICoreApplication.h"
 #include "MixHelpers.h"
+#include "IPlugin.h"
 
 namespace lmms
 {
 
 
-EffectChain::EffectChain( Model * _parent ) :
-	Model( _parent ),
-	SerializingObject(),
+EffectChain::EffectChain( QObject * _parent ) :
+	m_model( _parent ),
 	m_enabledModel( false, nullptr, tr( "Effects enabled" ) )
 {
 }
@@ -58,9 +59,12 @@ void EffectChain::saveSettings( QDomDocument & _doc, QDomElement & _this )
 	m_enabledModel.saveSettings( _doc, _this, "enabled" );
 	_this.setAttribute( "numofeffects", m_effects.count() );
 
-	for( Effect* effect : m_effects)
+	for( IEffect* effect : m_effects)
 	{
-		if (auto dummy = dynamic_cast<DummyEffect*>(effect)) { _this.appendChild(dummy->originalPluginData()); }
+		if (effect->isDummy())
+		{
+			effect->saveState(_doc, _this);
+		}
 		else
 		{
 			QDomElement ef = effect->saveState( _doc, _this );
@@ -92,9 +96,9 @@ void EffectChain::loadSettings( const QDomElement & _this )
 			QDomElement effectData = node.toElement();
 
 			const QString name = effectData.attribute( "name" );
-			EffectKey key( effectData.elementsByTagName( "key" ).item( 0 ).toElement() );
+			PluginDescriptor::Key key( effectData.elementsByTagName( "key" ).item( 0 ).toElement() );
 
-			Effect* e = Effect::instantiate( name.toUtf8(), this, &key );
+			IEffect* e = InstantiateEffect( name.toUtf8(), this, &key );
 
 			if( e != nullptr && e->isOkay() && e->nodeName() == node.nodeName() )
 			{
@@ -103,7 +107,7 @@ void EffectChain::loadSettings( const QDomElement & _this )
 			else
 			{
 				delete e;
-				e = new DummyEffect( parentModel(), effectData );
+				e = InstantiateDummyEffect( this, effectData );
 			}
 
 			m_effects.push_back( e );
@@ -112,52 +116,52 @@ void EffectChain::loadSettings( const QDomElement & _this )
 		node = node.nextSibling();
 	}
 
-	emit dataChanged();
+	emit model()->dataChanged();
 }
 
 
 
 
-void EffectChain::appendEffect( Effect * _effect )
+void EffectChain::appendEffect( IEffect * _effect )
 {
-	Engine::audioEngine()->requestChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->requestChangeInModel();
 	m_effects.append( _effect );
-	Engine::audioEngine()->doneChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 
 	m_enabledModel.setValue( true );
 
-	emit dataChanged();
+	emit model()->dataChanged();
 }
 
 
 
 
-void EffectChain::removeEffect( Effect * _effect )
+void EffectChain::removeEffect( IEffect * _effect )
 {
-	Engine::audioEngine()->requestChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->requestChangeInModel();
 
-	Effect ** found = std::find( m_effects.begin(), m_effects.end(), _effect );
+	IEffect ** found = std::find( m_effects.begin(), m_effects.end(), _effect );
 	if( found == m_effects.end() )
 	{
-		Engine::audioEngine()->doneChangeInModel();
+		IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 		return;
 	}
 	m_effects.erase( found );
 
-	Engine::audioEngine()->doneChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 
 	if( m_effects.isEmpty() )
 	{
 		m_enabledModel.setValue( false );
 	}
 
-	emit dataChanged();
+	emit model()->dataChanged();
 }
 
 
 
 
-void EffectChain::moveDown( Effect * _effect )
+void EffectChain::moveDown( IEffect * _effect )
 {
 	if( _effect != m_effects.last() )
 	{
@@ -169,7 +173,7 @@ void EffectChain::moveDown( Effect * _effect )
 
 
 
-void EffectChain::moveUp( Effect * _effect )
+void EffectChain::moveUp( IEffect * _effect )
 {
 	if( _effect != m_effects.first() )
 	{
@@ -226,16 +230,16 @@ void EffectChain::clear()
 {
 	emit aboutToClear();
 
-	Engine::audioEngine()->requestChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->requestChangeInModel();
 
 	while( m_effects.count() )
 	{
-		Effect * e = m_effects[m_effects.count() - 1];
+		IEffect * e = m_effects[m_effects.count() - 1];
 		m_effects.pop_back();
 		delete e;
 	}
 
-	Engine::audioEngine()->doneChangeInModel();
+	IEngine::Instance()->getAudioEngineInterface()->doneChangeInModel();
 
 	m_enabledModel.setValue( false );
 }

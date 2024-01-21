@@ -26,18 +26,19 @@
 #include "NotePlayHandle.h"
 
 #include "AudioEngine.h"
+#include "tracks/AutomationTrack.h"
 #include "BasicFilters.h"
 #include "DetuningHelper.h"
 #include "InstrumentSoundShaping.h"
-#include "InstrumentTrack.h"
-#include "Instrument.h"
+#include "tracks/InstrumentTrack.h"
+#include "IPlugin.h"
 #include "Song.h"
 
 namespace lmms
 {
 
-NotePlayHandle::BaseDetuning::BaseDetuning( DetuningHelper *detuning ) :
-	m_value( detuning ? detuning->automationClip()->valueAt( 0 ) : 0 )
+NotePlayHandle::BaseDetuning::BaseDetuning( IDetuningHelper *detuning ) :
+	m_value( detuning ? static_cast<AutomationClip*>(detuning->automationClip())->valueAt( 0 ) : 0 )
 {
 }
 
@@ -53,7 +54,7 @@ NotePlayHandle::NotePlayHandle( InstrumentTrack* instrumentTrack,
 								NotePlayHandle *parent,
 								int midiEventChannel,
 								Origin origin ) :
-	PlayHandle( TypeNotePlayHandle, _offset ),
+	PlayHandle( PlayHandleType::TypeNotePlayHandle, _offset ),
 	Note( n.length(), n.pos(), n.key(), n.getVolume(), n.getPanning(), n.detuning() ),
 	m_pluginData( nullptr ),
 	m_instrumentTrack( instrumentTrack ),
@@ -106,10 +107,10 @@ NotePlayHandle::NotePlayHandle( InstrumentTrack* instrumentTrack,
 	// inform attached components about new MIDI note (used for recording in Piano Roll)
 	if( m_origin == OriginMidiInput )
 	{
-		m_instrumentTrack->midiNoteOn( *this );
+		m_instrumentTrack->instrumentTrackModel()->midiNoteOn( *this );
 	}
 
-	if(m_instrumentTrack->instrument() && m_instrumentTrack->instrument()->flags() & Instrument::IsSingleStreamed )
+	if(m_instrumentTrack->instrument() && m_instrumentTrack->instrument()->flags() & IInstrument::IsSingleStreamed )
 	{
 		setUsesBuffer( false );
 	}
@@ -358,7 +359,7 @@ fpp_t NotePlayHandle::framesLeftForCurrentPeriod() const
 
 
 
-bool NotePlayHandle::isFromTrack( const Track * _track ) const
+bool NotePlayHandle::isFromTrack( const ITrack * _track ) const
 {
 	return m_instrumentTrack == _track || m_patternTrack == _track;
 }
@@ -403,7 +404,7 @@ void NotePlayHandle::noteOff( const f_cnt_t _s )
 		if( m_origin == OriginMidiInput )
 		{
 			setLength( TimePos( static_cast<f_cnt_t>( totalFramesPlayed() / Engine::framesPerTick() ) ) );
-			m_instrumentTrack->midiNoteOff( *this );
+			m_instrumentTrack->instrumentTrackModel()->midiNoteOff( *this );
 		}
 	}
 }
@@ -476,7 +477,7 @@ int NotePlayHandle::index() const
 
 
 
-ConstNotePlayHandleList NotePlayHandle::nphsOfInstrumentTrack( const InstrumentTrack * _it, bool _all_ph )
+ConstNotePlayHandleList NotePlayHandle::nphsOfInstrumentTrack( const ITrack * _it, bool _all_ph )
 {
 	const PlayHandleList & playHandles = Engine::audioEngine()->playHandles();
 	ConstNotePlayHandleList cnphv;
@@ -561,7 +562,8 @@ void NotePlayHandle::processTimePos( const TimePos& time )
 {
 	if( detuning() && time >= songGlobalParentOffset()+pos() )
 	{
-		const float v = detuning()->automationClip()->valueAt( time - songGlobalParentOffset() - pos() );
+		const float v = static_cast<AutomationClip*>(detuning()->automationClip())->valueAt(
+				time - songGlobalParentOffset() - pos() );
 		if( !typeInfo<float>::isEqual( v, m_baseDetuning->value() ) )
 		{
 			m_baseDetuning->setValue( v );
@@ -632,16 +634,17 @@ NotePlayHandle * NotePlayHandleManager::acquire( InstrumentTrack* instrumentTrac
 	NotePlayHandle * nph = s_available[s_availableIndex--];
 	s_mutex.unlock();
 
-	new( (void*)nph ) NotePlayHandle( instrumentTrack, offset, frames, noteToPlay, parent, midiEventChannel, origin );
+	new( (void*)nph ) NotePlayHandle( instrumentTrack, offset, frames, static_cast<const Note&>(noteToPlay), parent, midiEventChannel, origin );
 	return nph;
 }
 
 
-void NotePlayHandleManager::release( NotePlayHandle * nph )
+void NotePlayHandleManager::release( INotePlayHandle * nph )
 {
-	nph->NotePlayHandle::~NotePlayHandle();
+	NotePlayHandle* handle = static_cast<NotePlayHandle*>(nph);
+	handle->NotePlayHandle::~NotePlayHandle();
 	s_mutex.lockForRead();
-	s_available[++s_availableIndex] = nph;
+	s_available[++s_availableIndex] = handle;
 	s_mutex.unlock();
 }
 

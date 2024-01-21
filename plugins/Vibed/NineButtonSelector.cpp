@@ -26,8 +26,8 @@
 
 #include "NineButtonSelector.h"
 
-#include "CaptionMenu.h"
-#include "PixmapButton.h"
+#include "widgets/CaptionMenu.h"
+#include "widgets/PixmapButton.h"
 
 namespace lmms::gui
 {
@@ -53,10 +53,10 @@ NineButtonSelector::NineButtonSelector(	QPixmap _button0_on,
 					QPixmap _button8_off,
 					int _default,
 					int _x, int _y,
+					IntModel* _model,
 					QWidget * _parent ):
 	QWidget( _parent ),
-	IntModelView( new NineButtonSelectorModel(0, 8, _default, nullptr,
-				QString(), true ), this )
+	IntModelView( _model, this )
 {
 	setFixedSize( 50, 50 );
 	move( _x, _y );
@@ -225,11 +225,6 @@ void NineButtonSelector::button7Clicked()
 void NineButtonSelector::button8Clicked()
 {
 	setSelected( 8 );
-}
-
-void NineButtonSelector::modelChanged()
-{
-	updateButton( model()->value() );
 }
 
 void NineButtonSelector::setSelected( int _new_button )

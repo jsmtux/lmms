@@ -32,15 +32,17 @@
 #include <QMutexLocker>
 #include <samplerate.h>
 
-#include "Instrument.h"
-#include "PixmapButton.h"
-#include "InstrumentView.h"
-#include "Knob.h"
-#include "LcdSpinBox.h"
-#include "LedCheckBox.h"
 #include "MemoryManager.h"
 #include "gig.h"
 
+#include "plugins/QWidgetInstrumentPlugin.h"
+
+#include "instrument/InstrumentView.h"
+
+#include "widgets/Knob.h"
+#include "widgets/LcdSpinBox.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/PixmapButton.h"
 
 class QLabel;
 
@@ -233,7 +235,7 @@ public:
 
 
 
-class GigInstrument : public Instrument
+class GigInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 	MM_OPERATORS

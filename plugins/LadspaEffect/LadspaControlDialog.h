@@ -27,7 +27,7 @@
 #ifndef LADSPA_CONTROL_DIALOG_H
 #define LADSPA_CONTROL_DIALOG_H
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 
 class QHBoxLayout;
@@ -60,6 +60,7 @@ private slots:
 private:
 	QHBoxLayout * m_effectLayout;
 	LedCheckBox * m_stereoLink;
+	QHBoxLayout * m_centerLayout;
 
 } ;
 

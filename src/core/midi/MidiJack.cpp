@@ -26,14 +26,11 @@
 
 #ifdef LMMS_HAVE_JACK
 
-#include <QMessageBox>
-
 #include "AudioEngine.h"
-#include "AudioJack.h"
+#include "audio/AudioJack.h"
 #include "ConfigManager.h"
-#include "GuiApplication.h"
 #include "Engine.h"
-#include "MainWindow.h"
+#include "IGuiApplication.h"
 
 namespace lmms
 {
@@ -54,11 +51,9 @@ static int JackMidiProcessCallback(jack_nframes_t nframes, void *arg)
 
 static void JackMidiShutdown(void *arg)
 {
-        //: When JACK(JACK Audio Connection Kit) disconnects, it will show the following message (title)
-	QString msg_short = MidiJack::tr("JACK server down");
-        //: When JACK(JACK Audio Connection Kit) disconnects, it will show the following message (dialog message)
-	QString msg_long = MidiJack::tr("The JACK server seems to be shuted down.");
-	QMessageBox::information(gui::getGUI()->mainWindow(), msg_short, msg_long);
+	gui::getGUIInterface()->mainWindowInterface()->ShowInfoMessage(
+		MidiJack::tr("JACK server down"),
+		MidiJack::tr("The JACK server seems to be shuted down."));
 }
 
 MidiJack::MidiJack() :
@@ -164,16 +159,6 @@ jack_client_t* MidiJack::jackClient()
 		return m_jackClient;
 
 	return m_jackAudio->jackClient();
-}
-
-QString MidiJack::probeDevice()
-{
-	QString jid = ConfigManager::inst()->value( "midijack", "lmms" );
-	if( jid.isEmpty() )
-	{
-		return "lmms";
-	}
-	return jid;
 }
 
 // we read data from jack

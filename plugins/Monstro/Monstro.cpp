@@ -27,12 +27,13 @@
 
 #include "Monstro.h"
 
-#include "ComboBox.h"
 #include "Engine.h"
 #include "InstrumentTrack.h"
 #include "gui_templates.h"
 #include "lmms_math.h"
 #include "interpolation.h"
+
+#include "widgets/ComboBox.h"
 
 #include "embed.h"
 
@@ -166,8 +167,8 @@ void MonstroSynth::renderOutput( fpp_t _frames, sampleFrame * _buf  )
 	m_lfo_inc[0] = 1.0f / m_lfo_rate[0];
 	m_lfo_inc[1] = 1.0f / m_lfo_rate[1];
 
-	m_env_sus[0] = m_parent-> m_env1Sus.value();
-	m_env_sus[1] = m_parent-> m_env2Sus.value();
+	m_env_sus[0] = m_parent->m_env1Sus.value();
+	m_env_sus[1] = m_parent->m_env2Sus.value();
 
 	m_lfovalue[0] = m_parent->m_lfo1Wave.value();
 	m_lfovalue[1] = m_parent->m_lfo2Wave.value();
@@ -826,122 +827,122 @@ inline sample_t MonstroSynth::calcSlope( int slope, sample_t s )
 
 
 MonstroInstrument::MonstroInstrument( InstrumentTrack * _instrument_track ) :
-		Instrument( _instrument_track, &monstro_plugin_descriptor ),
+		QWidgetInstrumentPlugin( _instrument_track, &monstro_plugin_descriptor ),
 
-		m_osc1Vol( 33.0, 0.0, 200.0, 0.1, this, tr( "Osc 1 volume" ) ),
-		m_osc1Pan( 0.0, -100.0, 100.0, 0.1, this, tr( "Osc 1 panning" ) ),
-		m_osc1Crs( 0.0, -24.0, 24.0, 1.0, this, tr( "Osc 1 coarse detune" ) ),
-		m_osc1Ftl( 0.0, -100.0, 100.0, 1.0, this, tr( "Osc 1 fine detune left" ) ),
-		m_osc1Ftr( 0.0, -100.0, 100.0, 1.0, this, tr( "Osc 1 fine detune right" ) ),
-		m_osc1Spo( 0.0, -180.0, 180.0, 0.1, this, tr( "Osc 1 stereo phase offset" ) ),
-		m_osc1Pw( 50.0, PW_MIN, PW_MAX, 0.01, this, tr( "Osc 1 pulse width" ) ),
-		m_osc1SSR( false, this, tr( "Osc 1 sync send on rise" ) ),
-		m_osc1SSF( false, this, tr( "Osc 1 sync send on fall" ) ),
+		m_osc1Vol( 33.0, 0.0, 200.0, 0.1, model(), tr( "Osc 1 volume" ) ),
+		m_osc1Pan( 0.0, -100.0, 100.0, 0.1, model(), tr( "Osc 1 panning" ) ),
+		m_osc1Crs( 0.0, -24.0, 24.0, 1.0, model(), tr( "Osc 1 coarse detune" ) ),
+		m_osc1Ftl( 0.0, -100.0, 100.0, 1.0, model(), tr( "Osc 1 fine detune left" ) ),
+		m_osc1Ftr( 0.0, -100.0, 100.0, 1.0, model(), tr( "Osc 1 fine detune right" ) ),
+		m_osc1Spo( 0.0, -180.0, 180.0, 0.1, model(), tr( "Osc 1 stereo phase offset" ) ),
+		m_osc1Pw( 50.0, PW_MIN, PW_MAX, 0.01, model(), tr( "Osc 1 pulse width" ) ),
+		m_osc1SSR( false, model(), tr( "Osc 1 sync send on rise" ) ),
+		m_osc1SSF( false, model(), tr( "Osc 1 sync send on fall" ) ),
 
-		m_osc2Vol( 33.0, 0.0, 200.0, 0.1, this, tr( "Osc 2 volume" ) ),
-		m_osc2Pan( 0.0, -100.0, 100.0, 0.1, this, tr( "Osc 2 panning" ) ),
-		m_osc2Crs( 0.0, -24.0, 24.0, 1.0, this, tr( "Osc 2 coarse detune" ) ),
-		m_osc2Ftl( 0.0, -100.0, 100.0, 1.0, this, tr( "Osc 2 fine detune left" ) ),
-		m_osc2Ftr( 0.0, -100.0, 100.0, 1.0, this, tr( "Osc 2 fine detune right" ) ),
-		m_osc2Spo( 0.0, -180.0, 180.0, 0.1, this, tr( "Osc 2 stereo phase offset" ) ),
-		m_osc2Wave( this, tr( "Osc 2 waveform" ) ),
-		m_osc2SyncH( false, this, tr( "Osc 2 sync hard" ) ),
-		m_osc2SyncR( false, this, tr( "Osc 2 sync reverse" ) ),
+		m_osc2Vol( 33.0, 0.0, 200.0, 0.1, model(), tr( "Osc 2 volume" ) ),
+		m_osc2Pan( 0.0, -100.0, 100.0, 0.1, model(), tr( "Osc 2 panning" ) ),
+		m_osc2Crs( 0.0, -24.0, 24.0, 1.0, model(), tr( "Osc 2 coarse detune" ) ),
+		m_osc2Ftl( 0.0, -100.0, 100.0, 1.0, model(), tr( "Osc 2 fine detune left" ) ),
+		m_osc2Ftr( 0.0, -100.0, 100.0, 1.0, model(), tr( "Osc 2 fine detune right" ) ),
+		m_osc2Spo( 0.0, -180.0, 180.0, 0.1, model(), tr( "Osc 2 stereo phase offset" ) ),
+		m_osc2Wave( model(), tr( "Osc 2 waveform" ) ),
+		m_osc2SyncH( false, model(), tr( "Osc 2 sync hard" ) ),
+		m_osc2SyncR( false, model(), tr( "Osc 2 sync reverse" ) ),
 
-		m_osc3Vol( 33.0, 0.0, 200.0, 0.1, this, tr( "Osc 3 volume" ) ),
-		m_osc3Pan( 0.0, -100.0, 100.0, 0.1, this, tr( "Osc 3 panning" ) ),
-		m_osc3Crs( 0.0, -24.0, 24.0, 1.0, this, tr( "Osc 3 coarse detune" ) ),
-		m_osc3Spo( 0.0, -180.0, 180.0, 0.1, this, tr( "Osc 3 Stereo phase offset" ) ),
-		m_osc3Sub( 0.0, -100.0, 100.0, 0.1, this, tr( "Osc 3 sub-oscillator mix" ) ),
-		m_osc3Wave1( this, tr( "Osc 3 waveform 1" ) ),
-		m_osc3Wave2( this, tr( "Osc 3 waveform 2" ) ),
-		m_osc3SyncH( false, this, tr( "Osc 3 sync hard" ) ),
-		m_osc3SyncR( false, this, tr( "Osc 3 Sync reverse" ) ),
+		m_osc3Vol( 33.0, 0.0, 200.0, 0.1, model(), tr( "Osc 3 volume" ) ),
+		m_osc3Pan( 0.0, -100.0, 100.0, 0.1, model(), tr( "Osc 3 panning" ) ),
+		m_osc3Crs( 0.0, -24.0, 24.0, 1.0, model(), tr( "Osc 3 coarse detune" ) ),
+		m_osc3Spo( 0.0, -180.0, 180.0, 0.1, model(), tr( "Osc 3 Stereo phase offset" ) ),
+		m_osc3Sub( 0.0, -100.0, 100.0, 0.1, model(), tr( "Osc 3 sub-oscillator mix" ) ),
+		m_osc3Wave1( model(), tr( "Osc 3 waveform 1" ) ),
+		m_osc3Wave2( model(), tr( "Osc 3 waveform 2" ) ),
+		m_osc3SyncH( false, model(), tr( "Osc 3 sync hard" ) ),
+		m_osc3SyncR( false, model(), tr( "Osc 3 Sync reverse" ) ),
 
-		m_lfo1Wave( this, tr( "LFO 1 waveform" ) ),
-		m_lfo1Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "LFO 1 attack" ) ),
-		m_lfo1Rate( 1.0f, 0.1, 10000.0, 0.1, 10000.0f, this, tr( "LFO 1 rate" ) ),
-		m_lfo1Phs( 0.0, -180.0, 180.0, 0.1, this, tr( "LFO 1 phase" ) ),
+		m_lfo1Wave( model(), tr( "LFO 1 waveform" ) ),
+		m_lfo1Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "LFO 1 attack" ) ),
+		m_lfo1Rate( 1.0f, 0.1, 10000.0, 0.1, 10000.0f, model(), tr( "LFO 1 rate" ) ),
+		m_lfo1Phs( 0.0, -180.0, 180.0, 0.1, model(), tr( "LFO 1 phase" ) ),
 
-		m_lfo2Wave( this, tr( "LFO 2 waveform" ) ),
-		m_lfo2Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "LFO 2 attack" ) ),
-		m_lfo2Rate( 1.0f, 0.1, 10000.0, 0.1, 10000.0f, this, tr( "LFO 2 rate" ) ),
-		m_lfo2Phs( 0.0, -180.0, 180.0, 0.1, this, tr( "LFO 2 phase" ) ),
+		m_lfo2Wave( model(), tr( "LFO 2 waveform" ) ),
+		m_lfo2Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "LFO 2 attack" ) ),
+		m_lfo2Rate( 1.0f, 0.1, 10000.0, 0.1, 10000.0f, model(), tr( "LFO 2 rate" ) ),
+		m_lfo2Phs( 0.0, -180.0, 180.0, 0.1, model(), tr( "LFO 2 phase" ) ),
 
-		m_env1Pre( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "Env 1 pre-delay" ) ),
-		m_env1Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "Env 1 attack" ) ),
-		m_env1Hold( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 1 hold" ) ),
-		m_env1Dec( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 1 decay" ) ),
-		m_env1Sus( 1.0f, 0.0f, 1.0f, 0.001f, this, tr( "Env 1 sustain" ) ),
-		m_env1Rel( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 1 release" ) ),
-		m_env1Slope( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Env 1 slope" ) ),
+		m_env1Pre( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "Env 1 pre-delay" ) ),
+		m_env1Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "Env 1 attack" ) ),
+		m_env1Hold( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 1 hold" ) ),
+		m_env1Dec( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 1 decay" ) ),
+		m_env1Sus( 1.0f, 0.0f, 1.0f, 0.001f, model(), tr( "Env 1 sustain" ) ),
+		m_env1Rel( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 1 release" ) ),
+		m_env1Slope( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Env 1 slope" ) ),
 
-		m_env2Pre( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "Env 2 pre-delay" ) ),
-		m_env2Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, this, tr( "Env 2 attack" ) ),
-		m_env2Hold( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 2 hold" ) ),
-		m_env2Dec( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 2 decay" ) ),
-		m_env2Sus( 1.0f, 0.0f, 1.0f, 0.001f, this, tr( "Env 2 sustain" ) ),
-		m_env2Rel( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, this, tr( "Env 2 release" ) ),
-		m_env2Slope( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Env 2 slope" ) ),
+		m_env2Pre( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "Env 2 pre-delay" ) ),
+		m_env2Att( 0.0f, 0.0f, 2000.0f, 1.0f, 2000.0f, model(), tr( "Env 2 attack" ) ),
+		m_env2Hold( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 2 hold" ) ),
+		m_env2Dec( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 2 decay" ) ),
+		m_env2Sus( 1.0f, 0.0f, 1.0f, 0.001f, model(), tr( "Env 2 sustain" ) ),
+		m_env2Rel( 0.0f, 0.0f, 4000.0f, 1.0f, 4000.0f, model(), tr( "Env 2 release" ) ),
+		m_env2Slope( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Env 2 slope" ) ),
 
-		m_o23Mod( 0, 0, NUM_MODS - 1, this, tr( "Osc 2+3 modulation" ) ),
+		m_o23Mod( 0, 0, NUM_MODS - 1, model(), tr( "Osc 2+3 modulation" ) ),
 
-		m_selectedView( 0, 0, 1, this, tr( "Selected view" ) ),
+		m_selectedView( 0, 0, 1, model(), tr( "Selected view" ) ),
 
-		m_vol1env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Vol env 1" ) ),
-		m_vol1env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Vol env 2" ) ),
-		m_vol1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Vol LFO 1" ) ),
-		m_vol1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Vol LFO 2" ) ),
+		m_vol1env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Vol env 1" ) ),
+		m_vol1env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Vol env 2" ) ),
+		m_vol1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Vol LFO 1" ) ),
+		m_vol1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Vol LFO 2" ) ),
 
-		m_vol2env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Vol env 1" ) ),
-		m_vol2env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Vol env 2" ) ),
-		m_vol2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Vol LFO 1" ) ),
-		m_vol2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Vol LFO 2" ) ),
+		m_vol2env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Vol env 1" ) ),
+		m_vol2env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Vol env 2" ) ),
+		m_vol2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Vol LFO 1" ) ),
+		m_vol2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Vol LFO 2" ) ),
 
-		m_vol3env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Vol env 1" ) ),
-		m_vol3env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Vol env 2" ) ),
-		m_vol3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Vol LFO 1" ) ),
-		m_vol3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Vol LFO 2" ) ),
+		m_vol3env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Vol env 1" ) ),
+		m_vol3env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Vol env 2" ) ),
+		m_vol3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Vol LFO 1" ) ),
+		m_vol3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Vol LFO 2" ) ),
 
-		m_phs1env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Phs env 1" ) ),
-		m_phs1env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Phs env 2" ) ),
-		m_phs1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Phs LFO 1" ) ),
-		m_phs1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Phs LFO 2" ) ),
+		m_phs1env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Phs env 1" ) ),
+		m_phs1env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Phs env 2" ) ),
+		m_phs1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Phs LFO 1" ) ),
+		m_phs1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Phs LFO 2" ) ),
 
-		m_phs2env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Phs env 1" ) ),
-		m_phs2env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Phs env 2" ) ),
-		m_phs2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Phs LFO 1" ) ),
-		m_phs2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Phs LFO 2" ) ),
+		m_phs2env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Phs env 1" ) ),
+		m_phs2env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Phs env 2" ) ),
+		m_phs2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Phs LFO 1" ) ),
+		m_phs2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Phs LFO 2" ) ),
 
-		m_phs3env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Phs env 1" ) ),
-		m_phs3env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Phs env 2" ) ),
-		m_phs3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Phs LFO 1" ) ),
-		m_phs3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Phs LFO 2" ) ),
+		m_phs3env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Phs env 1" ) ),
+		m_phs3env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Phs env 2" ) ),
+		m_phs3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Phs LFO 1" ) ),
+		m_phs3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Phs LFO 2" ) ),
 
-		m_pit1env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Pit env 1" ) ),
-		m_pit1env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Pit env 2" ) ),
-		m_pit1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Pit LFO 1" ) ),
-		m_pit1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - Pit LFO 2" ) ),
+		m_pit1env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Pit env 1" ) ),
+		m_pit1env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Pit env 2" ) ),
+		m_pit1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Pit LFO 1" ) ),
+		m_pit1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - Pit LFO 2" ) ),
 
-		m_pit2env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Pit env 1" ) ),
-		m_pit2env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Pit env 2" ) ),
-		m_pit2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Pit LFO 1" ) ),
-		m_pit2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 2 - Pit LFO 2" ) ),
+		m_pit2env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Pit env 1" ) ),
+		m_pit2env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Pit env 2" ) ),
+		m_pit2lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Pit LFO 1" ) ),
+		m_pit2lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 2 - Pit LFO 2" ) ),
 
-		m_pit3env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Pit env 1" ) ),
-		m_pit3env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Pit env 2" ) ),
-		m_pit3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Pit LFO 1" ) ),
-		m_pit3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Pit LFO 2" ) ),
+		m_pit3env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Pit env 1" ) ),
+		m_pit3env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Pit env 2" ) ),
+		m_pit3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Pit LFO 1" ) ),
+		m_pit3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Pit LFO 2" ) ),
 
-		m_pw1env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - PW env 1" ) ),
-		m_pw1env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - PW env 2" ) ),
-		m_pw1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - PW LFO 1" ) ),
-		m_pw1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 1 - PW LFO 2" ) ),
+		m_pw1env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - PW env 1" ) ),
+		m_pw1env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - PW env 2" ) ),
+		m_pw1lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - PW LFO 1" ) ),
+		m_pw1lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 1 - PW LFO 2" ) ),
 
-		m_sub3env1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Sub env 1" ) ),
-		m_sub3env2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Sub env 2" ) ),
-		m_sub3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Sub LFO 1" ) ),
-		m_sub3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, this, tr( "Osc 3 - Sub LFO 2" ) )
+		m_sub3env1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Sub env 1" ) ),
+		m_sub3env2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Sub env 2" ) ),
+		m_sub3lfo1( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Sub LFO 1" ) ),
+		m_sub3lfo2( 0.0f, -1.0f, 1.0f, 0.001f, model(), tr( "Osc 3 - Sub LFO 2" ) )
 
 {
 
@@ -1298,7 +1299,7 @@ f_cnt_t MonstroInstrument::desiredReleaseFrames() const
 }
 
 
-gui::PluginView* MonstroInstrument::instantiateView( QWidget * _parent )
+gui::InstrumentView* MonstroInstrument::instantiateView( QWidget * _parent )
 {
 	return( new gui::MonstroView( this, _parent ) );
 }
@@ -1443,9 +1444,9 @@ namespace gui
 {
 
 
-MonstroView::MonstroView( Instrument * _instrument,
+MonstroView::MonstroView( MonstroInstrument * _instrument,
 					QWidget * _parent ) :
-					InstrumentViewFixedSize( _instrument, _parent )
+					InstrumentViewImpl( _instrument, _parent, true )
 {
 	m_operatorsView = setupOperatorsView( this );
 	setWidgetBackground( m_operatorsView, "artwork_op" );
@@ -1460,20 +1461,20 @@ MonstroView::MonstroView( Instrument * _instrument,
 // "tab buttons"
 
 	auto m_opViewButton = new PixmapButton(this, nullptr);
-	m_opViewButton -> move( 0,0 );
-	m_opViewButton -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( "opview_active" ) );
-	m_opViewButton -> setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "opview_inactive" ) );
+	m_opViewButton->move( 0,0 );
+	m_opViewButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "opview_active" ) );
+	m_opViewButton->setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "opview_inactive" ) );
 	m_opViewButton->setToolTip(tr("Operators view"));
 
 	auto m_matViewButton = new PixmapButton(this, nullptr);
-	m_matViewButton -> move( 125,0 );
-	m_matViewButton -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( "matview_active" ) );
-	m_matViewButton -> setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "matview_inactive" ) );
+	m_matViewButton->move( 125,0 );
+	m_matViewButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "matview_active" ) );
+	m_matViewButton->setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "matview_inactive" ) );
 	m_matViewButton->setToolTip(tr("Matrix view"));
 
-	m_selectedViewGroup = new automatableButtonGroup( this );
-	m_selectedViewGroup -> addButton( m_opViewButton );
-	m_selectedViewGroup -> addButton( m_matViewButton );
+	m_selectedViewGroup = new automatableButtonGroup( &m_instrument->m_selectedView, this );
+	m_selectedViewGroup->addButton( m_opViewButton );
+	m_selectedViewGroup->addButton( m_matViewButton );
 
 	connect( m_opViewButton, SIGNAL( clicked() ), this, SLOT( updateLayout() ) );
 	connect( m_matViewButton, SIGNAL( clicked() ), this, SLOT( updateLayout() ) );
@@ -1496,127 +1497,6 @@ void MonstroView::updateLayout()
 }
 
 
-void MonstroView::modelChanged()
-{
-	auto m = castModel<MonstroInstrument>();
-
-	m_osc1VolKnob-> setModel( &m-> m_osc1Vol );
-	m_osc1PanKnob-> setModel( &m-> m_osc1Pan );
-	m_osc1CrsKnob-> setModel( &m-> m_osc1Crs );
-	m_osc1FtlKnob-> setModel( &m-> m_osc1Ftl );
-	m_osc1FtrKnob-> setModel( &m-> m_osc1Ftr );
-	m_osc1SpoKnob-> setModel( &m-> m_osc1Spo );
-	m_osc1PwKnob-> setModel( &m-> m_osc1Pw );
-	m_osc1SSRButton-> setModel( &m-> m_osc1SSR );
-	m_osc1SSFButton-> setModel( &m-> m_osc1SSF );
-
-	m_osc2VolKnob-> setModel( &m-> m_osc2Vol );
-	m_osc2PanKnob-> setModel( &m-> m_osc2Pan );
-	m_osc2CrsKnob-> setModel( &m-> m_osc2Crs );
-	m_osc2FtlKnob-> setModel( &m-> m_osc2Ftl );
-	m_osc2FtrKnob-> setModel( &m-> m_osc2Ftr );
-	m_osc2SpoKnob-> setModel( &m-> m_osc2Spo );
-	m_osc2WaveBox-> setModel( &m-> m_osc2Wave );
-	m_osc2SyncHButton-> setModel( &m-> m_osc2SyncH );
-	m_osc2SyncRButton-> setModel( &m-> m_osc2SyncR );
-
-	m_osc3VolKnob-> setModel( &m-> m_osc3Vol );
-	m_osc3PanKnob-> setModel( &m-> m_osc3Pan );
-	m_osc3CrsKnob-> setModel( &m-> m_osc3Crs );
-	m_osc3SpoKnob-> setModel( &m-> m_osc3Spo );
-	m_osc3SubKnob-> setModel( &m-> m_osc3Sub );
-	m_osc3Wave1Box-> setModel( &m-> m_osc3Wave1 );
-	m_osc3Wave2Box-> setModel( &m-> m_osc3Wave2 );
-	m_osc3SyncHButton-> setModel( &m-> m_osc3SyncH );
-	m_osc3SyncRButton-> setModel( &m-> m_osc3SyncR );
-
-	m_lfo1WaveBox-> setModel( &m-> m_lfo1Wave );
-	m_lfo1AttKnob-> setModel( &m-> m_lfo1Att );
-	m_lfo1RateKnob-> setModel( &m-> m_lfo1Rate );
-	m_lfo1PhsKnob-> setModel( &m-> m_lfo1Phs );
-
-	m_lfo2WaveBox-> setModel( &m-> m_lfo2Wave );
-	m_lfo2AttKnob-> setModel( &m-> m_lfo2Att );
-	m_lfo2RateKnob-> setModel( &m-> m_lfo2Rate );
-	m_lfo2PhsKnob-> setModel( &m-> m_lfo2Phs );
-
-	m_env1PreKnob-> setModel( &m->  m_env1Pre );
-	m_env1AttKnob-> setModel( &m->  m_env1Att );
-	m_env1HoldKnob-> setModel( &m->  m_env1Hold );
-	m_env1DecKnob-> setModel( &m->  m_env1Dec );
-	m_env1SusKnob-> setModel( &m->  m_env1Sus );
-	m_env1RelKnob-> setModel( &m->  m_env1Rel  );
-	m_env1SlopeKnob-> setModel( &m->  m_env1Slope );
-
-	m_env2PreKnob-> setModel( &m->  m_env2Pre );
-	m_env2AttKnob-> setModel( &m->  m_env2Att );
-	m_env2HoldKnob-> setModel( &m->  m_env2Hold );
-	m_env2DecKnob-> setModel( &m->  m_env2Dec );
-	m_env2SusKnob-> setModel( &m->  m_env2Sus );
-	m_env2RelKnob-> setModel( &m->  m_env2Rel  );
-	m_env2SlopeKnob-> setModel( &m->  m_env2Slope );
-
-	m_o23ModGroup-> setModel( &m-> m_o23Mod );
-	m_selectedViewGroup-> setModel( &m-> m_selectedView );
-
-	m_vol1env1Knob-> setModel( &m-> m_vol1env1 );
-	m_vol1env2Knob-> setModel( &m-> m_vol1env2 );
-	m_vol1lfo1Knob-> setModel( &m-> m_vol1lfo1 );
-	m_vol1lfo2Knob-> setModel( &m-> m_vol1lfo2 );
-
-	m_vol2env1Knob-> setModel( &m-> m_vol2env1 );
-	m_vol2env2Knob-> setModel( &m-> m_vol2env2 );
-	m_vol2lfo1Knob-> setModel( &m-> m_vol2lfo1 );
-	m_vol2lfo2Knob-> setModel( &m-> m_vol2lfo2 );
-
-	m_vol3env1Knob-> setModel( &m-> m_vol3env1 );
-	m_vol3env2Knob-> setModel( &m-> m_vol3env2 );
-	m_vol3lfo1Knob-> setModel( &m-> m_vol3lfo1 );
-	m_vol3lfo2Knob-> setModel( &m-> m_vol3lfo2 );
-
- 	m_phs1env1Knob-> setModel( &m-> m_phs1env1 );
-	m_phs1env2Knob-> setModel( &m-> m_phs1env2 );
-	m_phs1lfo1Knob-> setModel( &m-> m_phs1lfo1 );
-	m_phs1lfo2Knob-> setModel( &m-> m_phs1lfo2 );
-
-	m_phs2env1Knob-> setModel( &m-> m_phs2env1 );
-	m_phs2env2Knob-> setModel( &m-> m_phs2env2 );
-	m_phs2lfo1Knob-> setModel( &m-> m_phs2lfo1 );
-	m_phs2lfo2Knob-> setModel( &m-> m_phs2lfo2 );
-
-	m_phs3env1Knob-> setModel( &m-> m_phs3env1 );
-	m_phs3env2Knob-> setModel( &m-> m_phs3env2 );
-	m_phs3lfo1Knob-> setModel( &m-> m_phs3lfo1 );
-	m_phs3lfo2Knob-> setModel( &m-> m_phs3lfo2 );
-
-	m_pit1env1Knob-> setModel( &m-> m_pit1env1 );
-	m_pit1env2Knob-> setModel( &m-> m_pit1env2 );
-	m_pit1lfo1Knob-> setModel( &m-> m_pit1lfo1 );
-	m_pit1lfo2Knob-> setModel( &m-> m_pit1lfo2 );
-
-	m_pit2env1Knob-> setModel( &m-> m_pit2env1 );
-	m_pit2env2Knob-> setModel( &m-> m_pit2env2 );
-	m_pit2lfo1Knob-> setModel( &m-> m_pit2lfo1 );
-	m_pit2lfo2Knob-> setModel( &m-> m_pit2lfo2 );
-
-	m_pit3env1Knob-> setModel( &m-> m_pit3env1 );
-	m_pit3env2Knob-> setModel( &m-> m_pit3env2 );
-	m_pit3lfo1Knob-> setModel( &m-> m_pit3lfo1 );
-	m_pit3lfo2Knob-> setModel( &m-> m_pit3lfo2 );
-
-	m_pw1env1Knob-> setModel( &m-> m_pw1env1 );
-	m_pw1env2Knob-> setModel( &m-> m_pw1env2 );
-	m_pw1lfo1Knob-> setModel( &m-> m_pw1lfo1 );
-	m_pw1lfo2Knob-> setModel( &m-> m_pw1lfo2 );
-
-	m_sub3env1Knob-> setModel( &m-> m_sub3env1 );
-	m_sub3env2Knob-> setModel( &m-> m_sub3env2 );
-	m_sub3lfo1Knob-> setModel( &m-> m_sub3lfo1 );
-	m_sub3lfo2Knob-> setModel( &m->	m_sub3lfo2 );
-
-}
-
-
 void MonstroView::setWidgetBackground( QWidget * _widget, const QString & _pic )
 {
 	_widget->setAutoFillBackground( true );
@@ -1632,121 +1512,119 @@ QWidget * MonstroView::setupOperatorsView( QWidget * _parent )
 	// operators view
 
 	auto view = new QWidget(_parent);
-	view-> setFixedSize( 250, 250 );
+	view->setFixedSize( 250, 250 );
 
-	makeknob( m_osc1VolKnob, KNOBCOL1, O1ROW, tr( "Volume" ), "%", "osc1Knob" )
-	makeknob( m_osc1PanKnob, KNOBCOL2, O1ROW, tr( "Panning" ), "", "osc1Knob" )
-	makeknob( m_osc1CrsKnob, KNOBCOL3, O1ROW, tr( "Coarse detune" ), tr( " semitones" ), "osc1Knob" )
-	makeknob( m_osc1FtlKnob, KNOBCOL4, O1ROW, tr( "Fine tune left" ), tr( " cents" ), "osc1Knob" )
-	makeknob( m_osc1FtrKnob, KNOBCOL5, O1ROW, tr( "Fine tune right" ), tr( " cents" ), "osc1Knob" )
-	makeknob( m_osc1SpoKnob, KNOBCOL6, O1ROW, tr( "Stereo phase offset" ), tr( " deg" ), "osc1Knob" )
-	makeknob( m_osc1PwKnob,  KNOBCOL7, O1ROW, tr( "Pulse width" ), "%", "osc1Knob" )
+	makeknob( &m_instrument->m_osc1Vol, m_osc1VolKnob, KNOBCOL1, O1ROW, tr( "Volume" ), "%", "osc1Knob" )
+	makeknob( &m_instrument->m_osc1Pan, m_osc1PanKnob, KNOBCOL2, O1ROW, tr( "Panning" ), "", "osc1Knob" )
+	makeknob( &m_instrument->m_osc1Crs, m_osc1CrsKnob, KNOBCOL3, O1ROW, tr( "Coarse detune" ), tr( " semitones" ), "osc1Knob" )
+	makeknob( &m_instrument->m_osc1Ftl, m_osc1FtlKnob, KNOBCOL4, O1ROW, tr( "Fine tune left" ), tr( " cents" ), "osc1Knob" )
+	makeknob( &m_instrument->m_osc1Ftr, m_osc1FtrKnob, KNOBCOL5, O1ROW, tr( "Fine tune right" ), tr( " cents" ), "osc1Knob" )
+	makeknob( &m_instrument->m_osc1Spo, m_osc1SpoKnob, KNOBCOL6, O1ROW, tr( "Stereo phase offset" ), tr( " deg" ), "osc1Knob" )
+	makeknob( &m_instrument->m_osc1Pw, m_osc1PwKnob, KNOBCOL7, O1ROW, tr( "Pulse width" ), "%", "osc1Knob" )
 
-	m_osc1VolKnob -> setVolumeKnob( true );
+	m_osc1VolKnob->setVolumeKnob( true );
 
-	maketinyled( m_osc1SSRButton, 230, 34, tr( "Send sync on pulse rise" ) )
-	maketinyled( m_osc1SSFButton, 230, 44, tr( "Send sync on pulse fall" ) )
+	maketinyled( &m_instrument->m_osc1SSR, m_osc1SSRButton, 230, 34, tr( "Send sync on pulse rise" ) )
+	maketinyled( &m_instrument->m_osc1SSF, m_osc1SSFButton, 230, 44, tr( "Send sync on pulse fall" ) )
 
-	makeknob( m_osc2VolKnob, KNOBCOL1, O2ROW, tr( "Volume" ), "%", "osc2Knob" )
-	makeknob( m_osc2PanKnob, KNOBCOL2, O2ROW, tr( "Panning" ), "", "osc2Knob" )
-	makeknob( m_osc2CrsKnob, KNOBCOL3, O2ROW, tr( "Coarse detune" ), tr( " semitones" ), "osc2Knob" )
-	makeknob( m_osc2FtlKnob, KNOBCOL4, O2ROW, tr( "Fine tune left" ), tr( " cents" ), "osc2Knob" )
-	makeknob( m_osc2FtrKnob, KNOBCOL5, O2ROW, tr( "Fine tune right" ), tr( " cents" ), "osc2Knob" )
-	makeknob( m_osc2SpoKnob, KNOBCOL6, O2ROW, tr( "Stereo phase offset" ), tr( " deg" ), "osc2Knob" )
+	makeknob( &m_instrument->m_osc2Vol, m_osc2VolKnob, KNOBCOL1, O2ROW, tr( "Volume" ), "%", "osc2Knob" )
+	makeknob( &m_instrument->m_osc2Pan, m_osc2PanKnob, KNOBCOL2, O2ROW, tr( "Panning" ), "", "osc2Knob" )
+	makeknob( &m_instrument->m_osc2Crs, m_osc2CrsKnob, KNOBCOL3, O2ROW, tr( "Coarse detune" ), tr( " semitones" ), "osc2Knob" )
+	makeknob( &m_instrument->m_osc2Ftl, m_osc2FtlKnob, KNOBCOL4, O2ROW, tr( "Fine tune left" ), tr( " cents" ), "osc2Knob" )
+	makeknob( &m_instrument->m_osc2Ftr, m_osc2FtrKnob, KNOBCOL5, O2ROW, tr( "Fine tune right" ), tr( " cents" ), "osc2Knob" )
+	makeknob( &m_instrument->m_osc2Spo, m_osc2SpoKnob, KNOBCOL6, O2ROW, tr( "Stereo phase offset" ), tr( " deg" ), "osc2Knob" )
 
-	m_osc2VolKnob -> setVolumeKnob( true );
+	m_osc2VolKnob->setVolumeKnob( true );
 
-	m_osc2WaveBox = new ComboBox( view );
-	m_osc2WaveBox -> setGeometry( 204, O2ROW + 7, 42, ComboBox::DEFAULT_HEIGHT );
+	m_osc2WaveBox = new ComboBox( &m_instrument->m_osc2Wave, view );
+	m_osc2WaveBox->setGeometry( 204, O2ROW + 7, 42, ComboBox::DEFAULT_HEIGHT );
 	m_osc2WaveBox->setFont( pointSize<8>( m_osc2WaveBox->font() ) );
 
-	maketinyled( m_osc2SyncHButton, 212, O2ROW - 3, tr( "Hard sync oscillator 2" ) )
-	maketinyled( m_osc2SyncRButton, 191, O2ROW - 3, tr( "Reverse sync oscillator 2" ) )
+	maketinyled( &m_instrument->m_osc2SyncH, m_osc2SyncHButton, 212, O2ROW - 3, tr( "Hard sync oscillator 2" ) )
+	maketinyled( &m_instrument->m_osc2SyncR, m_osc2SyncRButton, 191, O2ROW - 3, tr( "Reverse sync oscillator 2" ) )
 
-	makeknob( m_osc3VolKnob, KNOBCOL1, O3ROW, tr( "Volume" ), "%", "osc3Knob" )
-	makeknob( m_osc3PanKnob, KNOBCOL2, O3ROW, tr( "Panning" ), "", "osc3Knob" )
-	makeknob( m_osc3CrsKnob, KNOBCOL3, O3ROW, tr( "Coarse detune" ), tr( " semitones" ), "osc3Knob" )
-	makeknob( m_osc3SpoKnob, KNOBCOL4, O3ROW, tr( "Stereo phase offset" ), tr( " deg" ), "osc3Knob" )
-	makeknob( m_osc3SubKnob, KNOBCOL5, O3ROW, tr( "Sub-osc mix" ), "", "osc3Knob" )
+	makeknob( &m_instrument->m_osc3Vol, m_osc3VolKnob, KNOBCOL1, O3ROW, tr( "Volume" ), "%", "osc3Knob" )
+	makeknob( &m_instrument->m_osc3Pan, m_osc3PanKnob, KNOBCOL2, O3ROW, tr( "Panning" ), "", "osc3Knob" )
+	makeknob( &m_instrument->m_osc3Crs, m_osc3CrsKnob, KNOBCOL3, O3ROW, tr( "Coarse detune" ), tr( " semitones" ), "osc3Knob" )
+	makeknob( &m_instrument->m_osc3Spo, m_osc3SpoKnob, KNOBCOL4, O3ROW, tr( "Stereo phase offset" ), tr( " deg" ), "osc3Knob" )
+	makeknob( &m_instrument->m_osc3Sub, m_osc3SubKnob, KNOBCOL5, O3ROW, tr( "Sub-osc mix" ), "", "osc3Knob" )
 
-	m_osc3VolKnob -> setVolumeKnob( true );
+	m_osc3VolKnob->setVolumeKnob( true );
 
-	m_osc3Wave1Box = new ComboBox( view );
-	m_osc3Wave1Box -> setGeometry( 160, O3ROW + 7, 42, ComboBox::DEFAULT_HEIGHT );
+	m_osc3Wave1Box = new ComboBox( &m_instrument->m_osc3Wave1, view );
+	m_osc3Wave1Box->setGeometry( 160, O3ROW + 7, 42, ComboBox::DEFAULT_HEIGHT );
 	m_osc3Wave1Box->setFont( pointSize<8>( m_osc3Wave1Box->font() ) );
 
-	m_osc3Wave2Box = new ComboBox( view );
-	m_osc3Wave2Box -> setGeometry( 204, O3ROW + 7, 42, ComboBox::DEFAULT_HEIGHT );
+	m_osc3Wave2Box = new ComboBox( &m_instrument->m_osc3Wave2, view );
+	m_osc3Wave2Box->setGeometry( 204, O3ROW + 7, 42, ComboBox::DEFAULT_HEIGHT );
 	m_osc3Wave2Box->setFont( pointSize<8>( m_osc3Wave2Box->font() ) );
 
-	maketinyled( m_osc3SyncHButton, 212, O3ROW - 3, tr( "Hard sync oscillator 3" ) )
-	maketinyled( m_osc3SyncRButton, 191, O3ROW - 3, tr( "Reverse sync oscillator 3" ) )
+	maketinyled( &m_instrument->m_osc3SyncH, m_osc3SyncHButton, 212, O3ROW - 3, tr( "Hard sync oscillator 3" ) )
+	maketinyled( &m_instrument->m_osc3SyncR, m_osc3SyncRButton, 191, O3ROW - 3, tr( "Reverse sync oscillator 3" ) )
 
-	m_lfo1WaveBox = new ComboBox( view );
-	m_lfo1WaveBox -> setGeometry( 2, LFOROW + 7, 42, ComboBox::DEFAULT_HEIGHT );
+	m_lfo1WaveBox = new ComboBox( &m_instrument->m_lfo1Wave, view );
+	m_lfo1WaveBox->setGeometry( 2, LFOROW + 7, 42, ComboBox::DEFAULT_HEIGHT );
 	m_lfo1WaveBox->setFont( pointSize<8>( m_lfo1WaveBox->font() ) );
 
-	maketsknob( m_lfo1AttKnob, LFOCOL1, LFOROW, tr( "Attack" ), " ms", "lfoKnob" )
-	maketsknob( m_lfo1RateKnob, LFOCOL2, LFOROW, tr( "Rate" ), " ms", "lfoKnob" )
-	makeknob( m_lfo1PhsKnob, LFOCOL3, LFOROW, tr( "Phase" ), tr( " deg" ), "lfoKnob" )
+	maketsknob( &m_instrument->m_lfo1Att, m_lfo1AttKnob, LFOCOL1, LFOROW, tr( "Attack" ), " ms", "lfoKnob" )
+	maketsknob( &m_instrument->m_lfo1Rate, m_lfo1RateKnob, LFOCOL2, LFOROW, tr( "Rate" ), " ms", "lfoKnob" )
+	makeknob( &m_instrument->m_lfo1Phs, m_lfo1PhsKnob, LFOCOL3, LFOROW, tr( "Phase" ), tr( " deg" ), "lfoKnob" )
 
-	m_lfo2WaveBox = new ComboBox( view );
-	m_lfo2WaveBox -> setGeometry( 127, LFOROW + 7, 42, ComboBox::DEFAULT_HEIGHT );
+	m_lfo2WaveBox = new ComboBox( &m_instrument->m_lfo2Wave, view );
+	m_lfo2WaveBox->setGeometry( 127, LFOROW + 7, 42, ComboBox::DEFAULT_HEIGHT );
 	m_lfo2WaveBox->setFont( pointSize<8>( m_lfo2WaveBox->font() ) );
 
-	maketsknob(m_lfo2AttKnob, LFOCOL4, LFOROW, tr("Attack"), " ms", "lfoKnob")
-	maketsknob(m_lfo2RateKnob, LFOCOL5, LFOROW, tr("Rate"), " ms", "lfoKnob")
-	makeknob(m_lfo2PhsKnob, LFOCOL6, LFOROW, tr("Phase"), tr(" deg"), "lfoKnob")
+	maketsknob(&m_instrument->m_lfo2Att, m_lfo2AttKnob, LFOCOL4, LFOROW, tr("Attack"), " ms", "lfoKnob")
+	maketsknob(&m_instrument->m_lfo2Rate, m_lfo2RateKnob, LFOCOL5, LFOROW, tr("Rate"), " ms", "lfoKnob")
+	makeknob(&m_instrument->m_lfo2Phs, m_lfo2PhsKnob, LFOCOL6, LFOROW, tr("Phase"), tr(" deg"), "lfoKnob")
 
-	maketsknob(m_env1PreKnob, KNOBCOL1, E1ROW, tr("Pre-delay"), " ms", "envKnob")
-	maketsknob(m_env1AttKnob, KNOBCOL2, E1ROW, tr("Attack"), " ms", "envKnob")
-	maketsknob(m_env1HoldKnob, KNOBCOL3, E1ROW, tr("Hold"), " ms", "envKnob")
-	maketsknob(m_env1DecKnob, KNOBCOL4, E1ROW, tr("Decay"), " ms", "envKnob")
+	maketsknob(&m_instrument->m_env1Pre, m_env1PreKnob, KNOBCOL1, E1ROW, tr("Pre-delay"), " ms", "envKnob")
+	maketsknob(&m_instrument->m_env1Att, m_env1AttKnob, KNOBCOL2, E1ROW, tr("Attack"), " ms", "envKnob")
+	maketsknob(&m_instrument->m_env1Hold, m_env1HoldKnob, KNOBCOL3, E1ROW, tr("Hold"), " ms", "envKnob")
+	maketsknob(&m_instrument->m_env1Dec, m_env1DecKnob, KNOBCOL4, E1ROW, tr("Decay"), " ms", "envKnob")
 
-	makeknob(m_env1SusKnob, KNOBCOL5, E1ROW, tr("Sustain"), "", "envKnob")
-	maketsknob(m_env1RelKnob, KNOBCOL6, E1ROW, tr("Release"), " ms", "envKnob")
-	makeknob(m_env1SlopeKnob, KNOBCOL7, E1ROW, tr("Slope"), "", "envKnob")
+	makeknob(&m_instrument->m_env1Sus, m_env1SusKnob, KNOBCOL5, E1ROW, tr("Sustain"), "", "envKnob")
+	maketsknob(&m_instrument->m_env1Rel, m_env1RelKnob, KNOBCOL6, E1ROW, tr("Release"), " ms", "envKnob")
+	makeknob(&m_instrument->m_env1Slope, m_env1SlopeKnob, KNOBCOL7, E1ROW, tr("Slope"), "", "envKnob")
 
-	maketsknob(m_env2PreKnob, KNOBCOL1, E2ROW, tr("Pre-delay"), " ms", "envKnob")
-	maketsknob(m_env2AttKnob, KNOBCOL2, E2ROW, tr("Attack"), " ms", "envKnob")
-	maketsknob(m_env2HoldKnob, KNOBCOL3, E2ROW, tr("Hold"), " ms", "envKnob")
-	maketsknob(m_env2DecKnob, KNOBCOL4, E2ROW, tr("Decay"), " ms", "envKnob")
-	makeknob(m_env2SusKnob, KNOBCOL5, E2ROW, tr("Sustain"), "", "envKnob")
-	maketsknob(m_env2RelKnob, KNOBCOL6, E2ROW, tr("Release"), " ms", "envKnob")
-	makeknob(m_env2SlopeKnob, KNOBCOL7, E2ROW, tr("Slope"), "", "envKnob")
+	maketsknob(&m_instrument->m_env2Pre, m_env2PreKnob, KNOBCOL1, E2ROW, tr("Pre-delay"), " ms", "envKnob")
+	maketsknob(&m_instrument->m_env2Att, m_env2AttKnob, KNOBCOL2, E2ROW, tr("Attack"), " ms", "envKnob")
+	maketsknob(&m_instrument->m_env2Hold, m_env2HoldKnob, KNOBCOL3, E2ROW, tr("Hold"), " ms", "envKnob")
+	maketsknob(&m_instrument->m_env2Dec, m_env2DecKnob, KNOBCOL4, E2ROW, tr("Decay"), " ms", "envKnob")
+	makeknob(&m_instrument->m_env2Sus, m_env2SusKnob, KNOBCOL5, E2ROW, tr("Sustain"), "", "envKnob")
+	maketsknob(&m_instrument->m_env2Rel, m_env2RelKnob, KNOBCOL6, E2ROW, tr("Release"), " ms", "envKnob")
+	makeknob(&m_instrument->m_env2Slope, m_env2SlopeKnob, KNOBCOL7, E2ROW, tr("Slope"), "", "envKnob")
 
 	// mod selector
 	auto m_mixButton = new PixmapButton(view, nullptr);
-	m_mixButton -> move( 225, 185 );
-	m_mixButton -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( "mix_active" ) );
-	m_mixButton -> setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "mix_inactive" ) );
+	m_mixButton->move( 225, 185 );
+	m_mixButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "mix_active" ) );
+	m_mixButton->setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "mix_inactive" ) );
 	m_mixButton->setToolTip(tr("Mix osc 2 with osc 3"));
 
 	auto m_amButton = new PixmapButton(view, nullptr);
-	m_amButton -> move( 225, 185 + 15 );
-	m_amButton -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( "am_active" ) );
-	m_amButton -> setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "am_inactive" ) );
+	m_amButton->move( 225, 185 + 15 );
+	m_amButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "am_active" ) );
+	m_amButton->setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "am_inactive" ) );
 	m_amButton->setToolTip(tr("Modulate amplitude of osc 3 by osc 2"));
 
 	auto m_fmButton = new PixmapButton(view, nullptr);
-	m_fmButton -> move( 225, 185 + 15*2 );
-	m_fmButton -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( "fm_active" ) );
-	m_fmButton -> setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "fm_inactive" ) );
+	m_fmButton->move( 225, 185 + 15*2 );
+	m_fmButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "fm_active" ) );
+	m_fmButton->setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "fm_inactive" ) );
 	m_fmButton->setToolTip(tr("Modulate frequency of osc 3 by osc 2"));
 
 	auto m_pmButton = new PixmapButton(view, nullptr);
-	m_pmButton -> move( 225, 185 + 15*3 );
-	m_pmButton -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( "pm_active" ) );
-	m_pmButton -> setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "pm_inactive" ) );
+	m_pmButton->move( 225, 185 + 15*3 );
+	m_pmButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "pm_active" ) );
+	m_pmButton->setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "pm_inactive" ) );
 	m_pmButton->setToolTip(tr("Modulate phase of osc 3 by osc 2"));
 
-	m_o23ModGroup = new automatableButtonGroup( view );
-	m_o23ModGroup-> addButton( m_mixButton );
-	m_o23ModGroup-> addButton( m_amButton );
-	m_o23ModGroup-> addButton( m_fmButton );
-	m_o23ModGroup-> addButton( m_pmButton );
-
-
+	m_o23ModGroup = new automatableButtonGroup( &m_instrument->m_o23Mod, view );
+	m_o23ModGroup->addButton( m_mixButton );
+	m_o23ModGroup->addButton( m_amButton );
+	m_o23ModGroup->addButton( m_fmButton );
+	m_o23ModGroup->addButton( m_pmButton );
 
 	return( view );
 }
@@ -1757,62 +1635,62 @@ QWidget * MonstroView::setupMatrixView( QWidget * _parent )
 	// matrix view
 
 	auto view = new QWidget(_parent);
-	view-> setFixedSize( 250, 250 );
+	view->setFixedSize( 250, 250 );
 
-	makeknob( m_vol1env1Knob, MATCOL1, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_vol1env2Knob, MATCOL2, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_vol1lfo1Knob, MATCOL3, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_vol1lfo2Knob, MATCOL4, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol1env1, m_vol1env1Knob, MATCOL1, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol1env2, m_vol1env2Knob, MATCOL2, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol1lfo1, m_vol1lfo1Knob, MATCOL3, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol1lfo2, m_vol1lfo2Knob, MATCOL4, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
 
-	makeknob( m_vol2env1Knob, MATCOL1, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_vol2env2Knob, MATCOL2, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_vol2lfo1Knob, MATCOL3, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_vol2lfo2Knob, MATCOL4, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol2env1, m_vol2env1Knob, MATCOL1, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol2env2, m_vol2env2Knob, MATCOL2, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol2lfo1, m_vol2lfo1Knob, MATCOL3, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol2lfo2, m_vol2lfo2Knob, MATCOL4, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
 
-	makeknob( m_vol3env1Knob, MATCOL1, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_vol3env2Knob, MATCOL2, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_vol3lfo1Knob, MATCOL3, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_vol3lfo2Knob, MATCOL4, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol3env1, m_vol3env1Knob, MATCOL1, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol3env2, m_vol3env2Knob, MATCOL2, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol3lfo1, m_vol3lfo1Knob, MATCOL3, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_vol3lfo2, m_vol3lfo2Knob, MATCOL4, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
 
-	makeknob( m_phs1env1Knob, MATCOL1, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_phs1env2Knob, MATCOL2, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_phs1lfo1Knob, MATCOL3, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_phs1lfo2Knob, MATCOL4, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs1env1, m_phs1env1Knob, MATCOL1, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs1env2, m_phs1env2Knob, MATCOL2, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs1lfo1, m_phs1lfo1Knob, MATCOL3, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs1lfo2, m_phs1lfo2Knob, MATCOL4, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
 
-	makeknob( m_phs2env1Knob, MATCOL1, MATROW4, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_phs2env2Knob, MATCOL2, MATROW4, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_phs2lfo1Knob, MATCOL3, MATROW4, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_phs2lfo2Knob, MATCOL4, MATROW4, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs2env1, m_phs2env1Knob, MATCOL1, MATROW4, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs2env2, m_phs2env2Knob, MATCOL2, MATROW4, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs2lfo1, m_phs2lfo1Knob, MATCOL3, MATROW4, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs2lfo2, m_phs2lfo2Knob, MATCOL4, MATROW4, tr( "Modulation amount" ), "", "matrixKnob" )
 
-	makeknob( m_phs3env1Knob, MATCOL1, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_phs3env2Knob, MATCOL2, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_phs3lfo1Knob, MATCOL3, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_phs3lfo2Knob, MATCOL4, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs3env1, m_phs3env1Knob, MATCOL1, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs3env2, m_phs3env2Knob, MATCOL2, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs3lfo1, m_phs3lfo1Knob, MATCOL3, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_phs3lfo2, m_phs3lfo2Knob, MATCOL4, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
 
-	makeknob( m_pit1env1Knob, MATCOL5, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pit1env2Knob, MATCOL6, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pit1lfo1Knob, MATCOL7, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pit1lfo2Knob, MATCOL8, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit1env1, m_pit1env1Knob, MATCOL5, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit1env2, m_pit1env2Knob, MATCOL6, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit1lfo1, m_pit1lfo1Knob, MATCOL7, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit1lfo2, m_pit1lfo2Knob, MATCOL8, MATROW1, tr( "Modulation amount" ), "", "matrixKnob" )
 
-	makeknob( m_pit2env1Knob, MATCOL5, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pit2env2Knob, MATCOL6, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pit2lfo1Knob, MATCOL7, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pit2lfo2Knob, MATCOL8, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit2env1, m_pit2env1Knob, MATCOL5, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit2env2, m_pit2env2Knob, MATCOL6, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit2lfo1, m_pit2lfo1Knob, MATCOL7, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit2lfo2, m_pit2lfo2Knob, MATCOL8, MATROW3, tr( "Modulation amount" ), "", "matrixKnob" )
 
-	makeknob( m_pit3env1Knob, MATCOL5, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pit3env2Knob, MATCOL6, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pit3lfo1Knob, MATCOL7, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pit3lfo2Knob, MATCOL8, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit3env1, m_pit3env1Knob, MATCOL5, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit3env2, m_pit3env2Knob, MATCOL6, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit3lfo1, m_pit3lfo1Knob, MATCOL7, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pit3lfo2, m_pit3lfo2Knob, MATCOL8, MATROW5, tr( "Modulation amount" ), "", "matrixKnob" )
 
-	makeknob( m_pw1env1Knob, MATCOL5, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pw1env2Knob, MATCOL6, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pw1lfo1Knob, MATCOL7, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_pw1lfo2Knob, MATCOL8, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pw1env1, m_pw1env1Knob, MATCOL5, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pw1env2, m_pw1env2Knob, MATCOL6, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pw1lfo1, m_pw1lfo1Knob, MATCOL7, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_pw1lfo2, m_pw1lfo2Knob, MATCOL8, MATROW2, tr( "Modulation amount" ), "", "matrixKnob" )
 
-	makeknob( m_sub3env1Knob, MATCOL5, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_sub3env2Knob, MATCOL6, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_sub3lfo1Knob, MATCOL7, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
-	makeknob( m_sub3lfo2Knob, MATCOL8, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_sub3env1, m_sub3env1Knob, MATCOL5, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_sub3env2, m_sub3env2Knob, MATCOL6, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_sub3lfo1, m_sub3lfo1Knob, MATCOL7, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
+	makeknob( &m_instrument->m_sub3lfo2, m_sub3lfo2Knob, MATCOL8, MATROW6, tr( "Modulation amount" ), "", "matrixKnob" )
 
 	return( view );
 }
@@ -1825,9 +1703,9 @@ extern "C"
 {
 
 // necessary for getting instance out of shared lib
-PLUGIN_EXPORT Plugin * lmms_plugin_main( Model *m, void * )
+PLUGIN_EXPORT Plugin * lmms_plugin_main( Model *m_instrument, void * )
 {
-	return new MonstroInstrument( static_cast<InstrumentTrack *>( m ) );
+	return new MonstroInstrument( static_cast<InstrumentTrack *>( m_instrument ) );
 }
 
 

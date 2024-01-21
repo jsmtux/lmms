@@ -28,36 +28,39 @@
 
 #include <vector>
 
-#include "ComboBoxModel.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
 #include "AutomatableModel.h"
-#include "TempoSyncKnob.h"
-#include "PixmapButton.h"
+#include "BandLimitedWave.h"
+#include "ComboBoxModel.h"
 #include "Oscillator.h"
 #include "lmms_math.h"
-#include "BandLimitedWave.h"
+
+#include "instrument/InstrumentView.h"
+
+#include "plugins/QWidgetInstrumentPlugin.h"
+
+#include "widgets/TempoSyncKnob.h"
+#include "widgets/PixmapButton.h"
 
 //
 //	UI Macros
 //
 
-#define makeknob( name, x, y, hint, unit, oname ) 		\
-	name = new Knob( knobStyled, view ); 				\
+#define makeknob( model, name, x, y, hint, unit, oname ) 		\
+	name = new Knob( knobStyled, model, view ); 				\
 	name ->move( x, y );								\
 	name ->setHintText( hint, unit );             \
 	name ->setObjectName( oname );						\
 	name ->setFixedSize( 20, 20 );
 
-#define maketsknob( name, x, y, hint, unit, oname ) 		\
-	name = new TempoSyncKnob( knobStyled, view ); 				\
+#define maketsknob( model, name, x, y, hint, unit, oname ) 		\
+	name = new TempoSyncKnob( knobStyled, model, view ); 				\
 	name ->move( x, y );								\
 	name ->setHintText( hint, unit );		\
 	name ->setObjectName( oname );						\
 	name ->setFixedSize( 20, 20 );
 
-#define maketinyled( name, x, y, ttip ) \
-	name = new PixmapButton( view, nullptr ); 	\
+#define maketinyled( model, name, x, y, ttip ) \
+	name = new PixmapButton( view, model ); 	\
 	name -> setCheckable( true );			\
 	name -> move( x, y );					\
 	name -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( "tinyled_on" ) ); \
@@ -318,7 +321,7 @@ private:
 	std::vector<float> m_env[2];
 };
 
-class MonstroInstrument : public Instrument
+class MonstroInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 
@@ -369,7 +372,7 @@ public:
 
 	f_cnt_t desiredReleaseFrames() const override;
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 public slots:
 	void updateVolume1();
@@ -587,11 +590,11 @@ namespace gui
 {
 
 
-class MonstroView : public InstrumentViewFixedSize
+class MonstroView : public InstrumentViewImpl<MonstroInstrument>
 {
 	Q_OBJECT
 public:
-	MonstroView( Instrument * _instrument,
+	MonstroView( MonstroInstrument * _instrument,
 					QWidget * _parent );
 	~MonstroView() override = default;
 
@@ -599,7 +602,6 @@ protected slots:
 	void updateLayout();
 
 private:
-	void modelChanged() override;
 
 	void setWidgetBackground( QWidget * _widget, const QString & _pic );
 	QWidget * setupOperatorsView( QWidget * _parent );

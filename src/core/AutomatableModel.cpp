@@ -26,6 +26,7 @@
 
 #include "lmms_math.h"
 
+#include "tracks/AutomationTrack.h"
 #include "AudioEngine.h"
 #include "AutomationClip.h"
 #include "ControllerConnection.h"
@@ -36,14 +37,49 @@
 namespace lmms
 {
 
+template<>
+IAutomatableModel<float>* MFact::create(float val, float min, float max, float step,
+        QObject * parent,
+        const QString& displayName){
+	return new FloatModel(val, min, max, step,
+        parent, displayName);
+}
+template<>
+IAutomatableModel<int>* MFact::create(
+        int val, int min, int max, int step,
+        QObject * parent,
+        const QString& displayName){
+	return new IntModel(
+        val, min, max,
+        parent, displayName);
+}
+template<>
+IAutomatableModel<bool>* MFact::create(
+        bool val, bool min, bool max, bool step,
+        QObject * parent,
+        const QString& displayName){
+	return new BoolModel(
+        val, parent, displayName);
+}
+
+IAutomatableModel<int>* MFact::createIntModel(
+	int val, int min, int max,
+	QObject * parent,
+	const QString& displayName) {
+	return new IntModel(
+        val, min, max,
+        parent, displayName);
+}
+
 long AutomatableModel::s_periodCounter = 0;
 
 
 
 AutomatableModel::AutomatableModel(
 						const float val, const float min, const float max, const float step,
-						Model* parent, const QString & displayName, bool defaultConstructed ) :
-	Model( parent, displayName, defaultConstructed ),
+						QObject* parent, const QString & displayName ) :
+	Model( parent, displayName ),
+	m_nodeName("automatablemodel"),
 	m_scaleType( Linear ),
 	m_minValue( min ),
 	m_maxValue( max ),
@@ -53,9 +89,9 @@ AutomatableModel::AutomatableModel(
 	m_valueChanged( false ),
 	m_setValueDepth( 0 ),
 	m_hasStrictStepSize( false ),
-	m_controllerConnection( nullptr ),
 	m_valueBuffer( static_cast<int>( Engine::audioEngine()->framesPerPeriod() ) ),
 	m_lastUpdatedPeriod( -1 ),
+	m_controllerConnection( nullptr ),
 	m_hasSampleExactData(false),
 	m_useControllerValue(true)
 
@@ -75,25 +111,10 @@ AutomatableModel::~AutomatableModel()
 		m_linkedModels.erase( m_linkedModels.end() - 1 );
 	}
 
-	if( m_controllerConnection )
-	{
-		delete m_controllerConnection;
-	}
-
 	m_valueBuffer.clear();
 
 	emit destroyed( id() );
 }
-
-
-
-
-bool AutomatableModel::isAutomated() const
-{
-	return AutomationClip::isAutomated( this );
-}
-
-
 
 bool AutomatableModel::mustQuoteName(const QString& name)
 {
@@ -140,11 +161,11 @@ void AutomatableModel::saveSettings( QDomDocument& doc, QDomElement& element, co
 	// the discardMIDIConnections option is true.
 	auto controllerType = m_controllerConnection
 			? m_controllerConnection->getController()->type()
-			: Controller::DummyController;
+			: IController::DummyController;
 	bool skipMidiController = Engine::getSong()->isSavingProject()
 							  && Engine::getSong()->getSaveOptions().discardMIDIConnections.value();
-	if (m_controllerConnection && controllerType != Controller::DummyController
-		&& !(skipMidiController && controllerType == Controller::MidiController))
+	if (m_controllerConnection && controllerType != IController::DummyController
+		&& !(skipMidiController && controllerType == IController::MidiController))
 	{
 		QDomElement controllerElement;
 
@@ -167,7 +188,7 @@ void AutomatableModel::saveSettings( QDomDocument& doc, QDomElement& element, co
 		QDomElement element = doc.createElement( elementName );
 		if(mustQuote)
 			element.setAttribute( "nodename", name );
-		m_controllerConnection->saveSettings( doc, element );
+		m_controllerConnection->saveSettingsInPlace( doc, element );
 
 		controllerElement.appendChild( element );
 	}
@@ -185,7 +206,7 @@ void AutomatableModel::loadSettings( const QDomElement& element, const QString& 
 		node = node.namedItem( name );
 		if( node.isElement() )
 		{
-			AutomationClip * p = AutomationClip::globalAutomationClip( this );
+			AutomationClip * p = AutomationClip::globalAutomationClip( thisInterface() );
 			p->loadSettings( node.toElement() );
 			setValue( p->valueAt( 0 ) );
 			// in older projects we sometimes have odd automations
@@ -218,8 +239,8 @@ void AutomatableModel::loadSettings( const QDomElement& element, const QString& 
 		}
 		if( thisConnection.isElement() )
 		{
-			setControllerConnection(new ControllerConnection(nullptr));
-			m_controllerConnection->loadSettings( thisConnection.toElement() );
+			setControllerConnection(createControllerconnection(nullptr));
+			m_controllerConnection->loadSettingsInPlace( thisConnection.toElement() );
 			//m_controllerConnection->setTargetName( displayName() );
 		}
 	}
@@ -534,6 +555,21 @@ void AutomatableModel::unlinkModels( AutomatableModel* model1, AutomatableModel*
 
 
 
+void IAutomatableModelBase::linkModelInterfaces( IAutomatableModelBase* _model1, IAutomatableModelBase* _model2 )
+{
+	AutomatableModel::linkModels(dynamic_cast<AutomatableModel*>(_model1), dynamic_cast<AutomatableModel*>(_model2));
+}
+
+void IAutomatableModelBase::unlinkModelInterfacses( IAutomatableModelBase* _model1, IAutomatableModelBase* _model2 )
+{
+	AutomatableModel::unlinkModels(dynamic_cast<AutomatableModel*>(_model1), dynamic_cast<AutomatableModel*>(_model2));
+}
+
+IAutomatableModelBase* getAutomatableModelFromJournallingObject(JournallingObject* object) {
+	return dynamic_cast<IAutomatableModelBase*>(object);
+}
+
+
 
 void AutomatableModel::unlinkAllModels()
 {
@@ -546,14 +582,14 @@ void AutomatableModel::unlinkAllModels()
 
 
 
-void AutomatableModel::setControllerConnection( ControllerConnection* c )
+void AutomatableModel::setControllerConnection( std::unique_ptr<IControllerConnection>&& connection )
 {
-	m_controllerConnection = c;
-	if( c )
+	m_controllerConnection = std::move(connection);
+	if( connection )
 	{
-		QObject::connect( m_controllerConnection, SIGNAL(valueChanged()),
+		QObject::connect( m_controllerConnection.get(), SIGNAL(valueChanged()),
 				this, SIGNAL(dataChanged()), Qt::DirectConnection );
-		QObject::connect( m_controllerConnection, SIGNAL(destroyed()), this, SLOT(unlinkControllerConnection()));
+		QObject::connect( m_controllerConnection.get(), SIGNAL(destroyed()), this, SLOT(unlinkControllerConnection()));
 		m_valueChanged = true;
 		emit dataChanged();
 	}
@@ -570,11 +606,11 @@ float AutomatableModel::controllerValue( int frameOffset ) const
 		switch(m_scaleType)
 		{
 		case Linear:
-			v = minValue<float>() + ( range() * controllerConnection()->currentValue( frameOffset ) );
+			v = minValue<float>() + ( range() * controllerConnection()->getController()->currentValue( frameOffset ) );
 			break;
 		case Logarithmic:
 			v = logToLinearScale(
-				controllerConnection()->currentValue( frameOffset ));
+				controllerConnection()->getController()->currentValue( frameOffset ));
 			break;
 		default:
 			qFatal("AutomatableModel::controllerValue(int)"
@@ -614,7 +650,7 @@ ValueBuffer * AutomatableModel::valueBuffer()
 	ValueBuffer * vb;
 	if (m_controllerConnection && m_useControllerValue && m_controllerConnection->getController()->isSampleExact())
 	{
-		vb = m_controllerConnection->valueBuffer();
+		vb = m_controllerConnection->getController()->valueBuffer();
 		if( vb )
 		{
 			float * values = vb->values();
@@ -721,7 +757,7 @@ void AutomatableModel::reset()
 float AutomatableModel::globalAutomationValueAt( const TimePos& time )
 {
 	// get clips that connect to this model
-	QVector<AutomationClip *> clips = AutomationClip::clipsForModel( this );
+	QVector<AutomationClip *> clips = AutomationClip::clipsForModel( thisInterface() );
 	if( clips.isEmpty() )
 	{
 		// if no such clips exist, return current value
@@ -789,28 +825,6 @@ void AutomatableModel::setUseControllerValue(bool b)
 		emit dataChanged();
 	}
 }
-
-float FloatModel::getRoundedValue() const
-{
-	return qRound( value() / step<float>() ) * step<float>();
-}
-
-
-
-
-int FloatModel::getDigitCount() const
-{
-	auto steptemp = step<float>();
-	int digits = 0;
-	while ( steptemp < 1 )
-	{
-		steptemp = steptemp * 10.0f;
-		digits++;
-	}
-	return digits;
-}
-
-
 
 QString FloatModel::displayValue( const float val ) const
 {

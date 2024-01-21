@@ -25,7 +25,7 @@
 #ifndef _VST_EFFECT_CONTROL_DIALOG_H
 #define _VST_EFFECT_CONTROL_DIALOG_H
 
-#include "EffectControlDialog.h"
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 #include <QSharedPointer>
 

@@ -52,7 +52,7 @@ Plugin::Descriptor PLUGIN_EXPORT crossovereq_plugin_descriptor =
 }
 
 
-CrossoverEQEffect::CrossoverEQEffect( Model* parent, const Descriptor::SubPluginFeatures::Key* key ) :
+CrossoverEQEffect::CrossoverEQEffect( Model* parent, const PluginDescriptor::Key* key ) :
 	Effect( &crossovereq_plugin_descriptor, parent, key ),
 	m_controls( this ),
 	m_sampleRate( Engine::audioEngine()->processingSampleRate() ),
@@ -222,7 +222,7 @@ extern "C"
 // necessary for getting instance out of shared lib
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model* parent, void* data )
 {
-	return new CrossoverEQEffect( parent, static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>( data ) );
+	return new CrossoverEQEffect( parent, static_cast<const Plugin::PluginDescriptor::Key *>( data ) );
 }
 
 }

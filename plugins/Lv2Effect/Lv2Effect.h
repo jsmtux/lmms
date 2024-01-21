@@ -40,7 +40,7 @@ public:
 	/*
 		initialization
 	*/
-	Lv2Effect(Model* parent, const Descriptor::SubPluginFeatures::Key* _key);
+	Lv2Effect(Model* parent, const PluginDescriptor::Key* _key);
 	//! Must be checked after ctor or reload
 	bool isValid() const { return m_controls.isValid(); }
 

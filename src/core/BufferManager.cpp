@@ -33,6 +33,12 @@
 namespace lmms
 {
 
+void clearInBufferManager( sampleFrame * ab, const f_cnt_t frames,
+					const f_cnt_t offset )
+{
+	BufferManager::clear(ab, frames, offset);
+}
+
 fpp_t BufferManager::s_framesPerPeriod;
 
 void BufferManager::init( fpp_t fpp )

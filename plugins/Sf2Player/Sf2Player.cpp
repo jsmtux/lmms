@@ -32,19 +32,19 @@
 
 #include "AudioEngine.h"
 #include "ConfigManager.h"
-#include "FileDialog.h"
 #include "Engine.h"
+#include "IGuiApplication.h"
 #include "InstrumentTrack.h"
 #include "InstrumentPlayHandle.h"
-#include "Knob.h"
 #include "NotePlayHandle.h"
+#include "PatchesDialog.h"
 #include "PathUtil.h"
-#include "PixmapButton.h"
 #include "Song.h"
 #include "fluidsynthshims.h"
 
-#include "PatchesDialog.h"
-#include "LcdSpinBox.h"
+#include "widgets/Knob.h"
+#include "widgets/LcdSpinBox.h"
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 #include "plugin_export.h"
@@ -92,7 +92,7 @@ QMutex Sf2Instrument::s_fontsMutex;
 
 
 Sf2Instrument::Sf2Instrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &sf2player_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &sf2player_plugin_descriptor ),
 	m_srcState( nullptr ),
 	m_synth(nullptr),
 	m_font( nullptr ),
@@ -101,19 +101,19 @@ Sf2Instrument::Sf2Instrument( InstrumentTrack * _instrument_track ) :
 	m_lastMidiPitch( -1 ),
 	m_lastMidiPitchRange( -1 ),
 	m_channel( 1 ),
-	m_bankNum( 0, 0, 999, this, tr("Bank") ),
-	m_patchNum( 0, 0, 127, this, tr("Patch") ),
-	m_gain( 1.0f, 0.0f, 5.0f, 0.01f, this, tr( "Gain" ) ),
-	m_reverbOn( false, this, tr( "Reverb" ) ),
-	m_reverbRoomSize( FLUID_REVERB_DEFAULT_ROOMSIZE, 0, 1.0, 0.01f, this, tr( "Reverb room size" ) ),
-	m_reverbDamping( FLUID_REVERB_DEFAULT_DAMP, 0, 1.0, 0.01, this, tr( "Reverb damping" ) ),
-	m_reverbWidth( FLUID_REVERB_DEFAULT_WIDTH, 0, 1.0, 0.01f, this, tr( "Reverb width" ) ),
-	m_reverbLevel( FLUID_REVERB_DEFAULT_LEVEL, 0, 1.0, 0.01f, this, tr( "Reverb level" ) ),
-	m_chorusOn( false, this, tr( "Chorus" ) ),
-	m_chorusNum( FLUID_CHORUS_DEFAULT_N, 0, 10.0, 1.0, this, tr( "Chorus voices" ) ),
-	m_chorusLevel( FLUID_CHORUS_DEFAULT_LEVEL, 0, 10.0, 0.01, this, tr( "Chorus level" ) ),
-	m_chorusSpeed( FLUID_CHORUS_DEFAULT_SPEED, 0.29, 5.0, 0.01, this, tr( "Chorus speed" ) ),
-	m_chorusDepth( FLUID_CHORUS_DEFAULT_DEPTH, 0, 46.0, 0.05, this, tr( "Chorus depth" ) )
+	m_bankNum( 0, 0, 999, model(), tr("Bank") ),
+	m_patchNum( 0, 0, 127, model(), tr("Patch") ),
+	m_gain( 1.0f, 0.0f, 5.0f, 0.01f, model(), tr( "Gain" ) ),
+	m_reverbOn( false, model(), tr( "Reverb" ) ),
+	m_reverbRoomSize( FLUID_REVERB_DEFAULT_ROOMSIZE, 0, 1.0, 0.01f, model(), tr( "Reverb room size" ) ),
+	m_reverbDamping( FLUID_REVERB_DEFAULT_DAMP, 0, 1.0, 0.01, model(), tr( "Reverb damping" ) ),
+	m_reverbWidth( FLUID_REVERB_DEFAULT_WIDTH, 0, 1.0, 0.01f, model(), tr( "Reverb width" ) ),
+	m_reverbLevel( FLUID_REVERB_DEFAULT_LEVEL, 0, 1.0, 0.01f, model(), tr( "Reverb level" ) ),
+	m_chorusOn( false, model(), tr( "Chorus" ) ),
+	m_chorusNum( FLUID_CHORUS_DEFAULT_N, 0, 10.0, 1.0, model(), tr( "Chorus voices" ) ),
+	m_chorusLevel( FLUID_CHORUS_DEFAULT_LEVEL, 0, 10.0, 0.01, model(), tr( "Chorus level" ) ),
+	m_chorusSpeed( FLUID_CHORUS_DEFAULT_SPEED, 0.29, 5.0, 0.01, model(), tr( "Chorus speed" ) ),
+	m_chorusDepth( FLUID_CHORUS_DEFAULT_DEPTH, 0, 46.0, 0.05, model(), tr( "Chorus depth" ) )
 {
 
 
@@ -922,7 +922,7 @@ void Sf2Instrument::deleteNotePluginData( NotePlayHandle * _n )
 
 
 
-gui::PluginView * Sf2Instrument::instantiateView( QWidget * _parent )
+gui::InstrumentView * Sf2Instrument::instantiateView( QWidget * _parent )
 {
 	return new gui::Sf2InstrumentView( this, _parent );
 }
@@ -937,8 +937,8 @@ namespace gui
 class Sf2Knob : public Knob
 {
 public:
-	Sf2Knob( QWidget * _parent ) :
-			Knob( knobStyled, _parent )
+	Sf2Knob( FloatModel* _model, QWidget * _parent ) :
+			Knob( knobStyled, _model, _parent )
 	{
 		setFixedSize( 31, 38 );
 	}
@@ -946,19 +946,17 @@ public:
 
 
 
-Sf2InstrumentView::Sf2InstrumentView( Instrument * _instrument, QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent )
+Sf2InstrumentView::Sf2InstrumentView( Sf2Instrument * _instrument, QWidget * _parent ) :
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 //	QVBoxLayout * vl = new QVBoxLayout( this );
 //	QHBoxLayout * hl = new QHBoxLayout();
 
-	auto k = castModel<Sf2Instrument>();
-
-	connect(&k->m_bankNum, SIGNAL(dataChanged()), this, SLOT(updatePatchName()));
-	connect(&k->m_patchNum, SIGNAL(dataChanged()), this, SLOT(updatePatchName()));
+	connect(&m_instrument->m_bankNum, SIGNAL(dataChanged()), this, SLOT(updatePatchName()));
+	connect(&m_instrument->m_patchNum, SIGNAL(dataChanged()), this, SLOT(updatePatchName()));
 
 	// File Button
-	m_fileDialogButton = new PixmapButton(this);
+	m_fileDialogButton = new PixmapButton(this, new BoolModel(false, this));
 	m_fileDialogButton->setCursor(QCursor(Qt::PointingHandCursor));
 	m_fileDialogButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("fileselect_on"));
 	m_fileDialogButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("fileselect_off"));
@@ -969,7 +967,7 @@ Sf2InstrumentView::Sf2InstrumentView( Instrument * _instrument, QWidget * _paren
 	m_fileDialogButton->setToolTip(tr("Open SoundFont file"));
 
 	// Patch Button
-	m_patchDialogButton = new PixmapButton(this);
+	m_patchDialogButton = new PixmapButton(this, new BoolModel(false, this));
 	m_patchDialogButton->setCursor(QCursor(Qt::PointingHandCursor));
 	m_patchDialogButton->setActiveGraphic(PLUGIN_NAME::getIconPixmap("patches_on"));
 	m_patchDialogButton->setInactiveGraphic(PLUGIN_NAME::getIconPixmap("patches_off"));
@@ -981,12 +979,12 @@ Sf2InstrumentView::Sf2InstrumentView( Instrument * _instrument, QWidget * _paren
 	m_patchDialogButton->setToolTip(tr("Choose patch"));
 
 	// LCDs
-	m_bankNumLcd = new LcdSpinBox(3, "21pink", this);
+	m_bankNumLcd = new LcdSpinBox(3, "21pink",&m_instrument->m_bankNum, this );
 	m_bankNumLcd->move(131, 62);
 //	m_bankNumLcd->addTextForValue( -1, "---" );
 //	m_bankNumLcd->setEnabled( false );
 
-	m_patchNumLcd = new LcdSpinBox( 3, "21pink", this );
+	m_patchNumLcd = new LcdSpinBox( 3, "21pink", &m_instrument->m_patchNum, this );
 	m_patchNumLcd->move(190, 62);
 //	m_patchNumLcd->addTextForValue( -1, "---" );
 //	m_patchNumLcd->setEnabled( false );
@@ -1011,7 +1009,7 @@ Sf2InstrumentView::Sf2InstrumentView( Instrument * _instrument, QWidget * _paren
 //	vl->addLayout( hl );
 
 	// Gain
-	m_gainKnob = new Sf2Knob( this );
+	m_gainKnob = new Sf2Knob( &m_instrument->m_gain, this );
 	m_gainKnob->setHintText( tr("Gain:"), "" );
 	m_gainKnob->move( 86, 55 );
 //	vl->addWidget( m_gainKnob );
@@ -1020,7 +1018,7 @@ Sf2InstrumentView::Sf2InstrumentView( Instrument * _instrument, QWidget * _paren
 //	hl = new QHBoxLayout();
 
 
-	m_reverbButton = new PixmapButton( this );
+	m_reverbButton = new PixmapButton( this, &m_instrument->m_reverbOn );
 	m_reverbButton->setCheckable( true );
 	m_reverbButton->move( 14, 180 );
 	m_reverbButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "reverb_on" ) );
@@ -1028,19 +1026,19 @@ Sf2InstrumentView::Sf2InstrumentView( Instrument * _instrument, QWidget * _paren
 	m_reverbButton->setToolTip(tr("Apply reverb (if supported)"));
 
 
-	m_reverbRoomSizeKnob = new Sf2Knob( this );
+	m_reverbRoomSizeKnob = new Sf2Knob( &m_instrument->m_reverbRoomSize, this );
 	m_reverbRoomSizeKnob->setHintText( tr("Room size:"), "" );
 	m_reverbRoomSizeKnob->move( 93, 160 );
 
-	m_reverbDampingKnob = new Sf2Knob( this );
+	m_reverbDampingKnob = new Sf2Knob( &m_instrument->m_reverbDamping, this );
 	m_reverbDampingKnob->setHintText( tr("Damping:"), "" );
 	m_reverbDampingKnob->move( 130, 160 );
 
-	m_reverbWidthKnob = new Sf2Knob( this );
+	m_reverbWidthKnob = new Sf2Knob( &m_instrument->m_reverbWidth, this );
 	m_reverbWidthKnob->setHintText( tr("Width:"), "" );
 	m_reverbWidthKnob->move( 167, 160 );
 
-	m_reverbLevelKnob = new Sf2Knob( this );
+	m_reverbLevelKnob = new Sf2Knob( &m_instrument->m_reverbLevel, this );
 	m_reverbLevelKnob->setHintText( tr("Level:"), "" );
 	m_reverbLevelKnob->move( 204, 160 );
 
@@ -1056,26 +1054,26 @@ Sf2InstrumentView::Sf2InstrumentView( Instrument * _instrument, QWidget * _paren
 	// Chorus
 //	hl = new QHBoxLayout();
 
-	m_chorusButton = new PixmapButton( this );
+	m_chorusButton = new PixmapButton( this, &m_instrument->m_chorusOn );
 	m_chorusButton->setCheckable( true );
 	m_chorusButton->move( 14, 226 );
 	m_chorusButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "chorus_on" ) );
 	m_chorusButton->setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "chorus_off" ) );
 	m_chorusButton->setToolTip(tr("Apply chorus (if supported)"));
 
-	m_chorusNumKnob = new Sf2Knob( this );
+	m_chorusNumKnob = new Sf2Knob( &m_instrument->m_chorusNum, this );
 	m_chorusNumKnob->setHintText( tr("Voices:"), "" );
 	m_chorusNumKnob->move( 93, 206 );
 
-	m_chorusLevelKnob = new Sf2Knob( this );
+	m_chorusLevelKnob = new Sf2Knob( &m_instrument->m_chorusLevel, this );
 	m_chorusLevelKnob->setHintText( tr("Level:"), "" );
 	m_chorusLevelKnob->move( 130 , 206 );
 
-	m_chorusSpeedKnob = new Sf2Knob( this );
+	m_chorusSpeedKnob = new Sf2Knob( &m_instrument->m_chorusSpeed, this );
 	m_chorusSpeedKnob->setHintText( tr("Speed:"), "" );
 	m_chorusSpeedKnob->move( 167 , 206 );
 
-	m_chorusDepthKnob = new Sf2Knob( this );
+	m_chorusDepthKnob = new Sf2Knob( &m_instrument->m_chorusDepth, this );
 	m_chorusDepthKnob->setHintText( tr("Depth:"), "" );
 	m_chorusDepthKnob->move( 204 , 206 );
 /*
@@ -1098,48 +1096,17 @@ Sf2InstrumentView::Sf2InstrumentView( Instrument * _instrument, QWidget * _paren
 
 
 
-void Sf2InstrumentView::modelChanged()
-{
-	auto k = castModel<Sf2Instrument>();
-	m_bankNumLcd->setModel( &k->m_bankNum );
-	m_patchNumLcd->setModel( &k->m_patchNum );
-
-	m_gainKnob->setModel( &k->m_gain );
-
-	m_reverbButton->setModel( &k->m_reverbOn );
-	m_reverbRoomSizeKnob->setModel( &k->m_reverbRoomSize );
-	m_reverbDampingKnob->setModel( &k->m_reverbDamping );
-	m_reverbWidthKnob->setModel( &k->m_reverbWidth );
-	m_reverbLevelKnob->setModel( &k->m_reverbLevel );
-
-	m_chorusButton->setModel( &k->m_chorusOn );
-	m_chorusNumKnob->setModel( &k->m_chorusNum );
-	m_chorusLevelKnob->setModel( &k->m_chorusLevel );
-	m_chorusSpeedKnob->setModel( &k->m_chorusSpeed );
-	m_chorusDepthKnob->setModel( &k->m_chorusDepth );
-
-
-	connect( k, SIGNAL( fileChanged() ), this, SLOT( updateFilename() ) );
-
-	connect( k, SIGNAL( fileLoading() ), this, SLOT( invalidateFile() ) );
-
-	updateFilename();
-}
-
-
-
 
 void Sf2InstrumentView::updateFilename()
 {
-	auto i = castModel<Sf2Instrument>();
 	QFontMetrics fm( m_filenameLabel->font() );
-	QString file = i->m_filename.endsWith( ".sf2", Qt::CaseInsensitive ) ?
-			i->m_filename.left( i->m_filename.length() - 4 ) :
-			i->m_filename;
+	QString file = m_instrument->m_filename.endsWith( ".sf2", Qt::CaseInsensitive ) ?
+			m_instrument->m_filename.left( m_instrument->m_filename.length() - 4 ) :
+			m_instrument->m_filename;
 	m_filenameLabel->setText( fm.elidedText( file, Qt::ElideLeft, m_filenameLabel->width() ) );
-			//		i->m_filename + "\nPatch: TODO" );
+			//		m_instrument->m_filename + "\nPatch: TODO" );
 
-	m_patchDialogButton->setEnabled( !i->m_filename.isEmpty() );
+	m_patchDialogButton->setEnabled( !m_instrument->m_filename.isEmpty() );
 
 	updatePatchName();
 
@@ -1151,13 +1118,19 @@ void Sf2InstrumentView::updateFilename()
 
 void Sf2InstrumentView::updatePatchName()
 {
-	auto i = castModel<Sf2Instrument>();
 	QFontMetrics fm( font() );
-	QString patch = i->getCurrentPatchName();
+	QString patch = m_instrument->getCurrentPatchName();
 	m_patchLabel->setText( fm.elidedText( patch, Qt::ElideLeft, m_patchLabel->width() ) );
 
 
 	update();
+
+
+	connect( m_instrument, SIGNAL( fileChanged() ), this, SLOT( updateFilename() ) );
+
+	connect( m_instrument, SIGNAL( fileLoading() ), this, SLOT( invalidateFile() ) );
+
+	updateFilename();
 }
 
 
@@ -1173,34 +1146,32 @@ void Sf2InstrumentView::invalidateFile()
 
 void Sf2InstrumentView::showFileDialog()
 {
-	auto k = castModel<Sf2Instrument>();
-
-	FileDialog ofd( nullptr, tr( "Open SoundFont file" ) );
-	ofd.setFileMode( FileDialog::ExistingFiles );
+	auto ofd = getGUIInterface()->createFileDialog(tr("Open SoundFont file"));
+	ofd->setFileMode( IFileDialog::ExistingFiles );
 
 	QStringList types;
 	types << tr( "SoundFont Files (*.sf2 *.sf3)" );
-	ofd.setNameFilters( types );
+	ofd->setNameFilters( types );
 
-	if( k->m_filename != "" )
+	if( m_instrument->m_filename != "" )
 	{
-		QString f = PathUtil::toAbsolute( k->m_filename );
-		ofd.setDirectory( QFileInfo( f ).absolutePath() );
-		ofd.selectFile( QFileInfo( f ).fileName() );
+		QString f = PathUtil::toAbsolute( m_instrument->m_filename );
+		ofd->setDirectory( QFileInfo( f ).absolutePath() );
+		ofd->selectFile( QFileInfo( f ).fileName() );
 	}
 	else
 	{
-		ofd.setDirectory( ConfigManager::inst()->sf2Dir() );
+		ofd->setDirectory( ConfigManager::inst()->sf2Dir() );
 	}
 
 	m_fileDialogButton->setEnabled( false );
 
-	if( ofd.exec() == QDialog::Accepted && !ofd.selectedFiles().isEmpty() )
+	if( ofd->exec() == IFileDialog::Accepted && !ofd->selectedFiles().isEmpty() )
 	{
-		QString f = ofd.selectedFiles()[0];
+		QString f = ofd->selectedFiles()[0];
 		if( f != "" )
 		{
-			k->openFile( f );
+			m_instrument->openFile( f );
 			Engine::getSong()->setModified();
 		}
 	}
@@ -1213,11 +1184,9 @@ void Sf2InstrumentView::showFileDialog()
 
 void Sf2InstrumentView::showPatchDialog()
 {
-	auto k = castModel<Sf2Instrument>();
-
 	PatchesDialog pd( this );
 
-	pd.setup( k->m_synth, 1, k->instrumentTrack()->name(), &k->m_bankNum, &k->m_patchNum, m_patchLabel );
+	pd.setup( m_instrument->m_synth, 1, m_instrument->instrumentTrack()->name(), &m_instrument->m_bankNum, &m_instrument->m_patchNum, m_patchLabel );
 
 	pd.exec();
 }

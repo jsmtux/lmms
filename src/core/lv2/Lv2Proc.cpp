@@ -159,7 +159,7 @@ Plugin::PluginTypes Lv2Proc::check(const LilvPlugin *plugin,
 
 
 
-Lv2Proc::Lv2Proc(const LilvPlugin *plugin, Model* parent) :
+Lv2Proc::Lv2Proc(const LilvPlugin *plugin, QObject* parent) :
 	LinkedModelGroup(parent),
 	m_plugin(plugin),
 	m_midiInputBuf(m_maxMidiInputEvents),

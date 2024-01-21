@@ -81,7 +81,7 @@ Plugin::Descriptor PLUGIN_EXPORT midiimport_plugin_descriptor =
 
 
 MidiImport::MidiImport( const QString & _file ) :
-	ImportFilter( _file, &midiimport_plugin_descriptor ),
+	QWidgetImportFilter( _file, &midiimport_plugin_descriptor ),
 	m_events(),
 	m_timingDivision( 0 )
 {
@@ -328,15 +328,15 @@ bool MidiImport::readSMF( TrackContainer* tc )
 	// NOTE: unordered_map::operator[] creates a new element if none exists
 
 	MeterModel & timeSigMM = Engine::getSong()->getTimeSigModel();
-	auto nt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, Engine::getSong()));
+	auto nt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, &Engine::getSong()->trackContainer()));
 	nt->setName(tr("MIDI Time Signature Numerator"));
-	auto dt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, Engine::getSong()));
+	auto dt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, &Engine::getSong()->trackContainer()));
 	dt->setName(tr("MIDI Time Signature Denominator"));
 	auto timeSigNumeratorPat = new AutomationClip(nt);
-	timeSigNumeratorPat->setDisplayName(tr("Numerator"));
+	timeSigNumeratorPat->model().setDisplayName(tr("Numerator"));
 	timeSigNumeratorPat->addObject(&timeSigMM.numeratorModel());
 	auto timeSigDenominatorPat = new AutomationClip(dt);
-	timeSigDenominatorPat->setDisplayName(tr("Denominator"));
+	timeSigDenominatorPat->model().setDisplayName(tr("Denominator"));
 	timeSigDenominatorPat->addObject(&timeSigMM.denominatorModel());
 
 	// TODO: adjust these to Time.Sig changes
@@ -358,10 +358,10 @@ bool MidiImport::readSMF( TrackContainer* tc )
 	pd.setValue( 2 );
 
 	// Tempo stuff
-	auto tt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, Engine::getSong()));
+	auto tt = dynamic_cast<AutomationTrack*>(Track::create(Track::AutomationTrack, &Engine::getSong()->trackContainer()));
 	tt->setName(tr("Tempo"));
 	auto tap = new AutomationClip(tt);
-	tap->setDisplayName(tr("Tempo"));
+	tap->model().setDisplayName(tr("Tempo"));
 	tap->addObject(&Engine::getSong()->tempoModel());
 	if( tap )
 	{

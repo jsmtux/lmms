@@ -26,10 +26,12 @@
 #include "SampleRecordHandle.h"
 #include "AudioEngine.h"
 #include "Engine.h"
-#include "PatternTrack.h"
 #include "SampleBuffer.h"
 #include "SampleClip.h"
+#include "tracks/SampleTrack.h"
 #include "debug.h"
+
+#include "tracks/PatternTrack.h"
 
 
 namespace lmms
@@ -37,7 +39,7 @@ namespace lmms
 
 
 SampleRecordHandle::SampleRecordHandle( SampleClip* clip ) :
-	PlayHandle( TypeSamplePlayHandle ),
+	PlayHandle( PlayHandleType::TypeSamplePlayHandle ),
 	m_framesRecorded( 0 ),
 	m_minLength( clip->length() ),
 	m_track( clip->getTrack() ),
@@ -95,9 +97,9 @@ bool SampleRecordHandle::isFinished() const
 
 
 
-bool SampleRecordHandle::isFromTrack( const Track * _track ) const
+bool SampleRecordHandle::isFromTrack( const ITrack * _track ) const
 {
-	return (m_track == _track || m_patternTrack == _track);
+	return (static_cast<void*>(m_track) == _track || m_patternTrack == _track);
 }
 
 

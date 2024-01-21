@@ -22,21 +22,28 @@
 
 #include <QKeyEvent>
 
-#include "MidiClip.h"
-#include "StepRecorderWidget.h"
-#include "PianoRoll.h"
+#include "Engine.h"
+#include "IPianoRoll.h"
+#include "IStepRecorderWidget.h"
+#include "Song.h"
 
+#include "tracks/MidiClip.h"
 
 namespace lmms
 {
 
+
+IStepRecorder* createStepRecorder(gui::IPianoRoll& pianoRoll, gui::IStepRecorderWidget& stepRecorderWidget)
+{
+	return new StepRecorder(pianoRoll, stepRecorderWidget);
+}
 
 using std::min;
 using std::max;
 
 const int REMOVE_RELEASED_NOTE_TIME_THRESHOLD_MS = 70;
 
-StepRecorder::StepRecorder(gui::PianoRoll& pianoRoll, gui::StepRecorderWidget& stepRecorderWidget):
+StepRecorder::StepRecorder(gui::IPianoRoll& pianoRoll, gui::IStepRecorderWidget& stepRecorderWidget):
 	m_pianoRoll(pianoRoll),
 	m_stepRecorderWidget(stepRecorderWidget),
 	m_midiClip(nullptr)
@@ -241,7 +248,7 @@ void StepRecorder::applyStep()
 
 	m_midiClip->rearrangeAllNotes();
 	m_midiClip->updateLength();
-	m_midiClip->dataChanged();
+	m_midiClip->model()->dataChanged();
 	Engine::getSong()->setModified();
 
 	prepareNewStep();
@@ -273,14 +280,14 @@ void StepRecorder::prepareNewStep()
 	updateWidget();
 }
 
-void StepRecorder::setCurrentMidiClip( MidiClip* newMidiClip )
+void StepRecorder::setCurrentMidiClip( IMidiClip* newMidiClip )
 {
 	if(m_midiClip != nullptr && m_midiClip != newMidiClip)
 	{
 		dismissStep();
 	}
 
-	m_midiClip = newMidiClip;
+	m_midiClip = dynamic_cast<MidiClip*>(newMidiClip);
 }
 
 void StepRecorder::removeNotesReleasedForTooLong()

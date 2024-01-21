@@ -28,11 +28,12 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-#include "Knob.h"
-#include "LedCheckBox.h"
 #include "VecControls.h"
 #include "Vectorscope.h"
 #include "VectorView.h"
+
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
 
 namespace lmms::gui
 {
@@ -61,26 +62,23 @@ VecControlsDialog::VecControlsDialog(VecControls *controls) :
 	config_layout->addLayout(switch_layout);
 
 	// High-quality switch
-	auto highQualityButton = new LedCheckBox(tr("HQ"), this);
+	auto highQualityButton = new LedCheckBox(tr("HQ"), &controls->m_highQualityModel, this);
 	highQualityButton->setToolTip(tr("Double the resolution and simulate continuous analog-like trace."));
 	highQualityButton->setCheckable(true);
 	highQualityButton->setMinimumSize(70, 12);
-	highQualityButton->setModel(&controls->m_highQualityModel);
 	switch_layout->addWidget(highQualityButton);
 
 	// Log. scale switch
-	auto logarithmicButton = new LedCheckBox(tr("Log. scale"), this);
+	auto logarithmicButton = new LedCheckBox(tr("Log. scale"), &controls->m_logarithmicModel, this);
 	logarithmicButton->setToolTip(tr("Display amplitude on logarithmic scale to better see small values."));
 	logarithmicButton->setCheckable(true);
 	logarithmicButton->setMinimumSize(70, 12);
-	logarithmicButton->setModel(&controls->m_logarithmicModel);
 	switch_layout->addWidget(logarithmicButton);
 
 	config_layout->addStretch();
 
 	// Persistence knob
-	auto persistenceKnob = new Knob(knobSmall_17, this);
-	persistenceKnob->setModel(&controls->m_persistenceModel);
+	auto persistenceKnob = new Knob(knobSmall_17, &controls->m_persistenceModel, this);
 	persistenceKnob->setLabel(tr("Persist."));
 	persistenceKnob->setToolTip(tr("Trace persistence: higher amount means the trace will stay bright for longer time."));
 	persistenceKnob->setHintText(tr("Trace persistence"), "");

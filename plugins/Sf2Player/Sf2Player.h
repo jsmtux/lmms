@@ -31,10 +31,11 @@
 #include <QMutex>
 #include <samplerate.h>
 
-#include "Instrument.h"
-#include "InstrumentView.h"
-#include "LcdSpinBox.h"
 #include "MemoryManager.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/LcdSpinBox.h"
 
 class QLabel;
 
@@ -55,7 +56,7 @@ class PatchesDialog;
 } // namespace gui
 
 
-class Sf2Instrument : public Instrument
+class Sf2Instrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 	mapPropertyFromModel(int,getBank,setBank,m_bankNum);
@@ -91,7 +92,7 @@ public:
 		return IsSingleStreamed;
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 	
 	QString getCurrentPatchName();
 
@@ -197,17 +198,15 @@ namespace gui
 {
 
 
-class Sf2InstrumentView : public InstrumentViewFixedSize
+class Sf2InstrumentView : public InstrumentViewImpl<Sf2Instrument>
 {
 	Q_OBJECT
 public:
-	Sf2InstrumentView( Instrument * _instrument,
+	Sf2InstrumentView( Sf2Instrument * _instrument,
 					QWidget * _parent );
 	~Sf2InstrumentView() override = default;
 
 private:
-	void modelChanged() override;
-
 	PixmapButton * m_fileDialogButton;
 	PixmapButton * m_patchDialogButton;
 

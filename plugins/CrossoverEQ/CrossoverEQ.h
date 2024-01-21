@@ -38,7 +38,7 @@ namespace lmms
 class CrossoverEQEffect : public Effect
 {
 public:
-	CrossoverEQEffect( Model* parent, const Descriptor::SubPluginFeatures::Key* key );
+	CrossoverEQEffect( Model* parent, const PluginDescriptor::Key* key );
 	~CrossoverEQEffect() override;
 	bool processAudioBuffer( sampleFrame* buf, const fpp_t frames ) override;
 

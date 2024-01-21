@@ -27,22 +27,22 @@
 
 #include <cmath>
 
-#include "Instrument.h"
-#include "InstrumentView.h"
 #include "AutomatableModel.h"
-#include "PixmapButton.h"
 #include "MemoryManager.h"
 
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/PixmapButton.h"
 
-#define makeknob( name, x, y, hint, unit, oname ) 		\
-	name = new Knob( knobStyled, this ); 				\
+#define makeknob( model, name, x, y, hint, unit, oname ) 		\
+	name = new Knob( knobStyled, model, this ); 				\
 	name ->move( x, y );								\
 	name ->setHintText( hint, unit );		\
 	name ->setObjectName( oname );						\
 	name ->setFixedSize( 29, 29 );
 
-#define makenesled( name, x, y, ttip ) \
-	name = new PixmapButton( this, nullptr ); 	\
+#define makenesled( model, name, x, y, ttip ) \
+	name = new PixmapButton( this, model ); 	\
 	name -> setCheckable( true );			\
 	name -> move( x, y );					\
 	name -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( "nesled_on" ) ); \
@@ -50,7 +50,7 @@
 	name->setToolTip(ttip);
 
 #define makedcled( name, x, y, ttip, active ) \
-	PixmapButton * name = new PixmapButton( this, nullptr ); 	\
+	PixmapButton * name = new PixmapButton( this, new BoolModel(false, this) ); 	\
 	name -> move( x, y );					\
 	name -> setActiveGraphic( PLUGIN_NAME::getIconPixmap( active ) ); \
 	name -> setInactiveGraphic( PLUGIN_NAME::getIconPixmap( "nesdc_off" ) ); \
@@ -206,7 +206,7 @@ private:
 };
 
 
-class NesInstrument : public Instrument
+class NesInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:
@@ -229,7 +229,7 @@ public:
 		return( 8 );
 	}
 	
-	gui::PluginView* instantiateView( QWidget * parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * parent ) override;
 	
 public slots:
 	void updateFreq1();
@@ -307,17 +307,15 @@ namespace gui
 {
 
 
-class NesInstrumentView : public InstrumentViewFixedSize
+class NesInstrumentView : public InstrumentViewImpl<NesInstrument>
 {
 	Q_OBJECT
 public:
-	NesInstrumentView( Instrument * instrument,
+	NesInstrumentView( NesInstrument * instrument,
 					QWidget * parent );
 	~NesInstrumentView() override = default;
 
-private:
-	void modelChanged() override;
-	
+private:	
 	// channel 1
 	PixmapButton * 	m_ch1EnabledBtn;
 	Knob *			m_ch1CrsKnob;

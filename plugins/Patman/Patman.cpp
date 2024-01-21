@@ -32,15 +32,17 @@
 #include "ConfigManager.h"
 #include "endian_handling.h"
 #include "Engine.h"
-#include "FileDialog.h"
 #include "gui_templates.h"
+#include "IFileDialog.h"
+#include "IGuiApplication.h"
 #include "InstrumentTrack.h"
 #include "NotePlayHandle.h"
 #include "PathUtil.h"
-#include "PixmapButton.h"
 #include "Song.h"
 #include "StringPairDrag.h"
 #include "Clipboard.h"
+
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 
@@ -80,9 +82,9 @@ PLUGIN_EXPORT Plugin * lmms_plugin_main( Model *m, void * )
 
 
 PatmanInstrument::PatmanInstrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &patman_plugin_descriptor ),
-	m_loopedModel( true, this ),
-	m_tunedModel( true, this )
+	QWidgetInstrumentPlugin( _instrument_track, &patman_plugin_descriptor ),
+	m_loopedModel( true, model() ),
+	m_tunedModel( true, model() )
 {
 }
 
@@ -430,7 +432,7 @@ void PatmanInstrument::selectSample( NotePlayHandle * _n )
 
 
 
-gui::PluginView * PatmanInstrument::instantiateView( QWidget * _parent )
+gui::InstrumentView * PatmanInstrument::instantiateView( QWidget * _parent )
 {
 	return( new gui::PatmanView( this, _parent ) );
 }
@@ -444,9 +446,8 @@ namespace gui
 {
 
 
-PatmanView::PatmanView( Instrument * _instrument, QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent ),
-	m_pi( nullptr )
+PatmanView::PatmanView( PatmanInstrument * _instrument, QWidget * _parent ) :
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 	setAutoFillBackground( true );
 	QPalette pal;
@@ -455,7 +456,7 @@ PatmanView::PatmanView( Instrument * _instrument, QWidget * _parent ) :
 	setPalette( pal );
 
 
-	m_openFileButton = new PixmapButton( this, nullptr );
+	m_openFileButton = new PixmapButton( this, new BoolModel(false, this) );
 	m_openFileButton->setObjectName( "openFileButton" );
 	m_openFileButton->setCursor( QCursor( Qt::PointingHandCursor ) );
 	m_openFileButton->move( 227, 86 );
@@ -467,7 +468,7 @@ PatmanView::PatmanView( Instrument * _instrument, QWidget * _parent ) :
 				this, SLOT( openFile() ) );
 	m_openFileButton->setToolTip(tr("Open patch"));
 
-	m_loopButton = new PixmapButton( this, tr( "Loop" ) );
+	m_loopButton = new PixmapButton( this, &m_instrument->m_loopedModel, tr( "Loop" ) );
 	m_loopButton->setObjectName("loopButton");
 	m_loopButton->setCheckable( true );
 	m_loopButton->move( 195, 138 );
@@ -477,7 +478,7 @@ PatmanView::PatmanView( Instrument * _instrument, QWidget * _parent ) :
 								"loop_off" ) );
 	m_loopButton->setToolTip(tr("Loop mode"));
 
-	m_tuneButton = new PixmapButton( this, tr( "Tune" ) );
+	m_tuneButton = new PixmapButton( this, &m_instrument->m_tunedModel, tr( "Tune" ) );
 	m_tuneButton->setObjectName("tuneButton");
 	m_tuneButton->setCheckable( true );
 	m_tuneButton->move( 223, 138 );
@@ -490,6 +491,9 @@ PatmanView::PatmanView( Instrument * _instrument, QWidget * _parent ) :
 	m_displayFilename = tr( "No file selected" );
 
 	setAcceptDrops( true );
+
+	connect( m_instrument, SIGNAL( fileChanged() ),
+			this, SLOT( updateFilename() ) );
 }
 
 
@@ -497,48 +501,48 @@ PatmanView::PatmanView( Instrument * _instrument, QWidget * _parent ) :
 
 void PatmanView::openFile()
 {
-	FileDialog ofd( nullptr, tr( "Open patch file" ) );
-	ofd.setFileMode( FileDialog::ExistingFiles );
+	auto ofd = getGUIInterface()->createFileDialog("Open patch file");
+	ofd->setFileMode( IFileDialog::ExistingFiles );
 
 	QStringList types;
 	types << tr( "Patch-Files (*.pat)" );
-	ofd.setNameFilters( types );
+	ofd->setNameFilters( types );
 
-	if( m_pi->m_patchFile == "" )
+	if( m_instrument->m_patchFile == "" )
 	{
 		if( QDir( "/usr/share/midi/freepats" ).exists() )
 		{
-			ofd.setDirectory( "/usr/share/midi/freepats" );
+			ofd->setDirectory( "/usr/share/midi/freepats" );
 		}
 		else
 		{
-			ofd.setDirectory(
+			ofd->setDirectory(
 				ConfigManager::inst()->userSamplesDir() );
 		}
 	}
-	else if( QFileInfo( m_pi->m_patchFile ).isRelative() )
+	else if( QFileInfo( m_instrument->m_patchFile ).isRelative() )
 	{
 		QString f = ConfigManager::inst()->userSamplesDir()
-							+ m_pi->m_patchFile;
+							+ m_instrument->m_patchFile;
 		if( QFileInfo( f ).exists() == false )
 		{
 			f = ConfigManager::inst()->factorySamplesDir()
-							+ m_pi->m_patchFile;
+							+ m_instrument->m_patchFile;
 		}
 
-		ofd.selectFile( f );
+		ofd->selectFile( f );
 	}
 	else
 	{
-		ofd.selectFile( m_pi->m_patchFile );
+		ofd->selectFile( m_instrument->m_patchFile );
 	}
 
-	if( ofd.exec() == QDialog::Accepted && !ofd.selectedFiles().isEmpty() )
+	if( ofd->exec() == IFileDialog::Accepted && !ofd->selectedFiles().isEmpty() )
 	{
-		QString f = ofd.selectedFiles()[0];
+		QString f = ofd->selectedFiles()[0];
 		if( f != "" )
 		{
-			m_pi->setFile( f );
+			m_instrument->setFile( f );
 			Engine::getSong()->setModified();
 		}
 	}
@@ -550,7 +554,7 @@ void PatmanView::openFile()
 void PatmanView::updateFilename()
 {
  	m_displayFilename = "";
-	int idx = m_pi->m_patchFile.length();
+	int idx = m_instrument->m_patchFile.length();
 
 	QFontMetrics fm( pointSize<8>( font() ) );
 
@@ -559,7 +563,7 @@ void PatmanView::updateFilename()
 	while( idx > 0 && fm.size( Qt::TextSingleLine,
 				m_displayFilename + "..." ).width() < 225 )
 	{
-		m_displayFilename = m_pi->m_patchFile[--idx] +
+		m_displayFilename = m_instrument->m_patchFile[--idx] +
 							m_displayFilename;
 	}
 
@@ -607,7 +611,7 @@ void PatmanView::dropEvent( QDropEvent * _de )
 	QString value = StringPairDrag::decodeValue( _de );
 	if( type == "samplefile" )
 	{
-		m_pi->setFile( value );
+		m_instrument->setFile( value );
 		_de->accept();
 		return;
 	}
@@ -628,17 +632,6 @@ void PatmanView::paintEvent( QPaintEvent * )
 			m_displayFilename );
 }
 
-
-
-
-void PatmanView::modelChanged()
-{
-	m_pi = castModel<PatmanInstrument>();
-	m_loopButton->setModel( &m_pi->m_loopedModel );
-	m_tuneButton->setModel( &m_pi->m_tunedModel );
-	connect( m_pi, SIGNAL( fileChanged() ),
-			this, SLOT( updateFilename() ) );
-}
 
 
 } // namespace gui

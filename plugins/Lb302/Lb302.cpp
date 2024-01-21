@@ -33,19 +33,20 @@
 #include <cmath>
 
 #include "Lb302.h"
-#include "AutomatableButton.h"
 #include "Engine.h"
 #include "InstrumentPlayHandle.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
-#include "LedCheckBox.h"
 #include "NotePlayHandle.h"
 #include "Oscillator.h"
-#include "PixmapButton.h"
 #include "BandLimitedWave.h"
 
 #include "embed.h"
 #include "plugin_export.h"
+
+#include "widgets/AutomatableButton.h"
+#include "widgets/Knob.h"
+#include "widgets/LedCheckBox.h"
+#include "widgets/PixmapButton.h"
 
 // Envelope Recalculation period
 #define ENVINC 64
@@ -274,18 +275,18 @@ float Lb302Filter3Pole::process(const float& samp)
 //
 
 Lb302Synth::Lb302Synth( InstrumentTrack * _instrumentTrack ) :
-	Instrument( _instrumentTrack, &lb302_plugin_descriptor ),
-	vcf_cut_knob( 0.75f, 0.0f, 1.5f, 0.005f, this, tr( "VCF Cutoff Frequency" ) ),
-	vcf_res_knob( 0.75f, 0.0f, 1.25f, 0.005f, this, tr( "VCF Resonance" ) ),
-	vcf_mod_knob( 0.1f, 0.0f, 1.0f, 0.005f, this, tr( "VCF Envelope Mod" ) ),
-	vcf_dec_knob( 0.1f, 0.0f, 1.0f, 0.005f, this, tr( "VCF Envelope Decay" ) ),
-	dist_knob( 0.0f, 0.0f, 1.0f, 0.01f, this, tr( "Distortion" ) ),
-	wave_shape( 8.0f, 0.0f, 11.0f, this, tr( "Waveform" ) ),
-	slide_dec_knob( 0.6f, 0.0f, 1.0f, 0.005f, this, tr( "Slide Decay" ) ),
-	slideToggle( false, this, tr( "Slide" ) ),
-	accentToggle( false, this, tr( "Accent" ) ),
-	deadToggle( false, this, tr( "Dead" ) ),
-	db24Toggle( false, this, tr( "24dB/oct Filter" ) ),
+	QWidgetInstrumentPlugin( _instrumentTrack, &lb302_plugin_descriptor ),
+	vcf_cut_knob( 0.75f, 0.0f, 1.5f, 0.005f, model(), tr( "VCF Cutoff Frequency" ) ),
+	vcf_res_knob( 0.75f, 0.0f, 1.25f, 0.005f, model(), tr( "VCF Resonance" ) ),
+	vcf_mod_knob( 0.1f, 0.0f, 1.0f, 0.005f, model(), tr( "VCF Envelope Mod" ) ),
+	vcf_dec_knob( 0.1f, 0.0f, 1.0f, 0.005f, model(), tr( "VCF Envelope Decay" ) ),
+	dist_knob( 0.0f, 0.0f, 1.0f, 0.01f, model(), tr( "Distortion" ) ),
+	wave_shape( 8.0f, 0.0f, 11.0f, model(), tr( "Waveform" ) ),
+	slide_dec_knob( 0.6f, 0.0f, 1.0f, 0.005f, model(), tr( "Slide Decay" ) ),
+	slideToggle( false, model(), tr( "Slide" ) ),
+	accentToggle( false, model(), tr( "Accent" ) ),
+	deadToggle( false, model(), tr( "Dead" ) ),
+	db24Toggle( false, model(), tr( "24dB/oct Filter" ) ),
 	vca_attack(1.0 - 0.96406088),
 	vca_decay(0.99897516),
 	vca_a0(0.5),
@@ -806,7 +807,7 @@ void Lb302Synth::deleteNotePluginData( NotePlayHandle * _n )
 }
 
 
-gui::PluginView * Lb302Synth::instantiateView( QWidget * _parent )
+gui::InstrumentView * Lb302Synth::instantiateView( QWidget * _parent )
 {
 	return( new gui::Lb302SynthView( this, _parent ) );
 }
@@ -815,52 +816,52 @@ namespace gui
 {
 
 
-Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent )
+Lb302SynthView::Lb302SynthView( Lb302Synth * _instrument, QWidget * _parent ) :
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 	// GUI
-	m_vcfCutKnob = new Knob( knobBright_26, this );
+	m_vcfCutKnob = new Knob( knobBright_26, &m_instrument->vcf_cut_knob, this );
 	m_vcfCutKnob->move( 75, 130 );
 	m_vcfCutKnob->setHintText( tr( "Cutoff Freq:" ), "" );
 	m_vcfCutKnob->setLabel( "" );
 
-	m_vcfResKnob = new Knob( knobBright_26, this );
+	m_vcfResKnob = new Knob( knobBright_26, &m_instrument->vcf_res_knob, this );
 	m_vcfResKnob->move( 120, 130 );
 	m_vcfResKnob->setHintText( tr( "Resonance:" ), "" );
 	m_vcfResKnob->setLabel( "" );
 
-	m_vcfModKnob = new Knob( knobBright_26, this );
+	m_vcfModKnob = new Knob( knobBright_26, &m_instrument->vcf_mod_knob, this );
 	m_vcfModKnob->move( 165, 130 );
 	m_vcfModKnob->setHintText( tr( "Env Mod:" ), "" );
 	m_vcfModKnob->setLabel( "" );
 
-	m_vcfDecKnob = new Knob( knobBright_26, this );
+	m_vcfDecKnob = new Knob( knobBright_26, &m_instrument->vcf_dec_knob, this );
 	m_vcfDecKnob->move( 210, 130 );
 	m_vcfDecKnob->setHintText( tr( "Decay:" ), "" );
 	m_vcfDecKnob->setLabel( "" );
 
-	m_slideToggle = new LedCheckBox( "", this );
+	m_slideToggle = new LedCheckBox( "", &m_instrument->slideToggle, this );
 	m_slideToggle->move( 10, 180 );
 
-/*	m_accentToggle = new LedCheckBox( "", this );
+/*	m_accentToggle = new LedCheckBox( "", &m_instrument->accentToggle, this );
 	m_accentToggle->move( 10, 200 );
 	m_accentToggle->setDisabled(true);*/ // accent removed pending real implementation - no need for non-functional buttons
 
-	m_deadToggle = new LedCheckBox( "", this );
+	m_deadToggle = new LedCheckBox( "", &m_instrument->deadToggle, this );
 	m_deadToggle->move( 10, 200 );
 
-	m_db24Toggle = new LedCheckBox( "", this );
+	m_db24Toggle = new LedCheckBox( "", &m_instrument->db24Toggle, this );
 	m_db24Toggle->move( 10, 150);
 	m_db24Toggle->setToolTip(
 			tr( "303-es-que, 24dB/octave, 3 pole filter" ) );
 
 
-	m_slideDecKnob = new Knob( knobBright_26, this );
+	m_slideDecKnob = new Knob( knobBright_26, &m_instrument->slide_dec_knob, this );
 	m_slideDecKnob->move( 210, 75 );
 	m_slideDecKnob->setHintText( tr( "Slide Decay:" ), "" );
 	m_slideDecKnob->setLabel( "");
 
-	m_distKnob = new Knob( knobBright_26, this );
+	m_distKnob = new Knob( knobBright_26, &m_instrument->dist_knob, this );
 	m_distKnob->move( 210, 190 );
 	m_distKnob->setHintText( tr( "DIST:" ), "" );
 	m_distKnob->setLabel( tr( ""));
@@ -870,7 +871,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	// move to 120,75
 	const int waveBtnX = 10;
 	const int waveBtnY = 96;
-	auto sawWaveBtn = new PixmapButton(this, tr("Saw wave"));
+	auto sawWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("Saw wave"));
 	sawWaveBtn->move( waveBtnX, waveBtnY );
 	sawWaveBtn->setActiveGraphic( embed::getIconPixmap(
 						"saw_wave_active" ) );
@@ -879,7 +880,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	sawWaveBtn->setToolTip(
 			tr( "Click here for a saw-wave." ) );
 
-	auto triangleWaveBtn = new PixmapButton(this, tr("Triangle wave"));
+	auto triangleWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("Triangle wave"));
 	triangleWaveBtn->move( waveBtnX+(16*1), waveBtnY );
 	triangleWaveBtn->setActiveGraphic(
 		embed::getIconPixmap( "triangle_wave_active" ) );
@@ -888,7 +889,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	triangleWaveBtn->setToolTip(
 			tr( "Click here for a triangle-wave." ) );
 
-	auto sqrWaveBtn = new PixmapButton(this, tr("Square wave"));
+	auto sqrWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("Square wave"));
 	sqrWaveBtn->move( waveBtnX+(16*2), waveBtnY );
 	sqrWaveBtn->setActiveGraphic( embed::getIconPixmap(
 					"square_wave_active" ) );
@@ -897,7 +898,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	sqrWaveBtn->setToolTip(
 			tr( "Click here for a square-wave." ) );
 
-	auto roundSqrWaveBtn = new PixmapButton(this, tr("Rounded square wave"));
+	auto roundSqrWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("Rounded square wave"));
 	roundSqrWaveBtn->move( waveBtnX+(16*3), waveBtnY );
 	roundSqrWaveBtn->setActiveGraphic( embed::getIconPixmap(
 					"round_square_wave_active" ) );
@@ -906,7 +907,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	roundSqrWaveBtn->setToolTip(
 			tr( "Click here for a square-wave with a rounded end." ) );
 
-	auto moogWaveBtn = new PixmapButton(this, tr("Moog wave"));
+	auto moogWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("Moog wave"));
 	moogWaveBtn->move( waveBtnX+(16*4), waveBtnY );
 	moogWaveBtn->setActiveGraphic(
 		embed::getIconPixmap( "moog_saw_wave_active" ) );
@@ -915,7 +916,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	moogWaveBtn->setToolTip(
 			tr( "Click here for a moog-like wave." ) );
 
-	auto sinWaveBtn = new PixmapButton(this, tr("Sine wave"));
+	auto sinWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("Sine wave"));
 	sinWaveBtn->move( waveBtnX+(16*5), waveBtnY );
 	sinWaveBtn->setActiveGraphic( embed::getIconPixmap(
 						"sin_wave_active" ) );
@@ -924,7 +925,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	sinWaveBtn->setToolTip(
 			tr( "Click for a sine-wave." ) );
 
-	auto exponentialWaveBtn = new PixmapButton(this, tr("White noise wave"));
+	auto exponentialWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("White noise wave"));
 	exponentialWaveBtn->move( waveBtnX+(16*6), waveBtnY );
 	exponentialWaveBtn->setActiveGraphic(
 		embed::getIconPixmap( "exp_wave_active" ) );
@@ -933,7 +934,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	exponentialWaveBtn->setToolTip(
 			tr( "Click here for an exponential wave." ) );
 
-	auto whiteNoiseWaveBtn = new PixmapButton(this, tr("White noise wave"));
+	auto whiteNoiseWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("White noise wave"));
 	whiteNoiseWaveBtn->move( waveBtnX+(16*7), waveBtnY );
 	whiteNoiseWaveBtn->setActiveGraphic(
 		embed::getIconPixmap( "white_noise_wave_active" ) );
@@ -942,7 +943,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	whiteNoiseWaveBtn->setToolTip(
 			tr( "Click here for white-noise." ) );
 
-	auto blSawWaveBtn = new PixmapButton(this, tr("Bandlimited saw wave"));
+	auto blSawWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("Bandlimited saw wave"));
 	blSawWaveBtn->move( waveBtnX+(16*9)-8, waveBtnY );
 	blSawWaveBtn->setActiveGraphic(
 		embed::getIconPixmap( "saw_wave_active" ) );
@@ -951,7 +952,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	blSawWaveBtn->setToolTip(
 			tr( "Click here for bandlimited saw wave." ) );
 
-	auto blSquareWaveBtn = new PixmapButton(this, tr("Bandlimited square wave"));
+	auto blSquareWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("Bandlimited square wave"));
 	blSquareWaveBtn->move( waveBtnX+(16*10)-8, waveBtnY );
 	blSquareWaveBtn->setActiveGraphic(
 		embed::getIconPixmap( "square_wave_active" ) );
@@ -960,7 +961,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	blSquareWaveBtn->setToolTip(
 			tr( "Click here for bandlimited square wave." ) );
 
-	auto blTriangleWaveBtn = new PixmapButton(this, tr("Bandlimited triangle wave"));
+	auto blTriangleWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("Bandlimited triangle wave"));
 	blTriangleWaveBtn->move( waveBtnX+(16*11)-8, waveBtnY );
 	blTriangleWaveBtn->setActiveGraphic(
 		embed::getIconPixmap( "triangle_wave_active" ) );
@@ -969,7 +970,7 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	blTriangleWaveBtn->setToolTip(
 			tr( "Click here for bandlimited triangle wave." ) );
 
-	auto blMoogWaveBtn = new PixmapButton(this, tr("Bandlimited moog saw wave"));
+	auto blMoogWaveBtn = new PixmapButton(this, new BoolModel(false, this), tr("Bandlimited moog saw wave"));
 	blMoogWaveBtn->move( waveBtnX+(16*12)-8, waveBtnY );
 	blMoogWaveBtn->setActiveGraphic(
 		embed::getIconPixmap( "moog_saw_wave_active" ) );
@@ -979,8 +980,8 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 			tr( "Click here for bandlimited moog saw wave." ) );
 
 
-	m_waveBtnGrp = new automatableButtonGroup( this );
 	m_waveBtnGrp->addButton( sawWaveBtn );
+	m_waveBtnGrp = new automatableButtonGroup( &m_instrument->wave_shape, this );
 	m_waveBtnGrp->addButton( triangleWaveBtn );
 	m_waveBtnGrp->addButton( sqrWaveBtn );
 	m_waveBtnGrp->addButton( roundSqrWaveBtn );
@@ -998,26 +999,6 @@ Lb302SynthView::Lb302SynthView( Instrument * _instrument, QWidget * _parent ) :
 	pal.setBrush( backgroundRole(), PLUGIN_NAME::getIconPixmap(
 			"artwork" ) );
 	setPalette( pal );
-}
-
-
-void Lb302SynthView::modelChanged()
-{
-	auto syn = castModel<Lb302Synth>();
-
-	m_vcfCutKnob->setModel( &syn->vcf_cut_knob );
-	m_vcfResKnob->setModel( &syn->vcf_res_knob );
-	m_vcfDecKnob->setModel( &syn->vcf_dec_knob );
-	m_vcfModKnob->setModel( &syn->vcf_mod_knob );
-	m_slideDecKnob->setModel( &syn->slide_dec_knob );
-
-	m_distKnob->setModel( &syn->dist_knob );
-	m_waveBtnGrp->setModel( &syn->wave_shape );
-
-	m_slideToggle->setModel( &syn->slideToggle );
-	/*m_accentToggle->setModel( &syn->accentToggle );*/
-	m_deadToggle->setModel( &syn->deadToggle );
-	m_db24Toggle->setModel( &syn->db24Toggle );
 }
 
 

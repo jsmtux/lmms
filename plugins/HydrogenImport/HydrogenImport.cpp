@@ -126,7 +126,7 @@ public:
 
 };
 HydrogenImport::HydrogenImport( const QString & _file ) :
-	ImportFilter( _file, &hydrogenimport_plugin_descriptor )
+	QWidgetImportFilter( _file, &hydrogenimport_plugin_descriptor )
 {
 	filename = _file;
 }
@@ -141,8 +141,7 @@ bool HydrogenImport::readSong()
 	QHash<QString, int> pattern_length;
 	QHash<QString, int> pattern_id;
 
-	Song *s = Engine::getSong();
-	int song_num_tracks = s->tracks().size();
+	int song_num_tracks = Engine::getSong()->trackContainer().tracks().size();
 	if ( QFile( filename ).exists() == false ) 
 	{
 		printf( "Song file not found \n" );
@@ -218,7 +217,7 @@ bool HydrogenImport::readSong()
 					if ( nLayer == 0 ) 
 					{
 						drum_track[sId] = static_cast<InstrumentTrack*>(
-							Track::create(Track::InstrumentTrack, Engine::patternStore())
+							Track::create(Track::InstrumentTrack, &Engine::patternStore()->trackContainer())
 						);
 						drum_track[sId]->volumeModel()->setValue( fVolume * 100 );
 						drum_track[sId]->panningModel()->setValue( ( fPan_R - fPan_L ) * 100 );
@@ -243,7 +242,7 @@ bool HydrogenImport::readSong()
 	}
 	QDomNode patterns = songNode.firstChildElement( "patternList" );
 	int pattern_count = 0;
-	int existing_patterns = Engine::patternStore()->numOfPatterns();
+	int existing_patterns = Engine::getSong()->numOfPatterns();
 	QDomNode patternNode =  patterns.firstChildElement( "pattern" );
 	int pn = 1;
 	while (  !patternNode.isNull()  ) 
@@ -251,7 +250,7 @@ bool HydrogenImport::readSong()
 		if ( pn > 0 ) 
 		{
 			pattern_count++;
-			s->addPatternTrack();
+			Engine::getSong()->addPatternTrack();
 			pn = 0;
 		}
 		QString sName;	// name
@@ -311,7 +310,7 @@ bool HydrogenImport::readSong()
 			patternId = ( QDomNode ) patternId.nextSiblingElement( "patternID" );
 
 			int i = pattern_id[patId]+song_num_tracks;
-			Track* t = s->tracks().at(i);
+			Track* t = Engine::getSong()->trackContainer().tracks().at(i);
 			t->createClip(pos);
 
 			if ( pattern_length[patId] > best_length ) 

@@ -35,7 +35,8 @@
 #include "LadspaControls.h"
 #include "LadspaControlDialog.h"
 #include "LadspaControlView.h"
-#include "LedCheckBox.h"
+
+#include "widgets/LedCheckBox.h"
 
 namespace lmms::gui
 {
@@ -56,11 +57,8 @@ LadspaControlDialog::LadspaControlDialog( LadspaControls * _ctl ) :
 	if( _ctl->m_processors > 1 )
 	{
 		mainLay->addSpacing( 3 );
-		auto center = new QHBoxLayout();
-		mainLay->addLayout( center );
-		m_stereoLink = new LedCheckBox( tr( "Link Channels" ), this );
-		m_stereoLink->setModel( &_ctl->m_stereoLinkModel );
-		center->addWidget( m_stereoLink );
+		m_centerLayout = new QHBoxLayout();
+		mainLay->addLayout( m_centerLayout );
 	}
 }
 
@@ -129,9 +127,14 @@ void LadspaControlDialog::updateEffectView( LadspaControls * _ctl )
 		m_effectLayout->addWidget( grouper );
 	}
 
-	if( _ctl->m_processors > 1 && m_stereoLink != nullptr )
+	if( _ctl->m_processors > 1 )
 	{
-		m_stereoLink->setModel( &_ctl->m_stereoLinkModel );
+		if( m_stereoLink != nullptr )
+		{
+			delete m_stereoLink;
+		}
+		m_stereoLink = new LedCheckBox( tr( "Link Channels" ), &_ctl->m_stereoLinkModel, this );
+		m_centerLayout->addWidget( m_stereoLink );
 	}
 
 	connect( _ctl, SIGNAL( effectModelChanged( lmms::LadspaControls * ) ),

@@ -29,11 +29,12 @@
 #include "GuiApplication.h"
 #include "InstrumentPlayHandle.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
 #include "MidiEventToByteSeq.h"
 #include "MainWindow.h"
 #include "gui_templates.h"
 #include "Song.h"
+
+#include "widgets/Knob.h"
 
 #include <QApplication>
 #include <QComboBox>
@@ -150,7 +151,7 @@ static const char* host_ui_save_file(NativeHostHandle, bool isDir, const char* t
 
 
 CarlaInstrument::CarlaInstrument(InstrumentTrack* const instrumentTrack, const Descriptor* const descriptor, const bool isPatchbay)
-    : Instrument(instrumentTrack, descriptor),
+    : QWidgetInstrumentPlugin(instrumentTrack, descriptor),
       kIsPatchbay(isPatchbay),
       fHandle(nullptr),
       fDescriptor(isPatchbay ? carla_get_native_patchbay_plugin() : carla_get_native_rack_plugin()),
@@ -209,7 +210,7 @@ CarlaInstrument::CarlaInstrument(InstrumentTrack* const instrumentTrack, const D
     m_paramModels.reserve(paramCount);
     for (int i=0; i < paramCount; ++i)
     {
-        m_paramModels.push_back(new CarlaParamFloatModel(this));
+        m_paramModels.push_back(new CarlaParamFloatModel(model()));
         connect(m_paramModels[i], &CarlaParamFloatModel::dataChanged,
             this, [this, i]() {paramModelChanged(i);}, Qt::DirectConnection);
     }
@@ -579,7 +580,7 @@ bool CarlaInstrument::handleMidiEvent(const MidiEvent& event, const TimePos&, f_
     return true;
 }
 
-gui::PluginView* CarlaInstrument::instantiateView(QWidget* parent)
+gui::InstrumentView* CarlaInstrument::instantiateView(QWidget* parent)
 {
 // Disable plugin focus per https://bugreports.qt.io/browse/QTBUG-30181
 #ifndef CARLA_OS_MAC
@@ -610,7 +611,7 @@ namespace gui
 {
 
 CarlaInstrumentView::CarlaInstrumentView(CarlaInstrument* const instrument, QWidget* const parent)
-    : InstrumentViewFixedSize(instrument, parent),
+    : InstrumentViewImpl(instrument, parent, true),
       fHandle(instrument->fHandle),
       fDescriptor(instrument->fDescriptor),
       fTimerId(fHandle != nullptr && fDescriptor->ui_idle != nullptr ? startTimer(30) : 0),
@@ -699,10 +700,6 @@ void CarlaInstrumentView::toggleUI(bool visible)
 void CarlaInstrumentView::uiClosed()
 {
     m_toggleUIButton->setChecked(false);
-}
-
-void CarlaInstrumentView::modelChanged()
-{
 }
 
 void CarlaInstrumentView::timerEvent(QTimerEvent* event)
@@ -1015,14 +1012,13 @@ void CarlaParamsView::refreshKnobs()
 	for (uint32_t i=0; i < m_carlaInstrument->m_paramModels.count(); ++i)
 	{
 		bool enabled = m_carlaInstrument->m_paramModels[i]->enabled();
-		m_knobs.push_back(new Knob(knobDark_28, m_inputScrollAreaWidgetContent));
+		m_knobs.push_back(new Knob(knobDark_28, m_carlaInstrument->m_paramModels[i], m_inputScrollAreaWidgetContent));
 		QString name = (*m_carlaInstrument->m_paramModels[i]).displayName();
 		m_knobs[i]->setHintText(name, "");
 		m_knobs[i]->setLabel(name);
 		m_knobs[i]->setObjectName(name); // this is being used for filtering the knobs.
 
 		// Set the newly created model to the knob.
-		m_knobs[i]->setModel(m_carlaInstrument->m_paramModels[i]);
 		m_knobs[i]->setEnabled(enabled);
 
 		if (enabled)

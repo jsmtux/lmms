@@ -29,7 +29,8 @@
 #include "BassBoosterControlDialog.h"
 #include "BassBoosterControls.h"
 #include "embed.h"
-#include "Knob.h"
+
+#include "widgets/Knob.h"
 
 
 namespace lmms::gui
@@ -50,18 +51,15 @@ BassBoosterControlDialog::BassBoosterControlDialog( BassBoosterControls* control
 
 	auto l = new QHBoxLayout;
 
-	auto freqKnob = new Knob(knobBright_26, this);
-	freqKnob->setModel( &controls->m_freqModel );
+	auto freqKnob = new Knob(knobBright_26, &controls->m_freqModel, this);
 	freqKnob->setLabel( tr( "FREQ" ) );
 	freqKnob->setHintText( tr( "Frequency:" ) , "Hz" );
 
-	auto gainKnob = new Knob(knobBright_26, this);
-	gainKnob->setModel( &controls->m_gainModel );
+	auto gainKnob = new Knob(knobBright_26, &controls->m_gainModel, this);
 	gainKnob->setLabel( tr( "GAIN" ) );
 	gainKnob->setHintText( tr( "Gain:" ) , "" );
 
-	auto ratioKnob = new Knob(knobBright_26, this);
-	ratioKnob->setModel( &controls->m_ratioModel );
+	auto ratioKnob = new Knob(knobBright_26, &controls->m_ratioModel, this);
 	ratioKnob->setLabel( tr( "RATIO" ) );
 	ratioKnob->setHintText( tr( "Ratio:" ) , "" );
 

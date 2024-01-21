@@ -33,12 +33,12 @@
 #include <QPainter>
 #include <QString>
 
-#include "EffectControlDialog.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
 #include "SaControls.h"
 #include "SaProcessor.h"
 
+#include "effectcontroldialogs/EffectControlDialog.h"
 
 namespace lmms::gui
 {

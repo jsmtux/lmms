@@ -31,7 +31,6 @@
 #include <samplerate.h>
 
 #include "AudioEngine.h"
-#include "ComboBox.h"
 #include "ConfigManager.h"
 #include "DataFile.h"
 #include "Engine.h"
@@ -39,13 +38,15 @@
 #include "InstrumentTrack.h"
 #include "NotePlayHandle.h"
 #include "PathUtil.h"
-#include "PixmapButton.h"
 #include "Song.h"
 #include "StringPairDrag.h"
 #include "Clipboard.h"
 
 #include "embed.h"
 #include "plugin_export.h"
+
+#include "widgets/ComboBox.h"
+#include "widgets/PixmapButton.h"
 
 
 namespace lmms
@@ -77,16 +78,16 @@ Plugin::Descriptor PLUGIN_EXPORT audiofileprocessor_plugin_descriptor =
 
 
 AudioFileProcessor::AudioFileProcessor( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &audiofileprocessor_plugin_descriptor ),
+	gui::QWidgetInstrumentPlugin( _instrument_track, &audiofileprocessor_plugin_descriptor ),
 	m_sampleBuffer(),
-	m_ampModel( 100, 0, 500, 1, this, tr( "Amplify" ) ),
-	m_startPointModel( 0, 0, 1, 0.0000001f, this, tr( "Start of sample" ) ),
-	m_endPointModel( 1, 0, 1, 0.0000001f, this, tr( "End of sample" ) ),
-	m_loopPointModel( 0, 0, 1, 0.0000001f, this, tr( "Loopback point" ) ),
-	m_reverseModel( false, this, tr( "Reverse sample" ) ),
-	m_loopModel( 0, 0, 2, this, tr( "Loop mode" ) ),
-	m_stutterModel( false, this, tr( "Stutter" ) ),
-	m_interpolationModel( this, tr( "Interpolation mode" ) ),
+	m_ampModel( 100, 0, 500, 1, &m_model, tr( "Amplify" ) ),
+	m_startPointModel( 0, 0, 1, 0.0000001f, &m_model, tr( "Start of sample" ) ),
+	m_endPointModel( 1, 0, 1, 0.0000001f, &m_model, tr( "End of sample" ) ),
+	m_loopPointModel( 0, 0, 1, 0.0000001f, &m_model, tr( "Loopback point" ) ),
+	m_reverseModel( false, &m_model, tr( "Reverse sample" ) ),
+	m_loopModel( 0, 0, 2, &m_model, tr( "Loop mode" ) ),
+	m_stutterModel( false, &m_model, tr( "Stutter" ) ),
+	m_interpolationModel( &m_model, tr( "Interpolation mode" ) ),
 	m_nextPlayStartPoint( 0 ),
 	m_nextPlayBackwards( false )
 {
@@ -310,7 +311,7 @@ int AudioFileProcessor::getBeatLen( NotePlayHandle * _n ) const
 
 
 
-gui::PluginView* AudioFileProcessor::instantiateView( QWidget * _parent )
+gui::InstrumentView* AudioFileProcessor::instantiateView( QWidget * _parent )
 {
 	return new gui::AudioFileProcessorView( this, _parent );
 }
@@ -434,7 +435,7 @@ void AudioFileProcessor::pointChanged()
 	m_nextPlayBackwards = false;
 
 	m_sampleBuffer.setAllPointFrames( f_start, f_end, f_loop, f_end );
-	emit dataChanged();
+	emit m_model.dataChanged();
 }
 
 
@@ -447,9 +448,9 @@ namespace gui
 QPixmap * AudioFileProcessorView::s_artwork = nullptr;
 
 
-AudioFileProcessorView::AudioFileProcessorView( Instrument * _instrument,
+AudioFileProcessorView::AudioFileProcessorView( AudioFileProcessor * _instrument,
 							QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent )
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 	if( s_artwork == nullptr )
 	{
@@ -457,7 +458,7 @@ AudioFileProcessorView::AudioFileProcessorView( Instrument * _instrument,
 								"artwork" ) );
 	}
 
-	m_openAudioFileButton = new PixmapButton( this );
+	m_openAudioFileButton = new PixmapButton( this, new BoolModel(false, this));
 	m_openAudioFileButton->setCursor( QCursor( Qt::PointingHandCursor ) );
 	m_openAudioFileButton->move( 227, 72 );
 	m_openAudioFileButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap(
@@ -468,7 +469,7 @@ AudioFileProcessorView::AudioFileProcessorView( Instrument * _instrument,
 					this, SLOT( openAudioFile() ) );
 	m_openAudioFileButton->setToolTip(tr("Open sample"));
 
-	m_reverseButton = new PixmapButton( this );
+	m_reverseButton = new PixmapButton( this, &m_instrument->m_reverseModel );
 	m_reverseButton->setCheckable( true );
 	m_reverseButton->move( 164, 105 );
 	m_reverseButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap(
@@ -479,7 +480,7 @@ AudioFileProcessorView::AudioFileProcessorView( Instrument * _instrument,
 
 // loop button group
 
-	auto m_loopOffButton = new PixmapButton(this);
+	auto m_loopOffButton = new PixmapButton(this, new BoolModel(false, this));
 	m_loopOffButton->setCheckable( true );
 	m_loopOffButton->move( 190, 105 );
 	m_loopOffButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap(
@@ -488,7 +489,7 @@ AudioFileProcessorView::AudioFileProcessorView( Instrument * _instrument,
 							"loop_off_off" ) );
 	m_loopOffButton->setToolTip(tr("Disable loop"));
 
-	auto m_loopOnButton = new PixmapButton(this);
+	auto m_loopOnButton = new PixmapButton(this, new BoolModel(false, this));
 	m_loopOnButton->setCheckable( true );
 	m_loopOnButton->move( 190, 124 );
 	m_loopOnButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap(
@@ -497,7 +498,7 @@ AudioFileProcessorView::AudioFileProcessorView( Instrument * _instrument,
 							"loop_on_off" ) );
 	m_loopOnButton->setToolTip(tr("Enable loop"));
 
-	auto m_loopPingPongButton = new PixmapButton(this);
+	auto m_loopPingPongButton = new PixmapButton(this, new BoolModel(false, this));
 	m_loopPingPongButton->setCheckable( true );
 	m_loopPingPongButton->move( 216, 124 );
 	m_loopPingPongButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap(
@@ -506,12 +507,12 @@ AudioFileProcessorView::AudioFileProcessorView( Instrument * _instrument,
 							"loop_pingpong_off" ) );
 	m_loopPingPongButton->setToolTip(tr("Enable ping-pong loop"));
 
-	m_loopGroup = new automatableButtonGroup( this );
+	m_loopGroup = new automatableButtonGroup( &m_instrument->m_loopModel, this );
 	m_loopGroup->addButton( m_loopOffButton );
 	m_loopGroup->addButton( m_loopOnButton );
 	m_loopGroup->addButton( m_loopPingPongButton );
 
-	m_stutterButton = new PixmapButton( this );
+	m_stutterButton = new PixmapButton( this, &m_instrument->m_stutterModel);
 	m_stutterButton->setCheckable( true );
 	m_stutterButton->move( 164, 124 );
 	m_stutterButton->setActiveGraphic( PLUGIN_NAME::getIconPixmap(
@@ -521,25 +522,25 @@ AudioFileProcessorView::AudioFileProcessorView( Instrument * _instrument,
 	m_stutterButton->setToolTip(
 		tr( "Continue sample playback across notes" ) );
 
-	m_ampKnob = new Knob( knobBright_26, this );
+	m_ampKnob = new Knob( knobBright_26, &m_instrument->m_ampModel, this );
 	m_ampKnob->setVolumeKnob( true );
 	m_ampKnob->move( 5, 108 );
 	m_ampKnob->setHintText( tr( "Amplify:" ), "%" );
 
-	m_startKnob = new AudioFileProcessorWaveView::knob( this );
+	m_startKnob = new AudioFileProcessorWaveView::knob(  &m_instrument->m_startPointModel, this );
 	m_startKnob->move( 45, 108 );
 	m_startKnob->setHintText( tr( "Start point:" ), "" );
 
-	m_endKnob = new AudioFileProcessorWaveView::knob( this );
+	m_endKnob = new AudioFileProcessorWaveView::knob( &m_instrument->m_endPointModel, this );
 	m_endKnob->move( 125, 108 );
 	m_endKnob->setHintText( tr( "End point:" ), "" );
 
-	m_loopKnob = new AudioFileProcessorWaveView::knob( this );
+	m_loopKnob = new AudioFileProcessorWaveView::knob(  &m_instrument->m_loopPointModel , this );
 	m_loopKnob->move( 85, 108 );
 	m_loopKnob->setHintText( tr( "Loopback point:" ), "" );
 
 // interpolation selector
-	m_interpBox = new ComboBox( this );
+	m_interpBox = new ComboBox( &m_instrument->m_interpolationModel, this );
 	m_interpBox->setGeometry( 142, 62, 82, ComboBox::DEFAULT_HEIGHT );
 	m_interpBox->setFont( pointSize<8>( m_interpBox->font() ) );
 
@@ -547,12 +548,16 @@ AudioFileProcessorView::AudioFileProcessorView( Instrument * _instrument,
 	m_waveView = 0;
 	newWaveView();
 
-	connect( castModel<AudioFileProcessor>(), SIGNAL( isPlaying( lmms::f_cnt_t ) ),
+	connect( m_instrument, SIGNAL( isPlaying( lmms::f_cnt_t ) ),
 			m_waveView, SLOT( isPlaying( lmms::f_cnt_t ) ) );
 
 	qRegisterMetaType<lmms::f_cnt_t>( "lmms::f_cnt_t" );
 
 	setAcceptDrops( true );
+
+	connect( &m_instrument->m_sampleBuffer, SIGNAL( sampleUpdated() ),
+					this, SLOT( sampleUpdated() ) );
+	sampleUpdated();
 }
 
 
@@ -601,7 +606,7 @@ void AudioFileProcessorView::newWaveView()
 		delete m_waveView;
 		m_waveView = 0;
 	}
-	m_waveView = new AudioFileProcessorWaveView( this, 245, 75, castModel<AudioFileProcessor>()->m_sampleBuffer );
+	m_waveView = new AudioFileProcessorWaveView( this, 245, 75, m_instrument->m_sampleBuffer );
 	m_waveView->move( 2, 172 );
 	m_waveView->setKnobs(
 		dynamic_cast<AudioFileProcessorWaveView::knob *>( m_startKnob ),
@@ -619,7 +624,7 @@ void AudioFileProcessorView::dropEvent( QDropEvent * _de )
 	QString value = StringPairDrag::decodeValue( _de );
 	if( type == "samplefile" )
 	{
-		castModel<AudioFileProcessor>()->setAudioFile( value );
+		m_instrument->setAudioFile( value );
 		_de->accept();
 		newWaveView();
 		return;
@@ -627,7 +632,7 @@ void AudioFileProcessorView::dropEvent( QDropEvent * _de )
 	else if( type == QString( "clip_%1" ).arg( Track::SampleTrack ) )
 	{
 		DataFile dataFile( value.toUtf8() );
-		castModel<AudioFileProcessor>()->setAudioFile( dataFile.content().firstChild().toElement().attribute( "src" ) );
+		m_instrument->setAudioFile( dataFile.content().firstChild().toElement().attribute( "src" ) );
 		_de->accept();
 		return;
 	}
@@ -644,7 +649,7 @@ void AudioFileProcessorView::paintEvent( QPaintEvent * )
 
 	p.drawPixmap( 0, 0, *s_artwork );
 
-	auto a = castModel<AudioFileProcessor>();
+	auto a = m_instrument;
 
 	QString file_name = "";
 	int idx = a->m_sampleBuffer.audioFile().length();
@@ -686,35 +691,15 @@ void AudioFileProcessorView::sampleUpdated()
 
 void AudioFileProcessorView::openAudioFile()
 {
-	QString af = castModel<AudioFileProcessor>()->m_sampleBuffer.
+	QString af = m_instrument->m_sampleBuffer.
 							openAudioFile();
 	if( af != "" )
 	{
-		castModel<AudioFileProcessor>()->setAudioFile( af );
+		m_instrument->setAudioFile( af );
 		Engine::getSong()->setModified();
 		m_waveView->updateSampleRange();
 	}
 }
-
-
-
-
-void AudioFileProcessorView::modelChanged()
-{
-	auto a = castModel<AudioFileProcessor>();
-	connect( &a->m_sampleBuffer, SIGNAL( sampleUpdated() ),
-					this, SLOT( sampleUpdated() ) );
-	m_ampKnob->setModel( &a->m_ampModel );
-	m_startKnob->setModel( &a->m_startPointModel );
-	m_endKnob->setModel( &a->m_endPointModel );
-	m_loopKnob->setModel( &a->m_loopPointModel );
-	m_reverseButton->setModel( &a->m_reverseModel );
-	m_loopGroup->setModel( &a->m_loopModel );
-	m_stutterButton->setModel( &a->m_stutterModel );
-	m_interpBox->setModel( &a->m_interpolationModel );
-	sampleUpdated();
-}
-
 
 
 

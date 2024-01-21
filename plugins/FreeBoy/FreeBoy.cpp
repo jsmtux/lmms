@@ -31,12 +31,13 @@
 #include "GbApuWrapper.h"
 #include "base64.h"
 #include "InstrumentTrack.h"
-#include "Knob.h"
 #include "AudioEngine.h"
 #include "NotePlayHandle.h"
-#include "PixmapButton.h"
 #include "Engine.h"
-#include "Graph.h"
+
+#include "widgets/Graph.h"
+#include "widgets/Knob.h"
+#include "widgets/PixmapButton.h"
 
 #include "embed.h"
 
@@ -72,57 +73,57 @@ Plugin::Descriptor PLUGIN_EXPORT freeboy_plugin_descriptor =
 
 
 FreeBoyInstrument::FreeBoyInstrument( InstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, &freeboy_plugin_descriptor ),
+	QWidgetInstrumentPlugin( _instrument_track, &freeboy_plugin_descriptor ),
 
-	m_ch1SweepTimeModel( 4.0f, 0.0f, 7.0f, 1.0f, this, tr( "Sweep time" ) ),
-	m_ch1SweepDirModel( false, this, tr( "Sweep direction" ) ),
-	m_ch1SweepRtShiftModel( 4.0f, 0.0f, 7.0f, 1.0f, this,
+	m_ch1SweepTimeModel( 4.0f, 0.0f, 7.0f, 1.0f, model(), tr( "Sweep time" ) ),
+	m_ch1SweepDirModel( false, model(), tr( "Sweep direction" ) ),
+	m_ch1SweepRtShiftModel( 4.0f, 0.0f, 7.0f, 1.0f, model(),
 						tr( "Sweep rate shift amount" ) ),
-	m_ch1WavePatternDutyModel( 2.0f, 0.0f, 3.0f, 1.0f, this,
+	m_ch1WavePatternDutyModel( 2.0f, 0.0f, 3.0f, 1.0f, model(),
 						tr( "Wave pattern duty cycle" ) ),
-	m_ch1VolumeModel( 15.0f, 0.0f, 15.0f, 1.0f, this,
+	m_ch1VolumeModel( 15.0f, 0.0f, 15.0f, 1.0f, model(),
 						tr( "Channel 1 volume" ) ),
-	m_ch1VolSweepDirModel( false, this,
+	m_ch1VolSweepDirModel( false, model(),
 						tr( "Volume sweep direction" ) ),
-	m_ch1SweepStepLengthModel( 0.0f, 0.0f, 7.0f, 1.0f, this,
+	m_ch1SweepStepLengthModel( 0.0f, 0.0f, 7.0f, 1.0f, model(),
 						tr( "Length of each step in sweep" ) ),
 
-	m_ch2WavePatternDutyModel( 2.0f, 0.0f, 3.0f, 1.0f, this,
+	m_ch2WavePatternDutyModel( 2.0f, 0.0f, 3.0f, 1.0f, model(),
 						tr( "Wave pattern duty cycle" ) ),
-	m_ch2VolumeModel( 15.0f, 0.0f, 15.0f, 1.0f, this,
+	m_ch2VolumeModel( 15.0f, 0.0f, 15.0f, 1.0f, model(),
 						tr( "Channel 2 volume" ) ),
-	m_ch2VolSweepDirModel( false, this,
+	m_ch2VolSweepDirModel( false, model(),
 						tr( "Volume sweep direction" ) ),
-	m_ch2SweepStepLengthModel( 0.0f, 0.0f, 7.0f, 1.0f, this,
+	m_ch2SweepStepLengthModel( 0.0f, 0.0f, 7.0f, 1.0f, model(),
 						tr( "Length of each step in sweep" ) ),
 
-	//m_ch3OnModel( true, this, tr( "Channel 3 Master on/off" ) ),
-	m_ch3VolumeModel( 3.0f, 0.0f, 3.0f, 1.0f, this,
+	//m_ch3OnModel( true, model(), tr( "Channel 3 Master on/off" ) ),
+	m_ch3VolumeModel( 3.0f, 0.0f, 3.0f, 1.0f, model(),
 						tr( "Channel 3 volume" ) ),
 
-	m_ch4VolumeModel( 15.0f, 0.0f, 15.0f, 1.0f, this,
+	m_ch4VolumeModel( 15.0f, 0.0f, 15.0f, 1.0f, model(),
 						tr( "Channel 4 volume" ) ),
-	m_ch4VolSweepDirModel( false, this,
+	m_ch4VolSweepDirModel( false, model(),
 						tr( "Volume sweep direction" ) ),
-	m_ch4SweepStepLengthModel( 0.0f, 0.0f, 7.0f, 1.0f, this,
+	m_ch4SweepStepLengthModel( 0.0f, 0.0f, 7.0f, 1.0f, model(),
 						tr( "Length of each step in sweep" ) ),
-	m_ch4ShiftRegWidthModel( false, this,
+	m_ch4ShiftRegWidthModel( false, model(),
 						tr( "Shift Register width" ) ),
 
-	m_so1VolumeModel( 7.0f, 0.0f, 7.0f, 1.0f, this, tr( "Right output level") ),
-	m_so2VolumeModel( 7.0f, 0.0f, 7.0f, 1.0f, this, tr( "Left output level" ) ),
-	m_ch1So1Model( true, this, tr( "Channel 1 to SO2 (Left)" ) ),
-	m_ch2So1Model( true, this, tr( "Channel 2 to SO2 (Left)" ) ),
-	m_ch3So1Model( true, this, tr( "Channel 3 to SO2 (Left)" ) ),
-	m_ch4So1Model( false, this, tr( "Channel 4 to SO2 (Left)" ) ),
-	m_ch1So2Model( true, this, tr( "Channel 1 to SO1 (Right)" ) ),
-	m_ch2So2Model( true, this, tr( "Channel 2 to SO1 (Right)" ) ),
-	m_ch3So2Model( true, this, tr( "Channel 3 to SO1 (Right)" ) ),
-	m_ch4So2Model( false, this, tr( "Channel 4 to SO1 (Right)" ) ),
-	m_trebleModel( -20.0f, -100.0f, 200.0f, 1.0f, this, tr( "Treble" ) ),
-	m_bassModel( 461.0f, -1.0f, 600.0f, 1.0f, this, tr( "Bass" ) ),
+	m_so1VolumeModel( 7.0f, 0.0f, 7.0f, 1.0f, model(), tr( "Right output level") ),
+	m_so2VolumeModel( 7.0f, 0.0f, 7.0f, 1.0f, model(), tr( "Left output level" ) ),
+	m_ch1So1Model( true, model(), tr( "Channel 1 to SO2 (Left)" ) ),
+	m_ch2So1Model( true, model(), tr( "Channel 2 to SO2 (Left)" ) ),
+	m_ch3So1Model( true, model(), tr( "Channel 3 to SO2 (Left)" ) ),
+	m_ch4So1Model( false, model(), tr( "Channel 4 to SO2 (Left)" ) ),
+	m_ch1So2Model( true, model(), tr( "Channel 1 to SO1 (Right)" ) ),
+	m_ch2So2Model( true, model(), tr( "Channel 2 to SO1 (Right)" ) ),
+	m_ch3So2Model( true, model(), tr( "Channel 3 to SO1 (Right)" ) ),
+	m_ch4So2Model( false, model(), tr( "Channel 4 to SO1 (Right)" ) ),
+	m_trebleModel( -20.0f, -100.0f, 200.0f, 1.0f, model(), tr( "Treble" ) ),
+	m_bassModel( 461.0f, -1.0f, 600.0f, 1.0f, model(), tr( "Bass" ) ),
 
-	m_graphModel( 0, 15, 32, this, false, 1 )
+	m_graphModel( 0, 15, 32, model(), 1 )
 {
 }
 
@@ -428,7 +429,7 @@ void FreeBoyInstrument::deleteNotePluginData(NotePlayHandle* nph)
 
 
 
-gui::PluginView * FreeBoyInstrument::instantiateView( QWidget * _parent )
+gui::InstrumentView * FreeBoyInstrument::instantiateView( QWidget * _parent )
 {
 	return( new gui::FreeBoyInstrumentView( this, _parent ) );
 }
@@ -441,8 +442,8 @@ namespace gui
 class FreeBoyKnob : public Knob
 {
 public:
-	FreeBoyKnob( QWidget * _parent ) :
-			Knob( knobStyled, _parent )
+	FreeBoyKnob( FloatModel* _model, QWidget * _parent ) :
+			Knob( knobStyled, _model, _parent )
 	{
 		setFixedSize( 30, 30 );
 		setCenterPointX( 15.0 );
@@ -457,9 +458,9 @@ public:
 
 
 
-FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
+FreeBoyInstrumentView::FreeBoyInstrumentView( FreeBoyInstrument * _instrument,
 							QWidget * _parent ) :
-	InstrumentViewFixedSize( _instrument, _parent )
+	InstrumentViewImpl( _instrument, _parent, true )
 {
 
 	setAutoFillBackground( true );
@@ -467,30 +468,31 @@ FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
 	pal.setBrush( backgroundRole(), PLUGIN_NAME::getIconPixmap( "artwork" ) );
 	setPalette( pal );
 
-	m_ch1SweepTimeKnob = new FreeBoyKnob( this );
+	m_ch1SweepTimeKnob = new FreeBoyKnob( &m_instrument->m_ch1SweepTimeModel, this );
 	m_ch1SweepTimeKnob->setHintText( tr( "Sweep time:" ), "" );
 	m_ch1SweepTimeKnob->move( 5 + 4*32, 106 );
 	m_ch1SweepTimeKnob->setToolTip(tr("Sweep time"));
 
-	m_ch1SweepRtShiftKnob = new FreeBoyKnob( this );
+	m_ch1SweepRtShiftKnob = new FreeBoyKnob( &m_instrument->m_ch1SweepRtShiftModel, this );
 	m_ch1SweepRtShiftKnob->setHintText( tr( "Sweep rate shift amount:" )
 										, "" );
 	m_ch1SweepRtShiftKnob->move( 5 + 3*32, 106 );
 	m_ch1SweepRtShiftKnob->setToolTip(tr("Sweep rate shift amount"));
 
-	m_ch1WavePatternDutyKnob = new FreeBoyKnob( this );
+	m_ch1WavePatternDutyKnob = new FreeBoyKnob( &m_instrument->m_ch1WavePatternDutyModel, this );
 	m_ch1WavePatternDutyKnob->setHintText( tr( "Wave pattern duty cycle:" )
 									, "" );
 	m_ch1WavePatternDutyKnob->move( 5 + 2*32, 106 );
 	m_ch1WavePatternDutyKnob->setToolTip(tr("Wave pattern duty cycle"));
 
-	m_ch1VolumeKnob = new FreeBoyKnob( this );
+	m_ch1VolumeKnob = new FreeBoyKnob( &m_instrument->m_ch1VolumeModel, this );
 	m_ch1VolumeKnob->setHintText( tr( "Square channel 1 volume:" )
 								, "" );
 	m_ch1VolumeKnob->move( 5, 106 );
 	m_ch1VolumeKnob->setToolTip(tr("Square channel 1 volume"));
 
-	m_ch1SweepStepLengthKnob = new FreeBoyKnob( this );
+	m_ch1SweepStepLengthKnob = new FreeBoyKnob( &m_instrument->m_ch1SweepStepLengthModel, this );
+
 	m_ch1SweepStepLengthKnob->setHintText( tr( "Length of each step in sweep:" )
 									, "" );
 	m_ch1SweepStepLengthKnob->move( 5 + 32, 106 );
@@ -498,19 +500,19 @@ FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
 
 
 
-	m_ch2WavePatternDutyKnob = new FreeBoyKnob( this );
+	m_ch2WavePatternDutyKnob = new FreeBoyKnob( &m_instrument->m_ch2WavePatternDutyModel, this );
 	m_ch2WavePatternDutyKnob->setHintText( tr( "Wave pattern duty cycle:" )
 									, "" );
 	m_ch2WavePatternDutyKnob->move( 5 + 2*32, 155 );
 	m_ch2WavePatternDutyKnob->setToolTip(tr("Wave pattern duty cycle"));
 
-	m_ch2VolumeKnob = new FreeBoyKnob( this );
+	m_ch2VolumeKnob = new FreeBoyKnob( &m_instrument->m_ch2VolumeModel, this );
 	m_ch2VolumeKnob->setHintText( tr( "Square channel 2 volume:" )
 							, "" );
 	m_ch2VolumeKnob->move( 5, 155 );
 	m_ch2VolumeKnob->setToolTip(tr("Square channel 2 volume"));
 
-	m_ch2SweepStepLengthKnob = new FreeBoyKnob( this );
+	m_ch2SweepStepLengthKnob = new FreeBoyKnob( &m_instrument->m_ch2SweepStepLengthModel, this );
 	m_ch2SweepStepLengthKnob->setHintText( tr( "Length of each step in sweep:" )
 									, "" );
 	m_ch2SweepStepLengthKnob->move( 5 + 32, 155 );
@@ -518,19 +520,19 @@ FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
 
 
 
-	m_ch3VolumeKnob = new FreeBoyKnob( this );
+	m_ch3VolumeKnob = new FreeBoyKnob( &m_instrument->m_ch3VolumeModel, this );
 	m_ch3VolumeKnob->setHintText( tr( "Wave pattern channel volume:" ), "" );
 	m_ch3VolumeKnob->move( 5, 204 );
 	m_ch3VolumeKnob->setToolTip(tr("Wave pattern channel volume"));
 
 
 
-	m_ch4VolumeKnob = new FreeBoyKnob( this );
+	m_ch4VolumeKnob = new FreeBoyKnob( &m_instrument->m_ch4VolumeModel, this );
 	m_ch4VolumeKnob->setHintText( tr( "Noise channel volume:" ), "" );
 	m_ch4VolumeKnob->move( 144, 155 );
 	m_ch4VolumeKnob->setToolTip(tr("Noise channel volume"));
 
-	m_ch4SweepStepLengthKnob = new FreeBoyKnob( this );
+	m_ch4SweepStepLengthKnob = new FreeBoyKnob( &m_instrument->m_ch4SweepStepLengthModel, this );
 	m_ch4SweepStepLengthKnob->setHintText( tr( "Length of each step in sweep:" )
 									, "" );
 	m_ch4SweepStepLengthKnob->move( 144 + 32, 155 );
@@ -538,27 +540,27 @@ FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
 
 
 
-	m_so1VolumeKnob = new FreeBoyKnob( this );
+	m_so1VolumeKnob = new FreeBoyKnob( &m_instrument->m_so1VolumeModel, this );
 	m_so1VolumeKnob->setHintText( tr( "SO1 volume (Right):" ), "" );
 	m_so1VolumeKnob->move( 5, 58 );
 	m_so1VolumeKnob->setToolTip(tr("SO1 volume (Right)"));
 
-	m_so2VolumeKnob = new FreeBoyKnob( this );
+	m_so2VolumeKnob = new FreeBoyKnob( &m_instrument->m_so2VolumeModel, this );
 	m_so2VolumeKnob->setHintText( tr( "SO2 volume (Left):" ), "" );
 	m_so2VolumeKnob->move( 5 + 32, 58 );
 	m_so2VolumeKnob->setToolTip(tr("SO2 volume (Left)"));
 
-	m_trebleKnob = new FreeBoyKnob( this );
+	m_trebleKnob = new FreeBoyKnob( &m_instrument->m_trebleModel, this );
 	m_trebleKnob->setHintText( tr( "Treble:" ), "" );
 	m_trebleKnob->move( 5 + 2*32, 58 );
 	m_trebleKnob->setToolTip(tr("Treble"));
 
-	m_bassKnob = new FreeBoyKnob( this );
+	m_bassKnob = new FreeBoyKnob( &m_instrument->m_bassModel, this );
 	m_bassKnob->setHintText( tr( "Bass:" ), "" );
 	m_bassKnob->move( 5 + 3*32, 58 );
 	m_bassKnob->setToolTip(tr("Bass"));
 
-	m_ch1SweepDirButton = new PixmapButton( this, nullptr );
+	m_ch1SweepDirButton = new PixmapButton( this,&m_instrument->m_ch1SweepDirModel );
 	m_ch1SweepDirButton->setCheckable( true );
 	m_ch1SweepDirButton->move( 167, 108 );
 	m_ch1SweepDirButton->setActiveGraphic(
@@ -567,7 +569,7 @@ FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
 							PLUGIN_NAME::getIconPixmap( "btn_up" ) );
 	m_ch1SweepDirButton->setToolTip(tr("Sweep direction"));
 
-	m_ch1VolSweepDirButton = new PixmapButton( this, nullptr );
+	m_ch1VolSweepDirButton = new PixmapButton( this,&m_instrument->m_ch1VolSweepDirModel );
 	m_ch1VolSweepDirButton->setCheckable( true );
 	m_ch1VolSweepDirButton->move( 207, 108 );
 	m_ch1VolSweepDirButton->setActiveGraphic(
@@ -578,7 +580,7 @@ FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
 
 
 
-	m_ch2VolSweepDirButton = new PixmapButton( this,
+	m_ch2VolSweepDirButton = new PixmapButton( this, &m_instrument->m_ch2VolSweepDirModel,
 										tr( "Volume sweep direction" ) );
 	m_ch2VolSweepDirButton->setCheckable( true );
 	m_ch2VolSweepDirButton->move( 102, 156 );
@@ -588,10 +590,10 @@ FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
 								PLUGIN_NAME::getIconPixmap( "btn_down" ) );
 	m_ch2VolSweepDirButton->setToolTip(tr("Volume sweep direction"));
 
-	//m_ch3OnButton = new PixmapButton( this, NULL );
+	//m_ch3OnButton = new PixmapButton( this, NULL, &m_instrument->m_ch3OnModel );
 	//m_ch3OnButton->move( 176, 53 );
 
-	m_ch4VolSweepDirButton = new PixmapButton( this,
+	m_ch4VolSweepDirButton = new PixmapButton( this, &m_instrument->m_ch4VolSweepDirModel,
 										tr( "Volume sweep direction" ) );
 	m_ch4VolSweepDirButton->setCheckable( true );
 	m_ch4VolSweepDirButton->move( 207, 157 );
@@ -601,7 +603,7 @@ FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
 								PLUGIN_NAME::getIconPixmap( "btn_down" ) );
 	m_ch4VolSweepDirButton->setToolTip(tr("Volume sweep direction"));
 
-	m_ch4ShiftRegWidthButton = new PixmapButton( this, nullptr );
+	m_ch4ShiftRegWidthButton = new PixmapButton( this, &m_instrument->m_ch4ShiftRegWidthModel );
 	m_ch4ShiftRegWidthButton->setCheckable( true );
 	m_ch4ShiftRegWidthButton->move( 207, 171 );
 	m_ch4ShiftRegWidthButton->setActiveGraphic(
@@ -613,28 +615,28 @@ FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
 
 
 
-	m_ch1So1Button = new PixmapButton( this, nullptr );
+	m_ch1So1Button = new PixmapButton( this, &m_instrument->m_ch1So1Model );
 	m_ch1So1Button->setCheckable( true );
 	m_ch1So1Button->move( 208, 51 );
 	m_ch1So1Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "btn_on" ) );
 	m_ch1So1Button->setInactiveGraphic( PLUGIN_NAME::getIconPixmap("btn_off") );
 	m_ch1So1Button->setToolTip(tr("Channel 1 to SO1 (Right)"));
 
-	m_ch2So1Button = new PixmapButton( this, nullptr );
+	m_ch2So1Button = new PixmapButton( this, &m_instrument->m_ch2So1Model );
 	m_ch2So1Button->setCheckable( true );
 	m_ch2So1Button->move( 208, 51 + 12 );
 	m_ch2So1Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "btn_on" ) );
 	m_ch2So1Button->setInactiveGraphic( PLUGIN_NAME::getIconPixmap("btn_off") );
 	m_ch2So1Button->setToolTip(tr("Channel 2 to SO1 (Right)"));
 
-	m_ch3So1Button = new PixmapButton( this, nullptr );
+	m_ch3So1Button = new PixmapButton( this, &m_instrument->m_ch3So1Model );
 	m_ch3So1Button->setCheckable( true );
 	m_ch3So1Button->move( 208, 51 + 2*12 );
 	m_ch3So1Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "btn_on" ) );
 	m_ch3So1Button->setInactiveGraphic( PLUGIN_NAME::getIconPixmap("btn_off") );
 	m_ch3So1Button->setToolTip(tr("Channel 3 to SO1 (Right)"));
 
-	m_ch4So1Button = new PixmapButton( this, nullptr );
+	m_ch4So1Button = new PixmapButton( this, &m_instrument->m_ch4So1Model );
 	m_ch4So1Button->setCheckable( true );
 	m_ch4So1Button->setChecked( false );
 	m_ch4So1Button->move( 208, 51 + 3*12 );
@@ -642,28 +644,28 @@ FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
 	m_ch4So1Button->setInactiveGraphic( PLUGIN_NAME::getIconPixmap("btn_off") );
 	m_ch4So1Button->setToolTip(tr("Channel 4 to SO1 (Right)"));
 
-	m_ch1So2Button = new PixmapButton( this, nullptr );
+	m_ch1So2Button = new PixmapButton( this, &m_instrument->m_ch1So2Model );
 	m_ch1So2Button->setCheckable( true );
 	m_ch1So2Button->move( 148, 51 );
 	m_ch1So2Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "btn_on" ) );
 	m_ch1So2Button->setInactiveGraphic( PLUGIN_NAME::getIconPixmap("btn_off") );
 	m_ch1So2Button->setToolTip(tr("Channel 1 to SO2 (Left)"));
 
-	m_ch2So2Button = new PixmapButton( this, nullptr );
+	m_ch2So2Button = new PixmapButton( this, &m_instrument->m_ch2So2Model );
 	m_ch2So2Button->setCheckable( true );
 	m_ch2So2Button->move( 148, 51 + 12 );
 	m_ch2So2Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "btn_on" ) );
 	m_ch2So2Button->setInactiveGraphic( PLUGIN_NAME::getIconPixmap("btn_off") );
 	m_ch2So2Button->setToolTip(tr("Channel 2 to SO2 (Left)"));
 
-	m_ch3So2Button = new PixmapButton( this, nullptr );
+	m_ch3So2Button = new PixmapButton( this, &m_instrument->m_ch3So2Model );
 	m_ch3So2Button->setCheckable( true );
 	m_ch3So2Button->move( 148, 51 + 2*12 );
 	m_ch3So2Button->setActiveGraphic( PLUGIN_NAME::getIconPixmap( "btn_on" ) );
 	m_ch3So2Button->setInactiveGraphic( PLUGIN_NAME::getIconPixmap("btn_off") );
 	m_ch3So2Button->setToolTip(tr("Channel 3 to SO2 (Left)"));
 
-	m_ch4So2Button = new PixmapButton( this, nullptr );
+	m_ch4So2Button = new PixmapButton( this, &m_instrument->m_ch4So2Model );
 	m_ch4So2Button->setCheckable( true );
 	m_ch4So2Button->setChecked( false );
 	m_ch4So2Button->move( 148, 51 + 3*12 );
@@ -672,53 +674,12 @@ FreeBoyInstrumentView::FreeBoyInstrumentView( Instrument * _instrument,
 	m_ch4So2Button->setToolTip(tr("Channel 4 to SO2 (Left)"));
 
 
-	m_graph = new Graph( this );
+	m_graph = new Graph( &m_instrument->m_graphModel, this );
 	m_graph->setGraphStyle( Graph::NearestStyle );
 	m_graph->setGraphColor( QColor(0x4E, 0x83, 0x2B) );
 	m_graph->move( 37, 199 );
 	m_graph->resize(208, 47);
 	m_graph->setToolTip(tr("Wave pattern graph"));
-}
-
-
-void FreeBoyInstrumentView::modelChanged()
-{
-	auto p = castModel<FreeBoyInstrument>();
-
-	m_ch1SweepTimeKnob->setModel( &p->m_ch1SweepTimeModel );
-	m_ch1SweepDirButton->setModel( &p->m_ch1SweepDirModel );
-	m_ch1SweepRtShiftKnob->setModel( &p->m_ch1SweepRtShiftModel );
-	m_ch1WavePatternDutyKnob->setModel( &p->m_ch1WavePatternDutyModel );
-	m_ch1VolumeKnob->setModel( &p->m_ch1VolumeModel );
-	m_ch1VolSweepDirButton->setModel( &p->m_ch1VolSweepDirModel );
-	m_ch1SweepStepLengthKnob->setModel( &p->m_ch1SweepStepLengthModel );
-
-	m_ch2WavePatternDutyKnob->setModel( &p->m_ch2WavePatternDutyModel );
-	m_ch2VolumeKnob->setModel( &p->m_ch2VolumeModel );
-	m_ch2VolSweepDirButton->setModel( &p->m_ch2VolSweepDirModel );
-	m_ch2SweepStepLengthKnob->setModel( &p->m_ch2SweepStepLengthModel );
-
-	//m_ch3OnButton->setModel( &p->m_ch3OnModel );
-	m_ch3VolumeKnob->setModel( &p->m_ch3VolumeModel );
-
-	m_ch4VolumeKnob->setModel( &p->m_ch4VolumeModel );
-	m_ch4VolSweepDirButton->setModel( &p->m_ch4VolSweepDirModel );
-	m_ch4SweepStepLengthKnob->setModel( &p->m_ch4SweepStepLengthModel );
-	m_ch4ShiftRegWidthButton->setModel( &p->m_ch4ShiftRegWidthModel );
-
-	m_so1VolumeKnob->setModel( &p->m_so1VolumeModel );
-	m_so2VolumeKnob->setModel( &p->m_so2VolumeModel );
-	m_ch1So1Button->setModel( &p->m_ch1So1Model );
-	m_ch2So1Button->setModel( &p->m_ch2So1Model );
-	m_ch3So1Button->setModel( &p->m_ch3So1Model );
-	m_ch4So1Button->setModel( &p->m_ch4So1Model );
-	m_ch1So2Button->setModel( &p->m_ch1So2Model );
-	m_ch2So2Button->setModel( &p->m_ch2So2Model );
-	m_ch3So2Button->setModel( &p->m_ch3So2Model );
-	m_ch4So2Button->setModel( &p->m_ch4So2Model );
-	m_trebleKnob->setModel( &p->m_trebleModel );
-	m_bassKnob->setModel( &p->m_bassModel );
-	m_graph->setModel( &p->m_graphModel );
 }
 
 

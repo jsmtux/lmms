@@ -55,7 +55,7 @@ Plugin::Descriptor PLUGIN_EXPORT stereoenhancer_plugin_descriptor =
 
 StereoEnhancerEffect::StereoEnhancerEffect(
 			Model * _parent,
-			const Descriptor::SubPluginFeatures::Key * _key ) :
+			const PluginDescriptor::Key * _key ) :
 	Effect( &stereoenhancer_plugin_descriptor, _parent, _key ),
 	m_seFX( DspEffectLibrary::StereoEnhancer( 0.0f ) ),
 	m_delayBuffer( new sampleFrame[DEFAULT_BUFFER_SIZE] ),
@@ -170,7 +170,7 @@ extern "C"
 PLUGIN_EXPORT Plugin * lmms_plugin_main( Model * _parent, void * _data )
 {
 	return( new StereoEnhancerEffect( _parent,
-		static_cast<const Plugin::Descriptor::SubPluginFeatures::Key *>(
+		static_cast<const Plugin::PluginDescriptor::Key *>(
 								_data ) ) );
 }
 

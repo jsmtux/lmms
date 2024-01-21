@@ -116,12 +116,12 @@ void AudioPort::doProcessing()
 	BufferManager::clear( m_portBuffer, fpp );
 
 	//qDebug( "Playhandles: %d", m_playHandles.size() );
-	for( PlayHandle * ph : m_playHandles ) // now we mix all playhandle buffers into the audioport buffer
+	for( auto * ph : m_playHandles ) // now we mix all playhandle buffers into the audioport buffer
 	{
 		if( ph->buffer() )
 		{
 			if( ph->usesBuffer()
-				&& ( ph->type() == PlayHandle::TypeNotePlayHandle
+				&& ( ph->getType() == PlayHandleType::TypeNotePlayHandle
 					|| !MixHelpers::isSilent( ph->buffer(), fpp ) ) )
 			{
 				m_bufferUsage = true;
@@ -234,7 +234,7 @@ void AudioPort::doProcessing()
 void AudioPort::addPlayHandle( PlayHandle * handle )
 {
 	m_playHandleLock.lock();
-		m_playHandles.append( handle );
+	m_playHandles.append( handle );
 	m_playHandleLock.unlock();
 }
 

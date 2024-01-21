@@ -26,27 +26,30 @@
 #ifndef WATSYN_H
 #define WATSYN_H
 
-#include "Instrument.h"
-#include "InstrumentView.h"
-#include "Graph.h"
 #include "AutomatableModel.h"
-#include "TempoSyncKnob.h"
 #include <samplerate.h>
 #include "MemoryManager.h"
+
+#include "instrument/InstrumentView.h"
+
+#include "plugins/QWidgetInstrumentPlugin.h"
+
+#include "widgets/Graph.h"
+#include "widgets/TempoSyncKnob.h"
 
 namespace lmms
 {
 
 
-#define makeknob( name, x, y, hint, unit, oname ) 		\
-	name = new Knob( knobStyled, this ); 				\
+#define makeknob( model, name, x, y, hint, unit, oname ) 		\
+	name = new Knob( knobStyled, model, this ); 				\
 	name ->move( x, y );								\
 	name ->setHintText( hint, unit );		\
 	name ->setObjectName( oname );						\
 	name ->setFixedSize( 19, 19 );
 
-#define maketsknob( name, x, y, hint, unit, oname ) 		\
-	name = new TempoSyncKnob( knobStyled, this ); 				\
+#define maketsknob( model, name, x, y, hint, unit, oname ) 		\
+	name = new TempoSyncKnob( knobStyled, model, this ); 				\
 	name ->move( x, y );								\
 	name ->setHintText( hint, unit );		\
 	name ->setObjectName( oname );						\
@@ -134,7 +137,7 @@ private:
 	float m_B2wave [WAVELEN];
 };
 
-class WatsynInstrument : public Instrument
+class WatsynInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:
@@ -157,7 +160,7 @@ public:
 		return( 64 );
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 public slots:
 	void updateVolumes();
@@ -270,10 +273,10 @@ private:
 	FloatModel b1_rtune;
 	FloatModel b2_rtune;
 
-	graphModel a1_graph;
-	graphModel a2_graph;
-	graphModel b1_graph;
-	graphModel b2_graph;
+	gui::graphModel a1_graph;
+	gui::graphModel a2_graph;
+	gui::graphModel b1_graph;
+	gui::graphModel b2_graph;
 
 	FloatModel m_abmix;
 
@@ -304,11 +307,11 @@ namespace gui
 {
 
 
-class WatsynView : public InstrumentViewFixedSize
+class WatsynView : public InstrumentViewImpl<WatsynInstrument>
 {
 	Q_OBJECT
 public:
-	WatsynView( Instrument * _instrument,
+	WatsynView( WatsynInstrument * _instrument,
 					QWidget * _parent );
 	~WatsynView() override = default;
 
@@ -328,8 +331,6 @@ protected slots:
 	void loadClicked();
 
 private:
-	void modelChanged() override;
-
 // knobs
 	Knob * a1_volKnob;
 	Knob * a2_volKnob;

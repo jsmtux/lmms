@@ -27,44 +27,57 @@
 #define PEAK_CONTROLLER_EFFECT_H
 
 #include "Effect.h"
+#include "IController.h"
 #include "PeakControllerEffectControls.h"
 
 namespace lmms
 {
 
-
-class PeakController;
-
-class PeakControllerEffect : public Effect
+class PeakControllerEffect : public Effect, public IPeakControllerEffect
 {
 public:
 	PeakControllerEffect( Model * parent, 
-						const Descriptor::SubPluginFeatures::Key * _key );
+						const PluginDescriptor::Key * _key );
 	~PeakControllerEffect() override;
 	bool processAudioBuffer( sampleFrame * _buf,
 									const fpp_t _frames ) override;
+
+	void removeFromEffectChain() override {
+		if( m_peakEffect != nullptr && m_peakEffect->effectChain() != nullptr )
+		{
+			m_peakEffect->effectChain()->removeEffect( m_peakEffect );
+		}
+	}
 
 	EffectControls * controls() override
 	{
 		return &m_peakControls;
 	}
 
-	float lastSample()
+	float lastSample() override;
 	{
 		return m_lastSample;
 	}
 
-	PeakController * controller()
+	int effectId() override {
+		return m_effectId;
+	}
+
+    void setEffectId(int effect_id) {
+		m_effectId = effect_id;
+	}
+
+	IPeakController * controller()
 	{
 		return m_autoController;
 	}
 	
-	FloatModel * attackModel()
+	FloatModel * attackModel() override
 	{
 		return &( m_peakControls.m_attackModel );
 	}
 
-	FloatModel * decayModel()
+	FloatModel * decayModel() override
 	{
 		return &( m_peakControls.m_decayModel );
 	}

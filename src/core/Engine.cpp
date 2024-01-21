@@ -28,14 +28,15 @@
 #include "ConfigManager.h"
 #include "Mixer.h"
 #include "Ladspa2LMMS.h"
-#include "Lv2Manager.h"
+#include "lv2/Lv2Manager.h"
 #include "PatternStore.h"
-#include "Plugin.h"
 #include "PresetPreviewPlayHandle.h"
 #include "ProjectJournal.h"
 #include "Song.h"
 #include "BandLimitedWave.h"
 #include "Oscillator.h"
+#include "tracks/AutomationTrack.h"
+#include "IPlugin.h"
 
 namespace lmms
 {
@@ -50,10 +51,21 @@ ProjectJournal * Engine::s_projectJournal = nullptr;
 Lv2Manager * Engine::s_lv2Manager = nullptr;
 #endif
 Ladspa2LMMS * Engine::s_ladspaManager = nullptr;
-void* Engine::s_dndPluginKey = nullptr;
+PluginDescriptor::Key* Engine::s_dndPluginKey = nullptr;
 
+IEngine* IEngine::Instance() {
+	return Engine::inst();
+}
 
+void InitializeEngine(bool renderOnly)
+{
+	Engine::init(renderOnly);
+}
 
+void DestroyEngine()
+{
+	Engine::destroy();
+}
 
 void Engine::init( bool renderOnly )
 {
@@ -150,23 +162,56 @@ void Engine::updateFramesPerTick()
 }
 
 
+void setEngineDndPluginKey(PluginDescriptor::Key* newKey) {
+	Engine::setDndPluginKey(newKey);
+}
 
 
-void Engine::setDndPluginKey(void *newKey)
+void Engine::setDndPluginKey(PluginDescriptor::Key *newKey)
 {
-	Q_ASSERT(static_cast<Plugin::Descriptor::SubPluginFeatures::Key*>(newKey));
 	s_dndPluginKey = newKey;
 }
 
 
 
 
-void *Engine::pickDndPluginKey()
+PluginDescriptor::Key* Engine::pickDndPluginKey()
 {
 	return s_dndPluginKey;
 }
 
 
+TrackList Engine::getTracks(bool includeGlobalAutomation)
+{
+  TrackList ret;
+  ret += s_song->trackContainer().tracks();
+  ret += s_patternStore->trackContainer().tracks();
+  if (includeGlobalAutomation) {
+	ret.append(s_song->globalAutomationTrack());
+  }
+  return ret;
+}
+
+AutomationTrack* Engine::getGlobalAutomationTrack()
+{
+	return s_song->globalAutomationTrack();
+}
+
+ISong* Engine::getSongInterface()
+{
+	return Engine::getSong();
+}
+
+IAudioEngine* Engine::getAudioEngineInterface()
+{
+	return Engine::audioEngine();
+}
+
+
+IProjectJournal* Engine::getProjectJournalInterface()
+{
+	return Engine::projectJournal();
+}
 
 
 Engine * Engine::s_instanceOfMe = nullptr;

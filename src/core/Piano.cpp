@@ -38,7 +38,7 @@
 
 #include "Piano.h"
 
-#include "InstrumentTrack.h"
+#include "tracks/InstrumentTrack.h"
 
 
 namespace lmms
@@ -63,7 +63,7 @@ static const auto KEY_ORDER = std::array
  *  \param _it the InstrumentTrack window to attach to
  */
 Piano::Piano(InstrumentTrack* track) :
-	Model(nullptr),              /*!< base class ctor */
+	m_pianoModel(nullptr),
 	m_instrumentTrack(track),
 	m_midiEvProc(track)        /*!< the InstrumentTrack Model */
 {
@@ -80,7 +80,7 @@ void Piano::setKeyState(int key, bool state)
 	{
 		m_pressedKeys[key] = state;
 
-		emit dataChanged();
+		emit m_pianoModel.dataChanged();
 	}
 }
 
@@ -121,9 +121,12 @@ void Piano::handleKeyRelease(int key)
 	}
 }
 
+IInstrumentTrack* Piano::instrumentTrack()
+{
+	return m_instrumentTrack;
+}
 
-
-bool Piano::isBlackKey(int key)
+bool IPiano::isBlackKey(int key)
 {
 	int keyCode = key % KeysPerOctave;
 
@@ -131,7 +134,7 @@ bool Piano::isBlackKey(int key)
 }
 
 
-bool Piano::isWhiteKey(int key)
+bool IPiano::isWhiteKey(int key)
 {
 	return !isBlackKey(key);
 }

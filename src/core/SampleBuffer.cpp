@@ -29,7 +29,6 @@
 
 #include <QFile>
 #include <QFileInfo>
-#include <QMessageBox>
 #include <QPainter>
 
 
@@ -55,14 +54,18 @@
 #include "DrumSynth.h"
 #include "endian_handling.h"
 #include "Engine.h"
-#include "GuiApplication.h"
+#include "IGuiApplication.h"
 #include "Note.h"
 #include "PathUtil.h"
 
-#include "FileDialog.h"
+#include "IFileDialog.h"
 
 namespace lmms
 {
+
+std::unique_ptr<ISampleBuffer> createSampleBuffer() {
+	return std::make_unique<SampleBuffer>();
+}
 
 SampleBuffer::SampleBuffer() :
 	m_userAntiAliasWaveTable(nullptr),
@@ -369,10 +372,9 @@ void SampleBuffer::update(bool keepSettings)
 		QString message = tr("Audio files are limited to %1 MB "
 				"in size and %2 minutes of playing time"
 				).arg(fileSizeMax).arg(sampleLengthMax);
-		if (gui::getGUI() != nullptr)
+		if (gui::getGUIInterface() != nullptr)
 		{
-			QMessageBox::information(nullptr,
-				title, message,	QMessageBox::Ok);
+			gui::getGUIInterface()->mainWindowInterface()->ShowCriticalMessage(title, message);
 		}
 		else
 		{
@@ -1121,7 +1123,7 @@ void SampleBuffer::visualize(
 
 QString SampleBuffer::openAudioFile() const
 {
-	gui::FileDialog ofd(nullptr, tr("Open audio file"));
+	auto ofd = gui::getGUIInterface()->createFileDialog(tr("Open audio file"));
 
 	QString dir;
 	if (!m_audioFile.isEmpty())
@@ -1143,8 +1145,8 @@ QString SampleBuffer::openAudioFile() const
 		dir = ConfigManager::inst()->userSamplesDir();
 	}
 	// change dir to position of previously opened file
-	ofd.setDirectory(dir);
-	ofd.setFileMode(gui::FileDialog::ExistingFiles);
+	ofd->setDirectory(dir);
+	ofd->setFileMode(gui::IFileDialog::ExistingFiles);
 
 	// set filters
 	QStringList types;
@@ -1163,20 +1165,20 @@ QString SampleBuffer::openAudioFile() const
 		<< tr("RAW-Files (*.raw)")
 		//<< tr("MOD-Files (*.mod)")
 		;
-	ofd.setNameFilters(types);
+	ofd->setNameFilters(types);
 	if (!m_audioFile.isEmpty())
 	{
 		// select previously opened file
-		ofd.selectFile(QFileInfo(m_audioFile).fileName());
+		ofd->selectFile(QFileInfo(m_audioFile).fileName());
 	}
 
-	if (ofd.exec () == QDialog::Accepted)
+	if (ofd->exec () == gui::IFileDialog::Accepted)
 	{
-		if (ofd.selectedFiles().isEmpty())
+		if (ofd->selectedFiles().isEmpty())
 		{
 			return QString();
 		}
-		return PathUtil::toShortestRelative(ofd.selectedFiles()[0]);
+		return PathUtil::toShortestRelative(ofd->selectedFiles()[0]);
 	}
 
 	return QString();

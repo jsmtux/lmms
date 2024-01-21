@@ -28,8 +28,9 @@
 #define _SID_H
 
 #include "AutomatableModel.h"
-#include "Instrument.h"
-#include "InstrumentView.h"
+
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
 
 namespace lmms
 {
@@ -78,7 +79,7 @@ private:
 	friend class gui::SidInstrumentView;
 } ;
 
-class SidInstrument : public Instrument
+class SidInstrument : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:
@@ -111,7 +112,7 @@ public:
 
 	f_cnt_t desiredReleaseFrames() const override;
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 /*public slots:
@@ -142,16 +143,14 @@ namespace gui
 {
 
 
-class SidInstrumentView : public InstrumentViewFixedSize
+class SidInstrumentView : public InstrumentViewImpl<SidInstrument>
 {
 	Q_OBJECT
 public:
-	SidInstrumentView( Instrument * _instrument, QWidget * _parent );
+	SidInstrumentView( SidInstrument * _instrument, QWidget * _parent );
 	~SidInstrumentView() override = default;
 
 private:
-	void modelChanged() override;
-	
 	automatableButtonGroup * m_passBtnGrp;
 	automatableButtonGroup * m_sidTypeBtnGrp;
 

@@ -80,5 +80,22 @@ void MemoryManager::free(void * ptr)
 	return rpfree(ptr);
 }
 
+void * MemoryManager::do_alloc( size_t size )
+{
+	return MemoryManager::alloc(size);
+}
+
+void MemoryManager::do_free( void * ptr )
+{
+	return MemoryManager::free(ptr);
+}
+
+MemoryManager memoryManagerInstance;
+
+IMemoryManager* IMemoryManager::Instance()
+{
+	return &memoryManagerInstance;
+}
+
 
 } // namespace lmms

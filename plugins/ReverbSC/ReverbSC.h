@@ -43,7 +43,7 @@ namespace lmms
 class ReverbSCEffect : public Effect
 {
 public:
-	ReverbSCEffect( Model* parent, const Descriptor::SubPluginFeatures::Key* key );
+	ReverbSCEffect( Model* parent, const PluginDescriptor::Key* key );
 	~ReverbSCEffect() override;
 	bool processAudioBuffer( sampleFrame* buf, const fpp_t frames ) override;
 

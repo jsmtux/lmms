@@ -31,10 +31,12 @@
 
 #include "ComboBoxModel.h"
 #include "Instrument.h"
-#include "InstrumentView.h"
 #include "SampleBuffer.h"
-#include "Knob.h"
+#include "PluginView.h"
 
+#include "instrument/InstrumentView.h"
+#include "plugins/QWidgetInstrumentPlugin.h"
+#include "widgets/Knob.h"
 
 namespace lmms
 {
@@ -42,7 +44,6 @@ namespace lmms
 namespace gui
 {
 class automatableButtonGroup;
-class PluginView;
 class InstrumentViewFixedSize;
 class Knob;
 class PixmapButton;
@@ -51,7 +52,7 @@ class AudioFileProcessorView;
 }
 
 
-class AudioFileProcessor : public Instrument
+class AudioFileProcessor : public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:
@@ -76,7 +77,7 @@ public:
 		return 128;
 	}
 
-	gui::PluginView* instantiateView( QWidget * _parent ) override;
+	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
 
 
 public slots:
@@ -125,11 +126,11 @@ namespace gui
 class AudioFileProcessorWaveView;
 
 
-class AudioFileProcessorView : public gui::InstrumentViewFixedSize
+class AudioFileProcessorView : public InstrumentViewImpl<AudioFileProcessor>
 {
 	Q_OBJECT
 public:
-	AudioFileProcessorView( Instrument * _instrument, QWidget * _parent );
+	AudioFileProcessorView( AudioFileProcessor * _instrument, QWidget * _parent );
 	virtual ~AudioFileProcessorView() = default;
 
 	void newWaveView();
@@ -145,8 +146,6 @@ protected:
 
 
 private:
-	virtual void modelChanged();
-
 	static QPixmap * s_artwork;
 
 	AudioFileProcessorWaveView * m_waveView;
@@ -193,8 +192,8 @@ public:
 
 
 	public:
-		knob( QWidget * _parent ) :
-			Knob( knobBright_26, _parent ),
+		knob( FloatModel* _model, QWidget * _parent ) :
+			Knob( knobBright_26, _model, _parent ),
 			m_waveView( 0 ),
 			m_relatedKnob( 0 )
 		{
