@@ -4,7 +4,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Theme
+import "lmms2widgets"
 import App 1.0
 
 pragma ComponentBehavior: Bound
@@ -189,6 +189,31 @@ ApplicationWindow {
                                 implicitWidth: 80
                             }
                         }
+                    }
+                }
+
+                GroupBox {
+                    Layout.fillWidth: true
+                    Layout.minimumHeight: 350
+
+                    title: qsTr("Plugin information")
+                    ColumnLayout {
+                        anchors.fill: parent
+                        ColumnLayout {
+                        Dial {
+                            implicitWidth: 30
+                            implicitHeight: 30
+                        }
+                        Text {text: "Start"}
+                        }
+                        ColumnLayout {
+                        Dial {
+                            implicitWidth: 30
+                            implicitHeight: 30
+                        }
+                        Text {text: "End"}
+                        }
+                        TaggedDial {text: "Test"}
                     }
                 }
             }

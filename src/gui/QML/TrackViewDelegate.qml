@@ -4,6 +4,7 @@ import QtQuick.Controls
 import Theme
 import App 1.0
 import lmms2
+import "lmms2widgets"
 
 
 Rectangle {

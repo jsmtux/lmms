@@ -42,6 +42,9 @@
 #include <QTextStream>
 #include <QQmlContext>
 
+#include <QtQml/QQmlExtensionPlugin>
+Q_IMPORT_QML_PLUGIN(lmms2widgetsPlugin)
+
 #ifdef LMMS_BUILD_WIN32
 #include <windows.h>
 #endif
