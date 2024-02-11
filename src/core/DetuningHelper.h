@@ -73,7 +73,6 @@ public:
 	}
 } ;
 
-
 } // namespace lmms
 
 #endif // LMMS_DETUNING_HELPER_H

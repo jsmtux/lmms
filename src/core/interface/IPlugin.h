@@ -39,12 +39,15 @@ namespace lmms {
 class EffectControls;
 class SerializingObject;
 
-class IGUISpecificPlugin {};
+class IGUISpecificPlugin {
+public:
+	virtual ~IGUISpecificPlugin() = default;
+};
 
 class IPlugin {
 public:
 	virtual ~IPlugin() = default;
-	IGUISpecificPlugin* guiSpecificPlugin() { return nullptr; }
+	virtual IGUISpecificPlugin* guiSpecificPlugin() { return nullptr; }
 };
 
 class ITool : public IPlugin

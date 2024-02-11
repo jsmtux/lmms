@@ -3,13 +3,13 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Theme
 import App 1.0
-import lmms2
-import "lmms2widgets"
+import LmmsWidgets
 
 
 Rectangle {
     required property BaseTrackModel track
     id: control
+    signal instrumentActivated(InstrumentModel instrument)
 
     height: 40
     implicitWidth: 350
@@ -47,6 +47,9 @@ Rectangle {
                 implicitWidth: 30
                 implicitHeight: 30
                 inputMode: Dial.Horizontal
+            }
+            TaggedDial {
+                text: "allright"
             }
         }
     }
@@ -92,6 +95,12 @@ Rectangle {
             height: 30
             width: 150
             text: control.track.name
+            onClicked: {
+                if (control.track.type == BaseTrackModel.Instrument) {
+                    print(control.track.instrument.name)
+                    control.instrumentActivated(control.track.instrument)
+                }
+            }
         }
 
         Loader {

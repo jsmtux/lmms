@@ -26,7 +26,7 @@
 #include "lmmsconfig.h"
 #include "lmmsversion.h"
 #include "versioninfo.h"
-
+#include "Engine.h"
 #include "denormals.h"
 
 #include "IPlugin.h"
@@ -41,9 +41,6 @@
 #include <QTranslator>
 #include <QTextStream>
 #include <QQmlContext>
-
-#include <QtQml/QQmlExtensionPlugin>
-Q_IMPORT_QML_PLUGIN(lmms2widgetsPlugin)
 
 #ifdef LMMS_BUILD_WIN32
 #include <windows.h>
@@ -427,7 +424,7 @@ int main( int argc, char * * argv )
 	// }
 	// printf( "Done\n" );
 
-	InitializeEngine(false);
+	Engine::init(false);
 
     QQmlApplicationEngine qCoreApplicationEngine;
     qCoreApplicationEngine.addImportPath(":/imports");

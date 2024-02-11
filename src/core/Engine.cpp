@@ -37,6 +37,7 @@
 #include "Oscillator.h"
 #include "tracks/AutomationTrack.h"
 #include "IPlugin.h"
+#include "DetuningHelper.h"
 
 namespace lmms
 {
@@ -53,23 +54,10 @@ Lv2Manager * Engine::s_lv2Manager = nullptr;
 Ladspa2LMMS * Engine::s_ladspaManager = nullptr;
 PluginDescriptor::Key* Engine::s_dndPluginKey = nullptr;
 
-IEngine* IEngine::Instance() {
-	return Engine::inst();
-}
-
-void InitializeEngine(bool renderOnly)
-{
-	Engine::init(renderOnly);
-}
-
-void DestroyEngine()
-{
-	Engine::destroy();
-}
-
 void Engine::init( bool renderOnly )
 {
-	Engine *engine = inst();
+	Engine *engine = new Engine();
+	IEngine::InitIEngine(engine);
 
 	emit engine->initProgress(tr("Generating wavetables"));
 	// generate (load from file) bandlimited wavetables
@@ -213,6 +201,11 @@ IProjectJournal* Engine::getProjectJournalInterface()
 	return Engine::projectJournal();
 }
 
+
+IDetuningHelper* Engine::createDetuningHelper()
+{
+	return new DetuningHelper();
+}
 
 Engine * Engine::s_instanceOfMe = nullptr;
 

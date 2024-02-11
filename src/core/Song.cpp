@@ -56,10 +56,6 @@
 namespace lmms
 {
 
-tick_t TimePos::s_ticksPerBar = DefaultTicksPerBar;
-
-
-
 Song::Song() :
 	m_trackContainer(this),
 	m_globalAutomationTrack( dynamic_cast<AutomationTrack *>(

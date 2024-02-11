@@ -179,6 +179,7 @@ void PluginFactory::discoverPlugins()
 	for (const QFileInfo& file : files)
 	{
 		auto library = std::make_shared<QLibrary>(file.absoluteFilePath());
+		library->setLoadHints(QLibrary::ResolveAllSymbolsHint | QLibrary::ExportExternalSymbolsHint);
 		if (! library->load()) {
 			m_errors[file.baseName()] = library->errorString();
 			qWarning("%s", library->errorString().toLocal8Bit().data());

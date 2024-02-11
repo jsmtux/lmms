@@ -121,15 +121,6 @@ public:
 
 	static void updateFramesPerTick();
 
-	static inline Engine * inst()
-	{
-		if( s_instanceOfMe == nullptr )
-		{
-			s_instanceOfMe = new Engine();
-		}
-		return s_instanceOfMe;
-	}
-
 	static void setDndPluginKey(PluginDescriptor::Key* newKey);
 	PluginDescriptor::Key* pickDndPluginKey() override;
 
@@ -142,6 +133,7 @@ public:
     IAudioEngine* getAudioEngineInterface() override;
 	IProjectJournal* getProjectJournalInterface() override;
 
+	IDetuningHelper* createDetuningHelper() override;
 signals:
 	void initProgress(const QString &msg);
 
@@ -177,7 +169,6 @@ private:
 
 	friend class gui::GuiApplication;
 };
-
 
 } // namespace lmms
 

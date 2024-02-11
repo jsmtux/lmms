@@ -4,7 +4,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "lmms2widgets"
+import LmmsWidgets
 import App 1.0
 
 pragma ComponentBehavior: Bound
@@ -171,7 +171,11 @@ ApplicationWindow {
                             resizableRows: false
                             clip: true
                             model: songModel.trackList
-                            delegate: TrackViewDelegate {}
+                            delegate: TrackViewDelegate {
+                                Component.onCompleted: {
+                                    instrumentActivated.connect(pluginAreaGroup.activateInstrument)
+                                }
+                            }
                         }
                         TableView {
                             id: songTableView
@@ -193,27 +197,28 @@ ApplicationWindow {
                 }
 
                 GroupBox {
+                    id: pluginAreaGroup
+                    function activateInstrument(instrument: InstrumentModel) {
+                        pluginUILoader.setSource("/qt/qml/" + instrument.name +  "/BottomPanel.qml", {"instrument": instrument})
+                    }
                     Layout.fillWidth: true
-                    Layout.minimumHeight: 350
+                    Layout.minimumWidth: 250
+                    Layout.minimumHeight: 250
 
-                    title: qsTr("Plugin information")
-                    ColumnLayout {
-                        anchors.fill: parent
-                        ColumnLayout {
-                        Dial {
-                            implicitWidth: 30
-                            implicitHeight: 30
+                    Component {
+                        id: emptyPluginComponent
+
+                        Label {
+                            text: "No instrument selected"
                         }
-                        Text {text: "Start"}
-                        }
-                        ColumnLayout {
-                        Dial {
-                            implicitWidth: 30
-                            implicitHeight: 30
-                        }
-                        Text {text: "End"}
-                        }
-                        TaggedDial {text: "Test"}
+                    }
+
+                    Loader {
+                        id: pluginUILoader
+                        width: parent.width
+                        height: parent.height
+                        // source: "/kicker/bottom_panel.qml"
+                        sourceComponent: emptyPluginComponent
                     }
                 }
             }

@@ -65,6 +65,12 @@ public:
 		return denominatorModel();
 	}
 
+    const IIntAutomatableModel & getNumeratorModel() const override {
+		return m_numeratorModel;
+	}
+	const IIntAutomatableModel & getDenominatorModel() const override {
+		return m_denominatorModel;
+	}
 
 private:
 	IntModel m_numeratorModel;

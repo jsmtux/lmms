@@ -1,34 +1,41 @@
-qt_add_library(tripleoscillator MODULE
+qt_add_library(tripleoscillator SHARED
     TripleOscillatorGui.cpp
     TripleOscillatorGui.h
     ../core/TripleOscillator.cpp
     ../core/TripleOscillator.h
 )
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -g")
-
 set_property(TARGET tripleoscillator PROPERTY AUTOMOC ON)
+
+qt_add_qml_module(tripleoscillator
+    URI tripleoscillator
+    VERSION 1.0
+    QML_FILES
+        BottomPanel.qml
+        OscillatorPanel.qml
+    RESOURCE_PREFIX "/qt/qml/"
+)
 
 add_definitions(-DPLUGIN_NAME=tripleoscillator)
 
-INSTALL(TARGETS tripleoscillator
+INSTALL(TARGETS tripleoscillatorplugin
 LIBRARY DESTINATION "${PLUGIN_DIR}"
 RUNTIME DESTINATION "${PLUGIN_DIR}"
 )
 
 IF(LMMS_BUILD_APPLE)
-IF ("${PLUGIN_LINK}" STREQUAL "SHARED")
+# IF ("${PLUGIN_LINK}" STREQUAL "SHARED")
     SET_TARGET_PROPERTIES(tripleoscillator PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
-ELSE()
-    SET_TARGET_PROPERTIES(tripleoscillator PROPERTIES LINK_FLAGS "-bundle_loader \"${CMAKE_BINARY_DIR}/lmms2example.app/Contents/MacOS/lmms2example\"")
-ENDIF()
-
+# ELSE()
+#     SET_TARGET_PROPERTIES(tripleoscillator PROPERTIES LINK_FLAGS "-bundle_loader \"${CMAKE_BINARY_DIR}/lmms2example.app/Contents/MacOS/lmms2example\"")
+# ENDIF()
 ENDIF(LMMS_BUILD_APPLE)
+
 IF(LMMS_BUILD_WIN32)
 add_custom_command(
-    TARGET "tripleoscillator"
+    TARGET "tripleoscillatorplugin"
     POST_BUILD
-    COMMAND "${STRIP_COMMAND}" "$<TARGET_FILE:tripleoscillator>"
+    COMMAND "${STRIP_COMMAND}" "$<TARGET_FILE:tripleoscillatorplugin>"
     VERBATIM
     COMMAND_EXPAND_LISTS
 )
@@ -36,4 +43,4 @@ SET_TARGET_PROPERTIES(${PLUGIN_NAME} PROPERTIES PREFIX "")
 ENDIF()
 
 target_include_directories(tripleoscillator PUBLIC ../core)
-target_link_libraries(tripleoscillator PUBLIC lmms_core_interface lmmsobjs qmlgui)
+target_link_libraries(tripleoscillator PUBLIC lmms_widgets lmms_core_plugins qmlgui)

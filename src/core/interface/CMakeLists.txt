@@ -12,6 +12,7 @@ ADD_LIBRARY(lmms_core_interface STATIC
     IEffectChain.h
     IClip.h
     IEngine.h
+    IEngine.cpp
     ITrack.h
     IPlugin.h
     IMidiPort.h
@@ -23,6 +24,8 @@ ADD_LIBRARY(lmms_core_interface STATIC
     AutomationNode.cpp
     Clipboard.cpp
     ISong.h
+    TimePos.h
+    TimePos.cpp
     Note.h
     Note.cpp
     IDetuningHelper.h
@@ -33,7 +36,7 @@ ADD_LIBRARY(lmms_core_interface STATIC
 find_package(Qt6 REQUIRED COMPONENTS Xml Gui) 
 
 TARGET_LINK_LIBRARIES(lmms_core_interface
-    PRIVATE
+    PUBLIC
         Qt6::Xml
         Qt6::Gui
         lmms_gui_interface

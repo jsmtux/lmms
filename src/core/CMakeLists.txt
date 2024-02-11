@@ -66,7 +66,6 @@ set(LMMS_SRCS
 	Scale.cpp
 	Song.cpp
 	TempoSyncKnobModel.cpp
-	TimePos.cpp
 	Track.cpp
 	TrackContainer.cpp
 	Clip.cpp
@@ -210,6 +209,8 @@ IF(NOT ("${SUIL_INCLUDE_DIRS}" STREQUAL ""))
 	TARGET_INCLUDE_DIRECTORIES(lmmsobjs PRIVATE ${SUIL_INCLUDE_DIRS})
 ENDIF()
 LIST(APPEND LMMS_SRCS "${RINGBUFFER_DIR}/src/lib/ringbuffer.cpp")
+
+TARGET_INCLUDE_DIRECTORIES(lmmsobjs PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 SET(LMMS_REQUIRED_LIBS ${LMMS_REQUIRED_LIBS}

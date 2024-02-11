@@ -29,7 +29,7 @@ T.Dial {
         y: control.height / 2 - 10
         width: 20
         height: 20
-        source: "qrc:/lmms2widgets/dial.png"
+        source: "qrc:/icons/controls/dial.png"
         antialiasing: true
         opacity: control.enabled ? 1 : 0.3
         transform: [

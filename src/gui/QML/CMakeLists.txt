@@ -11,21 +11,25 @@ qt_standard_project_setup(REQUIRES 6.5)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 Widgets)
 
-qt_add_library(qmlgui STATIC
+qt_add_library(qmlgui SHARED
     GuiApplication.cpp
     GuiApplication.h
+    LMMSProperty.h
 )
 
-target_link_libraries(qmlgui PUBLIC 
-    lmmsobjs
-    lmms_core_plugins
-)
+target_include_directories(qmlgui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(widgets)
 
+target_link_libraries(qmlgui PUBLIC 
+    Qt6::Qml
+    lmms_core_plugins
+    lmms_core_interface
+    lmms_widgetsplugin
+)
+
 qt_add_executable(lmms2example WIN32 MACOSX_BUNDLE
     main.cpp
-    LMMSProperty.h
 )
 
 qt_add_qml_module(lmms2example
@@ -36,6 +40,7 @@ qt_add_qml_module(lmms2example
         "TrackViewDelegate.qml"
         "ClipViewDelegate.qml"
         "imports/Flat/Button.qml"
+        "imports/Flat/Dial.qml"
         "imports/Flat/HeaderButton.qml"
         "imports/Flat/StatusButton.qml"
         "imports/Flat/CheckBox.qml"
@@ -46,6 +51,7 @@ qt_add_qml_module(lmms2example
     RESOURCES
         "imports/Flat/qmldir"
         "imports/Theme/qmldir"
+        "icons/controls/dial.png"
         "icons/status_button/stop.png"
         "icons/status_button/play_record.png"
         "icons/status_button/record.png"
@@ -60,13 +66,13 @@ qt_add_qml_module(lmms2example
 )
 
 target_link_libraries(lmms2example PUBLIC
-    lmms2widgetsplugin
     Qt6::Core
     Qt6::Gui
     Qt6::Quick
     Qt6::QuickControls2
     Qt6::Qml
     Qt6::Widgets
+    lmmsobjs
     qmlgui
 )
 

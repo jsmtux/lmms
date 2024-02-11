@@ -13,6 +13,7 @@ class IEngine : public QObject
 {
     Q_OBJECT
 public:
+    static void InitIEngine(IEngine* engine);
     static IEngine* Instance();
     virtual ~IEngine() = default;
     virtual ISong* getSongInterface() = 0;
@@ -23,12 +24,13 @@ public:
     virtual PluginDescriptor::Key* pickDndPluginKey() = 0;
     virtual TrackList getITracks(bool includeGlobalAutomation = false) = 0;
     virtual float getFramesPerTick() = 0;
+
+    virtual IDetuningHelper* createDetuningHelper() = 0;
+private:
+    static IEngine* m_instance;
 };
 
 
 void setEngineDndPluginKey(PluginDescriptor::Key* newKey);
-
-void InitializeEngine(bool renderOnly);
-void DestroyEngine();
 
 }

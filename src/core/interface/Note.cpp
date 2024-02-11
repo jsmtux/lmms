@@ -31,6 +31,7 @@
 #include "IDetuningHelper.h"
 #include "lmms_constants.h"
 #include "IClip.h"
+#include "IEngine.h"
 
 namespace lmms
 {
@@ -215,7 +216,7 @@ void Note::createDetuning()
 {
 	if( m_detuning == nullptr )
 	{
-		m_detuning = createDetuningHelper();
+		m_detuning = IEngine::Instance()->createDetuningHelper();
 		(void) m_detuning->automationClip();
 		m_detuning->setRange( -MaxDetuning, MaxDetuning, 0.5f );
 		m_detuning->automationClip()->setProgressionType( IAutomationClip::LinearProgression );

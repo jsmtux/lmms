@@ -180,6 +180,8 @@ public:
     virtual ~IMeterModel() = default;
     virtual IIntAutomatableModel & getNumeratorModel() = 0;
 	virtual IIntAutomatableModel & getDenominatorModel() = 0;
+    virtual const IIntAutomatableModel & getNumeratorModel() const = 0;
+	virtual const IIntAutomatableModel & getDenominatorModel() const = 0;
 };
 
 class MFact{

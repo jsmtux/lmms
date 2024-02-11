@@ -39,9 +39,28 @@
 namespace lmms
 {
 
+extern "C"
+{
+
+PluginDescriptor kicker_plugin_descriptor =
+{
+	LMMS_STRINGIFY( PLUGIN_NAME ),
+	KickerInstrument::PluginName(),
+	QT_TRANSLATE_NOOP( "PluginBrowser",
+				"Versatile drum synthesizer" ),
+	"Tobias Doerffel <tobydox/at/users.sf.net>",
+	0x0100,
+	PluginTypes::Instrument,
+	nullptr,
+	nullptr,
+	nullptr,
+} ;
+
+}
+
 
 KickerInstrument::KickerInstrument( IInstrumentTrack * _instrument_track ) :
-	Instrument( _instrument_track, nullptr ),
+	Instrument( _instrument_track, &kicker_plugin_descriptor ),
 	m_startFreqModel( MFact::create(150.0f, 5.0f, 1000.0f, 1.0f, this, tr( "Start frequency" ) )),
 	m_endFreqModel( MFact::create(40.0f, 5.0f, 1000.0f, 1.0f, this, tr( "End frequency" ) )),
 	m_decayModel( MFact::create(440.0f, 5.0f, 5000.0f, 1.0f, 5000.0f, this, tr( "Length" ) )),

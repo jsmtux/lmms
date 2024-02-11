@@ -28,6 +28,7 @@
 
 #include "lmms_export.h"
 #include "lmms_basics.h"
+#include "IModels.h"
 
 namespace lmms
 {
@@ -37,8 +38,6 @@ const int DefaultTicksPerBar = 192;
 const int DefaultStepsPerBar = 16;
 const int DefaultBeatsPerBar = DefaultTicksPerBar / DefaultStepsPerBar;
 
-
-class MeterModel;
 
 /**
 	Represents a time signature, in which the numerator is the number of beats
@@ -50,7 +49,7 @@ class LMMS_EXPORT TimeSig
 {
 public:
 	TimeSig( int num, int denom );
-	TimeSig( const MeterModel &model );
+	TimeSig( const IMeterModel &model );
 	int numerator() const;
 	int denominator() const;
 private:

@@ -25,6 +25,7 @@
 #include "Instrument.h"
 
 #include <cmath>
+#include <QDebug>
 
 #include "IAudioEngine.h"
 #include "IEngine.h"

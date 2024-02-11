@@ -25,10 +25,10 @@
 
 #include "TimePos.h"
 
-#include "MeterModel.h"
-
 namespace lmms
 {
+
+tick_t TimePos::s_ticksPerBar = DefaultTicksPerBar;
 
 TimeSig::TimeSig( int num, int denom ) :
 	m_num(num),
@@ -36,9 +36,9 @@ TimeSig::TimeSig( int num, int denom ) :
 {
 }
 
-TimeSig::TimeSig( const MeterModel &model ) :
-	m_num(model.getNumerator()),
-	m_denom(model.getDenominator())
+TimeSig::TimeSig( const IMeterModel &model ) :
+	m_num(model.getNumeratorModel().value()),
+	m_denom(model.getDenominatorModel().value())
 {
 }
 
@@ -52,8 +52,6 @@ int TimeSig::denominator() const
 {
 	return m_denom;
 }
-
-
 
 
 TimePos::TimePos( const bar_t bar, const tick_t ticks ) :

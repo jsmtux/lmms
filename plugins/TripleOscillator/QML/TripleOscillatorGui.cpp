@@ -28,7 +28,9 @@ extern "C"
 // necessary for getting instance out of shared lib
 Plugin * lmms_plugin_main( void * m, void * )
 {
-	return new TripleOscillatorQmlInstrument( static_cast<IInstrumentTrack *>( m ) );
+	qmlRegisterType<gui::TripleOscillatorModel>("App", 1, 0, "TripleOscillatorModel");
+	qmlRegisterType<gui::OscillatorObjectModel>("App", 1, 0, "OscillatorObjectModel");
+	return new gui::TripleOscillatorQmlInstrument( static_cast<IInstrumentTrack *>( m ) );
 }
 
 

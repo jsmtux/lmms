@@ -31,6 +31,7 @@
 #include "ITrack.h"
 #include "IPiano.h"
 #include "LMMSProperty.h"
+#include "IPlugin.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
@@ -86,14 +87,45 @@ private:
 	EXPOSE_LMMS_PROPERTY(bool, solo, trackSoloModel)
 };
 
+class InstrumentModel : public QObject
+{
+	Q_OBJECT
+	QML_ELEMENT
+	Q_PROPERTY(QString name READ name CONSTANT)
+public:
+	InstrumentModel(QObject* parent, IInstrument* _instrument) :
+		QObject(parent),
+		m_instrument(_instrument)
+	{}
+	static void RegisterInQml() {
+		qmlRegisterType<InstrumentModel>("App", 1, 0, "InstrumentModel");
+	}
+	QString name() {
+		return m_instrument->name();
+	}
+private:
+	IInstrument* m_instrument;
+};
+
+class ModelFactory : public IGUISpecificPlugin
+{
+public:
+	virtual ~ModelFactory() = default;
+	virtual InstrumentModel* getModel(QObject* parent) = 0;
+};
+
 class InstrumentTrackModel : public BaseTrackModel {
 	Q_OBJECT
+	Q_PROPERTY(lmms::gui::InstrumentModel* instrument READ instrument CONSTANT)
 public:
 	InstrumentTrackModel(IInstrumentTrack* _instrumentTrack, ITrack* track, QObject* parent) :
 		BaseTrackModel(track,  BaseTrackModel::TrackType::Instrument, parent),
 		m_instrumentTrack(_instrumentTrack) {}
 	Q_INVOKABLE void testPlay() {
 		m_instrumentTrack->piano()->handleKeyPress(40);
+	}
+	InstrumentModel* instrument() {
+		return dynamic_cast<ModelFactory*>(m_instrumentTrack->instrument()->guiSpecificPlugin())->getModel(this);
 	}
 private:
 	IInstrumentTrack* m_instrumentTrack;
@@ -344,6 +376,7 @@ public:
 	static void RegisterInQml() {
 		qmlRegisterType<lmms::gui::SongModel>("App", 1, 0, "SongModel");
 		BaseTrackModel::RegisterInQml();
+		InstrumentModel::RegisterInQml();
 		SongTableModel::RegisterInQml();
 	}
 

@@ -22,6 +22,4 @@ public:
 	virtual void loadSettings( const QDomElement & _this ) = 0;
 };
 
-IDetuningHelper* createDetuningHelper();
-
 } // namespace lmms

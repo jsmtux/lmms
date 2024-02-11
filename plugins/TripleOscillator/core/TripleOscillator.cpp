@@ -34,7 +34,6 @@
 #include "IPlayHandle.h"
 #include "IOscillator.h"
 #include "ISampleBuffer.h"
-#include "IOscillator.h"
 
 #include "embed.h"
 
