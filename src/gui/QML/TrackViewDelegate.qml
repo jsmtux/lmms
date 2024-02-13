@@ -37,11 +37,13 @@ Rectangle {
                 id: volumeDial
                 implicitWidth: 30
                 implicitHeight: 30
-                value: control.track.volume / 100.0
+                value: control.track.volume
                 inputMode: Dial.Horizontal
                 onMoved: {
-                    control.track.volume = volumeDial.value * 100
+                    control.track.volume = volumeDial.value
                 }
+                from: control.track.volume_min_value
+                to: control.track.volume_max_value
             }
             Dial {
                 implicitWidth: 30

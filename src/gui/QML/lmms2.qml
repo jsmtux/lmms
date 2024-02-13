@@ -217,7 +217,6 @@ ApplicationWindow {
                         id: pluginUILoader
                         width: parent.width
                         height: parent.height
-                        // source: "/kicker/bottom_panel.qml"
                         sourceComponent: emptyPluginComponent
                     }
                 }
