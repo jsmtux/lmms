@@ -142,8 +142,20 @@ ApplicationWindow {
                     TabButton {
                         text: qsTr("Song Editor")
                     }
-                    TabButton {
-                        text: qsTr("BB Editor")
+
+                    Component {
+                        id: tabButton
+                        TabButton {}
+                    }
+
+                    function addTab(patternTrack: PatternTrackModel) {
+                        var btn = tabButton.createObject(mainAreaBar, {text: patternTrack.name})
+                        mainAreaBar.addItem(btn)
+
+                        var panel = patternTrackPanel.createObject(mainAreaGroup, {track: patternTrack})
+                        mainAreaStack.children.push(panel)
+
+                        mainAreaBar.currentIndex = 1
                     }
                 }
 
@@ -163,34 +175,69 @@ ApplicationWindow {
                         border.width: 2
                     }
 
-                    RowLayout {
+                    StackLayout {
+                        width: parent.width
                         height: parent.height
-                        VerticalHeaderView {
-                            width: 350
-                            syncView: songTableView
-                            resizableRows: false
-                            clip: true
-                            model: songModel.trackList
-                            delegate: TrackViewDelegate {
-                                Component.onCompleted: {
-                                    instrumentActivated.connect(pluginAreaGroup.activateInstrument)
+                        id: mainAreaStack
+                        currentIndex: mainAreaBar.currentIndex
+
+                        RowLayout {
+                            height: parent.height
+                            VerticalHeaderView {
+                                width: 350
+                                syncView: songTableView
+                                resizableRows: false
+                                clip: true
+                                model: songModel.trackList
+                                delegate: TrackViewDelegate {
+                                    Component.onCompleted: {
+                                        instrumentActivated.connect(pluginAreaGroup.activateInstrument)
+                                        patternTrackActivated.connect(mainAreaBar.addTab)
+                                    }
+                                }
+                            }
+                            TableView {
+                                id: songTableView
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 850
+                                clip: true
+                                columnSpacing: 1
+                                rowSpacing: 1
+
+                                model:songModel.songTable
+
+                                delegate: ClipViewDelegate {
+                                    implicitHeight: 40
+                                    implicitWidth: 80
                                 }
                             }
                         }
-                        TableView {
-                            id: songTableView
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            Layout.minimumWidth: 850
-                            clip: true
-                            columnSpacing: 1
-                            rowSpacing: 1
 
-                            model:songModel.songTable
+                        Component {
+                            id: patternTrackPanel
+                            RowLayout {
+                                id: control
+                                required property PatternTrackModel track
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
 
-                            delegate: ClipViewDelegate {
-                                implicitHeight: 40
-                                implicitWidth: 80
+                                Label {
+                                    text: control.track.name
+                                }
+                                VerticalHeaderView {
+                                    width: 350
+                                    Layout.fillHeight: true
+                                    // syncView: songTableView
+                                    resizableRows: false
+                                    clip: true
+                                    model: control.track.trackList
+                                    delegate: TrackViewDelegate {
+                                        Component.onCompleted: {
+                                            instrumentActivated.connect(pluginAreaGroup.activateInstrument)
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

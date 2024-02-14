@@ -35,7 +35,10 @@ BaseTrackModel* CreateTrackModel(ITrack* track, QObject* parent){
 			return new InstrumentTrackModel(instrumentTrackSpecific, track, parent);
 		}
 		case ITrack::PatternTrack:
-			return new BaseTrackModel(track, BaseTrackModel::TrackType::Pattern, parent);
+		{
+			auto patternTrackSpecific = static_cast<IPatternTrack*>(track->getTrackTypeSpecificInterface());
+			return new PatternTrackModel(patternTrackSpecific, track, parent);
+		}
 		case ITrack::SampleTrack:
 			return new BaseTrackModel(track, BaseTrackModel::TrackType::Sample, parent);
 		case ITrack::AutomationTrack:

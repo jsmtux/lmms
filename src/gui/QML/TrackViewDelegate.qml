@@ -10,6 +10,7 @@ Rectangle {
     required property BaseTrackModel track
     id: control
     signal instrumentActivated(InstrumentModel instrument)
+    signal patternTrackActivated(PatternTrackModel patternTrack)
 
     height: 40
     implicitWidth: 350
@@ -99,8 +100,9 @@ Rectangle {
             text: control.track.name
             onClicked: {
                 if (control.track.type == BaseTrackModel.Instrument) {
-                    print(control.track.instrument.name)
                     control.instrumentActivated(control.track.instrument)
+                } else if (control.track.type == BaseTrackModel.Pattern) {
+                    control.patternTrackActivated(control.track)
                 }
             }
         }

@@ -135,6 +135,88 @@ private:
 
 BaseTrackModel* CreateTrackModel(ITrack* track, QObject* parent);
 
+class PatternTrackListView : public QAbstractListModel {
+		Q_OBJECT
+public:
+	PatternTrackListView(IPatternStore* _pattern_store) :
+		m_pattern_store(_pattern_store)
+	{
+		connect(&_pattern_store->trackContainer(),
+			&ITrackContainer::trackAdded, this, &PatternTrackListView::trackAdded, Qt::QueuedConnection);
+		for (const auto& patternTrack : _pattern_store->trackContainer().tracks()) {
+			trackAdded(patternTrack);
+		}
+	}
+
+    int rowCount(const QModelIndex &/*parent*/ = QModelIndex()) const override
+    {
+		return m_trackList.size();
+    }
+
+	QVariant data(const QModelIndex &index, int role) const override
+    {
+        if (index.isValid())
+		{
+			switch (role) {
+				case Qt::DisplayRole:
+				case TrackRole:
+				{
+					return QVariant::fromValue(m_trackList[index.row()]);
+				}
+			}
+		}
+
+        return QVariant();
+	}
+
+	enum Roles {
+		TrackRole = Qt::UserRole
+	};
+
+    virtual QHash<int, QByteArray> roleNames() const override
+    {
+        QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
+        roles[TrackRole] = "track";
+        return roles;
+    }
+
+private slots:
+	void trackAdded(ITrack* track) {
+		auto index = m_trackList.size();
+        beginInsertRows(QModelIndex(), index, index);
+		auto trackModel = CreateTrackModel(track, this);
+		m_trackList.append(trackModel);
+		endInsertRows();
+	}
+
+private:
+	IPatternStore* m_pattern_store;
+	QList<BaseTrackModel*> m_trackList;
+};
+
+class PatternTrackModel : public BaseTrackModel {
+	Q_OBJECT
+	Q_PROPERTY(QAbstractListModel* trackList READ trackList CONSTANT)
+public:
+	PatternTrackModel(IPatternTrack* _patternTrack, ITrack* track, QObject* parent) :
+		BaseTrackModel(track,  BaseTrackModel::TrackType::Pattern, parent),
+		m_patternTrack(_patternTrack),
+		m_trackList(IEngine::Instance()->getPatternStoreInterface())
+	{}
+
+	static void RegisterInQml() {
+		qmlRegisterType<lmms::gui::PatternTrackModel>("App", 1, 0, "PatternTrackModel");
+	}
+
+	QAbstractListModel* trackList() {
+		return &m_trackList;
+	}
+
+private:
+	IPatternTrack* m_patternTrack;
+	PatternTrackListView m_trackList;
+};
+
 class BaseClipModel : public QObject {
 	Q_OBJECT
 	Q_PROPERTY(QString name READ name CONSTANT)
@@ -376,6 +458,7 @@ public:
 	static void RegisterInQml() {
 		qmlRegisterType<lmms::gui::SongModel>("App", 1, 0, "SongModel");
 		BaseTrackModel::RegisterInQml();
+		PatternTrackModel::RegisterInQml();
 		InstrumentModel::RegisterInQml();
 		SongTableModel::RegisterInQml();
 	}
