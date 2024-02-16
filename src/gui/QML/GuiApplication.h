@@ -125,7 +125,9 @@ public:
 		m_instrumentTrack->piano()->handleKeyPress(40);
 	}
 	InstrumentModel* instrument() {
-		return dynamic_cast<ModelFactory*>(m_instrumentTrack->instrument()->guiSpecificPlugin())->getModel(this);
+		IInstrument* instrument = m_instrumentTrack->instrument();
+		ModelFactory* factory = dynamic_cast<ModelFactory*>(instrument->guiSpecificPlugin());
+		return factory->getModel(this);
 	}
 private:
 	IInstrumentTrack* m_instrumentTrack;

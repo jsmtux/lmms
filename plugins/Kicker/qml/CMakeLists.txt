@@ -13,7 +13,7 @@ qt_add_qml_module(kicker
     VERSION 1.0
     QML_FILES
         BottomPanel.qml
-    RESOURCE_PREFIX /
+    RESOURCE_PREFIX "/qt/qml/"
 )
 
 add_definitions(-DPLUGIN_NAME=kicker)
@@ -48,4 +48,4 @@ SET_TARGET_PROPERTIES(${PLUGIN_NAME} PROPERTIES PREFIX "")
 ENDIF()
 
 target_include_directories(kicker PUBLIC ../core)
-target_link_libraries(kicker PUBLIC lmms_widgets lmms_core_plugins)
+target_link_libraries(kicker PUBLIC lmms_widgets lmms_core_plugins qmlgui)

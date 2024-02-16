@@ -58,34 +58,29 @@ class LMMS_EXPORT SampleBuffer : public QObject, public ISampleBuffer, public sh
 	Q_OBJECT
 	MM_OPERATORS
 public:
-	enum LoopMode {
-		LoopOff = 0,
-		LoopOn,
-		LoopPingPong
-	};
-	class LMMS_EXPORT handleState
+	class LMMS_EXPORT handleState : public IHandleState
 	{
 		MM_OPERATORS
 	public:
 		handleState(bool varyingPitch = false, int interpolationMode = SRC_LINEAR);
 		virtual ~handleState();
 
-		const f_cnt_t frameIndex() const
+		const f_cnt_t frameIndex() const override
 		{
 			return m_frameIndex;
 		}
 
-		void setFrameIndex(f_cnt_t index)
+		void setFrameIndex(f_cnt_t index) override
 		{
 			m_frameIndex = index;
 		}
 
-		bool isBackwards() const
+		bool isBackwards() const override
 		{
 			return m_isBackwards;
 		}
 
-		void setBackwards(bool backwards)
+		void setBackwards(bool backwards) override
 		{
 			m_isBackwards = backwards;
 		}
@@ -123,11 +118,11 @@ public:
 
 	bool play(
 		sampleFrame * ab,
-		handleState * state,
+		IHandleState * state_interface,
 		const fpp_t frames,
 		const float freq,
 		const LoopMode loopMode = LoopOff
-	);
+	) override;
 
 	void visualize(
 		QPainter & p,
@@ -151,12 +146,12 @@ public:
 		return m_audioFile;
 	}
 
-	inline f_cnt_t startFrame() const
+	inline f_cnt_t startFrame() const override
 	{
 		return m_startFrame;
 	}
 
-	inline f_cnt_t endFrame() const
+	inline f_cnt_t endFrame() const override
 	{
 		return m_endFrame;
 	}
@@ -186,7 +181,7 @@ public:
 		f_cnt_t end,
 		f_cnt_t loopStart,
 		f_cnt_t loopEnd
-	)
+	) override
 	{
 		m_startFrame = start;
 		m_endFrame = end;
@@ -243,7 +238,7 @@ public:
 	QString openAndSetAudioFile();
 	QString openAndSetWaveformFile() override;
 
-	QString & toBase64(QString & dst) const;
+	QString & toBase64(QString & dst) const override;
 
 
 	// protect calls from the GUI to this function with dataReadLock() and
@@ -286,7 +281,7 @@ public slots:
 	void loadFromBase64(const QString & data) override;
 	void setStartFrame(const lmms::f_cnt_t s);
 	void setEndFrame(const lmms::f_cnt_t e);
-	void setAmplification(float a);
+	void setAmplification(float a) override;
 	void setReversed(bool on) override;
 	void sampleRateChanged();
 

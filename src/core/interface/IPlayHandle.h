@@ -72,6 +72,7 @@ public:
 	virtual bool isReleased() const = 0;
 	virtual void noteOff( const f_cnt_t offset = 0 ) = 0;
 	virtual float releaseFramesDone() = 0;
+	virtual bool hasDetuningInfo() = 0;
 };
 
 INotePlayHandle* createNotePlayHandle(const QString& sampleFile);

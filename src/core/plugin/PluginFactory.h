@@ -59,7 +59,7 @@ public:
 	using DescriptorMap = QMultiMap<PluginTypes, PluginDescriptor*>;
 
 	PluginFactory();
-	~PluginFactory() = default;
+	virtual ~PluginFactory() = default;
 
 	void setupSearchPaths() override;
 

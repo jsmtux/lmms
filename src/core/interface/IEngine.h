@@ -6,6 +6,7 @@
 #include "ITrack.h"
 #include "IPatternStore.h"
 #include "IMixer.h"
+#include "IModels.h"
 
 namespace lmms {
 
@@ -26,6 +27,20 @@ public:
     virtual float getFramesPerTick() = 0;
 
     virtual IDetuningHelper* createDetuningHelper() = 0;
+
+    virtual IAutomatableModel<float>* createFloatModel(float val, float min, float max, float step,
+        QObject * parent,
+        const QString& displayName) = 0;
+    virtual IAutomatableModel<int>* createIntModel(int val, int min, int max, int step,
+        QObject * parent,
+        const QString& displayName) = 0;
+    virtual IAutomatableModel<bool>* createBoolModel(bool val, bool min, bool max, bool step,
+        QObject * parent,
+        const QString& displayName) = 0;
+    virtual IComboBoxModelWrapper* createComboBox(QObject* parent,
+				const QString& displayName) = 0;
+    virtual std::unique_ptr<ISampleBuffer> createSampleBuffer() = 0;
+    virtual IHandleState* createHandleState(bool varyingPitch, int interpolationMode) = 0;
 private:
     static IEngine* m_instance;
 };

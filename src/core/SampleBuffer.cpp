@@ -63,8 +63,13 @@
 namespace lmms
 {
 
-std::unique_ptr<ISampleBuffer> createSampleBuffer() {
+std::unique_ptr<ISampleBuffer> Engine::createSampleBuffer() {
 	return std::make_unique<SampleBuffer>();
+}
+
+
+IHandleState* Engine::createHandleState(bool varyingPitch, int interpolationMode) {
+	return new SampleBuffer::handleState(varyingPitch, interpolationMode);
 }
 
 SampleBuffer::SampleBuffer() :
@@ -703,7 +708,7 @@ f_cnt_t SampleBuffer::decodeSampleDS(
 
 bool SampleBuffer::play(
 	sampleFrame * ab,
-	handleState * state,
+	IHandleState * state_interface,
 	const fpp_t frames,
 	const float freq,
 	const LoopMode loopMode
@@ -713,6 +718,8 @@ bool SampleBuffer::play(
 	f_cnt_t endFrame = m_endFrame;
 	f_cnt_t loopStartFrame = m_loopStartFrame;
 	f_cnt_t loopEndFrame = m_loopEndFrame;
+
+	auto state = static_cast<handleState*>(state_interface);
 
 	if (endFrame == 0 || frames == 0)
 	{

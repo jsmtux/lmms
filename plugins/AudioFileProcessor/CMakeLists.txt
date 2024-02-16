@@ -1,3 +1,3 @@
-INCLUDE(BuildPlugin)
-
-BUILD_PLUGIN(audiofileprocessor AudioFileProcessor.cpp AudioFileProcessor.h MOCFILES AudioFileProcessor.h EMBEDDED_RESOURCES *.png)
+# add_subdirectory(core)
+# add_subdirectory(QWidgets)
+add_subdirectory(qml)

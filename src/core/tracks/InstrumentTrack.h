@@ -200,7 +200,7 @@ public:
 	int firstKey() const override;
 	int lastKey() const override;
 	int baseNote() const override;
-	float baseFreq() const;
+	float baseFreq() const override;
 
 	IPiano *piano() override
 	{

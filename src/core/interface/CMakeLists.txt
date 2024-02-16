@@ -7,6 +7,7 @@ ADD_LIBRARY(lmms_core_interface STATIC
     ValueBuffer.cpp
     ValueBuffer.h
     Model.cpp
+    IModels.cpp
     JournallingObject.cpp
     SerializingObject.cpp
     IEffectChain.h
@@ -30,7 +31,8 @@ ADD_LIBRARY(lmms_core_interface STATIC
     Note.cpp
     IDetuningHelper.h
     IEnvelopeAndLfoParameters.h
-    ITrackContainer.h)
+    ITrackContainer.h
+    ISampleBuffer.cpp)
 
 
 find_package(Qt6 REQUIRED COMPONENTS Xml Gui) 

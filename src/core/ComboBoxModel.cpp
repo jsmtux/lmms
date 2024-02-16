@@ -31,14 +31,6 @@ namespace lmms
 
 using std::unique_ptr;
 
-
-
-
-IComboBoxModelWrapper* MFact::createComboBox(QObject* parent,
-				const QString& displayName) {
-	return static_cast<IComboBoxModelWrapper*>(new ComboBoxModelWrapper(parent, displayName));
-}
-
 // void ComboBoxModel::addItem( QString item, unique_ptr<PixmapLoader> loader )
 // {
 // 	m_items.emplace_back( std::move(item), std::move(loader) );

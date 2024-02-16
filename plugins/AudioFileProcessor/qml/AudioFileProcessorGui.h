@@ -28,7 +28,7 @@
 #define KICKER_GUI_H
 
 #include "GuiApplication.h"
-#include "Kicker.h"
+#include "AudioFileProcessor.h"
 
 
 namespace lmms
@@ -46,11 +46,11 @@ public:
     }
 };
 
-class KickerQmlInstrument : public KickerInstrument, public ModelFactory {
+class AudioFileProcessorQmlInstrument : public AudioFileProcessor, public ModelFactory {
     Q_OBJECT
 public:
-    KickerQmlInstrument(IInstrumentTrack * _instrument_track)
-		: KickerInstrument(_instrument_track)
+    AudioFileProcessorQmlInstrument(IInstrumentTrack * _instrument_track)
+		: AudioFileProcessor(_instrument_track)
 	{}
 
 	IGUISpecificPlugin* guiSpecificPlugin() override {

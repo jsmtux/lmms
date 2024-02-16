@@ -134,6 +134,35 @@ public:
 	IProjectJournal* getProjectJournalInterface() override;
 
 	IDetuningHelper* createDetuningHelper() override;
+
+
+    IAutomatableModel<float>* createFloatModel(float val, float min, float max, float step,
+        QObject * parent,
+        const QString& displayName) override
+	{
+		return new FloatModel(val, min, max, step, parent, displayName);
+	}
+    IAutomatableModel<int>* createIntModel(int val, int min, int max, int,
+        QObject * parent,
+        const QString& displayName) override
+	{
+		return new IntModel(val, min, max, parent, displayName);
+	}
+    IAutomatableModel<bool>* createBoolModel(bool val, bool, bool, bool,
+        QObject * parent,
+        const QString& displayName) override
+	{
+		return new BoolModel(val, parent, displayName);
+	}
+	IComboBoxModelWrapper* createComboBox(QObject* parent,
+				const QString& displayName) override
+	{
+		return new ComboBoxModelWrapper(parent, displayName);
+	}
+
+	std::unique_ptr<ISampleBuffer> createSampleBuffer() override;
+	IHandleState* createHandleState(bool varyingPitch, int interpolationMode) override;
+	
 signals:
 	void initProgress(const QString &msg);
 

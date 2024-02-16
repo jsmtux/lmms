@@ -292,6 +292,11 @@ public:
 		return m_releaseFramesDone;
 	}
 
+	bool hasDetuningInfo() override
+	{
+		return Note::hasDetuningInfo();
+	}
+
 private:
 	class BaseDetuning
 	{

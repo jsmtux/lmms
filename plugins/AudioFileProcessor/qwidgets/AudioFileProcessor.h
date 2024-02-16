@@ -24,8 +24,8 @@
  */
 
 
-#ifndef AUDIO_FILE_PROCESSOR_H
-#define AUDIO_FILE_PROCESSOR_H
+#ifndef QWIDGET_AUDIO_FILE_PROCESSOR_H
+#define QWIDGET_AUDIO_FILE_PROCESSOR_H
 
 #include <QPixmap>
 
@@ -52,69 +52,12 @@ class AudioFileProcessorView;
 }
 
 
-class AudioFileProcessor : public gui::QWidgetInstrumentPlugin
+class QWidgetAudioFileProcessor : public AudioFileProcessor, public gui::QWidgetInstrumentPlugin
 {
 	Q_OBJECT
 public:
-	AudioFileProcessor( InstrumentTrack * _instrument_track );
-
-	void playNote( NotePlayHandle * _n,
-						sampleFrame * _working_buffer ) override;
-	void deleteNotePluginData( NotePlayHandle * _n ) override;
-
-	void saveSettings( QDomDocument & _doc,
-						QDomElement & _parent ) override;
-	void loadSettings( const QDomElement & _this ) override;
-
-	void loadFile( const QString & _file ) override;
-
-	QString nodeName() const override;
-
-	virtual int getBeatLen( NotePlayHandle * _n ) const;
-
-	f_cnt_t desiredReleaseFrames() const override
-	{
-		return 128;
-	}
-
-	gui::InstrumentView* instantiateView( QWidget * _parent ) override;
-
-
-public slots:
-	void setAudioFile( const QString & _audio_file, bool _rename = true );
-
-
-private slots:
-	void reverseModelChanged();
-	void ampModelChanged();
-	void loopPointChanged();
-	void startPointChanged();
-	void endPointChanged();
-	void pointChanged();
-	void stutterModelChanged();
-
-
-signals:
-	void isPlaying( lmms::f_cnt_t _current_frame );
-
-
+	gui::InstrumentView* AudioFileProcessor::instantiateView( QWidget * _parent );
 private:
-	using handleState = SampleBuffer::handleState;
-
-	SampleBuffer m_sampleBuffer;
-
-	FloatModel m_ampModel;
-	FloatModel m_startPointModel;
-	FloatModel m_endPointModel;
-	FloatModel m_loopPointModel;
-	BoolModel m_reverseModel;
-	IntModel m_loopModel;
-	BoolModel m_stutterModel;
-	ComboBoxModel m_interpolationModel;
-
-	f_cnt_t m_nextPlayStartPoint;
-	bool m_nextPlayBackwards;
-
 	friend class gui::AudioFileProcessorView;
 
 } ;

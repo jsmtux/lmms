@@ -214,6 +214,7 @@ public:
 	virtual int firstKey() const = 0;
 	virtual int lastKey() const = 0;
 	virtual int baseNote() const = 0;
+	virtual float baseFreq() const = 0;
 	virtual void processAudioBuffer( sampleFrame * _buf, const fpp_t _frames,
 							INotePlayHandle * _n )  = 0;
 };

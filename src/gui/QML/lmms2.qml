@@ -216,7 +216,7 @@ ApplicationWindow {
 
                         Component {
                             id: patternTrackPanel
-                            RowLayout {
+                            ColumnLayout {
                                 id: control
                                 required property PatternTrackModel track
                                 Layout.fillHeight: true

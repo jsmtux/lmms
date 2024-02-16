@@ -39,40 +39,6 @@
 namespace lmms
 {
 
-template<>
-IAutomatableModel<float>* MFact::create(float val, float min, float max, float step,
-        QObject * parent,
-        const QString& displayName){
-	return new FloatModel(val, min, max, step,
-        parent, displayName);
-}
-template<>
-IAutomatableModel<int>* MFact::create(
-        int val, int min, int max, int step,
-        QObject * parent,
-        const QString& displayName){
-	return new IntModel(
-        val, min, max,
-        parent, displayName);
-}
-template<>
-IAutomatableModel<bool>* MFact::create(
-        bool val, bool min, bool max, bool step,
-        QObject * parent,
-        const QString& displayName){
-	return new BoolModel(
-        val, parent, displayName);
-}
-
-IAutomatableModel<int>* MFact::createIntModel(
-	int val, int min, int max,
-	QObject * parent,
-	const QString& displayName) {
-	return new IntModel(
-        val, min, max,
-        parent, displayName);
-}
-
 long AutomatableModel::s_periodCounter = 0;
 
 
