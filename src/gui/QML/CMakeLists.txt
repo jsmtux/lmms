@@ -18,13 +18,17 @@ qt_add_library(qmlgui SHARED
 )
 
 target_include_directories(qmlgui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(qmlgui PUBLIC 
+    lmms_core
+    lmms_core_plugins
+)
 
 add_subdirectory(widgets)
 
 target_link_libraries(qmlgui PUBLIC 
     Qt6::Qml
-    lmms_core_plugins
     lmms_core_interface
+    lmms_core_plugins
     lmms_widgetsplugin
 )
 
@@ -72,7 +76,7 @@ target_link_libraries(lmms2example PUBLIC
     Qt6::QuickControls2
     Qt6::Qml
     Qt6::Widgets
-    lmmsobjs
+    lmms_core
     qmlgui
 )
 

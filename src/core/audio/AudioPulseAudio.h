@@ -53,6 +53,11 @@ public:
 	AudioPulseAudio( bool & _success_ful, AudioEngine* audioEngine );
 	~AudioPulseAudio() override;
 
+	inline static QString name()
+	{
+		return AudioPulseAudioName();
+	}
+
 	static QString probeDevice();
 
 	void streamWriteCallback( pa_stream * s, size_t length );

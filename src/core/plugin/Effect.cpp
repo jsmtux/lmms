@@ -31,6 +31,7 @@
 #include "IEffectChain.h"
 #include "ICoreApplication.h"
 #include "EffectControls.h"
+#include "IModels.h"
 
 #include "IConfigManager.h"
 

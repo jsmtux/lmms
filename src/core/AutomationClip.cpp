@@ -208,7 +208,7 @@ TimePos AutomationClip::timeMapLength() const
 	if (m_timeMap.isEmpty()) { return one_bar; }
 
 	AutomationTimeMap::const_iterator it = m_timeMap.end();
-	auto last_tick = static_cast<tick_t>(POS(it - 1));
+	auto last_tick = static_cast<tick_t>(POS(std::prev(it)));
 	// if last_tick is 0 (single item at tick 0)
 	// return length as a whole bar to prevent disappearing Clip
 	if (last_tick == 0) { return one_bar; }
@@ -538,10 +538,10 @@ float AutomationClip::valueAt( const TimePos & _time ) const
 	if( v == m_timeMap.end() )
 	{
 		// When the time is after the last node, we want the outValue of it
-		return OUTVAL(v - 1);
+		return OUTVAL(std::prev(v));
 	}
 
-	return valueAt(v - 1, _time - POS(v - 1));
+	return valueAt(std::prev(v), _time - POS(std::prev(v)));
 }
 
 
@@ -564,8 +564,8 @@ float AutomationClip::valueAt( AutomationTimeMap::const_iterator v, int offset )
 	else if( m_progressionType == LinearProgression )
 	{
 		float slope =
-			(INVAL(v + 1) - OUTVAL(v))
-			/ (POS(v + 1) - POS(v));
+			(INVAL(std::next(v)) - OUTVAL(v))
+			/ (POS(std::next(v)) - POS(v));
 
 		return OUTVAL(v) + offset * slope;
 	}
@@ -579,16 +579,16 @@ float AutomationClip::valueAt( AutomationTimeMap::const_iterator v, int offset )
 		// value: y.  To make this work we map the values of x that this
 		// segment spans to values of t for t = 0.0 -> 1.0 and scale the
 		// tangents _m1 and _m2
-		int numValues = (POS(v + 1) - POS(v));
+		int numValues = (POS(std::next(v)) - POS(v));
 		float t = (float) offset / (float) numValues;
 		float m1 = OUTTAN(v) * numValues * m_tension;
-		float m2 = INTAN(v + 1) * numValues * m_tension;
+		float m2 = INTAN(std::next(v)) * numValues * m_tension;
 
 		auto t2 = pow(t, 2);
 		auto t3 = pow(t, 3);
 		return (2 * t3 - 3 * t2 + 1) * OUTVAL(v)
 			+ (t3 - 2 * t2 + t) * m1
-			+ (-2 * t3 + 3 * t2) * INVAL(v + 1)
+			+ (-2 * t3 + 3 * t2) * INVAL(std::next(v))
 			+ (t3 - t2) * m2;
 	}
 }
@@ -601,12 +601,12 @@ float *AutomationClip::valuesAfter( const TimePos & _time ) const
 	QMutexLocker m(&m_clipMutex);
 
 	AutomationTimeMap::const_iterator v = m_timeMap.lowerBound(_time);
-	if( v == m_timeMap.end() || (v+1) == m_timeMap.end() )
+	if( v == m_timeMap.end() || (std::next(v)) == m_timeMap.end() )
 	{
 		return nullptr;
 	}
 
-	int numValues = POS(v + 1) - POS(v);
+	int numValues = POS(std::next(v)) - POS(v);
 	auto ret = new float[numValues];
 
 	for( int i = 0; i < numValues; i++ )
@@ -1104,11 +1104,11 @@ void AutomationClip::generateTangents(AutomationTimeMap::iterator it, int numToG
 		{
 			// On the first node there's no curve behind it, so we will only calculate the outTangent
 			// and inTangent will be set to 0.
-			float tangent = (INVAL(it + 1) - OUTVAL(it)) / (POS(it + 1) - POS(it));
+			float tangent = (INVAL(std::next(it)) - OUTVAL(it)) / (POS(std::next(it)) - POS(it));
 			it.value().setInTangent(0);
 			it.value().setOutTangent(tangent);
 		}
-		else if( it+1 == m_timeMap.end() )
+		else if( std::next(it) == m_timeMap.end() )
 		{
 			// Previously, the last value's tangent was always set to 0. That logic was kept for both tangents
 			// of the last node
@@ -1129,7 +1129,7 @@ void AutomationClip::generateTangents(AutomationTimeMap::iterator it, int numToG
 			float outTangent;
 			if (OFFSET(it) == 0)
 			{
-				inTangent = (INVAL(it + 1) - OUTVAL(it - 1)) / (POS(it + 1) - POS(it - 1));
+				inTangent = (INVAL(std::next(it)) - OUTVAL(std::prev(it))) / (POS(std::next(it)) - POS(std::prev(it)));
 				it.value().setInTangent(inTangent);
 				// inTangent == outTangent in this case
 				it.value().setOutTangent(inTangent);
@@ -1137,9 +1137,9 @@ void AutomationClip::generateTangents(AutomationTimeMap::iterator it, int numToG
 			else
 			{
 				// Calculate the left side of the curve
-				inTangent = (INVAL(it) - OUTVAL(it - 1)) / (POS(it) - POS(it - 1));
+				inTangent = (INVAL(it) - OUTVAL(std::prev(it))) / (POS(it) - POS(std::prev(it)));
 				// Calculate the right side of the curve
-				outTangent = (INVAL(it + 1) - OUTVAL(it)) / (POS(it + 1) - POS(it));
+				outTangent = (INVAL(std::next(it)) - OUTVAL(it)) / (POS(std::next(it)) - POS(it));
 				it.value().setInTangent(inTangent);
 				it.value().setOutTangent(outTangent);
 			}

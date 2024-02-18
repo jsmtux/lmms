@@ -54,6 +54,11 @@ public:
 
 	static QString probeDevice();
 
+	inline static QString name()
+	{
+		return AudioOssName();
+	}
+
 private:
 	void startProcessing() override;
 	void stopProcessing() override;

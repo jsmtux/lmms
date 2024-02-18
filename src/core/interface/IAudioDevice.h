@@ -12,6 +12,11 @@ inline QString AudioJackName() {
         "JACK (JACK Audio Connection Kit)" );
 }
 
+inline QString AudioAlsaName() {
+    return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget",
+        "ALSA (Advanced Linux Sound Architecture)" );
+}
+
 inline QString PortAudioName()
 {
     return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", "PortAudio" );
@@ -21,6 +26,18 @@ inline QString AudioSdlName()
 {
     return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget",
 					"SDL (Simple DirectMedia Layer)" );
+}
+
+inline QString AudioOssName()
+{
+    return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget",
+					"OSS (Open Sound System)" );
+}
+
+inline QString AudioPulseAudioName()
+{
+    return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget",
+					"Pulse Audio" );
 }
 
 inline QString AudioDummyName()

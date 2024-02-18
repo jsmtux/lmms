@@ -3,28 +3,19 @@
 
 namespace lmms {
 
-template<>
-IAutomatableModel<float>* MFact::create(float val, float min, float max, float step,
+IAutomatableModel<float>* MFact::create(
+        float val, float min, float max, float step,
         QObject * parent,
         const QString& displayName){
-	return IEngine::Instance()->createFloatModel(val, min, max, step, parent, displayName);
+        return IEngine::Instance()->createFloatModel(val, min, max, step, parent, displayName);
 }
-template<>
-IAutomatableModel<int>* MFact::create(
-        int val, int min, int max, int step,
-        QObject * parent,
-        const QString& displayName){
-	return IEngine::Instance()->createIntModel(
-        val, min, max, step,
-        parent, displayName);
-}
-template<>
+
 IAutomatableModel<bool>* MFact::create(
-        bool val, bool min, bool max, bool step,
+        bool val,
         QObject * parent,
         const QString& displayName){
 	return IEngine::Instance()->createBoolModel(
-        val, min, max, step, parent, displayName);
+        val, 0, 1, 0, parent, displayName);
 }
 
 IAutomatableModel<int>* MFact::createIntModel(

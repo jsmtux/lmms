@@ -73,7 +73,7 @@ SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${LMMS_RCC_OUT}
 
 TARGET_LINK_LIBRARIES(lmms
 	PUBLIC
-	lmmsobjs
+	lmms_core
 	lmms_gui
 	lmms_qwidget_plugins
 )
@@ -88,7 +88,7 @@ ADD_EXECUTABLE(lmms_headless
 TARGET_LINK_LIBRARIES(lmms_headless
 	PUBLIC
 	lmms_core_interface
-	lmmsobjs
+	lmms_core
 )
 
 TARGET_INCLUDE_DIRECTORIES(lmms_headless

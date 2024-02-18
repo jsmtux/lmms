@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "ValueBuffer.h"
 
 #include "interpolation.h"

@@ -200,11 +200,13 @@ QStringList ConfigManager::availableVstEmbedMethods()
 	methods.append("win32");
 #endif
 #ifdef LMMS_BUILD_LINUX
-	if (static_cast<QGuiApplication*>(QApplication::instance())->
+#ifdef WANT_VST
+	if (static_cast<QApplication*>(QApplication::instance())->
 		platformName() == "xcb")
 	{
 		methods.append("xembed");
 	}
+#endif
 #endif
 	return methods;
 }

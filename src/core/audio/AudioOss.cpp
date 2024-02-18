@@ -27,14 +27,10 @@
 #ifdef LMMS_HAVE_OSS
 
 #include <QFileInfo>
-#include <QLabel>
-#include <QLineEdit>
 
 #include "endian_handling.h"
 #include "AudioEngine.h"
 #include "Engine.h"
-#include "gui_templates.h"
-
 #ifdef LMMS_HAVE_UNISTD_H
 #include <unistd.h>
 #endif

@@ -65,6 +65,11 @@ public:
 
 	};
 
+	inline static QString name()
+	{
+		return AudioAlsaName();
+	}
+
 	using DeviceInfoCollection = std::vector<DeviceInfo>;
 
 public:

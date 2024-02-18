@@ -49,7 +49,7 @@ namespace lmms::base64
 	}
 	// for compatibility-code only
 	QVariant decode( const QString & _b64,
-			QVariant::Type _force_type = QVariant::Invalid );
+			QMetaType::Type _force_type = QMetaType::UnknownType );
 
 } // namespace lmms::base64
 

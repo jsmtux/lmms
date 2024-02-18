@@ -119,7 +119,7 @@ public:
 	}
 
 	bar_t getLargestTrackLength(bool ignoreMuted = false) const {
-		bar_t ret;
+		bar_t ret = 0;
 		m_tracksMutex.lockForRead();
 		for (auto track : tracks())
 		{

@@ -57,7 +57,7 @@ AutomatableModel::AutomatableModel(
 	m_valueChanged( false ),
 	m_setValueDepth( 0 ),
 	m_hasStrictStepSize( false ),
-	m_valueBuffer( static_cast<int>( Engine::audioEngine()->framesPerPeriod() ) ),
+	m_valueBuffer( static_cast<int>( IEngine::Instance()->getAudioEngineInterface()->framesPerPeriod() ) ),
 	m_lastUpdatedPeriod( -1 ),
 	m_controllerConnection( nullptr ),
 	m_hasSampleExactData(false),

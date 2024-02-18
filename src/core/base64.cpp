@@ -32,7 +32,7 @@ namespace lmms::base64
 {
 
 
-QVariant decode( const QString & _b64, QVariant::Type _force_type )
+QVariant decode( const QString & _b64, QMetaType::Type _force_type )
 {
 	char * dst = nullptr;
 	int dsize = 0;

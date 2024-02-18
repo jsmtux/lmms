@@ -186,15 +186,7 @@ public:
 
 class MFact{
 public:
-    template<typename T>
-    static IAutomatableModel<T>* create(
-        T val = 0, T min = 0, T max = 0, T step = 0,
-        QObject * parent = nullptr,
-        const QString& displayName = QString()
-    );
-
-    template<>
-    IAutomatableModel<float>* create(
+    static IAutomatableModel<float>* create(
         float val, float min, float max, float step,
         QObject * parent,
         const QString& displayName);
@@ -204,19 +196,10 @@ public:
         QObject * parent,
         const QString& displayName = "");
 
-    template<>
-    IAutomatableModel<bool>* create(
-        bool val, bool min, bool max, bool step,
-        QObject * parent,
-        const QString& displayName);
-
     static IAutomatableModel<bool>* create(
         bool val,
         QObject * parent,
-        const QString& displayName = "")
-    {
-        return create<bool>(val, false, true, 1, parent, displayName);
-    }
+        const QString& displayName = "");
 
     static ITempoSyncKnobModelWrapper* create(
         float val, float min, float max, float step, float scale,

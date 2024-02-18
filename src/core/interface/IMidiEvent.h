@@ -27,6 +27,8 @@
 
 #include "MidiConstants.h"
 
+#include <memory>
+
 namespace lmms
 {
 

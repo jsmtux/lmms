@@ -991,7 +991,7 @@ void DataFile::upgrade_0_4_0_beta1()
 		if( !k.isEmpty() )
 		{
 			const QList<QVariant> l =
-				base64::decode( k, QVariant::List ).toList();
+				base64::decode( k, QMetaType::QVariantList ).toList();
 			if( !l.isEmpty() )
 			{
 				QString name = l[0].toString();

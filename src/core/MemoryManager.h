@@ -75,26 +75,26 @@ struct MmAllocator
 	using vector = std::vector<T, MmAllocator<T>>;
 };
 
-
-// #define MM_OPERATORS								\
-// public: 											\
-// static void * operator new ( size_t size )		\
-// {													\
-// 	return MemoryManager::alloc( size );			\
-// }													\
-// static void * operator new[] ( size_t size )		\
-// {													\
-// 	return MemoryManager::alloc( size );			\
-// }													\
-// static void operator delete ( void * ptr )		\
-// {													\
-// 	MemoryManager::free( ptr );					\
-// }													\
-// static void operator delete[] ( void * ptr )	\
-// {													\
-// 	MemoryManager::free( ptr );					\
-// }
-
+#if 0
+#define MM_OPERATORS								\
+public: 											\
+static void * operator new ( size_t size )		\
+{													\
+	return MemoryManager::alloc( size );			\
+}													\
+static void * operator new[] ( size_t size )		\
+{													\
+	return MemoryManager::alloc( size );			\
+}													\
+static void operator delete ( void * ptr )		\
+{													\
+	MemoryManager::free( ptr );					\
+}													\
+static void operator delete[] ( void * ptr )	\
+{													\
+	MemoryManager::free( ptr );					\
+}
+#endif
 #define MM_OPERATORS
 
 // for use in cases where overriding new/delete isn't a possibility

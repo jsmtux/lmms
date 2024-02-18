@@ -41,6 +41,7 @@ TARGET_LINK_LIBRARIES(lmms_core_interface
     PUBLIC
         Qt6::Xml
         Qt6::Gui
+    PUBLIC
         lmms_gui_interface
 )
 

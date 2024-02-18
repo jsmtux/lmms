@@ -470,7 +470,7 @@ int main( int argc, char * * argv )
 	// IEngine::Instance()->getSongInterface()->createNewProject();
 	// IEngine::Instance()->getSongInterface()->loadProject(configManager->factoryProjectsDir() + "/shorties/sv-Trance-Startup.mmpz");
 	qDebug() << "Will run stuff\n";
-	IEngine::Instance()->getSongInterface()->loadProject("/Users/ventoso/Projects/lmms/data/projects/shorties/sv-Trance-Startup.mmpz");
+	IEngine::Instance()->getSongInterface()->loadProject("../data/projects/shorties/sv-Trance-Startup.mmpz");
 
 	const int ret = app.exec();
 
