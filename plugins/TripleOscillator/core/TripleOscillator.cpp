@@ -315,7 +315,7 @@ void TripleOscillator::playNote( INotePlayHandle * _n,
 			// the last oscs needs no sub-oscs...
 			if( i == NUM_OF_OSCILLATORS - 1 )
 			{
-				oscs_l[i] = createOscillator(
+				oscs_l[i] = IEngine::Instance()->createOscillator(
 						m_osc[i]->m_waveShapeModel,
 						m_osc[i]->m_modulationAlgoModel,
 						_n->frequency(),
@@ -323,7 +323,7 @@ void TripleOscillator::playNote( INotePlayHandle * _n,
 						m_osc[i]->m_phaseOffsetLeft,
 						m_osc[i]->m_volumeLeft );
 				oscs_l[i]->setUseWaveTable(m_osc[i]->m_useWaveTable);
-				oscs_r[i] = createOscillator(
+				oscs_r[i] = IEngine::Instance()->createOscillator(
 						m_osc[i]->m_waveShapeModel,
 						m_osc[i]->m_modulationAlgoModel,
 						_n->frequency(),
@@ -334,7 +334,7 @@ void TripleOscillator::playNote( INotePlayHandle * _n,
 			}
 			else
 			{
-				oscs_l[i] = createOscillator(
+				oscs_l[i] = IEngine::Instance()->createOscillator(
 						m_osc[i]->m_waveShapeModel,
 						m_osc[i]->m_modulationAlgoModel,
 						_n->frequency(),
@@ -343,7 +343,7 @@ void TripleOscillator::playNote( INotePlayHandle * _n,
 						m_osc[i]->m_volumeLeft,
 						oscs_l[i + 1]);
 				oscs_l[i]->setUseWaveTable(m_osc[i]->m_useWaveTable);
-				oscs_r[i] = createOscillator(
+				oscs_r[i] = IEngine::Instance()->createOscillator(
 						m_osc[i]->m_waveShapeModel,
 						m_osc[i]->m_modulationAlgoModel,
 						_n->frequency(),

@@ -81,12 +81,4 @@ public:
 	virtual void update(sampleFrame* ab, const fpp_t frames, const ch_cnt_t chnl, bool modulator = false) = 0;
 };
 
-IOscillator* createOscillator(const IIntAutomatableModel *wave_shape_model,
-			const IIntAutomatableModel *mod_algo_model,
-			const float &freq,
-			const float &detuning_div_samplerate,
-			const float &phase_offset,
-			const float &volume,
-			IOscillator *m_subOsc = nullptr);
-
 } // namespace lmms

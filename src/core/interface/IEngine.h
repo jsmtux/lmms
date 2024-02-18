@@ -9,6 +9,7 @@
 #include "IModels.h"
 
 namespace lmms {
+class IOscillator;
 
 class IEngine : public QObject
 {
@@ -41,6 +42,14 @@ public:
 				const QString& displayName) = 0;
     virtual std::unique_ptr<ISampleBuffer> createSampleBuffer() = 0;
     virtual IHandleState* createHandleState(bool varyingPitch, int interpolationMode) = 0;
+    virtual IOscillator* createOscillator(const IIntAutomatableModel *wave_shape_model,
+			const IIntAutomatableModel *mod_algo_model,
+			const float &freq,
+			const float &detuning_div_samplerate,
+			const float &phase_offset,
+			const float &volume,
+			IOscillator *m_subOsc = nullptr) = 0;
+
 private:
     static IEngine* m_instance;
 };

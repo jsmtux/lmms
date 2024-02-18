@@ -39,7 +39,9 @@
 
 
 namespace lmms
-{IOscillator* createOscillator(const IIntAutomatableModel *wave_shape_model,
+{
+
+IOscillator* Engine::createOscillator(const IIntAutomatableModel *wave_shape_model,
 			const IIntAutomatableModel *mod_algo_model,
 			const float &freq,
 			const float &detuning_div_samplerate,

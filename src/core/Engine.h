@@ -46,6 +46,7 @@ class ProjectJournal;
 class Song;
 class Ladspa2LMMS;
 class AutomationTrack;
+class IOscillator;
 
 namespace gui
 {
@@ -163,6 +164,13 @@ public:
 	std::unique_ptr<ISampleBuffer> createSampleBuffer() override;
 	IHandleState* createHandleState(bool varyingPitch, int interpolationMode) override;
 	
+    IOscillator* createOscillator(const IIntAutomatableModel *wave_shape_model,
+		const IIntAutomatableModel *mod_algo_model,
+		const float &freq,
+		const float &detuning_div_samplerate,
+		const float &phase_offset,
+		const float &volume,
+		IOscillator *m_subOsc = nullptr) override;
 signals:
 	void initProgress(const QString &msg);
 
