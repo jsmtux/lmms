@@ -38,21 +38,21 @@ Rectangle {
                 id: volumeDial
                 implicitWidth: 30
                 implicitHeight: 30
-                value: control.track.volume
+                value: control.track.volume.value
                 inputMode: Dial.Horizontal
                 onMoved: {
-                    control.track.volume = volumeDial.value
+                    control.track.volume.value = volumeDial.value
                 }
-                from: control.track.volume_min_value
-                to: control.track.volume_max_value
+                from: control.track.volume.min
+                to: control.track.volume.max
+            }
+            LmmsDial {
+                model: control.track.volume
             }
             Dial {
                 implicitWidth: 30
                 implicitHeight: 30
                 inputMode: Dial.Horizontal
-            }
-            TaggedDial {
-                text: "allright"
             }
         }
     }
@@ -73,11 +73,11 @@ Rectangle {
         Button {
             width: 30
             height: 30
-            checked: control.track.solo
+            checked: control.track.solo.value
             checkable: true
-            down: control.track.solo
+            down: control.track.solo.value
             onClicked: {
-                control.track.solo = !control.track.solo
+                control.track.solo.value = !control.track.solo.value
             }
             text: "S"
         }
@@ -85,11 +85,11 @@ Rectangle {
         Button {
             width: 30
             height: 30
-            checked: control.track.muted
-            down: control.track.muted
+            checked: control.track.muted.value
+            down: control.track.muted.value
             checkable: true
             onClicked: {
-                control.track.muted = !control.track.muted
+                control.track.muted.value = !control.track.muted.value
             }
             text: "M"
         }

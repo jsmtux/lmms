@@ -46,7 +46,6 @@ class ProjectJournal;
 class Song;
 class Ladspa2LMMS;
 class AutomationTrack;
-class IOscillator;
 
 namespace gui
 {

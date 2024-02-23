@@ -30,7 +30,6 @@
 #include "ICoreApplication.h"
 #include "ITrack.h"
 #include "IPiano.h"
-#include "LMMSProperty.h"
 #include "IPlugin.h"
 
 #include <QGuiApplication>
@@ -44,10 +43,117 @@
 namespace lmms::gui
 {
 
+class FloatLmmsModel : public QObject {
+	Q_OBJECT
+	Q_PROPERTY(float value READ value WRITE setValue NOTIFY valueUpdated)
+	Q_PROPERTY(float min READ minValue NOTIFY propertiesUpdated)
+	Q_PROPERTY(float max READ maxValue NOTIFY propertiesUpdated)
+public:
+	FloatLmmsModel(IAutomatableModel<float>* _model, QObject* parent = nullptr) :
+		QObject(parent),
+		model(_model)
+	{
+		connect(model->model(), &Model::dataChanged, this, &FloatLmmsModel::valueUpdated);
+		connect(model->model(), &Model::propertiesChanged, this, &FloatLmmsModel::propertiesUpdated);
+	}
+	static void RegisterInQml() {
+		qmlRegisterType<FloatLmmsModel>("App", 1, 0, "FloatLmmsModel");
+	}
+	float value() {
+		return model->value();
+	}
+	void setValue(float value) {
+		model->setValue(value);
+	}
+	float maxValue() {
+		return model->maxValue();
+	}
+	float minValue() {
+		return model->minValue();
+	}
+signals:
+	void valueUpdated();
+	void propertiesUpdated();
+private:
+	IAutomatableModel<float>* model;
+};
+
+class IntLmmsModel : public QObject {
+	Q_OBJECT
+	Q_PROPERTY(int value READ value WRITE setValue NOTIFY valueUpdated)
+	Q_PROPERTY(int min READ minValue NOTIFY propertiesUpdated)
+	Q_PROPERTY(int max READ maxValue NOTIFY propertiesUpdated)
+public:
+	IntLmmsModel(IAutomatableModel<int>* _model, QObject* parent = nullptr) :
+		QObject(parent),
+		model(_model)
+	{
+		connect(model->model(), &Model::dataChanged, this, &IntLmmsModel::valueUpdated);
+		connect(model->model(), &Model::propertiesChanged, this, &IntLmmsModel::propertiesUpdated);
+	}
+	static void RegisterInQml() {
+		qmlRegisterType<IntLmmsModel>("App", 1, 0, "IntLmmsModel");
+	}
+	int value() {
+		return model->value();
+	}
+	void setValue(int value) {
+		model->setValue(value);
+	}
+	int maxValue() {
+		return model->maxValue();
+	}
+	int minValue() {
+		return model->minValue();
+	}
+signals:
+	void valueUpdated();
+	void propertiesUpdated();
+private:
+	IAutomatableModel<int>* model;
+};
+
+class BoolLmmsModel : public QObject {
+	Q_OBJECT
+	Q_PROPERTY(bool value READ value WRITE setValue NOTIFY valueUpdated)
+	Q_PROPERTY(bool min READ minValue NOTIFY propertiesUpdated)
+	Q_PROPERTY(bool max READ maxValue NOTIFY propertiesUpdated)
+public:
+	BoolLmmsModel(IAutomatableModel<bool>* _model, QObject* parent = nullptr) :
+		QObject(parent),
+		model(_model)
+	{
+		connect(model->model(), &Model::dataChanged, this, &BoolLmmsModel::valueUpdated);
+		connect(model->model(), &Model::propertiesChanged, this, &BoolLmmsModel::propertiesUpdated);
+	}
+	static void RegisterInQml() {
+		qmlRegisterType<BoolLmmsModel>("App", 1, 0, "BoolLmmsModel");
+	}
+	bool value() {
+		return model->value();
+	}
+	void setValue(bool value) {
+		model->setValue(value);
+	}
+	bool maxValue() {
+		return model->maxValue();
+	}
+	bool minValue() {
+		return model->minValue();
+	}
+signals:
+	void valueUpdated();
+	void propertiesUpdated();
+private:
+	IAutomatableModel<bool>* model;
+};
+
 class BaseTrackModel : public QObject {
 	Q_OBJECT
 	Q_PROPERTY(TrackType type READ type CONSTANT)
 	Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+	Q_PROPERTY(BoolLmmsModel* muted READ trackMutedModel CONSTANT)
+	Q_PROPERTY(BoolLmmsModel* solo READ trackSoloModel CONSTANT)
 public:
 	enum TrackType {
 		Sample,
@@ -75,16 +181,21 @@ public:
 	QString name() {
 		return m_track->name();
 	}
+
+	BoolLmmsModel* trackMutedModel() {
+		return &m_trackMutedModel;
+	}
+	BoolLmmsModel* trackSoloModel() {
+		return &m_trackSoloModel;
+	}
 signals:
 	void nameChanged();
 	void propertiesChanged();
 private:
 	ITrack* m_track;
 	const TrackType m_type;
-	IBoolAutomatableModel* trackMutedModel{m_track->getMutedModel()};
-	EXPOSE_LMMS_PROPERTY(bool, muted, trackMutedModel)
-	IBoolAutomatableModel* trackSoloModel{m_track->soloModel()};
-	EXPOSE_LMMS_PROPERTY(bool, solo, trackSoloModel)
+	BoolLmmsModel m_trackMutedModel{m_track->getMutedModel()};
+	BoolLmmsModel m_trackSoloModel{m_track->soloModel()};
 };
 
 class InstrumentModel : public QObject
@@ -117,6 +228,7 @@ public:
 class InstrumentTrackModel : public BaseTrackModel {
 	Q_OBJECT
 	Q_PROPERTY(lmms::gui::InstrumentModel* instrument READ instrument CONSTANT)
+	Q_PROPERTY(FloatLmmsModel* volume READ trackVolumeModel CONSTANT)
 public:
 	InstrumentTrackModel(IInstrumentTrack* _instrumentTrack, ITrack* track, QObject* parent) :
 		BaseTrackModel(track,  BaseTrackModel::TrackType::Instrument, parent),
@@ -129,10 +241,12 @@ public:
 		ModelFactory* factory = dynamic_cast<ModelFactory*>(instrument->guiSpecificPlugin());
 		return factory->getModel(this);
 	}
+	FloatLmmsModel* trackVolumeModel() {
+		return &m_trackVolumeModel;
+	}
 private:
 	IInstrumentTrack* m_instrumentTrack;
-	IFloatAutomatableModel* trackVolumeModel{m_instrumentTrack->volumeModel()};
-	EXPOSE_LMMS_PROPERTY(float, volume, trackVolumeModel)
+	FloatLmmsModel m_trackVolumeModel{m_instrumentTrack->volumeModel()};
 };
 
 BaseTrackModel* CreateTrackModel(ITrack* track, QObject* parent);
@@ -542,6 +656,9 @@ public:
 		PatternTrackModel::RegisterInQml();
 		InstrumentModel::RegisterInQml();
 		SongTableModel::RegisterInQml();
+		FloatLmmsModel::RegisterInQml();
+		IntLmmsModel::RegisterInQml();
+		BoolLmmsModel::RegisterInQml();
 	}
 
 	const QList<ITrack*> tracks() {
