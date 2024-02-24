@@ -219,24 +219,11 @@ ApplicationWindow {
                             ColumnLayout {
                                 id: control
                                 required property PatternTrackModel track
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
+                                height: parent.height
+                                width: parent.width
 
                                 Label {
                                     text: control.track.name
-                                }
-                                VerticalHeaderView {
-                                    width: 350
-                                    Layout.fillHeight: true
-                                    syncView: patternTableView
-                                    resizableRows: false
-                                    clip: true
-                                    model: control.track.trackList
-                                    delegate: TrackViewDelegate {
-                                        Component.onCompleted: {
-                                            instrumentActivated.connect(pluginAreaGroup.activateInstrument)
-                                        }
-                                    }
                                 }
 
                                 Component {
@@ -246,18 +233,34 @@ ApplicationWindow {
                                     }
                                 }
 
-                                TableView {
-                                    id: patternTableView
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    Layout.minimumWidth: 850
-                                    clip: true
-                                    columnSpacing: 1
-                                    rowSpacing: 1
+                                RowLayout {
+                                    VerticalHeaderView {
+                                        width: 350
+                                        Layout.fillHeight: true
+                                        syncView: patternTableView
+                                        resizableRows: false
+                                        clip: true
+                                        model: control.track.trackList
+                                        delegate: TrackViewDelegate {
+                                            Component.onCompleted: {
+                                                instrumentActivated.connect(pluginAreaGroup.activateInstrument)
+                                            }
+                                        }
+                                    }
 
-                                    model:control.track.patternTable
+                                    TableView {
+                                        id: patternTableView
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        Layout.minimumWidth: 850
+                                        clip: true
+                                        columnSpacing: 1
+                                        rowSpacing: 1
 
-                                    delegate: patternTableDelegate
+                                        model:control.track.patternTable
+
+                                        delegate: patternTableDelegate
+                                    }
                                 }
                             }
                         }
