@@ -196,27 +196,106 @@ private:
 	QList<BaseTrackModel*> m_trackList;
 };
 
+class PatternTableModel : public QAbstractItemModel {
+		Q_OBJECT
+public:
+	PatternTableModel(IPatternStore* _pattern_store, IPatternTrack* _track) :
+		m_pattern_store(_pattern_store),
+		m_track(_track)
+	{
+	}
+
+	enum Roles {
+		ClipRole = Qt::UserRole
+	};
+
+	static void RegisterInQml() {
+		qmlRegisterType<lmms::gui::PatternTableModel>("App", 1, 0, "PatternTableModel");
+	}
+
+	QVariant data(const QModelIndex &index, int role) const override
+    {
+        if (index.isValid())
+		{
+			switch (role) {
+				case Qt::DisplayRole:
+					break;
+				case ClipRole:
+				{
+					return QVariant::fromValue(false);
+				}
+			}
+		}
+
+        return QVariant();
+    }
+
+	QModelIndex index(int row, int column, const QModelIndex &parent) const override
+	{
+		return hasIndex(row, column, parent) ? createIndex(row, column) : QModelIndex();
+	}
+
+	QModelIndex parent(const QModelIndex &index) const override
+	{
+		return QModelIndex();
+	}
+
+    virtual QHash<int, QByteArray> roleNames() const override
+    {
+        QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
+        roles[ClipRole] = "ClipRole";
+        return roles;
+    }
+
+
+    int rowCount(const QModelIndex &/*parent*/ = QModelIndex()) const override
+    {
+        return m_pattern_store->trackContainer().tracks().size();
+    }
+
+
+    int columnCount(const QModelIndex &parent) const override
+    {
+        return parent.isValid() ? 0 : m_pattern_store->lengthOfPattern(m_track->patternIndex());
+    }
+
+private slots:
+	void trackAdded(ITrack* track) {
+	}
+private:
+	IPatternStore* m_pattern_store;
+	IPatternTrack* m_track;
+};
+
 class PatternTrackModel : public BaseTrackModel {
 	Q_OBJECT
 	Q_PROPERTY(QAbstractListModel* trackList READ trackList CONSTANT)
+	Q_PROPERTY(QAbstractItemModel* patternTable READ patternTable CONSTANT)
 public:
 	PatternTrackModel(IPatternTrack* _patternTrack, ITrack* track, QObject* parent) :
 		BaseTrackModel(track,  BaseTrackModel::TrackType::Pattern, parent),
 		m_patternTrack(_patternTrack),
-		m_trackList(IEngine::Instance()->getPatternStoreInterface())
+		m_trackList(IEngine::Instance()->getPatternStoreInterface()),
+		m_patternModel(IEngine::Instance()->getPatternStoreInterface(), _patternTrack)
 	{}
 
 	static void RegisterInQml() {
 		qmlRegisterType<lmms::gui::PatternTrackModel>("App", 1, 0, "PatternTrackModel");
+		PatternTableModel::RegisterInQml();
 	}
 
 	QAbstractListModel* trackList() {
 		return &m_trackList;
 	}
 
+	QAbstractItemModel* patternTable() {
+		return &m_patternModel;
+	}
+
 private:
 	IPatternTrack* m_patternTrack;
 	PatternTrackListView m_trackList;
+	PatternTableModel m_patternModel;
 };
 
 class BaseClipModel : public QObject {

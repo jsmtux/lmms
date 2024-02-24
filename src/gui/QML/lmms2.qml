@@ -228,7 +228,7 @@ ApplicationWindow {
                                 VerticalHeaderView {
                                     width: 350
                                     Layout.fillHeight: true
-                                    // syncView: songTableView
+                                    syncView: patternTableView
                                     resizableRows: false
                                     clip: true
                                     model: control.track.trackList
@@ -237,6 +237,27 @@ ApplicationWindow {
                                             instrumentActivated.connect(pluginAreaGroup.activateInstrument)
                                         }
                                     }
+                                }
+
+                                Component {
+                                    id: patternTableDelegate
+                                    CheckBox {
+                                        checked: true
+                                    }
+                                }
+
+                                TableView {
+                                    id: patternTableView
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    Layout.minimumWidth: 850
+                                    clip: true
+                                    columnSpacing: 1
+                                    rowSpacing: 1
+
+                                    model:control.track.patternTable
+
+                                    delegate: patternTableDelegate
                                 }
                             }
                         }
