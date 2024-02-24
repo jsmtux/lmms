@@ -229,6 +229,7 @@ class InstrumentTrackModel : public BaseTrackModel {
 	Q_OBJECT
 	Q_PROPERTY(lmms::gui::InstrumentModel* instrument READ instrument CONSTANT)
 	Q_PROPERTY(FloatLmmsModel* volume READ trackVolumeModel CONSTANT)
+	Q_PROPERTY(FloatLmmsModel* panning READ trackPanningModel CONSTANT)
 public:
 	InstrumentTrackModel(IInstrumentTrack* _instrumentTrack, ITrack* track, QObject* parent) :
 		BaseTrackModel(track,  BaseTrackModel::TrackType::Instrument, parent),
@@ -244,9 +245,13 @@ public:
 	FloatLmmsModel* trackVolumeModel() {
 		return &m_trackVolumeModel;
 	}
+	FloatLmmsModel* trackPanningModel() {
+		return &m_trackPanningModel;
+	}
 private:
 	IInstrumentTrack* m_instrumentTrack;
 	FloatLmmsModel m_trackVolumeModel{m_instrumentTrack->volumeModel()};
+	FloatLmmsModel m_trackPanningModel{m_instrumentTrack->panningModel()};
 };
 
 BaseTrackModel* CreateTrackModel(ITrack* track, QObject* parent);

@@ -34,25 +34,11 @@ Rectangle {
         id: instrumentTrackType
         Row {
             spacing: 5
-            Dial {
-                id: volumeDial
-                implicitWidth: 30
-                implicitHeight: 30
-                value: control.track.volume.value
-                inputMode: Dial.Horizontal
-                onMoved: {
-                    control.track.volume.value = volumeDial.value
-                }
-                from: control.track.volume.min
-                to: control.track.volume.max
-            }
             LmmsDial {
                 model: control.track.volume
             }
-            Dial {
-                implicitWidth: 30
-                implicitHeight: 30
-                inputMode: Dial.Horizontal
+            LmmsDial {
+                model: control.track.panning
             }
         }
     }
