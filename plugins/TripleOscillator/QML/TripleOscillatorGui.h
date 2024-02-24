@@ -39,35 +39,63 @@ namespace gui
 class OscillatorObjectModel : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(FloatLmmsModel* volume READ volumeModel CONSTANT)
+    Q_PROPERTY(FloatLmmsModel* pan READ panModel CONSTANT)
+    Q_PROPERTY(FloatLmmsModel* coarse READ coarseModel CONSTANT)
+    Q_PROPERTY(FloatLmmsModel* fineLeft READ fineLeftModel CONSTANT)
+    Q_PROPERTY(FloatLmmsModel* fineRight READ fineRightModel CONSTANT)
+    Q_PROPERTY(FloatLmmsModel* phaseOffset READ phaseOffsetModel CONSTANT)
+    Q_PROPERTY(FloatLmmsModel* stereoPhaseDetuning READ stereoPhaseDetuningModel CONSTANT)
+    Q_PROPERTY(IntLmmsModel* waveShape READ waveShapeModel CONSTANT)
+    Q_PROPERTY(IntLmmsModel* modulationAlgo READ modulationAlgoModel CONSTANT)
+    Q_PROPERTY(BoolLmmsModel* useWaveTable READ useWaveTableModel CONSTANT)
 public:
     OscillatorObjectModel(QObject* parent, OscillatorObject* _osc) :
         QObject(parent),
         m_osc(_osc)
-    {
-
+    {}
+    FloatLmmsModel* volumeModel() {
+        return &m_volumeModel;
+    }
+    FloatLmmsModel* panModel() {
+        return &m_panModel;
+    }
+    FloatLmmsModel* coarseModel() {
+        return &m_coarseModel;
+    }
+    FloatLmmsModel* fineLeftModel() {
+        return &m_fineLeftModel;
+    }
+    FloatLmmsModel* fineRightModel() {
+        return &m_fineRightModel;
+    }
+    FloatLmmsModel* phaseOffsetModel() {
+        return &m_phaseOffsetModel;
+    }
+    FloatLmmsModel* stereoPhaseDetuningModel() {
+        return &m_stereoPhaseDetuningModel;
+    }
+    IntLmmsModel* waveShapeModel() {
+        return &m_waveShapeModel;
+    }
+    IntLmmsModel* modulationAlgoModel() {
+        return &m_modulationAlgoModel;
+    }
+    BoolLmmsModel* useWaveTableModel() {
+        return &m_useWaveTableModel;
     }
 private:
     OscillatorObject* m_osc;
-	IFloatAutomatableModel* m_volumeModel{m_osc->m_volumeModel};
-    EXPOSE_LMMS_PROPERTY(float, volume, m_volumeModel)
-	IFloatAutomatableModel* m_panModel{m_osc->m_panModel};
-    EXPOSE_LMMS_PROPERTY(float, pan, m_panModel)
-	IFloatAutomatableModel* m_coarseModel{m_osc->m_coarseModel};
-    EXPOSE_LMMS_PROPERTY(float, coarse, m_coarseModel)
-	IFloatAutomatableModel* m_fineLeftModel{m_osc->m_fineLeftModel};
-    EXPOSE_LMMS_PROPERTY(float, fineLeft, m_fineLeftModel)
-	IFloatAutomatableModel* m_fineRightModel{m_osc->m_fineRightModel};
-    EXPOSE_LMMS_PROPERTY(float, fineRight, m_fineRightModel)
-	IFloatAutomatableModel* m_phaseOffsetModel{m_osc->m_phaseOffsetModel};
-    EXPOSE_LMMS_PROPERTY(float, phaseOffset, m_phaseOffsetModel)
-	IFloatAutomatableModel* m_stereoPhaseDetuningModel{m_osc->m_stereoPhaseDetuningModel};
-    EXPOSE_LMMS_PROPERTY(float, stereoPhaseDetuning, m_stereoPhaseDetuningModel)
-	IIntAutomatableModel* m_waveShapeModel{m_osc->m_waveShapeModel};
-    EXPOSE_LMMS_PROPERTY(int, waveShape, m_waveShapeModel)
-	IIntAutomatableModel* m_modulationAlgoModel{m_osc->m_modulationAlgoModel};
-    EXPOSE_LMMS_PROPERTY(int, modulationAlgo, m_modulationAlgoModel)
-	IBoolAutomatableModel* m_useWaveTableModel{m_osc->m_useWaveTableModel};
-    EXPOSE_LMMS_PROPERTY(bool, useWaveTable, m_useWaveTableModel)
+	FloatLmmsModel m_volumeModel{m_osc->m_volumeModel};
+	FloatLmmsModel m_panModel{m_osc->m_panModel};
+	FloatLmmsModel m_coarseModel{m_osc->m_coarseModel};
+	FloatLmmsModel m_fineLeftModel{m_osc->m_fineLeftModel};
+	FloatLmmsModel m_fineRightModel{m_osc->m_fineRightModel};
+	FloatLmmsModel m_phaseOffsetModel{m_osc->m_phaseOffsetModel};
+	FloatLmmsModel m_stereoPhaseDetuningModel{m_osc->m_stereoPhaseDetuningModel};
+	IntLmmsModel m_waveShapeModel{m_osc->m_waveShapeModel};
+	IntLmmsModel m_modulationAlgoModel{m_osc->m_modulationAlgoModel};
+	BoolLmmsModel m_useWaveTableModel{m_osc->m_useWaveTableModel};
 };
 
 class TripleOscillatorModel : public InstrumentModel

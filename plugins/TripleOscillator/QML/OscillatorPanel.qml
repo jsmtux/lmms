@@ -13,46 +13,32 @@ RowLayout {
     Label {
         text: control.text
     }
-    TaggedDial {
+    LmmsDial {
         text: "Vol"
-        value: control.osc.volume
-        from: control.osc.volume_max_value
-        to: control.osc.volume_min_value
+        model: control.osc.volume
     }
-    TaggedDial {
+    LmmsDial {
         text: "Pan"
-        value: control.osc.pan
-        from: control.osc.pan_max_value
-        to: control.osc.pan_min_value
+        model: control.osc.pan
     }
-    TaggedDial {
+    LmmsDial {
         text: "Crs"
-        value: control.osc.coarse
-        from: control.osc.coarse_max_value
-        to: control.osc.coarse_min_value
+        model: control.osc.coarse
     }
-    TaggedDial {
+    LmmsDial {
         text: "Fl"
-        value: control.osc.fineLeft
-        from: control.osc.fineLeft_max_value
-        to: control.osc.fineLeft_min_value
+        model: control.osc.fineLeft
     }
-    TaggedDial {
+    LmmsDial {
         text: "Fr"
-        value: control.osc.fineRight
-        from: control.osc.fineRight_max_value
-        to: control.osc.fineRight_min_value
+        model: control.osc.fineRight
     }
-    TaggedDial {
+    LmmsDial {
         text: "Pd"
-        value: control.osc.phaseOffset
-        from: control.osc.phaseOffset_max_value
-        to: control.osc.phaseOffset_min_value
+        model: control.osc.phaseOffset
     }
-    TaggedDial {
+    LmmsDial {
         text: "Spd"
-        value: control.osc.stereoPhaseDetuning
-        from: control.osc.stereoPhaseDetuning_max_value
-        to: control.osc.stereoPhaseDetuning_min_value
+        model: control.osc.stereoPhaseDetuning
     }
 }

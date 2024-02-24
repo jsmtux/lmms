@@ -14,7 +14,6 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 Widgets)
 qt_add_library(qmlgui SHARED
     GuiApplication.cpp
     GuiApplication.h
-    LMMSProperty.h
 )
 
 target_include_directories(qmlgui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
