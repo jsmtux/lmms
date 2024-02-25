@@ -229,7 +229,10 @@ ApplicationWindow {
                                 Component {
                                     id: patternTableDelegate
                                     CheckBox {
-                                        checked: true
+                                        id: control
+                                        implicitWidth: 35
+                                        required property bool noteEnabled
+                                        checked: control.noteEnabled
                                     }
                                 }
 

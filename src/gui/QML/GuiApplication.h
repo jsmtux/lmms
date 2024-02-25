@@ -315,6 +315,27 @@ private:
 	QList<BaseTrackModel*> m_trackList;
 };
 
+class PatternNoteModel : public QObject
+{
+	Q_OBJECT
+	Q_PROPERTY(bool enabled READ isEnabled CONSTANT)
+public:
+	PatternNoteModel(IPatternStore* _pattern_store, int _pattern_index, Note* _note) :
+		m_pattern_store(_pattern_store),
+		m_pattern_index(_pattern_index),
+		m_note(_note)
+	{
+	}
+
+	bool isEnabled() {
+		return false;
+	}
+private:
+	IPatternStore* m_pattern_store;
+	int m_pattern_index;
+	Note* m_note;
+};
+
 class PatternTableModel : public QAbstractItemModel {
 		Q_OBJECT
 public:
@@ -325,7 +346,7 @@ public:
 	}
 
 	enum Roles {
-		ClipRole = Qt::UserRole
+		NoteRole = Qt::UserRole
 	};
 
 	static void RegisterInQml() {
@@ -334,12 +355,25 @@ public:
 
 	QVariant data(const QModelIndex &index, int role) const override
     {
+
+		for (const auto& track : m_pattern_store->trackContainer().tracks()) {
+			const auto clipIndex = m_track->patternIndex();
+			qWarning() << "For track " << track->name() << ":\n";
+			if (track->type() == ITrack::TrackTypes::InstrumentTrack) {
+				const auto clip = track->getClips()[clipIndex];
+				auto* instrumentData = static_cast<IMidiClip*>(clip->getClipTypeSpecificInterface());
+				qWarning() << "Clip contains notes: " << instrumentData->notes().size() << Qt::endl;
+				for (const auto& note : instrumentData->notes()) {
+					qWarning() << note->pos() << " - " << note->endPos() << Qt::endl;
+				}
+			}
+		}
         if (index.isValid())
 		{
 			switch (role) {
 				case Qt::DisplayRole:
 					break;
-				case ClipRole:
+				case NoteRole:
 				{
 					return QVariant::fromValue(false);
 				}
@@ -362,7 +396,7 @@ public:
     virtual QHash<int, QByteArray> roleNames() const override
     {
         QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
-        roles[ClipRole] = "ClipRole";
+        roles[NoteRole] = "noteEnabled";
         return roles;
     }
 
@@ -375,7 +409,7 @@ public:
 
     int columnCount(const QModelIndex &parent) const override
     {
-        return parent.isValid() ? 0 : m_pattern_store->lengthOfPattern(m_track->patternIndex());
+        return parent.isValid() ? 0 : m_pattern_store->lengthOfPattern(m_track->patternIndex()) * 4 * 4;
     }
 
 private slots:
