@@ -231,8 +231,9 @@ ApplicationWindow {
                                     CheckBox {
                                         id: control
                                         implicitWidth: 35
-                                        required property bool noteEnabled
-                                        checked: control.noteEnabled
+                                        required property PatternNoteModel note
+                                        checked: control.note.enabled
+                                        onClicked: control.note.enabled = checked
                                     }
                                 }
 

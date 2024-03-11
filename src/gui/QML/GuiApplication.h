@@ -40,6 +40,8 @@
 #include <QDebug>
 #include <QAbstractItemModel>
 
+#define DEFAULT_STEPS_PER_BAR 16
+
 namespace lmms::gui
 {
 
@@ -318,22 +320,40 @@ private:
 class PatternNoteModel : public QObject
 {
 	Q_OBJECT
-	Q_PROPERTY(bool enabled READ isEnabled CONSTANT)
+	Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
 public:
-	PatternNoteModel(IPatternStore* _pattern_store, int _pattern_index, Note* _note) :
-		m_pattern_store(_pattern_store),
-		m_pattern_index(_pattern_index),
-		m_note(_note)
+	PatternNoteModel(IMidiClip* _clip, int _step, QObject* _parent = nullptr) :
+		QObject(_parent),
+		m_clip(_clip),
+		m_step(_step)
 	{
 	}
 
-	bool isEnabled() {
-		return false;
+	static void RegisterInQml() {
+		qmlRegisterType<lmms::gui::PatternNoteModel>("App", 1, 0, "PatternNoteModel");
 	}
+
+	bool isEnabled() {
+		return m_clip->noteAtStep(m_step) != nullptr;
+	}
+
+	void setEnabled(bool enabled) {
+		auto* cur_note = m_clip->noteAtStep(m_step);
+		if (enabled) {
+			if (cur_note == nullptr) {
+				m_clip->addStepNote(m_step);
+			}
+		} else {
+			if (cur_note != nullptr) {
+				m_clip->removeNote(cur_note);
+			}
+		}
+	}
+signals:
+	void enabledChanged();
 private:
-	IPatternStore* m_pattern_store;
-	int m_pattern_index;
-	Note* m_note;
+	IMidiClip* m_clip;
+	int m_step;
 };
 
 class PatternTableModel : public QAbstractItemModel {
@@ -351,23 +371,11 @@ public:
 
 	static void RegisterInQml() {
 		qmlRegisterType<lmms::gui::PatternTableModel>("App", 1, 0, "PatternTableModel");
+		PatternNoteModel::RegisterInQml();
 	}
 
 	QVariant data(const QModelIndex &index, int role) const override
     {
-
-		for (const auto& track : m_pattern_store->trackContainer().tracks()) {
-			const auto clipIndex = m_track->patternIndex();
-			qWarning() << "For track " << track->name() << ":\n";
-			if (track->type() == ITrack::TrackTypes::InstrumentTrack) {
-				const auto clip = track->getClips()[clipIndex];
-				auto* instrumentData = static_cast<IMidiClip*>(clip->getClipTypeSpecificInterface());
-				qWarning() << "Clip contains notes: " << instrumentData->notes().size() << Qt::endl;
-				for (const auto& note : instrumentData->notes()) {
-					qWarning() << note->pos() << " - " << note->endPos() << Qt::endl;
-				}
-			}
-		}
         if (index.isValid())
 		{
 			switch (role) {
@@ -375,7 +383,9 @@ public:
 					break;
 				case NoteRole:
 				{
-					return QVariant::fromValue(false);
+					const auto track = m_pattern_store->trackContainer().tracks()[index.row()];
+					const auto clip = track->getClips()[m_track->patternIndex()];
+					return QVariant::fromValue(new PatternNoteModel(static_cast<IMidiClip*>(clip->getClipTypeSpecificInterface()), index.column()));
 				}
 			}
 		}
@@ -396,7 +406,7 @@ public:
     virtual QHash<int, QByteArray> roleNames() const override
     {
         QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
-        roles[NoteRole] = "noteEnabled";
+        roles[NoteRole] = "note";
         return roles;
     }
 
@@ -409,7 +419,7 @@ public:
 
     int columnCount(const QModelIndex &parent) const override
     {
-        return parent.isValid() ? 0 : m_pattern_store->lengthOfPattern(m_track->patternIndex()) * 4 * 4;
+        return parent.isValid() ? 0 : m_pattern_store->lengthOfPattern(m_track->patternIndex()) * DEFAULT_STEPS_PER_BAR;
     }
 
 private slots:
