@@ -54,14 +54,14 @@ ApplicationWindow {
             Rectangle {
                 Layout.fillWidth: true
                 Layout.minimumHeight: 100
-                Layout.minimumWidth: 400
+                Layout.minimumWidth: 600
                 Layout.alignment: Qt.AlignHCenter
                 color: "transparent"
                 Rectangle {
                     id: statusBg
                     anchors.centerIn: parent
                     height: 100
-                    width: 400
+                    width: parent.width
                     color: Theme.bgColor
                     border.color: Theme.bgColorDarker
                     border.width: 2
@@ -98,7 +98,7 @@ ApplicationWindow {
         RowLayout {
             id: workArea
             Layout.fillHeight: true
-            Layout.minimumWidth: 250
+            Layout.minimumWidth: 350
             spacing: 0
 
             ColumnLayout {
@@ -212,7 +212,6 @@ ApplicationWindow {
                                 id: songTableView
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                Layout.minimumWidth: 850
                                 clip: true
                                 columnSpacing: 1
                                 rowSpacing: 1
@@ -268,7 +267,6 @@ ApplicationWindow {
                                         id: patternTableView
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
-                                        Layout.minimumWidth: 850
                                         clip: true
                                         columnSpacing: 1
                                         rowSpacing: 1
