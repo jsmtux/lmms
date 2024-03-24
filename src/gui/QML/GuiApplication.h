@@ -36,6 +36,7 @@
 #include <QClipboard>
 #include <QQmlEngine>
 #include <QQmlProperty>
+#include <QFileSystemModel>
 
 #include <QDebug>
 #include <QAbstractItemModel>
@@ -739,6 +740,37 @@ private:
 	// TrackListModel m_trackList;
 	SongTableModel m_songTable;
 	SongTrackListView m_trackList;
+};
+
+class LmmsModel : public QObject {
+	Q_OBJECT
+	Q_PROPERTY(QAbstractItemModel* projectFiles READ projectFiles CONSTANT)
+	Q_PROPERTY(QModelIndex projectsIndex READ projectsIndex CONSTANT)
+public:
+	LmmsModel(IConfigManager* _configManager) :
+		m_configManager(_configManager)
+	{
+		fs_model.setRootPath(QFileInfo{m_configManager->workingDir()}.absoluteFilePath());
+		m_projects_index = fs_model.index(QFileInfo{m_configManager->userProjectsDir()}.absoluteFilePath());
+	}
+
+	static void RegisterInQml() {
+		qmlRegisterType<lmms::gui::SongModel>("App", 1, 0, "LmmsModel");
+		SongModel::RegisterInQml();
+	}
+
+	QModelIndex projectsIndex() {
+		return m_projects_index;
+	}
+
+	QAbstractItemModel* projectFiles()
+	{
+		return &fs_model;
+	}
+private:
+	IConfigManager* m_configManager;
+	QFileSystemModel fs_model;
+	QModelIndex m_projects_index;
 };
 
 class ProgressModal : public IProgressModal {

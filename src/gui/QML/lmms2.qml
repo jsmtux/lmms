@@ -5,6 +5,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import LmmsWidgets
+import Qt.labs.folderlistmodel
 import App 1.0
 
 pragma ComponentBehavior: Bound
@@ -123,6 +124,17 @@ ApplicationWindow {
                         color: Theme.bgColor
                         border.color: Theme.tabBgColorDarker
                         border.width: 5
+                    }
+
+                    TreeView {
+                        id: treeView
+                        anchors.fill: parent
+                        clip: true
+
+                        delegate: TreeViewDelegate {}
+
+                        model: lmms.projectFiles
+                        rootIndex: lmms.projectsIndex
                     }
                 }
             }
