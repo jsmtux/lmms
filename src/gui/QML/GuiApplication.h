@@ -686,6 +686,8 @@ private:
 	QAbstractItemModel* m_model;
 };
 
+// As opposed to the ISong interface, here we assume a single song.
+// Song loading/unloading shall happen elsewhere.
 class SongModel : public QObject {
 	Q_OBJECT
 	Q_PROPERTY(QAbstractListModel* trackList READ getTrackList CONSTANT)
@@ -746,9 +748,12 @@ class LmmsModel : public QObject {
 	Q_OBJECT
 	Q_PROPERTY(QAbstractItemModel* projectFiles READ projectFiles CONSTANT)
 	Q_PROPERTY(QModelIndex projectsIndex READ projectsIndex CONSTANT)
+	Q_PROPERTY(SongModel* curSong READ curSong CONSTANT)
 public:
 	LmmsModel(IConfigManager* _configManager) :
-		m_configManager(_configManager)
+		m_configManager(_configManager),
+		m_song(IEngine::Instance()->getSongInterface()),
+		m_songModel(m_song)
 	{
 		fs_model.setRootPath(QFileInfo{m_configManager->workingDir()}.absoluteFilePath());
 		m_projects_index = fs_model.index(QFileInfo{m_configManager->userProjectsDir()}.absoluteFilePath());
@@ -767,10 +772,23 @@ public:
 	{
 		return &fs_model;
 	}
+
+	SongModel* curSong() {
+		return &m_songModel;
+	}
+
+	Q_INVOKABLE void onProjectFileSelected(QModelIndex index) {
+		qWarning() << "Selected " << fs_model.filePath(index) << fs_model.isDir(index) << Qt::endl;
+		if (!fs_model.isDir(index)) {
+			m_song->loadProject(fs_model.filePath(index));
+		}
+	}
 private:
 	IConfigManager* m_configManager;
 	QFileSystemModel fs_model;
 	QModelIndex m_projects_index;
+	ISong* m_song;
+	SongModel m_songModel;
 };
 
 class ProgressModal : public IProgressModal {

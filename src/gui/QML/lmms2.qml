@@ -68,12 +68,13 @@ ApplicationWindow {
 
                     Flow {
                         anchors.verticalCenter: statusBg.verticalCenter
+                        anchors.centerIn: parent
                         padding: 5
                         StatusButton {
                             id: helpButtonTest
                             source: "qrc:/icons/status_button/play.png"
                             focusPolicy: Qt.TabFocus
-                            onClicked: songModel.Play();
+                            onClicked: lmms.curSong.Play();
                         }
                         StatusButton {
                             id: helpButtonTest3
@@ -131,7 +132,13 @@ ApplicationWindow {
                         anchors.fill: parent
                         clip: true
 
-                        delegate: TreeViewDelegate {}
+                        delegate: TreeViewDelegate { }
+
+                        selectionModel: ItemSelectionModel {
+                            onCurrentChanged: function(current, previous) {
+                                lmms.onProjectFileSelected(current)
+                            }
+                        }
 
                         model: lmms.projectFiles
                         rootIndex: lmms.projectsIndex
@@ -200,7 +207,7 @@ ApplicationWindow {
                                 syncView: songTableView
                                 resizableRows: false
                                 clip: true
-                                model: songModel.trackList
+                                model: lmms.curSong.trackList
                                 delegate: TrackViewDelegate {
                                     Component.onCompleted: {
                                         instrumentActivated.connect(pluginAreaGroup.activateInstrument)
@@ -216,7 +223,7 @@ ApplicationWindow {
                                 columnSpacing: 1
                                 rowSpacing: 1
 
-                                model:songModel.songTable
+                                model:lmms.curSong.songTable
 
                                 delegate: ClipViewDelegate {
                                     implicitHeight: 40

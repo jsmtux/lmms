@@ -202,10 +202,6 @@ int main( int argc, char * * argv )
 	lmms::gui::LmmsModel lmms_model(IConfigManager::Instance());
 	qml_context->setContextProperty("lmms", &lmms_model);
 
-	lmms::gui::SongModel song_model(IEngine::Instance()->getSongInterface());
-	qml_context->setContextProperty("songModel", &song_model);
-
-
     qCoreApplicationEngine.load(QUrl(QStringLiteral("qrc:/lmms2.qml")));
 
 	IEngine::Instance()->getSongInterface()->setExportLoop( false );
@@ -227,8 +223,6 @@ int main( int argc, char * * argv )
 	}
 
 	lmms::gui::GuiApplication guiApplication;
-
-	IEngine::Instance()->getSongInterface()->loadProject("../data/projects/shorties/sv-DnB-Startup.mmpz");
 
 	const int ret = app.exec();
 
