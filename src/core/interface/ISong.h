@@ -77,6 +77,7 @@ public:
     virtual ~ISong() = default;
 	virtual void createNewProject() = 0;
     virtual void loadProject( const QString & filename ) = 0;
+	virtual void clearProject() = 0;
     virtual void setExportLoop( bool exportLoop ) = 0;
     virtual void collectError( const QString error ) = 0;
 	virtual void exportProjectMidi(QString const & exportFileName) const = 0;

@@ -418,8 +418,6 @@ protected:
 
 signals:
 	void initValueChanged( float val );
-	void destroyed( lmms::jo_id_t id );
-
 } ;
 
 

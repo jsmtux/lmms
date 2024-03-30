@@ -191,6 +191,11 @@ public:
 	BoolLmmsModel* trackSoloModel() {
 		return &m_trackSoloModel;
 	}
+
+	bool containsTrack(ITrack* _track) {
+		return _track == m_track;
+	}
+
 signals:
 	void nameChanged();
 	void propertiesChanged();
@@ -633,11 +638,35 @@ private slots:
 		auto trackModel = CreateTrackModel(track, this);
 		m_trackList.append(trackModel);
 		m_trackClips[trackModel] = QList<BaseClipModel*>();
-		connect(track, &ITrack::clipAdded, this, [this, trackModel](IClip* clip){clipAdded(trackModel, clip);});
+		connect(track, &ITrack::clipAdded, this, [this, trackModel](IClip* clip){clipAdded(trackModel, clip);} );
+		connect(track->model(), &QObject::destroyed, this, [this, track](){goingToRemoveTrack(track);}, Qt::DirectConnection);
 		for (const auto& clip: track->getClips()) {
 			clipAdded(trackModel, clip);
 		}
 		endInsertRows();
+	}
+
+	void goingToRemoveTrack(ITrack* track) {
+		auto it = m_trackClips.begin();
+		int index = 0;
+		while(it != m_trackClips.end()) {
+			if (it.key()->containsTrack(track)) {
+				break;
+			}
+			++it;
+			index++;
+		}
+		beginRemoveRows(QModelIndex(), index, index);
+		m_trackClips.erase(it);
+		auto list_it = m_trackList.begin();
+		while(list_it != m_trackList.end()) {
+			if ((*list_it)->containsTrack(track)) {
+				m_trackList.erase(list_it);
+				break;
+			}
+			++it;
+		}
+		endRemoveRows();
 	}
 
 	void clipAdded(BaseTrackModel* track, IClip* clip) {
@@ -698,8 +727,6 @@ public:
 		m_songTable(song),
 		m_trackList(&m_songTable)
 	{
-		connect(m_song->trackContainerInterface(),
-			&ITrackContainer::trackAdded, this, &SongModel::trackAdded);
 	}
 
 	static void RegisterInQml() {
@@ -713,10 +740,6 @@ public:
 		BoolLmmsModel::RegisterInQml();
 	}
 
-	const QList<ITrack*> tracks() {
-		return m_tracks;
-	}
-
 	Q_INVOKABLE void Play() {
 		m_song->playSong();
 	}
@@ -728,18 +751,8 @@ public:
 	SongTableModel* getSongTable() {
 		return &m_songTable;
 	}
-signals:
-	void onTrackAdded(std::size_t ind);
-private slots:
-	void trackAdded(ITrack* track) {
-		auto index = m_tracks.size();
-		m_tracks.append(track);
-		emit onTrackAdded(index);
-	}
 private:
 	ISong* m_song;
-	QList<ITrack*> m_tracks;
-	// TrackListModel m_trackList;
 	SongTableModel m_songTable;
 	SongTrackListView m_trackList;
 };
@@ -778,7 +791,6 @@ public:
 	}
 
 	Q_INVOKABLE void onProjectFileSelected(QModelIndex index) {
-		qWarning() << "Selected " << fs_model.filePath(index) << fs_model.isDir(index) << Qt::endl;
 		if (!fs_model.isDir(index)) {
 			m_song->loadProject(fs_model.filePath(index));
 		}

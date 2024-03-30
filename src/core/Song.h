@@ -401,7 +401,7 @@ public slots:
 
 	void setModified() override;
 
-	void clearProject();
+	void clearProject() override;
 
 	void addPatternTrack();
 

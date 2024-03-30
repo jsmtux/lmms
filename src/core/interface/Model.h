@@ -29,6 +29,7 @@
 #include <QObject>
 
 #include "lmms_export.h"
+#include "lmms_basics.h"
 
 namespace lmms
 {
@@ -68,6 +69,8 @@ signals:
 	// emitted if properties of the model (e.g. ranges) have changed
 	void propertiesChanged();
 
+	// This is only emitted for journalling object children
+	void automatableObjectDestroyed( lmms::jo_id_t id );
 } ;
 
 

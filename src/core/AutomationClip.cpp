@@ -133,7 +133,7 @@ bool AutomationClip::addObject( IAutomatableModelBase * _obj, bool _search_dup )
 
 	m_objects += _obj;
 
-	connect(_obj->model(), &Model::destroyed, this, [this, _obj](){objectDestroyed(_obj->id());}, Qt::DirectConnection );
+	connect(_obj->model(), &Model::automatableObjectDestroyed, this, &AutomationClip::objectDestroyed, Qt::DirectConnection );
 
 	emit m_clipModel.dataChanged();
 

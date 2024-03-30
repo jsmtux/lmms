@@ -217,7 +217,7 @@ InstrumentTrack::~InstrumentTrack()
 	silenceAllNotes( true );
 
 	// now we're save deleting the instrument
-	if( m_instrument ) delete m_instrument;
+	// if( m_instrument ) delete m_instrument;
 }
 
 

@@ -81,7 +81,7 @@ AutomatableModel::~AutomatableModel()
 
 	m_valueBuffer.clear();
 
-	emit destroyed( id() );
+	emit automatableObjectDestroyed( id() );
 }
 
 bool AutomatableModel::mustQuoteName(const QString& name)
