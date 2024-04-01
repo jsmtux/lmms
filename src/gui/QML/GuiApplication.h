@@ -744,6 +744,11 @@ public:
 		m_song->playSong();
 	}
 
+
+	Q_INVOKABLE void Stop() {
+		m_song->stop();
+	}
+
 	QAbstractListModel* getTrackList() {
 		return &m_trackList;
 	}

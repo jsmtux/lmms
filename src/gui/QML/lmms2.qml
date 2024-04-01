@@ -89,6 +89,7 @@ ApplicationWindow {
                         StatusButton {
                             id: helpButtonTest5
                             source: "qrc:/icons/status_button/stop.png"
+                            onClicked: lmms.curSong.Stop();
                             focusPolicy: Qt.TabFocus
                         }
                     }
