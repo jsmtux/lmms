@@ -1,7 +1,7 @@
-IF(LMMS_BUILD_LINUX AND WANT_VST)
-	set(BUILD_SHARED_LIBS OFF)
-	add_subdirectory(qt5-x11embed)
-ENDIF()
+# IF(LMMS_BUILD_LINUX AND WANT_VST)
+# 	set(BUILD_SHARED_LIBS OFF)
+# 	add_subdirectory(qt5-x11embed)
+# ENDIF()
 
 ADD_SUBDIRECTORY(hiir)
 ADD_SUBDIRECTORY(rpmalloc)

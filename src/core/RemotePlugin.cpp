@@ -24,6 +24,8 @@
 
 #include "RemotePlugin.h"
 
+#ifdef WANT_VST
+
 //#define DEBUG_REMOTE_PLUGIN
 #ifdef DEBUG_REMOTE_PLUGIN
 #include <QDebug>
@@ -580,3 +582,5 @@ bool RemotePlugin::processMessage( const message & _m )
 
 
 } // namespace lmms
+
+#endif

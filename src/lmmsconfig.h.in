@@ -15,6 +15,7 @@
 #cmakedefine LMMS_HOST_PPC32
 #cmakedefine LMMS_HOST_PPC64
 
+#cmakedefine LMMS_HAVE_AAUDIO
 #cmakedefine LMMS_HAVE_ALSA
 #cmakedefine LMMS_HAVE_FLUIDSYNTH
 #cmakedefine LMMS_HAVE_JACK

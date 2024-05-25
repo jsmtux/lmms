@@ -25,6 +25,8 @@
 #ifndef LMMS_REMOTE_PLUGIN_H
 #define LMMS_REMOTE_PLUGIN_H
 
+#ifdef WANT_VST
+
 #include "RemotePluginBase.h"
 #include "SharedMemory.h"
 
@@ -196,5 +198,7 @@ LMMS_EXPORT inline std::string QSTR_TO_STDSTR(QString const& qstr)
 
 
 } // namespace lmms
+
+#endif
 
 #endif // LMMS_REMOTE_PLUGIN_H

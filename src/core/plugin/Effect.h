@@ -29,7 +29,7 @@
 #include "Plugin.h"
 #include "IMemoryManager.h"
 #include "IModels.h"
-#include "samplerate.h"
+#include <samplerate.h>
 #include "IEffectChain.h"
 
 #include <QObject>

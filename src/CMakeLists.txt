@@ -53,14 +53,14 @@ ENDIF()
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 
-ADD_EXECUTABLE(lmms
-	gui/QWidgets/main.cpp
-	"${WINRC}"
-)
+# ADD_EXECUTABLE(lmms
+# 	gui/QWidgets/main.cpp
+# 	"${WINRC}"
+# )
 
-TARGET_INCLUDE_DIRECTORIES(lmms
-	PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
-)
+# TARGET_INCLUDE_DIRECTORIES(lmms
+# 	PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+# )
 
 # Set Visual Studio startup project to lmms
 # https://stackoverflow.com/a/37994396/8166701
@@ -71,29 +71,29 @@ ENDIF()
 SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${LMMS_RCC_OUT} lmmsconfig.h lmms.1.gz")
 
 
-TARGET_LINK_LIBRARIES(lmms
-	PUBLIC
-	lmms_core
-	lmms_gui
-	lmms_qwidget_plugins
-)
+# TARGET_LINK_LIBRARIES(lmms
+# 	PUBLIC
+# 	lmms_core
+# 	lmms_gui
+# 	lmms_qwidget_plugins
+# )
 
 
-ADD_EXECUTABLE(lmms_headless
-	gui/headless/main.cpp
-    gui/headless/GuiApplication.cpp
-	"${WINRC}"
-)
+# ADD_EXECUTABLE(lmms_headless
+# 	gui/headless/main.cpp
+#     gui/headless/GuiApplication.cpp
+# 	"${WINRC}"
+# )
 
-TARGET_LINK_LIBRARIES(lmms_headless
-	PUBLIC
-	lmms_core_interface
-	lmms_core
-)
+# TARGET_LINK_LIBRARIES(lmms_headless
+# 	PUBLIC
+# 	lmms_core_interface
+# 	lmms_core
+# )
 
-TARGET_INCLUDE_DIRECTORIES(lmms_headless
-	PUBLIC ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src ${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/src/core
-)
+# TARGET_INCLUDE_DIRECTORIES(lmms_headless
+# 	PUBLIC ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src ${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/src/core
+# )
 
 IF(LMMS_BUILD_WIN32)
 	SET_TARGET_PROPERTIES(lmms PROPERTIES
@@ -112,9 +112,9 @@ IF(LMMS_BUILD_WIN32)
 		)
 	ENDIF()
 ELSE()
-	IF(NOT LMMS_BUILD_APPLE)
-		SET_TARGET_PROPERTIES(lmms PROPERTIES LINK_FLAGS "${LINK_FLAGS} -Wl,-E")
-	ENDIF(NOT LMMS_BUILD_APPLE)
+	# IF(NOT LMMS_BUILD_APPLE)
+	# 	SET_TARGET_PROPERTIES(lmms PROPERTIES LINK_FLAGS "${LINK_FLAGS} -Wl,-E")
+	# ENDIF(NOT LMMS_BUILD_APPLE)
 
 	if(CMAKE_INSTALL_MANDIR)
 		SET(INSTALL_MANDIR ${CMAKE_INSTALL_MANDIR})
@@ -126,4 +126,4 @@ ELSE()
 			PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 ENDIF()
 
-INSTALL(TARGETS lmms RUNTIME DESTINATION "${BIN_DIR}")
+# INSTALL(TARGETS lmms RUNTIME DESTINATION "${BIN_DIR}")

@@ -25,6 +25,8 @@
 #ifndef LMMS_SHARED_MEMORY_H
 #define LMMS_SHARED_MEMORY_H
 
+#ifdef LMMS_HAS_SHARED_MEMORY
+
 #include <memory>
 #include <string>
 #include <type_traits>
@@ -148,5 +150,7 @@ private:
 };
 
 } // namespace lmms
+
+#endif
 
 #endif // LMMS_SHARED_MEMORY_H

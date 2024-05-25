@@ -36,13 +36,14 @@ namespace lmms
 namespace gui
 {
 
-class KickerModel : public InstrumentModel
+class AudioFileProcessorModel : public InstrumentModel
 {
     Q_OBJECT
 public:
-    KickerModel(QObject* parent, IInstrument* _instrument)
+    AudioFileProcessorModel(QObject* parent, IInstrument* _instrument)
         : InstrumentModel(parent, _instrument)
     {
+        qWarning() << "Creating processor\n";
     }
 };
 
@@ -51,14 +52,21 @@ class AudioFileProcessorQmlInstrument : public AudioFileProcessor, public ModelF
 public:
     AudioFileProcessorQmlInstrument(IInstrumentTrack * _instrument_track)
 		: AudioFileProcessor(_instrument_track)
-	{}
+	{
+        qWarning() << "Creating audiofileprocessorquimlinstrument\n\n";
+    }
+
+    ~AudioFileProcessorQmlInstrument() {
+        qWarning() << "DELETING audiofileprocessorquimlinstrument\n\n";
+    }
 
 	IGUISpecificPlugin* guiSpecificPlugin() override {
         return this;
     }
 
 	InstrumentModel* getModel(QObject* parent) override {
-        return new KickerModel(parent, this);
+        qWarning() << "Returning model\n";
+        return new AudioFileProcessorModel(parent, this);
     }
 };
 

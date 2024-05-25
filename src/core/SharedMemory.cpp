@@ -25,6 +25,8 @@
 
 #include "lmmsconfig.h"
 
+#ifdef WANT_VST
+
 #ifdef LMMS_HAVE_UNISTD_H
 #	include <unistd.h>
 #endif
@@ -43,7 +45,6 @@
 #	include <QtGlobal>
 #	include <QSharedMemory>
 #endif
-
 
 namespace lmms::detail {
 
@@ -200,3 +201,5 @@ SharedMemoryData::SharedMemoryData(SharedMemoryData&& other) noexcept :
 { }
 
 } // namespace lmms::detail
+
+#endif

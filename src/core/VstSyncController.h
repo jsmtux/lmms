@@ -26,6 +26,8 @@
 #ifndef LMMS_VST_SYNC_CONTROLLER_H
 #define LMMS_VST_SYNC_CONTROLLER_H
 
+#ifdef WANT_VST
+
 #include <QObject>
 
 #include "SharedMemory.h"
@@ -61,5 +63,42 @@ private:
 
 
 } // namespace lmms
+
+#else
+
+#include <QObject>
+
+namespace lmms
+{
+
+namespace {
+const std::string invalid_mem_key = "INVALID_SH_MEM_KEY";
+}
+
+class VstSyncController : public QObject
+{
+	Q_OBJECT
+public:
+	VstSyncController() {}
+
+	void setAbsolutePosition(double ticks) {}
+	void setPlaybackState(bool enabled) {}
+	void setTempo(int newTempo) {}
+	void setTimeSignature(int num, int denom) {}
+	void startCycle(int startTick, int endTick) {}
+	void stopCycle() {}
+	void setPlaybackJumped(bool jumped) {}
+	void update() {}
+
+	const std::string& sharedMemoryKey() const noexcept { return invalid_mem_key; }
+
+private slots:
+	void updateSampleRate() {}
+};
+
+
+} // namespace lmms
+
+#endif
 
 #endif // LMMS_VST_SYNC_CONTROLLER_H

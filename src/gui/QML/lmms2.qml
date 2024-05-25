@@ -74,7 +74,7 @@ ApplicationWindow {
                             id: helpButtonTest
                             source: "qrc:/icons/status_button/play.png"
                             focusPolicy: Qt.TabFocus
-                            onClicked: lmms.curSong.Play();
+                            onPressed: lmms.curSong.Play();
                         }
                         StatusButton {
                             id: helpButtonTest3
@@ -89,7 +89,7 @@ ApplicationWindow {
                         StatusButton {
                             id: helpButtonTest5
                             source: "qrc:/icons/status_button/stop.png"
-                            onClicked: lmms.curSong.Stop();
+                            onPressed: lmms.curSong.Stop();
                             focusPolicy: Qt.TabFocus
                         }
                     }
@@ -133,7 +133,16 @@ ApplicationWindow {
                         anchors.fill: parent
                         clip: true
 
-                        delegate: TreeViewDelegate { }
+                        delegate: TreeViewDelegate {
+                            id: item
+                            TapHandler {
+                                acceptedModifiers: Qt.NoModifier
+                                onTapped: (eventPoint, button) => {
+                                    lmms.onProjectFileSelected(treeView.index( item.row, item.column))
+                                    console.log(item.row, item.column)
+                                }
+                            }
+                        }
 
                         selectionModel: ItemSelectionModel {
                             onCurrentChanged: function(current, previous) {

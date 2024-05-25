@@ -1,10 +1,11 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
+cmake_minimum_required(VERSION 3.14)
 
 PROJECT(lmms)
 
-SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 SET(LMMS_BINARY_DIR ${CMAKE_BINARY_DIR})
 SET(LMMS_SOURCE_DIR ${CMAKE_SOURCE_DIR})
+
 
 IF(COMMAND CMAKE_POLICY)
 	CMAKE_POLICY(SET CMP0005 NEW)
@@ -63,12 +64,13 @@ ENDIF()
 INCLUDE(VersionInfo)
 INCLUDE(DetectMachine)
 
+OPTION(WANT_AAUDIO	"Include AAudio (android audio) support" OFF)
 OPTION(WANT_ALSA	"Include ALSA (Advanced Linux Sound Architecture) support" ON)
 OPTION(WANT_CALF	"Include CALF LADSPA plugins" ON)
 OPTION(WANT_CAPS	"Include C* Audio Plugin Suite (LADSPA plugins)" ON)
 OPTION(WANT_CARLA	"Include Carla plugin" ON)
 OPTION(WANT_CMT		"Include Computer Music Toolkit LADSPA plugins" ON)
-OPTION(WANT_JACK	"Include JACK (Jack Audio Connection Kit) support" ON)
+OPTION(WANT_JACK	"Include JACK (Jack Audio Connection Kit) support" OFF)
 OPTION(WANT_WEAKJACK	"Loosely link JACK libraries" ON)
 OPTION(WANT_LV2		"Include Lv2 plugins" ON)
 OPTION(WANT_SUIL	"Include SUIL for LV2 plugin UIs" ON)
@@ -135,6 +137,10 @@ IF(LMMS_BUILD_MSYS AND CMAKE_BUILD_TYPE STREQUAL "Debug")
 	SET(STATUS_STK "not built as requested")
 ENDIF()
 
+IF(LMMS_BUILD_ANDROID)
+	SET(WANT_AAUDIO ON)
+ENDIF()
+
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 CHECK_INCLUDE_FILES(pthread.h LMMS_HAVE_PTHREAD_H)
@@ -159,6 +165,7 @@ check_library_exists(rt shm_open "" LMMS_HAVE_LIBRT)
 
 LIST(APPEND CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}")
 
+
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Quick QuickControls2 Xml Core5Compat)
 
 SET(QT_LIBRARIES
@@ -170,9 +177,32 @@ SET(QT_LIBRARIES
 	Qt6::Core5Compat
 )
 
+
+qt_standard_project_setup()
+
+if(LMMS_BUILD_ANDROID)
+	set(ANDROID_PLATFORM android-27)
+
+	set(ANDROID_NDK /home/jsmtux/Coding/Android/Sdk/ndk/26.1.10909125/)
+
+	include_directories(${ANDROID_NDK}/sources/android/native_app_glue)
+
+	# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -ffor-scope -pipe -ffunction-sections -fdata-sections -ffast-math -Wnon-virtual-dtor -Wreorder -Wsign-promo -fvisibility=hidden -fvisibility-inlines-hidden -Wstrict-null-sentinel -Os -funroll-all-loops -fpeel-loops -ftree-vectorize")
+	set(LINKER_FLAGS "${LINKER_FLAGS} -Wl,--as-needed -Wl,--gc-sections -Wl,--no-undefined -Wl,--strip-all -Wl,-rpath-link=${ANDROID_NDK_SYSROOT}/usr/lib/ -L${ANDROID_NDK_SYSROOT}/usr/lib/")
+
+	set(SNDFILE_INCLUDE_DIR "$ENV{ANDROID_LIBS_DIR}/libsndfile/include")
+	set(SNDFILE_LIBRARY "$ENV{ANDROID_LIBS_DIR}/libsndfile/lib/libsndfile.a")
+	set(FFTW_INCLUDE_DIR "$ENV{ANDROID_LIBS_DIR}/fftw/include")
+	set(FFTW3F_LIBRARY "$ENV{ANDROID_LIBS_DIR}/fftw/lib/libfftw3f.a")
+	set(SAMPLERATE_INCLUDE_DIR "$ENV{ANDROID_LIBS_DIR}/libsamplerate/include/")
+	set(SAMPLERATE_LIBRARY "$ENV{ANDROID_LIBS_DIR}/libsamplerate/lib/libsamplerate.a")
+endif()
+# set(SDL2_INCLUDE_DIR "$ENV{ANDROID_LIBS_DIR}/SDL2/include")
+# set(SDL2_LIBRARY "$ENV{ANDROID_LIBS_DIR}/SDL2/lib/libSDL2.so")
+
 IF(LMMS_BUILD_LINUX AND WANT_VST)
-    FIND_PACKAGE(Qt5 COMPONENTS X11Extras REQUIRED)
-    LIST(APPEND QT_LIBRARIES Qt6::X11Extras)
+    # FIND_PACKAGE(Qt5 COMPONENTS X11Extras REQUIRED)
+    # LIST(APPEND QT_LIBRARIES Qt6::X11Extras)
 ENDIF()
 
 # Resolve Qt6::qmake to full path for use in packaging scripts
@@ -310,6 +340,12 @@ IF(WANT_SDL)
 		SET(SDL_LIBRARY "")
 	ELSE()
 		SET(SDL2_LIBRARY "")
+	ENDIF()
+ENDIF()
+
+IF(WANT_AAUDIO)
+	IF(ANDROID)
+		SET(LMMS_HAVE_AAUDIO TRUE)
 	ENDIF()
 ENDIF()
 

@@ -1,6 +1,7 @@
 /build
 /build_qt5
 /build_qt6
+/build_android
 /target
 .*.sw?
 .DS_Store

@@ -172,12 +172,15 @@ void PluginFactory::discoverPlugins()
 	// all libraries twice we ensure that libZynAddSubFxCore is found.
 	for (const QFileInfo& file : files)
 	{
+		// qDebug() << "Loading file " << file.fileName() << Qt::endl;
+		// QLibrary(file.fileName()).load();
 		qDebug() << "Loading file " << file.absoluteFilePath() << Qt::endl;
 		QLibrary(file.absoluteFilePath()).load();
 	}
 
 	for (const QFileInfo& file : files)
 	{
+		// auto library = std::make_shared<QLibrary>(file.fileName());
 		auto library = std::make_shared<QLibrary>(file.absoluteFilePath());
 		library->setLoadHints(QLibrary::ResolveAllSymbolsHint | QLibrary::ExportExternalSymbolsHint);
 		if (! library->load()) {
@@ -189,7 +192,11 @@ void PluginFactory::discoverPlugins()
 		PluginDescriptor* pluginDescriptor = nullptr;
 		if (library->resolve("lmms_plugin_main"))
 		{
-			QString descriptorName = file.baseName() + "_plugin_descriptor";
+			QString libraryCommonName = file.baseName();
+			if ( libraryCommonName.contains("_") ) {
+				libraryCommonName = libraryCommonName.mid(0, libraryCommonName.indexOf("_"));
+			}
+			QString descriptorName = libraryCommonName + "_plugin_descriptor";
 			if( descriptorName.left(3) == "lib" )
 			{
 				descriptorName = descriptorName.mid(3);
@@ -221,8 +228,8 @@ void PluginFactory::discoverPlugins()
 				{
 					for (const QString& ext : supportedFileTypes.split(','))
 					{
-						//qDebug() << "Plugin " << info.name()
-						//	<< "supports" << ext;
+						// qWarning() << "Plugin " << info.name()
+						// 	<< "supports" << ext;
 						PluginInfoAndKey infoAndKey;
 						infoAndKey.info = info;
 						infoAndKey.key = key

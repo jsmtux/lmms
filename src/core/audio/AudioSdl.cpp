@@ -26,7 +26,7 @@
 
 #ifdef LMMS_HAVE_SDL
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "AudioEngine.h"
 #include "ConfigManager.h"
@@ -50,7 +50,7 @@ AudioSdl::AudioSdl( bool & _success_ful, AudioEngine*  _audioEngine ) :
 	m_convertedBuf = new Uint8[m_convertedBufSize];
 #endif
 
-	if( SDL_Init( SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE ) < 0 )
+	if( SDL_InitSubSystem( SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE ) < 0 )
 	{
 		qCritical( "Couldn't initialize SDL: %s\n", SDL_GetError() );
 		return;

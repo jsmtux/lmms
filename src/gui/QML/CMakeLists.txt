@@ -7,11 +7,12 @@ set(CMAKE_AUTOMOC ON)
 
 set(INSTALL_EXAMPLEDIR "${INSTALL_EXAMPLESDIR}/quickcontrols/lmms2")
 
-qt_standard_project_setup(REQUIRES 6.5)
+qt_standard_project_setup(REQUIRES 6.6)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 Widgets)
 
 qt_add_library(qmlgui SHARED
+    QMLDummyInstrument.cpp
     GuiApplication.cpp
     GuiApplication.h
 )
@@ -78,6 +79,13 @@ target_link_libraries(lmms2example PUBLIC
     lmms_core
     qmlgui
 )
+
+if(ANDROID)
+    set_target_properties(lmms2example PROPERTIES
+        QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android"
+        QT_ANDROID_TARGET_SDK_VERSION "27"
+    )
+endif()
 
 install(TARGETS lmms2example
     RUNTIME DESTINATION "${INSTALL_EXAMPLEDIR}"

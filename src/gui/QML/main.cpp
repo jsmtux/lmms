@@ -82,21 +82,6 @@ inline void loadTranslation( const QString & tname,
 	}
 }
 
-namespace lmms
-{
-
-IEffect* InstantiateDummyEffect(IEffectChain* _parent, const QDomElement& originalPluginData)
-{
-	return new DummyEffect(_parent, originalPluginData);
-}
-
-
-IInstrument* InstantiateDummyInstrument(IInstrumentTrack* _instrument_track)
-{
-	return new DummyInstrument(_instrument_track);
-}
-}
-
 void SetRealTime()
 {
 	// try to set realtime priority
@@ -191,7 +176,7 @@ int main( int argc, char * * argv )
 
 	auto qml_context = qCoreApplicationEngine.rootContext();
 	
-	IConfigManager::Instance()->setWorkingDir("../data");
+	// IConfigManager::Instance()->setWorkingDir("../data");
 	if ( !IConfigManager::Instance()->hasWorkingDir() )
 	{
 		IConfigManager::Instance()->createWorkingDir();

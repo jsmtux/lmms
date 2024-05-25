@@ -65,6 +65,9 @@ ConfigManager::ConfigManager() :
 	m_version(defaultVersion()),
 	m_configVersion( UPGRADE_METHODS.size() )
 {
+#ifdef ANDROID
+		initAndroidWorkingDir();
+#else
 	if (QFileInfo::exists(gui::getGUIInterface()->applicationDirPath() + PORTABLE_MODE_FILE))
 	{
 		initPortableWorkingDir();
@@ -73,6 +76,7 @@ ConfigManager::ConfigManager() :
 	{
 		initInstalledWorkingDir();
 	}
+#endif
 	m_dataDir = "data:/";
 	m_vstDir = m_workingDir + "vst/";
 	m_sf2Dir = m_workingDir + SF2_PATH;
@@ -89,7 +93,7 @@ ConfigManager::ConfigManager() :
 #else
 	QDir::addSearchPath("data", gui::getGUIInterface()->applicationDirPath().section('/', 0, -2) + "/share/lmms/");
 #endif
-
+	qDebug() << "Woring dir is after cosntructor " << m_workingDir << Qt::endl;
 }
 
 
@@ -637,6 +641,35 @@ void ConfigManager::saveConfigFile()
 
 	outfile.write(xml.toUtf8());
 	outfile.close();
+}
+
+void ConfigManager::initAndroidWorkingDir()
+{
+
+	    qDebug() << "location for DesktopLocation" << QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) << Qt::endl;
+        qDebug() << "location for DocumentsLocation" << QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) << Qt::endl;
+        qDebug() << "location for FontsLocation" << QStandardPaths::writableLocation(QStandardPaths::FontsLocation) << Qt::endl;
+        qDebug() << "location for ApplicationsLocation" << QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) << Qt::endl;
+        qDebug() << "location for MusicLocation" << QStandardPaths::writableLocation(QStandardPaths::MusicLocation) << Qt::endl;
+        qDebug() << "location for MoviesLocation" << QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) << Qt::endl;
+        qDebug() << "location for PicturesLocation" << QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) << Qt::endl;
+        qDebug() << "location for TempLocation" << QStandardPaths::writableLocation(QStandardPaths::TempLocation) << Qt::endl;
+        qDebug() << "location for HomeLocation" << QStandardPaths::writableLocation(QStandardPaths::HomeLocation) << Qt::endl;
+        qDebug() << "location for AppLocalDataLocation" << QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) << Qt::endl;
+        qDebug() << "location for CacheLocation" << QStandardPaths::writableLocation(QStandardPaths::CacheLocation) << Qt::endl;
+        qDebug() << "location for GenericDataLocation" << QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) << Qt::endl;
+        qDebug() << "location for RuntimeLocation" << QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation) << Qt::endl;
+        qDebug() << "location for ConfigLocation" << QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) << Qt::endl;
+        qDebug() << "location for DownloadLocation" << QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) << Qt::endl;
+        qDebug() << "location for GenericCacheLocation" << QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) << Qt::endl;
+        qDebug() << "location for GenericConfigLocation" << QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) << Qt::endl;
+        qDebug() << "location for AppDataLocation" << QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) << Qt::endl;
+        qDebug() << "location for AppConfigLocation" << QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) << Qt::endl;
+        qDebug() << "location for PublicShareLocation" << QStandardPaths::writableLocation(QStandardPaths::PublicShareLocation) << Qt::endl;
+        qDebug() << "location for TemplatesLocation" << QStandardPaths::writableLocation(QStandardPaths::TemplatesLocation) << Qt::endl;
+	m_workingDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+ "/";
+	qDebug() << "Working dir is now " << m_workingDir << Qt::endl;
+	m_lmmsRcFile = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/.lmmsrc.xml";
 }
 
 void ConfigManager::initPortableWorkingDir()

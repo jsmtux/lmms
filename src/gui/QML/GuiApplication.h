@@ -247,7 +247,8 @@ public:
 	}
 	InstrumentModel* instrument() {
 		IInstrument* instrument = m_instrumentTrack->instrument();
-		ModelFactory* factory = dynamic_cast<ModelFactory*>(instrument->guiSpecificPlugin());
+		ModelFactory* factory = static_cast<ModelFactory*>(instrument->guiSpecificPlugin());
+		qWarning() << "Received factory " << factory << Qt::endl;
 		return factory->getModel(this);
 	}
 	FloatLmmsModel* trackVolumeModel() {
@@ -773,8 +774,10 @@ public:
 		m_song(IEngine::Instance()->getSongInterface()),
 		m_songModel(m_song)
 	{
-		fs_model.setRootPath(QFileInfo{m_configManager->workingDir()}.absoluteFilePath());
-		m_projects_index = fs_model.index(QFileInfo{m_configManager->userProjectsDir()}.absoluteFilePath());
+		fs_model.setRootPath(m_configManager->workingDir());
+		qWarning() << "Setting browser path to " << m_configManager->workingDir() << Qt::endl;
+		m_projects_index = fs_model.index(QFileInfo{m_configManager->workingDir() + "/projects/shorties/"}.absoluteFilePath());
+		// m_projects_index = fs_model.index(m_configManager->workingDir());
 	}
 
 	static void RegisterInQml() {

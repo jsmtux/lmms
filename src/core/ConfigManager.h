@@ -78,6 +78,7 @@ public:
 		return m_workingDir;
 	}
 
+	void initAndroidWorkingDir();
 	void initPortableWorkingDir();
 
 	void initInstalledWorkingDir();

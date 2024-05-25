@@ -47,6 +47,7 @@
 #include "audio/AudioSoundIo.h"
 #include "audio/AudioPulseAudio.h"
 #include "audio/AudioSdl.h"
+#include "audio/AudioAAudio.h"
 #include "audio/AudioDummy.h"
 
 // platform-specific midi-interface-classes
@@ -848,6 +849,13 @@ bool AudioEngine::isAudioDevNameValid(QString name)
 	}
 #endif
 
+#ifdef LMMS_HAVE_AAUdio
+	if (name == AudioAAudio::name())
+	{
+		return true;
+	}
+#endif
+
 
 #ifdef LMMS_HAVE_ALSA
 	if (name == AudioAlsa::name())
@@ -981,6 +989,19 @@ AudioDevice * AudioEngine::tryAudioDevices()
 		if( success_ful )
 		{
 			m_audioDevName = AudioSdl::name();
+			return dev;
+		}
+		delete dev;
+	}
+#endif
+
+#ifdef LMMS_HAVE_AAUDIO
+	if( dev_name == AudioAAudio::name() || dev_name == "" )
+	{
+		dev = new AudioAAudio( success_ful, this );
+		if( success_ful )
+		{
+			m_audioDevName = AudioAAudio::name();
 			return dev;
 		}
 		delete dev;

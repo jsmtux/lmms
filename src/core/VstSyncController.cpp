@@ -25,6 +25,8 @@
 
 #include "VstSyncController.h"
 
+#ifdef WANT_VST
+
 #include <stdexcept>
 
 #include <QDebug>
@@ -164,3 +166,5 @@ void VstSyncController::updateSampleRate()
 
 
 } // namespace lmms
+
+#endif

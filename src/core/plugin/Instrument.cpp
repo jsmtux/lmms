@@ -79,8 +79,8 @@ IInstrument *Instrument::instantiate(const QString &_plugin_name,
 		Q_ASSERT(!key);
 	// copy from above // TODO! common cleaner func
 	Plugin * p = Plugin::instantiateWithKey(_plugin_name, _instrument_track, key, keyFromDnd);
-	if(dynamic_cast<Instrument *>(p))
-		return dynamic_cast<Instrument *>(p);
+	if(static_cast<Instrument *>(p))
+		return static_cast<Instrument *>(p);
 	delete p;
 	return( InstantiateDummyInstrument( _instrument_track ) );
 }
