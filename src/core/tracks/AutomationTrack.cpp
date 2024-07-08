@@ -48,13 +48,6 @@ bool AutomationTrack::play( const TimePos & time_start, const fpp_t _frames,
 
 
 
-gui::TrackView* AutomationTrack::createView( gui::TrackContainerView* tcv )
-{
-	return new gui::AutomationTrackView( this, tcv );
-}
-
-
-
 
 Clip* AutomationTrack::createClip(const TimePos & pos)
 {

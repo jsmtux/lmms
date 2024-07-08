@@ -43,6 +43,10 @@
 #include "TrackView.h"
 #include "GuiApplication.h"
 #include "PluginFactory.h"
+#include "AutomationTrackView.h"
+#include "InstrumentTrackView.h"
+#include "PatternTrackView.h"
+#include "SampleTrackView.h"
 
 namespace lmms
 {
@@ -280,7 +284,19 @@ TrackView * TrackContainerView::createTrackView( Track * _t )
 		if (trackView->getTrack() == _t) { return trackView; }
 	}
 
-	return _t->createView( this );
+	switch (_t->type())
+	{
+		case Track::Type::Automation:
+			return new AutomationTrackView( static_cast<AutomationTrack*>(_t), this );
+		case Track::Type::Instrument:
+			return new InstrumentTrackView( static_cast<InstrumentTrack*>(_t), this );
+		case Track::Type::Pattern:
+			return new PatternTrackView( static_cast<PatternTrack*>(_t), this );
+		case Track::Type::Sample:
+			return new SampleTrackView( static_cast<SampleTrack*>(_t), this );
+		default:
+			return nullptr;
+	}
 }
 
 

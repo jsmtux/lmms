@@ -103,8 +103,6 @@ public:
 						const f_cnt_t frameBase, int clipNum = -1 ) = 0;
 
 
-
-	virtual gui::TrackView * createView( gui::TrackContainerView * view ) = 0;
 	virtual Clip * createClip( const TimePos & pos ) = 0;
 
 	virtual void saveTrackSpecificSettings( QDomDocument & doc,

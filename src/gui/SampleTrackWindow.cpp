@@ -189,9 +189,9 @@ void SampleTrackWindow::modelChanged()
 	connect(m_track, SIGNAL(nameChanged()),
 			this, SLOT(updateName()));
 
-	m_volumeKnob->setModel(&m_track->m_volumeModel);
-	m_panningKnob->setModel(&m_track->m_panningModel);
-	m_mixerChannelNumber->setModel(&m_track->m_mixerChannelModel);
+	m_volumeKnob->setModel(&m_track->volumeModel());
+	m_panningKnob->setModel(&m_track->panningModel());
+	m_mixerChannelNumber->setModel(m_track->mixerChannelModel());
 
 	updateName();
 }

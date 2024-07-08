@@ -813,14 +813,6 @@ Clip* InstrumentTrack::createClip(const TimePos & pos)
 
 
 
-gui::TrackView* InstrumentTrack::createView( gui::TrackContainerView* tcv )
-{
-	return new gui::InstrumentTrackView( this, tcv );
-}
-
-
-
-
 void InstrumentTrack::saveTrackSpecificSettings( QDomDocument& doc, QDomElement & thisElement )
 {
 	m_volumeModel.saveSettings( doc, thisElement, "vol" );

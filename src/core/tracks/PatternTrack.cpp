@@ -135,15 +135,6 @@ bool PatternTrack::play( const TimePos & _start, const fpp_t _frames,
 
 
 
-
-gui::TrackView* PatternTrack::createView(gui::TrackContainerView* tcv)
-{
-	return new gui::PatternTrackView(this, tcv);
-}
-
-
-
-
 Clip* PatternTrack::createClip(const TimePos & pos)
 {
 	auto pc = new PatternClip(this);
