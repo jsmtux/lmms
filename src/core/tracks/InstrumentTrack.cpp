@@ -30,7 +30,6 @@
 #include "DataFile.h"
 #include "GuiApplication.h"
 #include "Mixer.h"
-#include "InstrumentTrackView.h"
 #include "Instrument.h"
 #include "Keymap.h"
 #include "MidiClient.h"
@@ -808,14 +807,6 @@ Clip* InstrumentTrack::createClip(const TimePos & pos)
 	auto p = new MidiClip(this);
 	p->movePosition(pos);
 	return p;
-}
-
-
-
-
-gui::TrackView* InstrumentTrack::createView( gui::TrackContainerView* tcv )
-{
-	return new gui::InstrumentTrackView( this, tcv );
 }
 
 

@@ -64,7 +64,7 @@ SampleTrackView::SampleTrackView( SampleTrack * _t, TrackContainerView* tcv ) :
 	m_volumeKnob = new Knob( KnobType::Small17, getTrackSettingsWidget(),
 						    tr( "Track volume" ) );
 	m_volumeKnob->setVolumeKnob( true );
-	m_volumeKnob->setModel( &_t->m_volumeModel );
+	m_volumeKnob->setModel( &_t->volumeModel() );
 	m_volumeKnob->setHintText( tr( "Channel volume:" ), "%" );
 
 	m_volumeKnob->setLabel( tr( "VOL" ) );
@@ -72,7 +72,7 @@ SampleTrackView::SampleTrackView( SampleTrack * _t, TrackContainerView* tcv ) :
 
 	m_panningKnob = new Knob( KnobType::Small17, getTrackSettingsWidget(),
 							tr( "Panning" ) );
-	m_panningKnob->setModel( &_t->m_panningModel );
+	m_panningKnob->setModel( &_t->panningModel() );
 	m_panningKnob->setHintText( tr( "Panning:" ), "%" );
 	m_panningKnob->setLabel( tr( "PAN" ) );
 	m_panningKnob->show();
@@ -179,8 +179,8 @@ void SampleTrackView::showEffects()
 void SampleTrackView::modelChanged()
 {
 	auto st = castModel<SampleTrack>();
-	m_volumeKnob->setModel(&st->m_volumeModel);
-	m_mixerChannelNumber->setModel(&st->m_mixerChannelModel);
+	m_volumeKnob->setModel(&st->volumeModel());
+	m_mixerChannelNumber->setModel(st->mixerChannelModel());
 
 	TrackView::modelChanged();
 }

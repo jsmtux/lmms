@@ -46,7 +46,7 @@
 #include "MixerView.h"
 #include "GuiApplication.h"
 #include "ImportFilter.h"
-#include "InstrumentTrackView.h"
+#include "tracks/InstrumentTrackView.h"
 #include "instrument/InstrumentTrackWindow.h"
 #include "MicrotunerConfig.h"
 #include "PatternEditor.h"

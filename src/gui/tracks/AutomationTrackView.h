@@ -27,11 +27,10 @@
 #define LMMS_GUI_AUTOMATION_TRACK_VIEW_H
 
 #include "TrackView.h"
+#include "AutomationTrack.h"
 
 namespace lmms
 {
-
-class AutomationTrack;
 
 namespace gui
 {
