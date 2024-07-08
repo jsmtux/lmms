@@ -40,13 +40,13 @@
 #include "PatternTrack.h"
 #include "Song.h"
 #include "StringPairDrag.h"
-#include "TrackView.h"
+#include "gui/tracks/TrackView.h"
 #include "GuiApplication.h"
 #include "PluginFactory.h"
-#include "AutomationTrackView.h"
-#include "InstrumentTrackView.h"
-#include "PatternTrackView.h"
-#include "SampleTrackView.h"
+#include "gui/tracks/AutomationTrackView.h"
+#include "gui/tracks/InstrumentTrackView.h"
+#include "gui/tracks/PatternTrackView.h"
+#include "gui/tracks/SampleTrackView.h"
 
 namespace lmms
 {

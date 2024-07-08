@@ -37,7 +37,7 @@
 #include "Knob.h"
 #include "MainWindow.h"
 #include "MixerChannelLcdSpinBox.h"
-#include "SampleTrackView.h"
+#include "tracks/SampleTrackView.h"
 #include "Song.h"
 #include "SubWindow.h"
 #include "tracks/TrackLabelButton.h"

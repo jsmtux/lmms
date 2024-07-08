@@ -27,7 +27,7 @@
 #include "CaptionMenu.h"
 #include "MixerView.h"
 #include "GuiApplication.h"
-#include "TrackView.h"
+#include "gui/tracks/TrackView.h"
 
 namespace lmms::gui
 {

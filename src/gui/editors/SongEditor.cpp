@@ -55,7 +55,7 @@
 #include "TextFloat.h"
 #include "gui/widgets/TimeDisplayWidget.h"
 #include "TimeLineWidget.h"
-#include "TrackView.h"
+#include "gui/tracks/TrackView.h"
 
 namespace lmms::gui
 {

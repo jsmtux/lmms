@@ -35,7 +35,7 @@
 #include "PatternTrack.h"
 #include "Song.h"
 #include "StringPairDrag.h"
-#include "TrackView.h"
+#include "gui/tracks/TrackView.h"
 
 #include "MidiClip.h"
 

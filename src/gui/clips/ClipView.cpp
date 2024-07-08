@@ -40,7 +40,7 @@
 #include "embed.h"
 #include "GuiApplication.h"
 #include "InstrumentTrack.h"
-#include "InstrumentTrackView.h"
+#include "gui/tracks/InstrumentTrackView.h"
 #include "MidiClip.h"
 #include "MidiClipView.h"
 #include "Note.h"
@@ -53,7 +53,7 @@
 #include "TextFloat.h"
 #include "TrackContainer.h"
 #include "TrackContainerView.h"
-#include "TrackView.h"
+#include "gui/tracks/TrackView.h"
 
 namespace lmms::gui
 {

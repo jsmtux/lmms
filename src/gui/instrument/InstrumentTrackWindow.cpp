@@ -51,7 +51,7 @@
 #include "InstrumentTuningView.h"
 #include "InstrumentSoundShapingView.h"
 #include "InstrumentTrack.h"
-#include "InstrumentTrackView.h"
+#include "gui/tracks/InstrumentTrackView.h"
 #include "Knob.h"
 #include "LcdSpinBox.h"
 #include "LedCheckBox.h"
